@@ -1,7 +1,7 @@
 Source Code
 ===========
 
-This page provides an overview of the source code available at `github.com/NREL/FuelLib <https://github.com/NREL/FuelLib>`_.
+This page provides an overview of the source code available at `github.com/NatLabRockies/FuelLib <https://github.com/NatLabRockies/FuelLib>`_.
 
 .. _source-code-structure:
 

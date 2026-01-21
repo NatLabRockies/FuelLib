@@ -70,7 +70,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_hept
     # Fuel: heptane-decane
     # Number of compounds: 2
     # Generated: <YYY-MM-DD> <HH-MM-SS>
-    # FuelLib remote URL: https://github.com/NREL/FuelLib.git
+    # FuelLib remote URL: https://github.com/NatLabRockies/FuelLib.git
     # Git commit: <commit-hash>
     # Units: MKS
     # -----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_mixt
     # Fuel: posf10264
     # Number of compounds: 1
     # Generated: <YYY-MM-DD> <HH-MM-SS>
-    # FuelLib remote URL: https://github.com/NREL/FuelLib.git
+    # FuelLib remote URL: https://github.com/NatLabRockies/FuelLib.git
     # Git commit: <commit-hash>
     # Units: MKS
     # -----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsMP_hepta
     # Fuel: posf10264
     # Number of compounds: 2
     # Generated: <YYY-MM-DD> <HH-MM-SS>
-    # FuelLib remote URL: https://github.com/NREL/FuelLib.git
+    # FuelLib remote URL: https://github.com/NatLabRockies/FuelLib.git
     # Git commit: <commit-hash>
     # Units: MKS
     # -----------------------------------------------------------------------------

@@ -10,7 +10,7 @@ Download and Setup
 
 Clone the FuelLib repository from GitHub: ::
 
-    git clone https://github.com/NREL/FuelLib.git
+    git clone https://github.com/NatLabRockies/FuelLib.git
 
 Create and activate a Conda environment, install the required dependencies: ::
 
@@ -27,9 +27,9 @@ Required Input Files and Decomposing Fuel Components
 FuelLib requires two input files for any given fuel, ``<fuel_name>``:
 
 - ``FuelLib/fuelData/gcData/<fuel_name>_init.csv``: the initial weight percentage composition of the fuel components (must include columns "Compound" and "Weight %")
-- ``FuelLib/fuelData/groupDecompositionData/<fuel_name>.csv``: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as `gcmTable <https://github.com/NREL/FuelLib/blob/main/gcmTableData/gcmTable.csv>`_)
+- ``FuelLib/fuelData/groupDecompositionData/<fuel_name>.csv``: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as `gcmTable <https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv>`_)
 
-These two required files must have the same number of rows and the same order of components. Many examples can be found in the `fuelData <https://github.com/NREL/FuelLib/tree/main/fuelData>`_ directory.
+These two required files must have the same number of rows and the same order of components. Many examples can be found in the `fuelData <https://github.com/NatLabRockies/FuelLib/tree/main/fuelData>`_ directory.
 
 Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -69,8 +69,8 @@ Basic Usage
 To demonstrate the usage of FuelLib, we will use the fuel "heptane-decane", which is a 
 binary mixture of heptane and decane. The initial weight percentage composition is 73.75% 
 heptane and 26.25% decane, and the group decomposition data is provided in the
-`groupDecompositionData <https://github.com/NREL/FuelLib/tree/main/fuelData/groupDecompositionData>`_ directory.
-The following tutorial is included in the `FuelLib/tutorials <https://github.com/NREL/FuelLib/tree/main/tutorials>`_
+`groupDecompositionData <https://github.com/NatLabRockies/FuelLib/tree/main/fuelData/groupDecompositionData>`_ directory.
+The following tutorial is included in the `FuelLib/tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_
 as ``basic.py``. To begin, we will import the necessary modules and create a ``groupContribution`` object for the two component fuel "heptane-decane": 
 
 .. code-block:: python

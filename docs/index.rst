@@ -7,8 +7,8 @@ Gani\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimation
 with additions from Govindaraju and Ihme (2016)\ :footcite:p:`govindaraju_group_2016`, 
 to provide a systematic approach for estimating the thermodynamic properties of
 pure organic compounds and mixtures of organic compounds. If you need help or have questions, please use the 
-`GitHub discussion <https://github.com/NREL/FuelLib/discussions>`_.
-The source code is available at `github.com/NREL/FuelLib <https://github.com/NREL/FuelLib>`_.
+`GitHub discussion <https://github.com/NatLabRockies/FuelLib/discussions>`_.
+The source code is available at `github.com/NatLabRockies/FuelLib <https://github.com/NatLabRockies/FuelLib>`_.
 
 .. figure:: /figures/info-graphic.png
    :width: 600pt
@@ -22,7 +22,7 @@ If you use FuelLib in your research, please cite the following software record:
 
 .. code-block:: none
 
-   Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, and Binswanger, Adam. FuelLib (Fuel Library) [SWR-25-26]. Computer Software. https://github.com/NREL/FuelLib. USDOE Office of Energy Efficiency and Renewable Energy (EERE), Office of Sustainable Transportation. Vehicle Technologies Office (VTO). 27 Feb. 2025. Web. doi:10.11578/dc.20250317.1.
+   Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, and Binswanger, Adam. FuelLib (Fuel Library) [SWR-25-26]. Computer Software. https://github.com/NatLabRockies/FuelLib. USDOE Office of Energy Efficiency and Renewable Energy (EERE), Office of Sustainable Transportation. Vehicle Technologies Office (VTO). 27 Feb. 2025. Web. doi:10.11578/dc.20250317.1.
 
 .. code-block:: bibtex
 

@@ -521,8 +521,8 @@ It is difficult to identify individual components of complex multicomponent jet 
 which generally provides weight percentages of a given hydrocarbon family and carbon number within a sample (e.g., 5% C10 iso-alkane, 2% C13 cycloalkane, etc.).
 To address this challenge, FuelLib uses a set of reference compounds that represent the major hydrocarbon families and carbon numbers found in jet fuels.
 A comprehensive list of the reference compounds used in FuelLib can be found in the 
-`fuelData/refCompounds.csv <https://github.com/NREL/FuelLib/blob/main/fuelData/refCompounds.csv>`_ file, 
-with associated functional group decompositions in `fuelData/groupDecompositionData/refCompounds.csv <https://github.com/NREL/FuelLib/blob/main/fuelData/groupDecompositionData/refCompounds.csv>`_.
+`fuelData/refCompounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuelData/refCompounds.csv>`_ file, 
+with associated functional group decompositions in `fuelData/groupDecompositionData/refCompounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuelData/groupDecompositionData/refCompounds.csv>`_.
 
 For ease of reference, the reference compounds and keys corresponding to a PelePhysics mechanism `fuellib_posf_nonreacting <https://github.com/AMReX-Combustion/PelePhysics/tree/development/Mechanisms/fuellib_posf_nonreacting>`_ are provided in the table below.
 When provided, the PelePhysics keys can be used to link the compounds in FuelLib to species in PelePhysics simulations via ``Export4Pele.py`` as described in :ref:`Exporting to PelePhysics <sec-exporting-to-pelephysics>`.
