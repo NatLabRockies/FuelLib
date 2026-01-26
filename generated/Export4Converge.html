@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Export4Converge &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=cb975c41"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorials" href="../tutorials.html" />
+    <link rel="prev" title="Export4Pele" href="Export4Pele.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            FuelLib
+              <img src="../_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#liquid-specific-heat-capacity">Liquid specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sourcecode.html">Source Code</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sourcecode.html#source-code-auto-documentation">Source Code Auto-Documentation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="FuelLib.html">FuelLib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Export4Pele.html">Export4Pele</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Export4Converge</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#required-input-files-and-decomposing-fuel-components">Required Input Files and Decomposing Fuel Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-export4pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-export4converge.html">Exporting GCM-Based Mixture Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../sourcecode.html">Source Code</a></li>
+      <li class="breadcrumb-item active">Export4Converge</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/Export4Converge.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Export4Converge">
+<span id="export4converge"></span><h1>Export4Converge<a class="headerlink" href="#module-Export4Converge" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Converge.export_converge" title="Export4Converge.export_converge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_converge</span></code></a>(fuel[, path, units, ...])</p></td>
+<td><p>Export mixture fuel properties to csv files for Converge simulations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Export4Converge.main" title="Export4Converge.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p>Main function to execute the export process.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Converge.validate_fuel_files" title="Export4Converge.validate_fuel_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_fuel_files</span></code></a>(fuel_name, fuel_data_dir)</p></td>
+<td><p>Validate that required fuel data files exist.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Converge.UnitConverter" title="Export4Converge.UnitConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnitConverter</span></code></a>(units)</p></td>
+<td><p>Unit conversion factors and labels for different unit systems.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="Export4Converge.UnitConverter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Export4Converge.</span></span><span class="sig-name descname"><span class="pre">UnitConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Converge.UnitConverter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit conversion factors and labels for different unit systems.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Export4Converge.UnitConverter.create_data_dict">
+<span class="sig-name descname"><span class="pre">create_data_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_crit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_tension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Cl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal_conductivity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Converge.UnitConverter.create_data_dict" title="Link to this definition"></a></dt>
+<dd><p>Create a data dictionary with converted units and appropriate labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>np.ndarray</em>) – Temperature array.</p></li>
+<li><p><strong>T_crit</strong> (<em>float</em>) – Critical temperature.</p></li>
+<li><p><strong>mu</strong> (<em>np.ndarray</em>) – Viscosity array.</p></li>
+<li><p><strong>surface_tension</strong> (<em>np.ndarray</em>) – Surface tension array.</p></li>
+<li><p><strong>Lv</strong> (<em>np.ndarray</em>) – Heat of vaporization array.</p></li>
+<li><p><strong>pv</strong> (<em>np.ndarray</em>) – Vapor pressure array.</p></li>
+<li><p><strong>rho</strong> (<em>np.ndarray</em>) – Density array.</p></li>
+<li><p><strong>Cl</strong> (<em>np.ndarray</em>) – Specific heat array.</p></li>
+<li><p><strong>thermal_conductivity</strong> (<em>np.ndarray</em>) – Thermal conductivity array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with converted properties and labels.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Converge.export_converge">
+<span class="sig-prename descclassname"><span class="pre">Export4Converge.</span></span><span class="sig-name descname"><span class="pre">export_converge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fuel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/runner/work/FuelLib/FuelLib/exportData'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_mix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Converge.export_converge" title="Link to this definition"></a></dt>
+<dd><p>Export mixture fuel properties to csv files for Converge simulations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fuel</strong> (<em>fl.fuel</em>) – Fuel object containing properties to export.</p></li>
+<li><p><strong>path</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: FuelLib/exportData</em><em>)</em>) – Directory to save the input file.</p></li>
+<li><p><strong>units</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;mks&quot;</em><em>)</em>) – Units for the properties (“mks” for SI, “cgs” for CGS).</p></li>
+<li><p><strong>temp_min</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default: 0</em><em>)</em>) – Minimum temperature (K) for the property calculations.</p></li>
+<li><p><strong>temp_max</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default: 1000</em><em>)</em>) – Maximum temperature (K)for the property calculations.</p></li>
+<li><p><strong>temp_step</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default: 10</em><em>)</em>) – Step size for temperature (K).</p></li>
+<li><p><strong>export_mix</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: False</em><em>)</em>) – Whether to export individual component or mixture properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If input parameters are invalid</p></li>
+<li><p><strong>TypeError</strong> – If fuel object is not a FuelLib fuel instance</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Converge.main">
+<span class="sig-prename descclassname"><span class="pre">Export4Converge.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Export4Converge.main" title="Link to this definition"></a></dt>
+<dd><p>Main function to execute the export process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>--fuel_name</strong> (<em>str</em>) – Name of the fuel (mandatory).</p></li>
+<li><p><strong>--fuel_data_dir</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: FuelLib/fuelData</em><em>)</em>) – Directory where fuel data files are located.</p></li>
+<li><p><strong>--units</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: mks</em><em>)</em>) – Units for critical properties. Options are mks or cgs.</p></li>
+<li><p><strong>--temp_min</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default: 0 K</em><em>)</em>) – Minimum temperature (K) for the property calculations.</p></li>
+<li><p><strong>--temp_max</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default: 1000 K</em><em>)</em>) – Maximum temperature (K) for the property calculations.</p></li>
+<li><p><strong>--temp_step</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default: 10 K</em><em>)</em>) – Step size for temperature (K).</p></li>
+<li><p><strong>--export_dir</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: FuelLib/exportData</em><em>)</em>) – Directory to export the properties.</p></li>
+<li><p><strong>--export_mix</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: False</em><em>)</em>) – Whether to export individual component or mixture properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If required files for the specified fuel are not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Converge.validate_fuel_files">
+<span class="sig-prename descclassname"><span class="pre">Export4Converge.</span></span><span class="sig-name descname"><span class="pre">validate_fuel_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fuel_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuel_data_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Converge.validate_fuel_files" title="Link to this definition"></a></dt>
+<dd><p>Validate that required fuel data files exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fuel_name</strong> (<em>str</em>) – Name of the fuel.</p></li>
+<li><p><strong>fuel_data_dir</strong> (<em>str</em>) – Directory containing fuel data files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If required files are missing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Export4Pele.html" class="btn btn-neutral float-left" title="Export4Pele" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorials.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

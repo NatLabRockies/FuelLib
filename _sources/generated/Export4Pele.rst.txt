@@ -1,0 +1,24 @@
+﻿Export4Pele
+===========
+
+.. automodule:: Export4Pele
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_individual_compounds_dataframe
+      create_mixture_dataframe
+      export_pele
+      get_filename
+      get_git_info
+      main
+      vec_to_str
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      UnitConverter
+   

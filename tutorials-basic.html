@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction and Basic Usage &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Exporting Properties for Pele" href="tutorials-export4pele.html" />
+    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-specific-heat-capacity">Liquid specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#source-code-auto-documentation">Source Code Auto-Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/FuelLib.html">FuelLib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Pele.html">Export4Pele</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Converge.html">Export4Converge</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#required-input-files-and-decomposing-fuel-components">Required Input Files and Decomposing Fuel Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export4pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export4converge.html">Exporting GCM-Based Mixture Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorials.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Introduction and Basic Usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorials-basic.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction-and-basic-usage">
+<h1>Introduction and Basic Usage<a class="headerlink" href="#introduction-and-basic-usage" title="Link to this heading"></a></h1>
+<p>FuelLib is a Python library that uses group contribution methods to estimate the
+thermophysical properties of multicomponent liquid fuels and their mixtures. This tutorial
+provides a basic introduction to using FuelLib, including installation, required input files, and example usage.</p>
+<section id="download-and-setup">
+<h2>Download and Setup<a class="headerlink" href="#download-and-setup" title="Link to this heading"></a></h2>
+<p>Clone the FuelLib repository from GitHub:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">NatLabRockies</span><span class="o">/</span><span class="n">FuelLib</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>Create and activate a Conda environment, install the required dependencies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">fuellib</span><span class="o">-</span><span class="n">env</span> <span class="n">matplotlib</span> <span class="n">pandas</span> <span class="n">scipy</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">fuellib</span><span class="o">-</span><span class="n">env</span>
+</pre></div>
+</div>
+<p>Change to the FuelLib/tutorials directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">FuelLib</span><span class="o">/</span><span class="n">tutorials</span>
+</pre></div>
+</div>
+</section>
+<section id="required-input-files-and-decomposing-fuel-components">
+<h2>Required Input Files and Decomposing Fuel Components<a class="headerlink" href="#required-input-files-and-decomposing-fuel-components" title="Link to this heading"></a></h2>
+<p>FuelLib requires two input files for any given fuel, <code class="docutils literal notranslate"><span class="pre">&lt;fuel_name&gt;</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FuelLib/fuelData/gcData/&lt;fuel_name&gt;_init.csv</span></code>: the initial weight percentage composition of the fuel components (must include columns “Compound” and “Weight %”)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FuelLib/fuelData/groupDecompositionData/&lt;fuel_name&gt;.csv</span></code>: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as <a class="reference external" href="https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv">gcmTable</a>)</p></li>
+</ul>
+<p>These two required files must have the same number of rows and the same order of components. Many examples can be found in the <a class="reference external" href="https://github.com/NatLabRockies/FuelLib/tree/main/fuelData">fuelData</a> directory.</p>
+</section>
+<section id="decomposing-fuel-components-into-fundamental-groups">
+<h2>Decomposing Fuel Components into Fundamental Groups<a class="headerlink" href="#decomposing-fuel-components-into-fundamental-groups" title="Link to this heading"></a></h2>
+<p>The decomposition process is a manual process that requires knowledge of the chemical structure of each component in the fuel.
+For example, consider a multicomponent fuel consisting of heptane (C7H16), decane (C10H22), and (1,5-dimethylhexyl)cyclohexane (C14H28).</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="_images/decomp-example.png"><img alt="_images/decomp-example.png" src="_images/decomp-example.png" style="width: 300pt;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Chemical structures of heptane (top), decane (middle), and (1,5-dimethylhexyl)cyclohexane (bottom). The CH3 groups are highlighted in green, the CH2 groups in blue, and the CH group in gold. The additional second order structures of (1,5-dimethylhexyl)cyclohexane are shown in orange.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The decomposition of heptane and decane into the groups defined in the <a class="reference external" href="https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv">gcmTable</a> is straightforward, as both compounds consist of only CH3 and CH2 groups.
+(1,5-dimethylhexyl)cyclohexane is a branched cycloalkane with a six-membered ring and
+two methyl branches on the first and fifth carbon atoms of the ring, as shown in the figure above.
+The six-membered ring and the branch containing the two CH3 groups bonded to a CH group
+are accounted for using the second order groups defined in the <a class="reference external" href="https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv">gcmTable</a>. However,
+the remaining branch with a single CH3 group bonded to a CH2 group is not defined in the <a class="reference external" href="https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv">gcmTable</a>.</p>
+<table class="docutils align-center">
+<thead>
+<tr class="row-odd"><th class="head"><p>Compound</p></th>
+<th class="head"><p>CH3</p></th>
+<th class="head"><p>CH2</p></th>
+<th class="head"><p>CH</p></th>
+<th class="head"><p>…</p></th>
+<th class="head"><p>(CH3)2CH</p></th>
+<th class="head"><p>6 membered ring</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Heptane</p></td>
+<td><p>2</p></td>
+<td><p>5</p></td>
+<td><p>0</p></td>
+<td><p>…</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Decane</p></td>
+<td><p>2</p></td>
+<td><p>8</p></td>
+<td><p>0</p></td>
+<td><p>…</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>(1,5-dimethylhexyl)cyclohexane</p></td>
+<td><p>3</p></td>
+<td><p>8</p></td>
+<td><p>3</p></td>
+<td><p>…</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h2>
+<p>To demonstrate the usage of FuelLib, we will use the fuel “heptane-decane”, which is a
+binary mixture of heptane and decane. The initial weight percentage composition is 73.75%
+heptane and 26.25% decane, and the group decomposition data is provided in the
+<a class="reference external" href="https://github.com/NatLabRockies/FuelLib/tree/main/fuelData/groupDecompositionData">groupDecompositionData</a> directory.
+The following tutorial is included in the <a class="reference external" href="https://github.com/NatLabRockies/FuelLib/tree/main/tutorials">FuelLib/tutorials</a>
+as <code class="docutils literal notranslate"><span class="pre">basic.py</span></code>. To begin, we will import the necessary modules and create a <code class="docutils literal notranslate"><span class="pre">groupContribution</span></code> object for the two component fuel “heptane-decane”:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># Add the FuelLib directory to the Python path</span>
+<span class="n">FUELLIB_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FUELLIB_DIR</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">paths</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">FuelLib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fl</span>
+
+<span class="c1"># Create a fuel object for the fuel &quot;heptane-decane&quot;</span>
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">fuel</span><span class="p">(</span><span class="s2">&quot;heptane-decane&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Upon initialization, the <code class="docutils literal notranslate"><span class="pre">fuel</span></code> object will read the initial weight
+percentage composition and group decomposition data from the specified files. The object stores
+vectors of the calculated fundamental properties at standard conditions for each component of the fuel as described in <a class="reference internal" href="fuelprops.html#eq-gcm-properties"><span class="std std-ref">Equations for GCM properties</span></a>.
+For example, we can display the fuel name, the components in the fuel, the initial composition, and the critical temperature for each component:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display fuel name, components, initial composition, and critical temperature</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fuel name: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fuel components: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">compounds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial composition: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">Y_0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Critical temperature: </span><span class="si">{</span><span class="n">fuel</span><span class="o">.</span><span class="n">Tc</span><span class="si">}</span><span class="s2"> K&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt; Fuel name: heptane-decane
+&gt;&gt; Fuel components: [&#39;NC7H16&#39;, &#39;NC10H22&#39;]
+&gt;&gt; Initial composition: [0.7375 0.2625]
+&gt;&gt; Critical temperature: [549.85598051 623.69051582] K
+</pre></div>
+</div>
+<p>Next, we can calculate any of the component- or mixture-level properties using the
+<code class="docutils literal notranslate"><span class="pre">groupContribution</span></code> object. For example, we can calculate the saturated vapor pressure
+for each component and the mixture at a given temperature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the saturated vapor pressure at 320 K</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">320</span> <span class="c1"># K</span>
+<span class="n">p_sat_i</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">psat</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="n">p_sat_mix</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">mixture_vapor_pressure</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saturated vapor pressure at </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2"> K: </span><span class="si">{</span><span class="n">p_sat_i</span><span class="si">}</span><span class="s2"> Pa&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mixture saturated vapor pressure at </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2"> K: </span><span class="si">{</span><span class="n">p_sat_mix</span><span class="si">}</span><span class="s2"> Pa&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt; Saturated vapor pressure at 320 K: [13735.84605413   673.28876023] Pa
+&gt;&gt; Mixture saturated vapor pressure at 320 K: 11117.84926875165 Pa
+</pre></div>
+</div>
+<p>The following links provide more information on the <a class="reference internal" href="fuelprops.html#eq-gcm-correlations"><span class="std std-ref">Equations for individual compound correlations</span></a> and
+the <a class="reference internal" href="fuelprops.html#eq-mixture-properties"><span class="std std-ref">Equations for mixture properties from GCM</span></a> that can be calculated using the <code class="docutils literal notranslate"><span class="pre">groupContribution</span></code> object.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorials-export4pele.html" class="btn btn-neutral float-right" title="Exporting Properties for Pele" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
