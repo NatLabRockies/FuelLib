@@ -135,7 +135,7 @@ plt.pie(
     autopct="%1.1f%%",
     startangle=140,
     colors=[colors[family] for family in family_names],
-    textprops={"fontsize": 20, "weight": "bold", "color": "white"},
+    textprops={"fontsize": 16, "weight": "bold", "color": "white"},
 )
 legend_handles = [
     plt.Rectangle((0, 0), 1, 1, fc=colors[family]) for family in family_names
