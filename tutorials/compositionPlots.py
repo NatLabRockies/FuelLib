@@ -72,6 +72,20 @@ def determine_carbon_number(compound):
 # Apply the function to the column and append as a new column
 df["nC"] = df.Compounds.apply(determine_carbon_number)
 
+# Determine relative weight % of each family
+family_weights = df.groupby("Family")["Weight %"].sum()
+
+# Print the sum of weight % for each family
+print("\n" + "=" * 45)
+print("Relative Weight % of Each Compound Family")
+print(f"Fuel: {fuel_name}")
+print("=" * 45)
+for family, weight in family_weights.items():
+    print(f"  {family:<20} {weight:>8.2f}%")
+print("-" * 45)
+print(f"  {'Total':<20} {family_weights.sum():>8.2f}%")
+print("=" * 45 + "\n")
+
 # Remove rows <= 0.01 in weight % column at max(nC)
 df = df[df["Weight %"] > 0.01]
 
@@ -111,5 +125,28 @@ plt.yticks(fontsize=14)
 plt.ylabel("Weight %", fontsize=16)
 plt.title("Fuel Composition", fontsize=16, fontweight="bold")
 plt.legend(fontsize=14)
+plt.tight_layout()
+
+# Plot pie chart of family weights
+plt.figure(figsize=(7, 5))
+plt.pie(
+    family_weights,
+    labels=None,
+    autopct="%1.1f%%",
+    startangle=140,
+    colors=[colors[family] for family in family_names],
+    textprops={"fontsize": 16, "weight": "bold", "color": "white"},
+)
+legend_handles = [
+    plt.Rectangle((0, 0), 1, 1, fc=colors[family]) for family in family_names
+]
+plt.legend(
+    legend_handles,
+    family_names,
+    loc="center left",
+    bbox_to_anchor=(1, 0.5),
+    fontsize=14,
+)
+plt.axis("equal")
 plt.tight_layout()
 plt.show()
