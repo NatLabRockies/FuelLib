@@ -71,7 +71,7 @@ binary mixture of heptane and decane. The initial weight percentage composition 
 heptane and 26.25% decane, and the group decomposition data is provided in the
 `groupDecompositionData <https://github.com/NatLabRockies/FuelLib/tree/main/fuelData/groupDecompositionData>`_ directory.
 The following tutorial is included in the `FuelLib/tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_
-as ``basic.py``. To begin, we will import the necessary modules and create a ``groupContribution`` object for the two component fuel "heptane-decane": 
+as ``basic.py``. To begin, we will import the necessary modules and create a ``fuel`` object for the two component fuel "heptane-decane": 
 
 .. code-block:: python
 
@@ -108,7 +108,7 @@ For example, we can display the fuel name, the components in the fuel, the initi
     >> Critical temperature: [549.85598051 623.69051582] K
 
 Next, we can calculate any of the component- or mixture-level properties using the 
-``groupContribution`` object. For example, we can calculate the saturated vapor pressure
+``fuel`` object. For example, we can calculate the saturated vapor pressure
 for each component and the mixture at a given temperature:
 
 .. code-block:: python
