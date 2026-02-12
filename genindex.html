@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Index &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-specific-heat-capacity">Liquid specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#source-code-auto-documentation">Source Code Auto-Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/FuelLib.html">FuelLib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Pele.html">Export4Pele</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Converge.html">Export4Converge</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#required-input-files-and-decomposing-fuel-components">Required Input Files and Decomposing Fuel Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export4pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export4converge.html">Exporting GCM-Based Mixture Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Index</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
+ 
+</div>
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.C2K">C2K() (in module FuelLib)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.Cl">Cl() (FuelLib.fuel method)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.Cp">Cp() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Converge.html#Export4Converge.UnitConverter.create_data_dict">create_data_dict() (Export4Converge.UnitConverter method)</a>
+</li>
+      <li><a href="generated/Export4Pele.html#Export4Pele.create_individual_compounds_dataframe">create_individual_compounds_dataframe() (in module Export4Pele)</a>
+</li>
+      <li><a href="generated/Export4Pele.html#Export4Pele.create_mixture_dataframe">create_mixture_dataframe() (in module Export4Pele)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.density">density() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.droplet_mass">droplet_mass() (in module FuelLib)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.droplet_volume">droplet_volume() (in module FuelLib)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    Export4Converge
+
+      <ul>
+        <li><a href="generated/Export4Converge.html#module-Export4Converge">module</a>
+</li>
+      </ul></li>
+      <li>
+    Export4Pele
+
+      <ul>
+        <li><a href="generated/Export4Pele.html#module-Export4Pele">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Converge.html#Export4Converge.export_converge">export_converge() (in module Export4Converge)</a>
+</li>
+      <li><a href="generated/Export4Pele.html#Export4Pele.export_pele">export_pele() (in module Export4Pele)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel">fuel (class in FuelLib)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    FuelLib
+
+      <ul>
+        <li><a href="generated/FuelLib.html#module-FuelLib">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Pele.html#Export4Pele.get_filename">get_filename() (in module Export4Pele)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Pele.html#Export4Pele.get_git_info">get_git_info() (in module Export4Pele)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.K2C">K2C() (in module FuelLib)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.k_B">k_B (FuelLib.fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.latent_heat_vaporization">latent_heat_vaporization() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Converge.html#Export4Converge.main">main() (in module Export4Converge)</a>
+
+      <ul>
+        <li><a href="generated/Export4Pele.html#Export4Pele.main">(in module Export4Pele)</a>
+</li>
+      </ul></li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mass2X">mass2X() (FuelLib.fuel method)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mass2Y">mass2Y() (FuelLib.fuel method)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mean_molecular_weight">mean_molecular_weight() (FuelLib.fuel method)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.mixing_rule">mixing_rule() (in module FuelLib)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mixture_density">mixture_density() (FuelLib.fuel method)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mixture_dynamic_viscosity">mixture_dynamic_viscosity() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mixture_thermal_conductivity">mixture_thermal_conductivity() (FuelLib.fuel method)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mixture_vapor_pressure">mixture_vapor_pressure() (FuelLib.fuel method)</a>
+</li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.mixture_vapor_pressure_antoine_coeffs">mixture_vapor_pressure_antoine_coeffs() (FuelLib.fuel method)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="generated/Export4Converge.html#module-Export4Converge">Export4Converge</a>
+</li>
+        <li><a href="generated/Export4Pele.html#module-Export4Pele">Export4Pele</a>
+</li>
+        <li><a href="generated/FuelLib.html#module-FuelLib">FuelLib</a>
+</li>
+      </ul></li>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.molar_liquid_vol">molar_liquid_vol() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.N_g1">N_g1 (FuelLib.fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.N_g2">N_g2 (FuelLib.fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.psat_antoine_coeffs">psat_antoine_coeffs() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Converge.html#Export4Converge.UnitConverter">UnitConverter (class in Export4Converge)</a>
+
+      <ul>
+        <li><a href="generated/Export4Pele.html#Export4Pele.UnitConverter">(class in Export4Pele)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Converge.html#Export4Converge.validate_fuel_files">validate_fuel_files() (in module Export4Converge)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Export4Pele.html#Export4Pele.vec_to_str">vec_to_str() (in module Export4Pele)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.X2Y">X2Y() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/FuelLib.html#FuelLib.fuel.Y2X">Y2X() (FuelLib.fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

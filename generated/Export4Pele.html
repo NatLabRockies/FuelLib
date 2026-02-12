@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Export4Pele &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=cb975c41"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Export4Converge" href="Export4Converge.html" />
+    <link rel="prev" title="FuelLib" href="FuelLib.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            FuelLib
+              <img src="../_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#liquid-specific-heat-capacity">Liquid specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sourcecode.html">Source Code</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sourcecode.html#source-code-auto-documentation">Source Code Auto-Documentation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="FuelLib.html">FuelLib</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Export4Pele</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Export4Converge.html">Export4Converge</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#required-input-files-and-decomposing-fuel-components">Required Input Files and Decomposing Fuel Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-export4pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-export4converge.html">Exporting GCM-Based Mixture Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export4converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../sourcecode.html">Source Code</a></li>
+      <li class="breadcrumb-item active">Export4Pele</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/Export4Pele.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Export4Pele">
+<span id="export4pele"></span><h1>Export4Pele<a class="headerlink" href="#module-Export4Pele" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Pele.create_individual_compounds_dataframe" title="Export4Pele.create_individual_compounds_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_individual_compounds_dataframe</span></code></a>(fuel, ...)</p></td>
+<td><p>Create DataFrame for individual compound properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Export4Pele.create_mixture_dataframe" title="Export4Pele.create_mixture_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_mixture_dataframe</span></code></a>(fuel, ...)</p></td>
+<td><p>Create DataFrame for mixture properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Pele.export_pele" title="Export4Pele.export_pele"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_pele</span></code></a>(fuel[, path, units, ...])</p></td>
+<td><p>Export fuel properties to input file for Pele simulations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Export4Pele.get_filename" title="Export4Pele.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(fuel_name, liq_prop_model, ...)</p></td>
+<td><p>Generate appropriate filename based on parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Pele.get_git_info" title="Export4Pele.get_git_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_git_info</span></code></a>()</p></td>
+<td><p>Get git commit hash and remote URL for file header.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Export4Pele.main" title="Export4Pele.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p>Main function to execute the export process.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Pele.vec_to_str" title="Export4Pele.vec_to_str"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vec_to_str</span></code></a>(vec)</p></td>
+<td><p>Convert a list or numpy array to a string representation.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Export4Pele.UnitConverter" title="Export4Pele.UnitConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnitConverter</span></code></a>(units)</p></td>
+<td><p>Unit conversion factors for different unit systems used in Pele exports.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="Export4Pele.UnitConverter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">UnitConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.UnitConverter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit conversion factors for different unit systems used in Pele exports.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Pele.create_individual_compounds_dataframe">
+<span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">create_individual_compounds_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fuel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.create_individual_compounds_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Create DataFrame for individual compound properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fuel</strong> (<em>FuelLib.Fuel</em>) – Fuel object containing compound properties.</p></li>
+<li><p><strong>compound_names</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of compound names.</p></li>
+<li><p><strong>converter</strong> (<a class="reference internal" href="#Export4Pele.UnitConverter" title="Export4Pele.UnitConverter"><em>UnitConverter</em></a>) – Unit converter instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with compound properties.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Pele.create_mixture_dataframe">
+<span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">create_mixture_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fuel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_mix_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.create_mixture_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Create DataFrame for mixture properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fuel</strong> (<em>FuelLib.Fuel</em>) – Fuel object containing mixture properties.</p></li>
+<li><p><strong>export_mix_name</strong> (<em>str</em><em> or </em><em>None</em>) – Name for the exported mixture.</p></li>
+<li><p><strong>converter</strong> (<a class="reference internal" href="#Export4Pele.UnitConverter" title="Export4Pele.UnitConverter"><em>UnitConverter</em></a>) – Unit converter instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with mixture properties.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Pele.export_pele">
+<span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">export_pele</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fuel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/runner/work/FuelLib/FuelLib/exportData'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_fuel_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pp_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_mix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_mix_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">liq_prop_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gcm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psat_antoine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.export_pele" title="Link to this definition"></a></dt>
+<dd><p>Export fuel properties to input file for Pele simulations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fuel</strong> (<em>fuel object</em>) – An instance of the fuel class.</p></li>
+<li><p><strong>path</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: FuelLib/exportData</em><em>)</em>) – Directory to save the input file.</p></li>
+<li><p><strong>units</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;mks&quot;</em><em>)</em>) – Units for the properties (“mks” for SI, “cgs” for CGS).</p></li>
+<li><p><strong>dep_fuel_names</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em><em> (</em><em>default: None</em><em>)</em>) – List or single fuel that each compound deposits to.</p></li>
+<li><p><strong>use_pp_keys</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use the PelePhysics key for each compound (True or False). Default is False.</p></li>
+<li><p><strong>export_mix</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: False</em><em>)</em>) – Option to export mixture properties of the fuel (True or False).</p></li>
+<li><p><strong>export_mix_name</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: None</em><em>)</em>) – Name the mixture if different than fuel_name.</p></li>
+<li><p><strong>liq_prop_model</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;gcm&quot;</em><em>)</em>) – Model for liquid properties. Options are “gcm” (default) or “mp”.</p></li>
+<li><p><strong>psat_antoine</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use Antoine coefficients for vapor pressure in MP model (True or False). Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If input parameters are invalid</p></li>
+<li><p><strong>TypeError</strong> – If fuel object is not a FuelLib fuel instance</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Pele.get_filename">
+<span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">get_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fuel_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">liq_prop_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_mix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.get_filename" title="Link to this definition"></a></dt>
+<dd><p>Generate appropriate filename based on parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fuel_name</strong> (<em>str</em>) – Name of the fuel.</p></li>
+<li><p><strong>liq_prop_model</strong> (<em>str</em>) – Liquid property model (‘gcm’ or ‘mp’).</p></li>
+<li><p><strong>export_mix</strong> (<em>bool</em>) – Whether exporting mixture properties.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – Directory path for output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Full path to output file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Pele.get_git_info">
+<span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">get_git_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.get_git_info" title="Link to this definition"></a></dt>
+<dd><p>Get git commit hash and remote URL for file header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple containing git commit hash and remote URL.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Pele.main">
+<span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.main" title="Link to this definition"></a></dt>
+<dd><p>Main function to execute the export process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>--fuel_name</strong> (<em>str</em>) – Name of the fuel (mandatory).</p></li>
+<li><p><strong>--fuel_data_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory where fuel data files are located. Default is FuelLib/fuelData.</p></li>
+<li><p><strong>--fuel_decomp_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the decomposition file (optional). If not provided, defaults to fuel_name.</p></li>
+<li><p><strong>--units</strong> (<em>str</em><em>, </em><em>optional</em>) – Units for critical properties. Options are “mks” (default) or “cgs”.</p></li>
+<li><p><strong>--dep_fuel_names</strong> (<em>str</em><em>, </em><em>optional</em>) – Space-separated list with len(fuel.compounds) or single fuel that all compounds deposit. Default is fuel.compounds.</p></li>
+<li><p><strong>--use_pp_keys</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use the PelePhysics key for each compound (True or False). Default is True.</p></li>
+<li><p><strong>--export_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory to export the properties. Default is “FuelLib/exportData”.</p></li>
+<li><p><strong>--export_mix</strong> (<em>bool</em><em>, </em><em>optional</em>) – Option to export mixture properties of the fuel (True or False). Default is False.</p></li>
+<li><p><strong>--export_mix_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name the mixture if different than fuel_name. Default is fuel_name.</p></li>
+<li><p><strong>--liq_prop_model</strong> (<em>str</em><em>, </em><em>optional</em>) – Model for liquid properties. Options are “gcm” (default) or “mp”.</p></li>
+<li><p><strong>--psat_antoine</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use Antoine coefficients for vapor pressure in MP model (True or False). Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If required files for the specified fuel are not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Export4Pele.vec_to_str">
+<span class="sig-prename descclassname"><span class="pre">Export4Pele.</span></span><span class="sig-name descname"><span class="pre">vec_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Export4Pele.vec_to_str" title="Link to this definition"></a></dt>
+<dd><p>Convert a list or numpy array to a string representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vec</strong> (<em>list</em><em> or </em><em>pd.Series</em><em> or </em><em>pd.DataFrame</em>) – List or numpy array to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>String representation of the vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="FuelLib.html" class="btn btn-neutral float-left" title="FuelLib" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Export4Converge.html" class="btn btn-neutral float-right" title="Export4Converge" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

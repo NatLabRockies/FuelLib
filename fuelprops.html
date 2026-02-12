@@ -1,0 +1,1612 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fuel Property Prediction Model &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Source Code" href="sourcecode.html" />
+    <link rel="prev" title="Welcome to FuelLib’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#liquid-specific-heat-capacity">Liquid specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#source-code-auto-documentation">Source Code Auto-Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/FuelLib.html">FuelLib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Pele.html">Export4Pele</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/Export4Converge.html">Export4Converge</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#required-input-files-and-decomposing-fuel-components">Required Input Files and Decomposing Fuel Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export4pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export4converge.html">Exporting GCM-Based Mixture Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export4converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fuel Property Prediction Model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fuelprops.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fuel-property-prediction-model">
+<h1>Fuel Property Prediction Model<a class="headerlink" href="#fuel-property-prediction-model" title="Link to this heading"></a></h1>
+<p><strong>FuelLib</strong> utilizes the group contribution method (GCM), as developed by Constantinou and
+Gani<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> in the mid-1990s,
+to provide a systematic approach for estimating the thermodynamic properties of
+pure organic compounds. The GCM decomposes molecules into structural groups,
+each contributing to a target property based on predefined group values.
+By summing these contributions, the GCM accurately predicts essential properties,
+including the acentric factor, normal boiling point, liquid molar volume at standard conditions
+(298 K) and more. This predictive capability is particularly useful for complex
+mixtures such as synthetic aviation turbine fuels (SATFs), where experimental thermodynamic data
+is limited. <cite>FuelLib</cite> provides SATF developers with a means to estimate
+these critical properties without extensive physical testing, thereby aiding in
+the identification of promising fuel compositions before committing to large-scale production.</p>
+<p><cite>FuelLib</cite> builds on
+<a class="reference external" href="https://github.com/gpavanb-old/GroupContribution">Pavan B. Govindaraju’s Matlab implementation</a>,
+and includes gas chromatography data (GC x GC) for various jet fuels from the National Jet Fuel Combustion Program<a class="footnote-reference brackets" href="#footcite-colket-overview-2017" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (NJFCP)
+Air Force Research Laboratory<a class="footnote-reference brackets" href="#footcite-edwards-reference-2017" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-edwards-jet-2020" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> (AFRL) and Vozka et al.<a class="footnote-reference brackets" href="#footcite-vozka-impact-2018" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>.
+Additionally, <cite>FuelLib</cite> includes correlations for the thermodynamic properties of
+mixture such as density, viscosity, vapor pressure, surface tension, and thermal conductivity. <a class="reference internal" href="#tab-gcm-properties"><span class="std std-ref">Table of GCM properties</span></a>
+outlines the properties for the <em>i-th</em> compound in a mixture, which depends on
+the <em>k-th</em> first-order and <em>j-th</em> second-order group contributions.</p>
+<section id="table-of-gcm-properties">
+<span id="tab-gcm-properties"></span><h2>Table of GCM properties<a class="headerlink" href="#table-of-gcm-properties" title="Link to this heading"></a></h2>
+<table class="docutils align-center" id="id61">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">GCM properties of the <em>i-th</em> component in a mixture. The subscript <em>stp</em> denotes a standard pressure assumption.</span><a class="headerlink" href="#id61" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Group Contributions</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(M_{w,i}\)</span></p></td>
+<td><p>kg/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(m_{w1k}\)</span></p></td>
+<td><p>g/mol</p></td>
+<td><p>Molecular weight.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_{c,i}\)</span></p></td>
+<td><p>K</p></td>
+<td><p><span class="math notranslate nohighlight">\(t_{c1k}\)</span>, <span class="math notranslate nohighlight">\(t_{c2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Critical temperature<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(p_{c,i}\)</span></p></td>
+<td><p>Pa</p></td>
+<td><p><span class="math notranslate nohighlight">\(p_{c1k}\)</span>, <span class="math notranslate nohighlight">\(p_{c2j}\)</span></p></td>
+<td><p>bar<sup>-0.5</sup></p></td>
+<td><p>Critical pressure<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(V_{c,i}\)</span></p></td>
+<td><p>m<sup>3</sup>/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(v_{c1k}\)</span>, <span class="math notranslate nohighlight">\(v_{c2j}\)</span></p></td>
+<td><p>m<sup>3</sup>/kmol</p></td>
+<td><p>Critical volume<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(T_{b,i}\)</span></p></td>
+<td><p>K</p></td>
+<td><p><span class="math notranslate nohighlight">\(t_{b1k}\)</span>, <span class="math notranslate nohighlight">\(t_{b2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Normal boiling point<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_{m,i}\)</span></p></td>
+<td><p>K</p></td>
+<td><p><span class="math notranslate nohighlight">\(t_{m1k}\)</span>, <span class="math notranslate nohighlight">\(t_{m2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Normal melting point<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta H_{f,i}\)</span></p></td>
+<td><p>J/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{f1k}\)</span>, <span class="math notranslate nohighlight">\(h_{f2j}\)</span></p></td>
+<td><p>kJ/mol</p></td>
+<td><p>Enthalpy of formation at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta G_{f,i}\)</span></p></td>
+<td><p>J/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(g_{f1k}\)</span>, <span class="math notranslate nohighlight">\(g_{f2j}\)</span></p></td>
+<td><p>kJ/mol</p></td>
+<td><p>Standard Gibbs free energy at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta H_{v,\textit{stp},i}\)</span></p></td>
+<td><p>J/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{v1k}\)</span>, <span class="math notranslate nohighlight">\(h_{v2j}\)</span></p></td>
+<td><p>kJ/mol</p></td>
+<td><p>Enthalpy of vaporization at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\omega_i\)</span></p></td>
+<td><p>1</p></td>
+<td><p><span class="math notranslate nohighlight">\(\omega_{1k}\)</span>, <span class="math notranslate nohighlight">\(\omega_{2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Acentric factor<a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(V_{m,\textit{stp},i}\)</span></p></td>
+<td><p>m<sup>3</sup>/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(v_{m1k}\)</span>, <span class="math notranslate nohighlight">\(v_{m2j}\)</span></p></td>
+<td><p>m<sup>3</sup>/kmol</p></td>
+<td><p>Liquid molar volume at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(C_{p,i}\)</span></p></td>
+<td><p>J/mol/K</p></td>
+<td><p><span class="math notranslate nohighlight">\(C_{pA1_k}\)</span>, <span class="math notranslate nohighlight">\(C_{pA2_k}\)</span>,…</p></td>
+<td><p>J/mol/K</p></td>
+<td><p>Specific heat capacity<a class="footnote-reference brackets" href="#footcite-nielsen-molecular-1998" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="equations-for-gcm-properties">
+<span id="eq-gcm-properties"></span><h2>Equations for GCM properties<a class="headerlink" href="#equations-for-gcm-properties" title="Link to this heading"></a></h2>
+<p>The properties of each compound in a mixture can be calculated as the sum of contributions
+from the first- and second-order groups that make up the compound. For a given mixture,
+let <span class="math notranslate nohighlight">\(\mathbf{N}\)</span> be an <span class="math notranslate nohighlight">\(N_c \times N_{g_1}\)</span> matrix that represents the
+number of first-order groups in each compound, where <span class="math notranslate nohighlight">\(N_c\)</span> is the number of compounds
+in the mixture and <span class="math notranslate nohighlight">\(N_{g_1}\)</span> is the total number of first-order groups as defined
+by Constantinou and Gani<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.
+Similarly, let <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> be an <span class="math notranslate nohighlight">\(N_c \times N_{g_2}\)</span> matrix that specifies
+the number of second-order groups in each compound, where <span class="math notranslate nohighlight">\(N_{g_2}\)</span> is the total
+number of second-order groups. The total number of groups <span class="math notranslate nohighlight">\(N_g = N_{g_1} + N_{g_2} = 121\)</span>.
+The GCM properties for the <em>i-th</em> compound in the mixture are calculated as
+follows<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}M_{w,i} &amp;= \bigg[\sum_{k = 1}^{N_{g_1}}\mathbf{N}_{ik}m_{w1k} \bigg] \times 10^{-3}, \\
+T_{c,i} &amp;= 181.28 \ln  \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} t_{c1k} + \sum_{j=1}^{N_{g_2}}         \mathbf{M}_{ij} t_{c2j} \bigg],\\
+p_{c,i} &amp;= \Bigg( \bigg[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} p_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}     p_{c2j} + 0.10022\bigg]^{-2}  + 1.3705\Bigg)\times 10^{5}, \\
+V_{c,i} &amp;= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}      v_{c2j} \bigg] -0.00435 \Bigg)\times 10^{-3}, \\
+T_{b,i} &amp;= 204.359 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{b1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{b2j}\bigg],\\
+T_{m,i} &amp;= 102.425 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{m1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{m2j}\bigg],\\
+\Delta H_{f,i} &amp;= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
+\Delta G_{f,i} &amp;= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
+\Delta H_{v,\textit{stp},i} &amp;= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
+\omega_i &amp;= 0.4085 \ln  \bigg( \Big[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big]^{1/0.5050} \bigg), \\
+V_{m,\textit{stp},i} &amp;= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
+C_{p,i} &amp; =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \\
+    &amp; +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \\
+    &amp; +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
+\theta &amp;= \frac{T - 298.15}{700}\end{split}\]</div>
+</section>
+<section id="equations-for-individual-compound-correlations">
+<span id="eq-gcm-correlations"></span><h2>Equations for individual compound correlations<a class="headerlink" href="#equations-for-individual-compound-correlations" title="Link to this heading"></a></h2>
+<p>This section presents correlations for physical properties that leverage the individual
+compound properties defined in <a class="reference internal" href="#eq-gcm-properties"><span class="std std-ref">Equations for GCM properties</span></a>.  These correlations make
+it possible to evaluate physical properties at non-standard temperatures and pressures,
+given that group contribution properties are only defined at standard conditions.
+Unless noted otherwise in the individual correlation, all units are assumed to be SI:
+length (m), mass (kg), time (s), temperature (K), mole (mol).
+The <a class="reference internal" href="#tab-reduced-temps"><span class="std std-ref">Reduced temperature quantities</span></a> are used throughout this section for each compound <em>i</em>,
+provided <span class="math notranslate nohighlight">\(T\)</span> in K unless noted otherwise.</p>
+<span id="tab-correlation-qtys"></span><table class="docutils align-center" id="id62">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Derived quantities and temperature corrections</span><a class="headerlink" href="#id62" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\nu_i\)</span></p></td>
+<td><p>m<sup>2</sup>/s</p></td>
+<td><p>Kinematic viscosity<a class="footnote-reference brackets" href="#footcite-viswanath-viscosity-2007" id="id24" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(L_{v,\textit{stp},i}\)</span></p></td>
+<td><p>J/kg</p></td>
+<td><p>Latent heat of vaporization at 298 K<a class="footnote-reference brackets" href="#footcite-govindaraju-group-2016" id="id25" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(L_{v,i}\)</span></p></td>
+<td><p>J/kg</p></td>
+<td><p>Temperature-adjusted latent heat of vaporization at 298 K<a class="footnote-reference brackets" href="#footcite-govindaraju-group-2016" id="id26" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(V_{m,i}\)</span></p></td>
+<td><p>m<sup>3</sup>/mol</p></td>
+<td><p>Temperature-adjusted liquid molar volume<a class="footnote-reference brackets" href="#footcite-rackett-equation-1970" id="id27" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-yamada-saturated-1973" id="id28" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-govindaraju-group-2016" id="id29" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\rho_i\)</span></p></td>
+<td><p>kg/m<sup>3</sup></p></td>
+<td><p>Density</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(C_{\ell,i}\)</span></p></td>
+<td><p>J/kg/K</p></td>
+<td><p>Liquid specific heat capacity<a class="footnote-reference brackets" href="#footcite-govindaraju-group-2016" id="id30" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(p_{sat,i}\)</span></p></td>
+<td><p>Pa</p></td>
+<td><p>Saturated vapor pressure<a class="footnote-reference brackets" href="#footcite-lee-generalized-1975" id="id31" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-ambrose-vapour-1989" id="id32" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sigma_i\)</span></p></td>
+<td><p>N/m</p></td>
+<td><p>Surface tension<a class="footnote-reference brackets" href="#footcite-brock-surface-1955" id="id33" role="doc-noteref"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\lambda_i\)</span></p></td>
+<td><p>W/m/K</p></td>
+<td><p>Thermal conductivity<a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id34" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="tab-reduced-temps"></span><table class="docutils align-center" id="id63">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">Reduced temperature quantities</span><a class="headerlink" href="#id63" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Definition</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(T_{r,i}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{T}{T_{c,i}}\)</span></p></td>
+<td><p>Reduced temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_{r,b,i}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{T_{b,i}}{T_{c,i}}\)</span></p></td>
+<td><p>Reduced boiling point temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(T_{r,\textit{stp},i}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{298 \text{ (K)}}{T_{c,i}}\)</span></p></td>
+<td><p>Reduced standard temperature.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="kinematic-viscosity">
+<h3>Kinematic viscosity<a class="headerlink" href="#kinematic-viscosity" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">viscosity_kinematic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate the viscosity using Dutt’s equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Viscosity of each component in m^2/s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The kinematic viscosity of the <em>i-th</em> compound of the fuel,</p>
+<div class="math notranslate nohighlight">
+\[\nu_i = \frac{\mu_i}{\rho_i},\]</div>
+<p>is calculated from Dutt’s equation (Eq. 4.23 in Viscosity of
+Liquids<a class="footnote-reference brackets" href="#footcite-viswanath-viscosity-2007" id="id35" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a>) provided <span class="math notranslate nohighlight">\(T\)</span> in <span class="math notranslate nohighlight">\(^{\circ}\)</span> C:</p>
+<div class="math notranslate nohighlight">
+\[\nu_i = 10^{-6} \times \exp \bigg\{-3.0171 + \frac{442.78 + 1.6452 \,T_{b,i}}{T + 239 - 0.19 \,T_{b,i}} \bigg\}.\]</div>
+</section>
+<section id="latent-heat-of-vaporization">
+<h3>Latent heat of vaporization<a class="headerlink" href="#latent-heat-of-vaporization" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">latent_heat_vaporization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate latent heat of vaporization adjusted for temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Latent heat of vaporization in J/kg.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The latent heat of vaporization for each compound at standard pressure and
+temperature is calculated from the enthalpy of vaporization as:</p>
+<div class="math notranslate nohighlight">
+\[L_{v,\textit{stp},i} = \frac{\Delta H_{v,\textit{stp},i}}{M_{w,i}}.\]</div>
+<p>The heat of vaporization for each compound is then adjusted for variations in
+temperature<a class="footnote-reference brackets" href="#footcite-govindaraju-group-2016" id="id36" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[L_{v,i} = L_{v,\textit{stp},i} \bigg(\frac{1 - T_{r,i}}{1-T_{r,b,i}} \bigg)^{0.38}.\]</div>
+</section>
+<section id="liquid-molar-volume">
+<h3>Liquid molar volume<a class="headerlink" href="#liquid-molar-volume" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">molar_liquid_vol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Compute molar liquid volume with temperature correction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Molar liquid volume in m^3/mol.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The liquid molar volume is calculated at a specific temperature <span class="math notranslate nohighlight">\(T\)</span> using
+the generalized Rackett equation<a class="footnote-reference brackets" href="#footcite-rackett-equation-1970" id="id37" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-yamada-saturated-1973" id="id38" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>
+with an updated <span class="math notranslate nohighlight">\(\phi_i\)</span> parameter<a class="footnote-reference brackets" href="#footcite-govindaraju-group-2016" id="id39" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[V_{m,i} = V_{m,\textit{stp},i} Z^{\phi_i}_{c,i},\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}Z_{c,i} &amp;= 0.29056 - 0.08775 \omega_i,  \\
+\phi_i &amp;=
+\begin{cases}
+    (1 - T_{r,i})^{2/7} - (1 - T_{r,\textit{stp},i})^{2/7}, &amp; \text{ if } T \leq T_{c,i} \\
+    - (1 - T_{r,\textit{stp},i})^{2/7}, &amp; \text{ if } T &gt; T_{c,i}
+\end{cases}. \label{eq:phi}\end{split}\]</div>
+</section>
+<section id="density">
+<h3>Density<a class="headerlink" href="#density" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate the density of each component at temperature T.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature of the mixture in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Density of each compound in kg/m^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The density of the <em>i-th</em> compound is given by</p>
+<div class="math notranslate nohighlight">
+\[\rho_i = \frac{M_{w,i}}{V_{m,i}}.\]</div>
+</section>
+<section id="liquid-specific-heat-capacity">
+<h3>Liquid specific heat capacity<a class="headerlink" href="#liquid-specific-heat-capacity" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">Cl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Compute liquid specific heat capacity in J/kg/K at a given temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Specific heat capacity in J/kg/K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The liquid specific heat capacity for each compound at standard pressure temperature is calculated from the specific heat capacity as:</p>
+<div class="math notranslate nohighlight">
+\[C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}}\]</div>
+</section>
+<section id="saturated-vapor-pressure">
+<h3>Saturated vapor pressure<a class="headerlink" href="#saturated-vapor-pressure" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">psat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Compute saturated vapor pressure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+<li><p><strong>correlation</strong> (<em>str</em><em>, </em><em>optional</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saturated vapor pressure in Pa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The saturated vapor pressure for each compound is calculated as a function of
+temperature using either the Lee–Kesler method<a class="footnote-reference brackets" href="#footcite-lee-generalized-1975" id="id40" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a>
+or the Ambrose-Walton method<a class="footnote-reference brackets" href="#footcite-ambrose-vapour-1989" id="id41" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a>.  Both methods solve</p>
+<div class="math notranslate nohighlight">
+\[\ln p_{r,\text{sat},i} = f_i^{(0)} + \omega_i f_i^{(1)} + \omega_i^2 f_i^{(2)}\]</div>
+<p>for the reduced saturated vapor pressure for each compound,
+<span class="math notranslate nohighlight">\(p_{r,\text{sat},i} = p_{\text{sat},i}/p_{c,i}\)</span>.
+The default method in <cite>FuelLib</cite> is the Lee-Kesler method, as it is
+more stable at higher temperatures.
+The Lee-Kesler<a class="footnote-reference brackets" href="#footcite-lee-generalized-1975" id="id42" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a> method defines</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f_i^{(0)} &amp;= 5.92714 - \frac{6.09648}{T_{r,i}} - 1.28862 \ln T_{r,i} + 0.169347 \, T_{r,i}^6, \\
+f_i^{(1)} &amp;= 15.2518 - \frac{15.6875}{T_{r,i}} - 13.4721 \ln T_{r,i} + 0.43577 \, T_{r,i}^6, \\
+f_i^{(2)} &amp;= 0,\end{split}\]</div>
+<p>The Ambrose-Walton<a class="footnote-reference brackets" href="#footcite-ambrose-vapour-1989" id="id43" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a> correlation sets:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f_i^{(0)} &amp;= \frac{- 5.97616\tau_i + 1.29874\tau_i^{1.5} - 0.60394\tau_i^{2.5} - 1.06841\tau_i^{5}}{T_{r,i}}, \\
+f_i^{(1)} &amp;= \frac{- 5.03365\tau_i + 1.11505\tau_i^{1.5} - 5.41217\tau_i^{2.5} - 7.46628\tau_i^{5},}{T_{r,i}}, \\
+f_i^{(2)} &amp;= \frac{- 0.64771\tau_i + 2.41539\tau_i^{1.5} - 4.26979\tau_i^{2.5} - 3.25259\tau_i^{5}}{T_{r,i}},\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\tau_i = 1 - T_{r,i}\)</span>.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">psat_antoine_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Estimate Antoine coefficients for vapor pressure of an individual compound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Tvals</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).</p></li>
+<li><p><strong>units</strong> (<em>str</em><em>, </em><em>optional</em>) – Units for pressure in fit (“mks”, “cgs”, “bar”, “atm”)</p></li>
+<li><p><strong>correlation</strong> (<em>str</em><em>, </em><em>optional</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Coefficients A, B, C, D</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>4 np.ndarrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Users also have the option to return the coefficients from an Antoine fit based on
+the mixture vapor pressure calculated from Raoult’s law above.  Antoine’s equation is:</p>
+<div class="math notranslate nohighlight">
+\[\log_{10}\Big(\frac{p_{v,i}}{D_i}\Big) = A_i - \frac{B_i}{C_i + T},\]</div>
+<p>where <span class="math notranslate nohighlight">\(D_i\)</span> is a conversion factor for converting <span class="math notranslate nohighlight">\(p_{v,i}\)</span> to units of bar (<span class="math notranslate nohighlight">\(D_i = 10^5\)</span>) or dyne/cm <sup>2</sup> (<span class="math notranslate nohighlight">\(D_i = 10^{-1}\)</span>) from Pa.
+This feature was added to provide <a class="reference external" href="https://amrex-combustion.github.io">Pele</a> users an option for estimating these coefficients for use in CFD
+simulations with spray. See the <a class="reference external" href="https://amrex-combustion.github.io/PelePhysics/Spray.html">PelePhysics documentation</a>
+for additional information.</p>
+</section>
+<section id="surface-tension">
+<h3>Surface tension<a class="headerlink" href="#surface-tension" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">surface_tension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Brock-Bird'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate surface tension of each compound at a given temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+<li><p><strong>correlation</strong> (<em>str</em><em>, </em><em>optional</em>) – Correlation method (“Brock-Bird” or “Pitzer”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Surface tension in N/m.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Surface tension for each compound is approximated using the relation:</p>
+<div class="math notranslate nohighlight">
+\[\sigma_i = p_{c,i}^{2/3} T_{c,i}^{1/3} Q_i (1 - T_{r,i})^{11/9},\]</div>
+<p>provided <span class="math notranslate nohighlight">\(p_{c,i}\)</span> in bar.  The <span class="math notranslate nohighlight">\(Q_i\)</span> term is defined by Brock and Bird<a class="footnote-reference brackets" href="#footcite-brock-surface-1955" id="id44" role="doc-noteref"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></a> (default in FuelLib) as</p>
+<div class="math notranslate nohighlight">
+\[Q_i = 0.1196 \bigg[1 + \frac{T_{r,b,i} \log(p_{c,i}/1.01325)}{1 - T_{r,b,i}}\bigg] - 0.279,\]</div>
+<p>or by Curl and Pitzer<a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id45" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-curl-volumetric-1958" id="id46" role="doc-noteref"><span class="fn-bracket">[</span>16<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-pitzer-thermodynamics-1995" id="id47" role="doc-noteref"><span class="fn-bracket">[</span>17<span class="fn-bracket">]</span></a> as</p>
+<div class="math notranslate nohighlight">
+\[Q_i = \frac{1.86 + 1.18 \omega_i}{19.05} \bigg[ \frac{3.75 + 0.91 \omega_i}{0.291 - 0.08\omega_i} \bigg]^{2/3}.\]</div>
+</section>
+<section id="thermal-conductivity">
+<h3>Thermal conductivity<a class="headerlink" href="#thermal-conductivity" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">thermal_conductivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate thermal conductivity at a given temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Thermal conductivity in W/m/K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Thermal conductivity for each compound is computed according to the method of
+Latini et al. as summarized in Poling’s<a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id48" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> book:</p>
+<div class="math notranslate nohighlight">
+\[\lambda_i = \frac{A_i(1 - T_{r,i})^{0.38}}{T_{r,i}^{1/6}}.\]</div>
+<p>The constant <span class="math notranslate nohighlight">\(A_i\)</span> is defined by:</p>
+<div class="math notranslate nohighlight">
+\[A_i = \frac{A^\ast T_{b,i}^\alpha}{M_{w,i}^\beta T_{c,i}^{\gamma}},\]</div>
+<p>provided <span class="math notranslate nohighlight">\(M_{w,i}\)</span> in g/mol. The exponents vary depending on the family of
+the compound as defined in <a class="reference internal" href="#tab-thermal-conductivity-parameters"><span class="std std-ref">Thermal conductivity relation parameters</span></a>.  It is assumed
+that:</p>
+<ul class="simple">
+<li><p>aromatics have contain aromatic group contributions (e.g. ACCH)</p></li>
+<li><p>cycloparaffins contain a ring (e.g. 5-membered ring) and do not contain aromatic groups</p></li>
+<li><p>olefins contain one or more pairs of carbon atoms linked by a double bond and do not contain aromatic groups or rings</p></li>
+<li><p>all other compounds are assumed to be saturated hydrocarbons.</p></li>
+</ul>
+<span id="tab-thermal-conductivity-parameters"></span><table class="docutils align-center" id="id64">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">Thermal conductivity relation parameters</span><a class="headerlink" href="#id64" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Identifier</p></th>
+<th class="head"><p>Family</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(A^\ast\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\alpha\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\beta\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\gamma\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Saturated hydrocarbons</p></td>
+<td><p>0.00350</p></td>
+<td><p>1.2</p></td>
+<td><p>0.5</p></td>
+<td><p>0.167</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Aromatics</p></td>
+<td><p>0.0346</p></td>
+<td><p>1.2</p></td>
+<td><p>1.0</p></td>
+<td><p>0.167</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Cycloparaffins</p></td>
+<td><p>0.0310</p></td>
+<td><p>1.2</p></td>
+<td><p>1.0</p></td>
+<td><p>0.167</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Olefins</p></td>
+<td><p>0.0361</p></td>
+<td><p>1.2</p></td>
+<td><p>1.0</p></td>
+<td><p>0.167</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="equations-for-mixture-properties-from-gcm">
+<span id="eq-mixture-properties"></span><h2>Equations for mixture properties from GCM<a class="headerlink" href="#equations-for-mixture-properties-from-gcm" title="Link to this heading"></a></h2>
+<p>This section contains correlations for estimating physical properties of the
+mixture from the individual compound and physical properties defined in
+<a class="reference internal" href="#eq-gcm-properties"><span class="std std-ref">Equations for GCM properties</span></a> and <a class="reference internal" href="#eq-gcm-correlations"><span class="std std-ref">Equations for individual compound correlations</span></a>.  These correlations make
+it possible to evaluate physical properties at non-standard temperatures and
+pressures, as the group contribution properties are only defined at standard
+conditions. The <a class="reference internal" href="#tab-mixture-properties"><span class="std std-ref">Mixture properties</span></a> available in <cite>FuelLib</cite> are listed in
+table below.  Mass and mole fractions defined in Table <a class="reference internal" href="#tab-mass-mole-fracs"><span class="std std-ref">Mass and mole fractions</span></a>
+are used throughout this section.</p>
+<span id="tab-mixture-properties"></span><table class="docutils align-center" id="id65">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">Mixture properties</span><a class="headerlink" href="#id65" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\rho\)</span></p></td>
+<td><p>kg/m<sup>3</sup></p></td>
+<td><p>Density</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\nu\)</span></p></td>
+<td><p>m<sup>2</sup>/s</p></td>
+<td><p>Kinematic viscosity</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(p_v\)</span></p></td>
+<td><p>Pa</p></td>
+<td><p>Vapor pressure</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sigma\)</span></p></td>
+<td><p>N/m</p></td>
+<td><p>Surface tension</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\lambda\)</span></p></td>
+<td><p>W/m/K</p></td>
+<td><p>Thermal conductivity</p></td>
+</tr>
+</tbody>
+</table>
+<span id="tab-mass-mole-fracs"></span><table class="docutils align-center" id="id66">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">Mass and mole fractions</span><a class="headerlink" href="#id66" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Definition</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Y_i\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{m_i}{\sum_{k=1}^{N_c} m_k}\)</span></p></td>
+<td><p>Mass fraction of compound <em>i</em>. <span class="math notranslate nohighlight">\(m_i\)</span> is the mass of compound <em>i</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(X_i\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{n_i}{\sum_{k=1}^{N_c} n_k}\)</span></p></td>
+<td><p>Mole fraction of compound <em>i</em>. <span class="math notranslate nohighlight">\(n_i\)</span> is the number of moles compound <em>i</em>.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="conventional-mixing-rules">
+<span id="id49"></span><h3>Conventional mixing rules<a class="headerlink" href="#conventional-mixing-rules" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">FuelLib.</span></span><span class="sig-name descname"><span class="pre">mixing_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pseudo_prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'arithmetic'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Mixing rules for computing mixture properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var_n</strong> (<em>np.ndarray</em>) – Individual compound properties.</p></li>
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Mole fractions of the compounds.</p></li>
+<li><p><strong>pseudo_prop</strong> (<em>str</em><em>, </em><em>optional</em>) – Type of mean (“arithmetic” or “geometric”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture property value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>While many of the mixture properties in FuelLib have a unique mixing rule,
+FuelLib’s <em>mixing_rule</em> function provides a general mixing rule based on the suggestions
+of Harstad et al<a class="footnote-reference brackets" href="#footcite-harstad-efficient-1997" id="id50" role="doc-noteref"><span class="fn-bracket">[</span>18<span class="fn-bracket">]</span></a>. For a given property <span class="math notranslate nohighlight">\(Q\)</span></p>
+<div class="math notranslate nohighlight">
+\[Q = \sum_{i=1}^{N_c} \sum_{j=1}^{N_c} X_i X_j Q_{ij},\]</div>
+<p>where the pseudo-property for the couple of components, <span class="math notranslate nohighlight">\(Q_{ij}\)</span> is computed
+using an arithmetic,</p>
+<div class="math notranslate nohighlight">
+\[Q_{ij} = \frac{Q_i + Q_j}{2},\]</div>
+<p>or a geometric mean,</p>
+<div class="math notranslate nohighlight">
+\[Q_{ij} = \sqrt{Q_i \cdot Q_j},\]</div>
+<p>where <span class="math notranslate nohighlight">\(Q_i\)</span> is the property of the <em>i-th</em> compound of the multicomponent mixture.</p>
+</section>
+<section id="mixture-density">
+<h3>Mixture density<a class="headerlink" href="#mixture-density" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">mixture_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate mixture density at a given temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>np.ndarray</em>) – Mass fractions of each compound.</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture density in kg/m^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The mixture’s density is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\rho = \sum_{i=1}^{N_c}Y_i\frac{M_{w,i}}{V_{m,i}}.\]</div>
+</section>
+<section id="mixture-kinematic-viscosity">
+<h3>Mixture kinematic viscosity<a class="headerlink" href="#mixture-kinematic-viscosity" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">mixture_kinematic_viscosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Kendall-Monroe'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate kinematic viscosity of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>np.ndarray</em>) – Mass fractions of each compound.</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>correlation</strong> (<em>str</em><em>, </em><em>optional</em>) – Mixing model (“Kendall-Monroe” or “Arrhenius”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture kinematic viscosity in m^2/s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The kinematic viscosity of the mixture is computed using the Kendall-Monroe<a class="footnote-reference brackets" href="#footcite-kendall-viscosity-1917" id="id51" role="doc-noteref"><span class="fn-bracket">[</span>19<span class="fn-bracket">]</span></a>
+mixing rule, with an option to use the Arrhenius<a class="footnote-reference brackets" href="#footcite-arrhenius-uber-1887" id="id52" role="doc-noteref"><span class="fn-bracket">[</span>20<span class="fn-bracket">]</span></a>
+mixing rule. The viscosity of each component. After evaluating thirty mixing rules,  Hernandez et al.<a class="footnote-reference brackets" href="#footcite-hernandez-evaluation-2021" id="id53" role="doc-noteref"><span class="fn-bracket">[</span>21<span class="fn-bracket">]</span></a>
+found that both Kendall-Monroe and Arrhenius
+were among the most effective without relying on additional data or parameter fitting.
+The Kendall-Monroe rule is:</p>
+<div class="math notranslate nohighlight">
+\[\nu_{KM}^{1/3} = \sum_{i=1}^{N_c} X_i \, \nu_i^{1/3}.\]</div>
+<p>The Arrhenius rule is:</p>
+<div class="math notranslate nohighlight">
+\[\ln \nu_{Arr} = \sum_{i=1}^{N_c} X_i\ln\nu_i .\]</div>
+</section>
+<section id="mixture-vapor-pressure">
+<h3>Mixture vapor pressure<a class="headerlink" href="#mixture-vapor-pressure" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">mixture_vapor_pressure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate vapor pressure of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>np.ndarray</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>correlation</strong> (<em>str</em><em>, </em><em>optional</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture vapor pressure in Pa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The vapor pressure of the mixture is calculated according to Raoult’s law:</p>
+<div class="math notranslate nohighlight">
+\[p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.\]</div>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">mixture_vapor_pressure_antoine_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Estimate Antoine coefficients for vapor pressure of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>np.ndarray</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>Tvals</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).</p></li>
+<li><p><strong>units</strong> (<em>str</em><em>, </em><em>optional</em>) – Units for pressure in fit (“mks”, “cgs”, “bar”, “atm”)</p></li>
+<li><p><strong>correlation</strong> (<em>str</em><em>, </em><em>optional</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Coefficients A, B, C, D</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Users also have the option to return the coefficients from an Antoine fit based on
+the mixture vapor pressure calculated from Raoult’s law above.  Antoine’s equation is:</p>
+<div class="math notranslate nohighlight">
+\[\log_{10}\Big(\frac{p_{v}}{D}\Big) = A - \frac{B}{C + T},\]</div>
+<p>where <span class="math notranslate nohighlight">\(D\)</span> is a conversion factor for converting <span class="math notranslate nohighlight">\(p_v\)</span> to units of bar (<span class="math notranslate nohighlight">\(D = 10^5\)</span>) or dyne/cm <sup>2</sup> (<span class="math notranslate nohighlight">\(D = 10^{-1}\)</span>) from Pa.
+This feature was added to provide <a class="reference external" href="https://amrex-combustion.github.io">Pele</a> users an option for estimating these coefficients for use in CFD
+simulations with spray. See the <a class="reference external" href="https://amrex-combustion.github.io/PelePhysics/Spray.html">PelePhysics documentation</a>
+for additional information.</p>
+</section>
+<section id="mixture-surface-tension">
+<h3>Mixture surface tension<a class="headerlink" href="#mixture-surface-tension" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">mixture_surface_tension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Brock-Bird'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate surface tension of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>np.ndarray</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>correlation</strong> (<em>str</em><em>, </em><em>optional</em>) – Correlation method (“Pitzer” or “Brock-Bird”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture surface tension in N/m.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The surface tension of the mixture is calculated using the <a class="reference internal" href="#conventional-mixing-rules"><span class="std std-ref">Conventional mixing rules</span></a>
+with an arithmetic mean for the pseudo-property <span class="math notranslate nohighlight">\(\sigma_{i,j}\)</span> as recommended by
+Hugill and van Welsenes<a class="footnote-reference brackets" href="#footcite-hugill-surface-1986" id="id56" role="doc-noteref"><span class="fn-bracket">[</span>22<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[\sigma = \sum_{i=1}^{N_c} \sum_{j=1}^{N_c} X_i X_j \frac{\sigma_i + \sigma_j}{2}.\]</div>
+</section>
+<section id="mixture-thermal-conductivity">
+<h3>Mixture thermal conductivity<a class="headerlink" href="#mixture-thermal-conductivity" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fuel.</span></span><span class="sig-name descname"><span class="pre">mixture_thermal_conductivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate thermal conductivity of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>np.ndarray</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Thermal conductivity in W/m/K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The thermal conductivity of the mixture is calculated using the power law method of
+Vredeveld as described in Poling<a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id57" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[\lambda = \bigg(\sum_{i=1}^{N_c} Y_i \lambda_i^{-2} \bigg)^{-1/2}.\]</div>
+</section>
+</section>
+<section id="reference-compounds-for-jet-fuels">
+<h2>Reference Compounds for Jet Fuels<a class="headerlink" href="#reference-compounds-for-jet-fuels" title="Link to this heading"></a></h2>
+<p>It is difficult to identify individual components of complex multicomponent jet fuels using GCxGC analysis,
+which generally provides weight percentages of a given hydrocarbon family and carbon number within a sample (e.g., 5% C10 iso-alkane, 2% C13 cycloalkane, etc.).
+To address this challenge, FuelLib uses a set of reference compounds that represent the major hydrocarbon families and carbon numbers found in jet fuels.
+A comprehensive list of the reference compounds used in FuelLib can be found in the
+<a class="reference external" href="https://github.com/NatLabRockies/FuelLib/blob/main/fuelData/refCompounds.csv">fuelData/refCompounds.csv</a> file,
+with associated functional group decompositions in <a class="reference external" href="https://github.com/NatLabRockies/FuelLib/blob/main/fuelData/groupDecompositionData/refCompounds.csv">fuelData/groupDecompositionData/refCompounds.csv</a>.</p>
+<p>For ease of reference, the reference compounds and keys corresponding to a PelePhysics mechanism <a class="reference external" href="https://github.com/AMReX-Combustion/PelePhysics/tree/development/Mechanisms/fuellib_posf_nonreacting">fuellib_posf_nonreacting</a> are provided in the table below.
+When provided, the PelePhysics keys can be used to link the compounds in FuelLib to species in PelePhysics simulations via <code class="docutils literal notranslate"><span class="pre">Export4Pele.py</span></code> as described in <a class="reference internal" href="tutorials-export4pele.html#sec-exporting-to-pelephysics"><span class="std std-ref">Exporting to PelePhysics</span></a>.</p>
+<table class="docutils align-center" id="id67">
+<caption><span class="caption-number">Table 7 </span><span class="caption-text">Reference compounds, chemical formulas, and corresponding PelePhysics keys by GCxGC bin.</span><a class="headerlink" href="#id67" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>GCxGC Bin</p></th>
+<th class="head"><p>Formula</p></th>
+<th class="head"><p>Reference Compound</p></th>
+<th class="head"><p>PelePhysics Key</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Toluene</p></td>
+<td><p>C7H8</p></td>
+<td><p>toluene</p></td>
+<td><p>C6H5CH3</p></td>
+</tr>
+<tr class="row-odd"><td><p>C2-Benzene</p></td>
+<td><p>C8H10</p></td>
+<td><p>ethyl benzene</p></td>
+<td><p>C6H5C2H5</p></td>
+</tr>
+<tr class="row-even"><td><p>C3-Benzene</p></td>
+<td><p>C9H12</p></td>
+<td><p>propyl benzene</p></td>
+<td><p>C6H5C3H7</p></td>
+</tr>
+<tr class="row-odd"><td><p>C4-Benzene</p></td>
+<td><p>C10H14</p></td>
+<td><p>butyl benzene</p></td>
+<td><p>C6H5C4H9</p></td>
+</tr>
+<tr class="row-even"><td><p>C5-Benzene</p></td>
+<td><p>C11H16</p></td>
+<td><p>pentyl benzene</p></td>
+<td><p>C6H5C5H11</p></td>
+</tr>
+<tr class="row-odd"><td><p>C6-Benzene</p></td>
+<td><p>C12H18</p></td>
+<td><p>hexyl benzene</p></td>
+<td><p>C6H5C6H13</p></td>
+</tr>
+<tr class="row-even"><td><p>C7-Benzene</p></td>
+<td><p>C13H20</p></td>
+<td><p>heptyl benzene</p></td>
+<td><p>C6H5C7H15</p></td>
+</tr>
+<tr class="row-odd"><td><p>C8-Benzene</p></td>
+<td><p>C14H22</p></td>
+<td><p>octyl benzene</p></td>
+<td><p>C6H5C8H17</p></td>
+</tr>
+<tr class="row-even"><td><p>C9-Benzene</p></td>
+<td><p>C15H24</p></td>
+<td><p>nonyl benzene</p></td>
+<td><p>C6H5C9H19</p></td>
+</tr>
+<tr class="row-odd"><td><p>C10-Benzene</p></td>
+<td><p>C16H26</p></td>
+<td><p>decyl benzene</p></td>
+<td><p>C6H5C10H21</p></td>
+</tr>
+<tr class="row-even"><td><p>Diaromatic-C10</p></td>
+<td><p>C10H8</p></td>
+<td><p>naphthalene</p></td>
+<td><p>NAPH</p></td>
+</tr>
+<tr class="row-odd"><td><p>Diaromatic-C11</p></td>
+<td><p>C11H10</p></td>
+<td><p>1-methyl naphthalene</p></td>
+<td><p>METHYLNAPH-1</p></td>
+</tr>
+<tr class="row-even"><td><p>Diaromatic-C12</p></td>
+<td><p>C12H12</p></td>
+<td><p>1-ethyl naphthalene</p></td>
+<td><p>ETHYLNAPH-1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Diaromatic-C13</p></td>
+<td><p>C13H14</p></td>
+<td><p>1-propyl naphthalene</p></td>
+<td><p>PROPYLNAPH-1</p></td>
+</tr>
+<tr class="row-even"><td><p>Diaromatic-C14</p></td>
+<td><p>C14H16</p></td>
+<td><p>1-butyl naphthalene</p></td>
+<td><p>BUTYLNAPH-1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cycloaromatic-C09</p></td>
+<td><p>C9H10</p></td>
+<td><p>indane</p></td>
+<td><p>INDANE</p></td>
+</tr>
+<tr class="row-even"><td><p>Cycloaromatic-C10</p></td>
+<td><p>C10H12</p></td>
+<td><p>tetralin</p></td>
+<td><p>TETRA</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cycloaromatic-C11</p></td>
+<td><p>C11H14</p></td>
+<td><p>2-methyl tetralin</p></td>
+<td><p>METHYLTETRA-2</p></td>
+</tr>
+<tr class="row-even"><td><p>Cycloaromatic-C12</p></td>
+<td><p>C12H16</p></td>
+<td><p>2-ethly tetralin</p></td>
+<td><p>ETHYLTETRA-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cycloaromatic-C13</p></td>
+<td><p>C13H18</p></td>
+<td><p>2-propyl tetralin</p></td>
+<td><p>PROPYLTETRA-2</p></td>
+</tr>
+<tr class="row-even"><td><p>Cycloaromatic-C14</p></td>
+<td><p>C14H20</p></td>
+<td><p>2-butyl tetralin</p></td>
+<td><p>BUTYLTETRA-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cycloaromatic-C15</p></td>
+<td><p>C15H22</p></td>
+<td><p>2-pentyl tetralin</p></td>
+<td><p>PENTYLTETRA-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C07-Isoparaffin</p></td>
+<td><p>C7H16</p></td>
+<td><p>2-methyl hexane</p></td>
+<td><p>C7H16-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C08-Isoparaffin</p></td>
+<td><p>C8H18</p></td>
+<td><p>2-methyl heptane</p></td>
+<td><p>C8H18-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C09-Isoparaffin</p></td>
+<td><p>C9H20</p></td>
+<td><p>2-methyl octane</p></td>
+<td><p>C9H20-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C10-Isoparaffin</p></td>
+<td><p>C10H22</p></td>
+<td><p>2-methyl nonane</p></td>
+<td><p>C10H22-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C11-Isoparaffin</p></td>
+<td><p>C11H24</p></td>
+<td><p>2-methyl decane</p></td>
+<td><p>C11H24-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C12-Isoparaffin</p></td>
+<td><p>C12H26</p></td>
+<td><p>2-methyl undecane</p></td>
+<td><p>C12H26-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C13-Isoparaffin</p></td>
+<td><p>C13H28</p></td>
+<td><p>2-methyl dodecane</p></td>
+<td><p>C13H28-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C14-Isoparaffin</p></td>
+<td><p>C14H30</p></td>
+<td><p>2-methyl tridecane</p></td>
+<td><p>C14H30-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C15-Isoparaffin</p></td>
+<td><p>C15H32</p></td>
+<td><p>2-methyl tetradecane</p></td>
+<td><p>C15H32-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C16-Isoparaffin</p></td>
+<td><p>C16H34</p></td>
+<td><p>2-methyl pentadecane</p></td>
+<td><p>C16H34-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C17-Isoparaffin</p></td>
+<td><p>C17H36</p></td>
+<td><p>2-methyl hexadecane</p></td>
+<td><p>C17H36-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C18-Isoparaffin</p></td>
+<td><p>C18H38</p></td>
+<td><p>2-methyl heptadecane</p></td>
+<td><p>C18H38-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C19-Isoparaffin</p></td>
+<td><p>C19H40</p></td>
+<td><p>2-methyl octadecane</p></td>
+<td><p>C19H40-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C20-Isoparaffin</p></td>
+<td><p>C20H42</p></td>
+<td><p>2-methyl nonadecane</p></td>
+<td><p>C20H42-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C21-Isoparaffin</p></td>
+<td><p>C21H44</p></td>
+<td><p>2-methyl icosane</p></td>
+<td><p>C21H44-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C22-Isoparaffin</p></td>
+<td><p>C22H46</p></td>
+<td><p>2-methyl henicosane</p></td>
+<td><p>C22H46-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C23-Isoparaffin</p></td>
+<td><p>C23H48</p></td>
+<td><p>2-methyl docosane</p></td>
+<td><p>C23H48-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C24-Isoparaffin</p></td>
+<td><p>C24H50</p></td>
+<td><p>2-methyl tricosane</p></td>
+<td><p>C24H50-2</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C07</p></td>
+<td><p>C7H16</p></td>
+<td><p>n-heptane</p></td>
+<td><p>NC7H16</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C08</p></td>
+<td><p>C8H18</p></td>
+<td><p>n-octane</p></td>
+<td><p>NC8H18</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C09</p></td>
+<td><p>C9H20</p></td>
+<td><p>n-nonane</p></td>
+<td><p>NC9H20</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C10</p></td>
+<td><p>C10H22</p></td>
+<td><p>n-decane</p></td>
+<td><p>NC10H22</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C11</p></td>
+<td><p>C11H24</p></td>
+<td><p>n-undecane</p></td>
+<td><p>NC11H24</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C12</p></td>
+<td><p>C12H26</p></td>
+<td><p>n-dodecane</p></td>
+<td><p>NC12H26</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C13</p></td>
+<td><p>C13H28</p></td>
+<td><p>n-tridecane</p></td>
+<td><p>NC13H28</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C14</p></td>
+<td><p>C14H30</p></td>
+<td><p>n-tetradecane</p></td>
+<td><p>NC14H30</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C15</p></td>
+<td><p>C15H32</p></td>
+<td><p>n-pentadecane</p></td>
+<td><p>NC15H32</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C16</p></td>
+<td><p>C16H34</p></td>
+<td><p>n-hexadecane</p></td>
+<td><p>NC16H34</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C17</p></td>
+<td><p>C17H36</p></td>
+<td><p>n-heptadecane</p></td>
+<td><p>NC17H36</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C18</p></td>
+<td><p>C18H38</p></td>
+<td><p>n-octadecane</p></td>
+<td><p>NC18H38</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C19</p></td>
+<td><p>C19H40</p></td>
+<td><p>n-nonadecane</p></td>
+<td><p>NC19H40</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C20</p></td>
+<td><p>C20H42</p></td>
+<td><p>n-icosane</p></td>
+<td><p>NC20H42</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C21</p></td>
+<td><p>C21H44</p></td>
+<td><p>n-henicosane</p></td>
+<td><p>NC21H44</p></td>
+</tr>
+<tr class="row-odd"><td><p>n-C22</p></td>
+<td><p>C22H46</p></td>
+<td><p>n-docosane</p></td>
+<td><p>NC22H46</p></td>
+</tr>
+<tr class="row-even"><td><p>n-C23</p></td>
+<td><p>C23H48</p></td>
+<td><p>n-tricosane</p></td>
+<td><p>NC23H48</p></td>
+</tr>
+<tr class="row-odd"><td><p>C07-Monocycloparaffin</p></td>
+<td><p>C7C14</p></td>
+<td><p>methyl cyclohexane</p></td>
+<td><p>C6H11CH3</p></td>
+</tr>
+<tr class="row-even"><td><p>C08-Monocycloparaffin</p></td>
+<td><p>C8H16</p></td>
+<td><p>ethyl cyclohexane</p></td>
+<td><p>C6H11C2H5</p></td>
+</tr>
+<tr class="row-odd"><td><p>C09-Monocycloparaffin</p></td>
+<td><p>C9H18</p></td>
+<td><p>propyl cyclohexane</p></td>
+<td><p>C6H11C3H7</p></td>
+</tr>
+<tr class="row-even"><td><p>C10-Monocycloparaffin</p></td>
+<td><p>C10H20</p></td>
+<td><p>butyl cyclohexane</p></td>
+<td><p>C6H11C4H9</p></td>
+</tr>
+<tr class="row-odd"><td><p>C11-Monocycloparaffin</p></td>
+<td><p>C11H22</p></td>
+<td><p>pentyl cyclohexane</p></td>
+<td><p>C6H11C5H11</p></td>
+</tr>
+<tr class="row-even"><td><p>C12-Monocycloparaffin</p></td>
+<td><p>C12H24</p></td>
+<td><p>hexyl cyclohexane</p></td>
+<td><p>C6H11C6H13</p></td>
+</tr>
+<tr class="row-odd"><td><p>C13-Monocycloparaffin</p></td>
+<td><p>C13H26</p></td>
+<td><p>heptyl cyclohexane</p></td>
+<td><p>C6H11C7H15</p></td>
+</tr>
+<tr class="row-even"><td><p>C14-Monocycloparaffin</p></td>
+<td><p>C14H28</p></td>
+<td><p>octyl cyclohexane</p></td>
+<td><p>C6H11C8H17</p></td>
+</tr>
+<tr class="row-odd"><td><p>C15-Monocycloparaffin</p></td>
+<td><p>C15H30</p></td>
+<td><p>nonyl cyclohexane</p></td>
+<td><p>C6H11C9H19</p></td>
+</tr>
+<tr class="row-even"><td><p>C16-Monocycloparaffin</p></td>
+<td><p>C16H32</p></td>
+<td><p>decyl cyclohexane</p></td>
+<td><p>C6H11C10H21</p></td>
+</tr>
+<tr class="row-odd"><td><p>C17-Monocycloparaffin</p></td>
+<td><p>C17H34</p></td>
+<td><p>undecyl cyclohexane</p></td>
+<td><p>C6H11C11H23</p></td>
+</tr>
+<tr class="row-even"><td><p>C18-Monocycloparaffin</p></td>
+<td><p>C18H36</p></td>
+<td><p>dodecyl cyclohexane</p></td>
+<td><p>C6H11C12H25</p></td>
+</tr>
+<tr class="row-odd"><td><p>C19-Monocycloparaffin</p></td>
+<td><p>C19H38</p></td>
+<td><p>tridecyl cyclohexane</p></td>
+<td><p>C6H11C13H27</p></td>
+</tr>
+<tr class="row-even"><td><p>C08-Dicycloparaffin</p></td>
+<td><p>C8H14</p></td>
+<td><p>Octahydropentalene</p></td>
+<td><p>OHPEN</p></td>
+</tr>
+<tr class="row-odd"><td><p>C09-Dicycloparaffin</p></td>
+<td><p>C9H16</p></td>
+<td><p>Hydrindane</p></td>
+<td><p>HYDRIND</p></td>
+</tr>
+<tr class="row-even"><td><p>C10-Dicycloparaffin</p></td>
+<td><p>C10H18</p></td>
+<td><p>Decalin</p></td>
+<td><p>DECALIN</p></td>
+</tr>
+<tr class="row-odd"><td><p>C11-Dicycloparaffin</p></td>
+<td><p>C11H20</p></td>
+<td><p>2-methyldecalin</p></td>
+<td><p>METHYLDECALIN-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C12-Dicycloparaffin</p></td>
+<td><p>C12H22</p></td>
+<td><p>2-ethyldecalin</p></td>
+<td><p>ETHYLDECALIN-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C13-Dicycloparaffin</p></td>
+<td><p>C13H24</p></td>
+<td><p>2-propyldecalin</p></td>
+<td><p>PROPYLDECALIN-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C14-Dicycloparaffin</p></td>
+<td><p>C14H26</p></td>
+<td><p>2-butyldecalin</p></td>
+<td><p>BUTYLDECALIN-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C15-Dicycloparaffin</p></td>
+<td><p>C15H28</p></td>
+<td><p>2-pentyldecalin</p></td>
+<td><p>PENTYLDECALIN-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C16-Dicycloparaffin</p></td>
+<td><p>C16H30</p></td>
+<td><p>2-hexyldecalin</p></td>
+<td><p>HEXYLDECALIN-2</p></td>
+</tr>
+<tr class="row-odd"><td><p>C17-Dicycloparaffin</p></td>
+<td><p>C17H32</p></td>
+<td><p>2-heptyldecalin</p></td>
+<td><p>HEPTYLDECALIN-2</p></td>
+</tr>
+<tr class="row-even"><td><p>C10-Tricycloparaffin</p></td>
+<td><p>C10H16</p></td>
+<td><p>C1CC2C(C1)C1CCCC21</p></td>
+<td><p>TRICYCLO-C10</p></td>
+</tr>
+<tr class="row-odd"><td><p>C11-Tricycloparaffin</p></td>
+<td><p>C11H18</p></td>
+<td><p>C1CC2CC3CCCC3C2C1</p></td>
+<td><p>TRICYCLO-C11</p></td>
+</tr>
+<tr class="row-even"><td><p>C12-Tricycloparaffin</p></td>
+<td><p>C12H20</p></td>
+<td><p>C1CC2CC3CCCC3CC2C1</p></td>
+<td><p>TRICYCLO-C12</p></td>
+</tr>
+<tr class="row-odd"><td><p>C13-Tricycloparaffin</p></td>
+<td><p>C13H22</p></td>
+<td><p>C1CCC2C(C1)CC1CCCCC12</p></td>
+<td><p>TRICYCLO-C13</p></td>
+</tr>
+<tr class="row-even"><td><p>C14-Tricycloparaffin</p></td>
+<td><p>C13H22</p></td>
+<td><p>C1CCC2CC3CCCCC3CC2C1</p></td>
+<td><p>TRICYCLO-C14</p></td>
+</tr>
+<tr class="row-odd"><td><p>C10-Alkene</p></td>
+<td><p>C10H20</p></td>
+<td><p>1-decene</p></td>
+<td><p>DECENE-1</p></td>
+</tr>
+<tr class="row-even"><td><p>C12-Alkene</p></td>
+<td><p>C12H24</p></td>
+<td><p>1-dodecene</p></td>
+<td><p>DODECENE-1</p></td>
+</tr>
+<tr class="row-odd"><td><p>C14-Alkene</p></td>
+<td><p>C14H28</p></td>
+<td><p>1-tetradecene</p></td>
+<td><p>TETRADECENE-1</p></td>
+</tr>
+<tr class="row-even"><td><p>C16-Alkene</p></td>
+<td><p>C16H32</p></td>
+<td><p>1-hexadecene</p></td>
+<td><p>HEXADECENE-1</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="validation">
+<h2>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h2>
+<section id="single-component-fuels">
+<h3>Single Component Fuels<a class="headerlink" href="#single-component-fuels" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id68">
+<a class="reference internal image-reference" href="_images/singleCompFuels.png"><img alt="_images/singleCompFuels.png" src="_images/singleCompFuels.png" style="width: 600pt;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Properties of heptane, decane, and dodecane against predictive data from NIST Chemistry WebBook.</span><a class="headerlink" href="#id68" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="multicomponent-fuels">
+<h3>Multicomponent Fuels<a class="headerlink" href="#multicomponent-fuels" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id69">
+<a class="reference internal image-reference" href="_images/multiCompFuels.png"><img alt="_images/multiCompFuels.png" src="_images/multiCompFuels.png" style="width: 600pt;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Properties of conventional jet fuels JP-8 (POSF10264), Jet A (POSF10325), and JP-5 (POSF10289) against data from the Air Force Research Laboratory<a class="footnote-reference brackets" href="#footcite-edwards-jet-2020" id="id58" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>. Note that the data sets for thermal conductivity are very inconsistent, but they typically show linear decreases in thermal conductivity with temperature.</span><a class="headerlink" href="#id69" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="fuel-blends">
+<h3>Fuel Blends<a class="headerlink" href="#fuel-blends" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id70">
+<a class="reference internal image-reference" href="_images/hefaBlends.png"><img alt="_images/hefaBlends.png" src="_images/hefaBlends.png" style="width: 250pt;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">Properties of three HEFA fuels produced from different feedstocks (camelina, tallow, and mixed fat) blended with Jet-A.  Measurement and GCxGC data from Vozka et al.<a class="footnote-reference brackets" href="#footcite-vozka-impact-2018" id="id59" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>.</span><a class="headerlink" href="#id70" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div class="docutils container" id="id60">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-constantinou-new-1994" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id7">2</a>,<a role="doc-backlink" href="#id8">3</a>,<a role="doc-backlink" href="#id9">4</a>,<a role="doc-backlink" href="#id10">5</a>,<a role="doc-backlink" href="#id11">6</a>,<a role="doc-backlink" href="#id12">7</a>,<a role="doc-backlink" href="#id13">8</a>,<a role="doc-backlink" href="#id14">9</a>,<a role="doc-backlink" href="#id19">10</a>,<a role="doc-backlink" href="#id21">11</a>)</span>
+<p>Leonidas Constantinou and Rafiqul Gani. New group contribution method for estimating properties of pure compounds. <em>AIChE Journal</em>, 40(10):1697–1710, October 1994. URL: <a class="reference external" href="https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690401011">https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690401011</a> (visited on 2024-07-08), <a class="reference external" href="https://doi.org/10.1002/aic.690401011">doi:10.1002/aic.690401011</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-constantinou-estimation-1995" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id15">2</a>,<a role="doc-backlink" href="#id16">3</a>,<a role="doc-backlink" href="#id20">4</a>,<a role="doc-backlink" href="#id22">5</a>)</span>
+<p>Leonidas Constantinou, Rafiqul Gani, and John P. O’Connell. Estimation of the acentric factor and the liquid molar volume at 298 K using a new group contribution method. <em>Fluid Phase Equilibria</em>, 103(1):11–22, January 1995. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/037838129402593P">https://linkinghub.elsevier.com/retrieve/pii/037838129402593P</a> (visited on 2024-07-08), <a class="reference external" href="https://doi.org/10.1016/0378-3812(94)02593-P">doi:10.1016/0378-3812(94)02593-P</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-colket-overview-2017" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>Meredith Colket, Joshua Heyne, Mark Rumizen, Mohan Gupta, Tim Edwards, William M. Roquemore, Gurhan Andac, Randy Boehm, Jeffery Lovett, Randy Williams, Jamey Condevaux, David Turner, Nader Rizk, Julian Tishkoff, Chiping Li, Jeff Moder, Daniel Friend, and Vaidya Sankaran. Overview of the National Jet Fuels Combustion Program. <em>AIAA Journal</em>, 55(4):1087–1104, April 2017. URL: <a class="reference external" href="https://arc.aiaa.org/doi/10.2514/1.J055361">https://arc.aiaa.org/doi/10.2514/1.J055361</a> (visited on 2025-01-28), <a class="reference external" href="https://doi.org/10.2514/1.J055361">doi:10.2514/1.J055361</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-edwards-reference-2017" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>James T. Edwards. Reference Jet Fuels for Combustion Testing. In <em>55th AIAA Aerospace Sciences Meeting</em>. Grapevine, Texas, January 2017. American Institute of Aeronautics and Astronautics. URL: <a class="reference external" href="https://arc.aiaa.org/doi/10.2514/6.2017-0146">https://arc.aiaa.org/doi/10.2514/6.2017-0146</a> (visited on 2025-01-17), <a class="reference external" href="https://doi.org/10.2514/6.2017-0146">doi:10.2514/6.2017-0146</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-edwards-jet-2020" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id58">2</a>)</span>
+<p>James T. Edwards. Jet Fuel Properties. Technical Report AFRL-RQ-WP-TR-2020-0017, Air Force Research Laboratory, Wright-Patterson Air Force Base, OH 45433, 2020. URL: <a class="reference external" href="https://apps.dtic.mil/sti/pdfs/AD1093317.pdf">https://apps.dtic.mil/sti/pdfs/AD1093317.pdf</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-vozka-impact-2018" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id59">2</a>)</span>
+<p>Petr Vozka, Pavel Šimáček, and Gozdem Kilaz. Impact of HEFA Feedstocks on Fuel Composition and Properties in Blends with Jet A. <em>Energy &amp; Fuels</em>, 32(11):11595–11606, November 2018. URL: <a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.energyfuels.8b02787">https://pubs.acs.org/doi/10.1021/acs.energyfuels.8b02787</a> (visited on 2025-06-27), <a class="reference external" href="https://doi.org/10.1021/acs.energyfuels.8b02787">doi:10.1021/acs.energyfuels.8b02787</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-nielsen-molecular-1998" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id17">7</a><span class="fn-bracket">]</span></span>
+<p>T.L. Nielsen. Molecular Structure Based Property Prediction, 15-point Project Department of Chemical Engineering. <em>Technical University of Denmark Lyngby</em>, 1998.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-poling-properties-2001" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id18">1</a>,<a role="doc-backlink" href="#id23">2</a>,<a role="doc-backlink" href="#id34">3</a>,<a role="doc-backlink" href="#id45">4</a>,<a role="doc-backlink" href="#id48">5</a>,<a role="doc-backlink" href="#id57">6</a>)</span>
+<p>Bruce E. Poling, John M. Prausnitz, and John P. O’Connell. <em>The properties of gases and liquids</em>. McGraw-Hill international editions Chemical engineering series. McGraw-Hill, New York, NY, 5. ed edition, 2001. ISBN 978-0-07-011682-5 978-0-07-118971-2. URL: <a class="reference external" href="https://www.accessengineeringlibrary.com/content/book/9780070116825?implicit-login=true">https://www.accessengineeringlibrary.com/content/book/9780070116825?implicit-login=true</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-viswanath-viscosity-2007" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id24">1</a>,<a role="doc-backlink" href="#id35">2</a>)</span>
+<p>D. S. Viswanath and Dabir S. Viswanath. <em>Viscosity of Liquids: Theory, Estimation, Experiment, and Data</em>. Physica-Verlag NetLibrary, Inc. [distributor], Heidelberg Boulder, 2007. ISBN 978-1-4020-5482-2.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-govindaraju-group-2016" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id25">1</a>,<a role="doc-backlink" href="#id26">2</a>,<a role="doc-backlink" href="#id29">3</a>,<a role="doc-backlink" href="#id30">4</a>,<a role="doc-backlink" href="#id36">5</a>,<a role="doc-backlink" href="#id39">6</a>)</span>
+<p>Pavan B. Govindaraju and Matthias Ihme. Group contribution method for multicomponent evaporation with application to transportation fuels. <em>International Journal of Heat and Mass Transfer</em>, 102:833–845, November 2016. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S0017931016309887">https://linkinghub.elsevier.com/retrieve/pii/S0017931016309887</a> (visited on 2024-07-01), <a class="reference external" href="https://doi.org/10.1016/j.ijheatmasstransfer.2016.06.079">doi:10.1016/j.ijheatmasstransfer.2016.06.079</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-rackett-equation-1970" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id27">1</a>,<a role="doc-backlink" href="#id37">2</a>)</span>
+<p>Harold G. Rackett. Equation of state for saturated liquids. <em>Journal of Chemical &amp; Engineering Data</em>, 15(4):514–517, October 1970. URL: <a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/je60047a012">https://pubs.acs.org/doi/abs/10.1021/je60047a012</a> (visited on 2024-08-14), <a class="reference external" href="https://doi.org/10.1021/je60047a012">doi:10.1021/je60047a012</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-yamada-saturated-1973" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id28">1</a>,<a role="doc-backlink" href="#id38">2</a>)</span>
+<p>Tomoyoshi Yamada and Robert D. Gunn. Saturated liquid molar volumes. Rackett equation. <em>Journal of Chemical &amp; Engineering Data</em>, 18(2):234–236, April 1973. URL: <a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/je60057a006">https://pubs.acs.org/doi/abs/10.1021/je60057a006</a> (visited on 2024-08-02), <a class="reference external" href="https://doi.org/10.1021/je60057a006">doi:10.1021/je60057a006</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-lee-generalized-1975" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id31">1</a>,<a role="doc-backlink" href="#id40">2</a>,<a role="doc-backlink" href="#id42">3</a>)</span>
+<p>Byung Ik Lee and Michael G. Kesler. A generalized thermodynamic correlation based on three‐parameter corresponding states. <em>AIChE Journal</em>, 21(3):510–527, May 1975. URL: <a class="reference external" href="https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690210313">https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690210313</a> (visited on 2024-08-09), <a class="reference external" href="https://doi.org/10.1002/aic.690210313">doi:10.1002/aic.690210313</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-ambrose-vapour-1989" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id32">1</a>,<a role="doc-backlink" href="#id41">2</a>,<a role="doc-backlink" href="#id43">3</a>)</span>
+<p>D. Ambrose and J. Walton. Vapour pressures up to their critical temperatures of normal alkanes and 1-alkanols. <em>Pure and Applied Chemistry</em>, 61(8):1395–1403, January 1989. URL: <a class="reference external" href="https://www.degruyter.com/document/doi/10.1351/pac198961081395/html">https://www.degruyter.com/document/doi/10.1351/pac198961081395/html</a> (visited on 2024-11-11), <a class="reference external" href="https://doi.org/10.1351/pac198961081395">doi:10.1351/pac198961081395</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-brock-surface-1955" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id33">1</a>,<a role="doc-backlink" href="#id44">2</a>)</span>
+<p>James R. Brock and R. Byron Bird. Surface tension and the principle of corresponding states. <em>AIChE Journal</em>, 1(2):174–177, June 1955. URL: <a class="reference external" href="https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690010208">https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690010208</a> (visited on 2025-04-14), <a class="reference external" href="https://doi.org/10.1002/aic.690010208">doi:10.1002/aic.690010208</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-curl-volumetric-1958" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id46">16</a><span class="fn-bracket">]</span></span>
+<p>R. F. Curl and Kenneth Pitzer. Volumetric and Thermodynamic Properties of Fluids—Enthalpy, Free Energy, and Entropy. <em>Industrial &amp; Engineering Chemistry</em>, 50(2):265–274, February 1958. URL: <a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/ie50578a047">https://pubs.acs.org/doi/abs/10.1021/ie50578a047</a> (visited on 2025-04-14), <a class="reference external" href="https://doi.org/10.1021/ie50578a047">doi:10.1021/ie50578a047</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-pitzer-thermodynamics-1995" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id47">17</a><span class="fn-bracket">]</span></span>
+<p>Kenneth S. Pitzer, Gilbert Newton Lewis, and Merle Randall, editors. <em>Thermodynamics</em>. Mc-Graw-Hill Series in advanced chemistry. McGraw-Hill, New York, 3. ed edition, 1995. ISBN 978-0-07-050221-5 978-0-07-113809-3.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-harstad-efficient-1997" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id50">18</a><span class="fn-bracket">]</span></span>
+<p>Kenneth G. Harstad, Richard S. Miller, and Josette Bellan. Efficient high‐pressure state equations. <em>AIChE Journal</em>, 43(6):1605–1610, June 1997. URL: <a class="reference external" href="https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690430624">https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690430624</a> (visited on 2025-04-14), <a class="reference external" href="https://doi.org/10.1002/aic.690430624">doi:10.1002/aic.690430624</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-kendall-viscosity-1917" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id51">19</a><span class="fn-bracket">]</span></span>
+<p>James Kendall and Kenneth Potter Monroe. THE VISCOSITY OF LIQUIDS. II. THE VISCOSITY-COMPOSITION CURVE FOR IDEAL LIQUID MIXTURES. $^\textrm 1$. <em>Journal of the American Chemical Society</em>, 39(9):1787–1802, September 1917. URL: <a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/ja02254a001">https://pubs.acs.org/doi/abs/10.1021/ja02254a001</a> (visited on 2024-08-13), <a class="reference external" href="https://doi.org/10.1021/ja02254a001">doi:10.1021/ja02254a001</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-arrhenius-uber-1887" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id52">20</a><span class="fn-bracket">]</span></span>
+<p>Svante Arrhenius. Über die Dissociation der in Wasser gelösten Stoffe. <em>Zeitschrift für Physikalische Chemie</em>, 1U(1):631–648, February 1887. URL: <a class="reference external" href="https://www.degruyter.com/document/doi/10.1515/zpch-1887-0164/html">https://www.degruyter.com/document/doi/10.1515/zpch-1887-0164/html</a> (visited on 2024-08-13), <a class="reference external" href="https://doi.org/10.1515/zpch-1887-0164">doi:10.1515/zpch-1887-0164</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-hernandez-evaluation-2021" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id53">21</a><span class="fn-bracket">]</span></span>
+<p>Esaú A. Hernández, Gabriela Sánchez-Reyna, and Jorge Ancheyta. Evaluation of mixing rules to predict viscosity of petrodiesel and biodiesel blends. <em>Fuel</em>, 283:118941, January 2021. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S0016236120319372">https://linkinghub.elsevier.com/retrieve/pii/S0016236120319372</a> (visited on 2024-08-09), <a class="reference external" href="https://doi.org/10.1016/j.fuel.2020.118941">doi:10.1016/j.fuel.2020.118941</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-hugill-surface-1986" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id56">22</a><span class="fn-bracket">]</span></span>
+<p>J.A. Hugill and A.J. Van Welsenes. Surface tension: a simple correlation for natural gas + conensate systems. <em>Fluid Phase Equilibria</em>, 29:383–390, October 1986. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/0378381286850385">https://linkinghub.elsevier.com/retrieve/pii/0378381286850385</a> (visited on 2025-04-14), <a class="reference external" href="https://doi.org/10.1016/0378-3812(86)85038-5">doi:10.1016/0378-3812(86)85038-5</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to FuelLib’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sourcecode.html" class="btn btn-neutral float-right" title="Source Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
