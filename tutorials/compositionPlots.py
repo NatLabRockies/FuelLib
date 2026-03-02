@@ -128,6 +128,7 @@ plt.legend(fontsize=14)
 plt.tight_layout()
 
 # Plot pie chart of family weights
+family_names = family_weights.index.tolist()
 plt.figure(figsize=(7, 5))
 plt.pie(
     family_weights,
