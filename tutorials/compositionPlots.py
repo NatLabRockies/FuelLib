@@ -11,7 +11,7 @@ sys.path.append(FUELLIB_DIR)
 import paths
 import FuelLib as fl
 
-fuel_name = "hefa-WE-SAF-262714"
+fuel_name = "posf10325"
 
 fuel = fl.fuel(fuel_name)
 
