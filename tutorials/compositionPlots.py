@@ -11,7 +11,7 @@ sys.path.append(FUELLIB_DIR)
 import paths
 import FuelLib as fl
 
-fuel_name = "posf10325"
+fuel_name = "hefa-WE-SAF-262714"
 
 fuel = fl.fuel(fuel_name)
 
@@ -128,6 +128,7 @@ plt.legend(fontsize=14)
 plt.tight_layout()
 
 # Plot pie chart of family weights
+family_names = family_weights.index.tolist()
 plt.figure(figsize=(7, 5))
 plt.pie(
     family_weights,
