@@ -204,6 +204,14 @@ class fuel:
         # L_v,stp (latent heat of vaporization at 298 K)
         self.Lv_stp = self.Hv_stp / self.MW  # J/kg
 
+        # --- UNIFAC parameters ---
+        # Group volume (Rk) and surface-area (Qk) parameters for each functional group
+        self.Rk = get_row("Rk")
+        self.Qk = get_row("Qk")
+
+        # UNIFAC energy-interaction matrix a[i,j] (K) — square, shape (num_groups, num_groups)
+        self.unifac_a = np.genfromtxt(UNIFAC_A_FILE, delimiter=",")
+
         # Lennard-Jones parameters for diffusion calculations (Tee et al. 1966)
         self.epsilonByKB = (0.7915 + 0.1693 * self.omega) * self.Tc  # K
         Pc_atm = self.Pc / 101325  # atm
@@ -215,6 +223,124 @@ class fuel:
     # -------------------------------------------------------------------------
     # Member functions
     # -------------------------------------------------------------------------
+    def activity(self, Xi, T):
+        """
+        Compute UNIFAC activity coefficients for each component.
+
+        Implements the full UNIFAC model with Staverman-Guggenheim combinatorial
+        part and residual part, as in *GroupContribution.activity()* (Ihme Lab
+        MATLAB code).
+
+        :param Xi: Liquid mole fractions of each compound (shape: ``num_compounds``).
+                   Components with zero mole fraction receive γ = 1 (fully vaporised).
+        :type Xi: np.ndarray
+        :param T: Temperature in Kelvin.
+        :type T: float
+        :returns: Activity coefficients γᵢ for each compound
+                  (shape: ``num_compounds``).
+        :rtype: np.ndarray
+        """
+        Xi = np.asarray(Xi, dtype=float)
+        num_comp = self.num_compounds
+        num_grp = self.num_groups          # number of functional groups
+
+        # Nij: (num_comp, num_groups) — functional-group count matrix
+        # Use only the first num_groups columns to match R/Q/a sizes
+        Nij = self.Nij[:, :num_grp]       # (num_comp, num_groups)
+        Rk = self.Rk[:num_grp]            # (num_groups,)
+        Qk = self.Qk[:num_grp]            # (num_groups,)
+        a_mat = self.unifac_a[:num_grp, :num_grp]  # (num_groups, num_groups)
+
+        # --- Energy interaction parameter Ψ[m,n] = exp(-a[m,n] / T) ---
+        Psi = np.exp(-a_mat / T)           # (num_groups, num_groups)
+
+        # Coordination number
+        z = 10.0
+
+        # --- Per-compound r and q (molecular volume / surface parameters) ---
+        r = Nij @ Rk                       # (num_comp,)
+        q = Nij @ Qk                       # (num_comp,)
+
+        # L vector: L_i = (z/2)(r_i - q_i) - (r_i - 1)
+        L_vec = (z / 2.0) * (r - q) - (r - 1.0)
+
+        # --- Denominators for θ and φ ---
+        sum_xq = Xi @ q
+        sum_xr = Xi @ r
+        sum_xL = Xi @ L_vec
+
+        # θ (segment fraction) and φ (volume fraction)
+        theta = (Xi * q) / sum_xq if sum_xq > 0 else np.zeros(num_comp)
+        phi   = (Xi * r) / sum_xr if sum_xr > 0 else np.zeros(num_comp)
+
+        # --- Combinatorial part (Staverman-Guggenheim) ---
+        # Avoid log(0) for zero-fraction components
+        with np.errstate(divide='ignore', invalid='ignore'):
+            phi_over_x  = np.where(Xi > 0, phi / Xi,  0.0)
+            tht_over_phi = np.where(phi > 0, theta / phi, 0.0)
+
+        ln_gamma_C = (
+            np.log(phi_over_x, where=(phi_over_x > 0), out=np.zeros(num_comp))
+            + (z / 2.0) * q * np.log(tht_over_phi,
+                                      where=(tht_over_phi > 0),
+                                      out=np.zeros(num_comp))
+            + L_vec
+            - (phi / sum_xr) * sum_xL if sum_xr > 0 else L_vec
+        )
+        gamma_C = np.exp(ln_gamma_C)
+        # Species with Xi = 0 are fully vaporised → γ = 1
+        gamma_C = np.where(Xi > 0, gamma_C, 1.0)
+
+        # --- Residual part ---
+        # Group mole fractions X_m for the mixture
+        X_vec = Xi @ Nij                   # (num_groups,)
+        X_sum = np.sum(X_vec)
+        X_vec = X_vec / X_sum if X_sum > 0 else np.zeros(num_grp)
+
+        # Group surface-area fractions Θ_m for the mixture
+        Theta_vec = Qk * X_vec            # (num_groups,)
+        Theta_sum = Qk @ X_vec
+        Theta_vec = Theta_vec / Theta_sum if Theta_sum > 0 else np.zeros(num_grp)
+
+        # ln Γ_m for the mixture: UNIFAC residual activity of each group
+        def ln_Gamma(Theta):
+            """UNIFAC residual term for group surface-area fraction vector Theta."""
+            # Θ·Ψ: (num_groups,)
+            Theta_Psi = Theta @ Psi        # row-vector × matrix → (num_groups,)
+            # Avoid division by zero
+            with np.errstate(divide='ignore', invalid='ignore'):
+                div_term = np.where(Theta_Psi > 0, Theta / Theta_Psi, 0.0)
+            # Ψᵀ: we need column sums of (Θ_n / Σ_k Θ_k Ψ_{kn}) * Ψ_{nm}
+            # = div_term @ Psi.T  (num_groups,)
+            sum_term = div_term @ Psi      # (num_groups,)
+            with np.errstate(divide='ignore', invalid='ignore'):
+                log_Theta_Psi = np.where(Theta_Psi > 0,
+                                         np.log(Theta_Psi), 0.0)
+            return Qk * (1.0 - log_Theta_Psi - sum_term)  # (num_groups,)
+
+        lnGamma_mix = ln_Gamma(Theta_vec)  # (num_groups,)  mixture
+
+        # ln Γ_m^(i): group residual activity in pure component i
+        lnGamma_pure = np.zeros((num_comp, num_grp))
+        for i in range(num_comp):
+            Nij_i = Nij[i]
+            n_sum = np.sum(Nij_i)
+            if n_sum <= 0:
+                continue
+            Xi_norm = Nij_i / n_sum                        # (num_groups,)
+            Theta_i = Qk * Xi_norm
+            Theta_i_sum = Qk @ Xi_norm
+            Theta_i = Theta_i / Theta_i_sum if Theta_i_sum > 0 else np.zeros(num_grp)
+            lnGamma_pure[i] = ln_Gamma(Theta_i)
+
+        # ln γᵢᴿ = Σ_m v_m^(i) * [ln Γ_m - ln Γ_m^(i)]
+        ln_gamma_R = np.sum(Nij * (lnGamma_mix - lnGamma_pure), axis=1)  # (num_comp,)
+        gamma_R = np.exp(ln_gamma_R)
+
+        # --- Total activity coefficient ---
+        gamma = gamma_C * gamma_R
+        return gamma
+
     def mean_molecular_weight(self, Yi):
         """
         Calculate the mean molecular weight of the mixture.
@@ -328,6 +454,194 @@ class fuel:
 
         rho = MW / Vm  # kg/m^3
         return rho
+
+    # -------------------------------------------------------------------------
+    # SRK Equation of State Procedures
+    # -------------------------------------------------------------------------
+    def _srk_params(self, T):
+        """
+        Compute pure component SRK parameters a_i(T) and b_i.
+        :return: (a_i, b_i, sqrt_a_i, da_i_dT, d2a_i_dT2) arrays.
+        """
+        R = 8.314462618  # J/(mol K)
+        Tc = self.Tc
+        Pc = self.Pc
+        w = self.omega
+
+        a_c = 0.42748 * (R**2 * Tc**2) / Pc
+        b_i = 0.08664 * R * Tc / Pc
+        f_w = 0.48 + 1.574 * w - 0.176 * w**2
+
+        # alpha(T) calculation
+        sqrt_T_Tr = np.sqrt(T / Tc)
+        sqrt_alpha = 1.0 + f_w * (1.0 - sqrt_T_Tr)
+        alpha = sqrt_alpha**2
+        
+        a_i = a_c * alpha
+        sqrt_a_i = np.sqrt(a_i)
+
+        # Derivatives
+        # d_sqrt_alpha/dT = f_w * (-0.5 / sqrt(T * Tc))
+        d_sqrt_alpha_dT = -0.5 * f_w / np.sqrt(T * Tc)
+        d_sqrt_a_i_dT = np.sqrt(a_c) * d_sqrt_alpha_dT
+        
+        # d2_sqrt_alpha/dT2 = f_w / (4 * sqrt(T^3 * Tc))
+        d2_sqrt_alpha_dT2 = 0.25 * f_w / np.sqrt(T**3 * Tc)
+        d2_sqrt_a_i_dT2 = np.sqrt(a_c) * d2_sqrt_alpha_dT2
+
+        return a_i, b_i, sqrt_a_i, d_sqrt_a_i_dT, d2_sqrt_a_i_dT2
+
+    def _srk_AmBm(self, T, X):
+        """
+        Compute SRK mixture parameters a_m, b_m, and derivatives using Van der Waals mixing rules.
+        """
+        a_i, b_i, sqrt_a_i, d_sqrt_a_i_dT, d2_sqrt_a_i_dT2 = self._srk_params(T)
+        
+        b_m = np.sum(X * b_i)
+        
+        # For a_m, assuming k_ij = 0: a_m = (sum(x_i * sqrt(a_i)))^2
+        S = np.sum(X * sqrt_a_i)
+        a_m = S**2
+        
+        dS_dT = np.sum(X * d_sqrt_a_i_dT)
+        da_m_dT = 2.0 * S * dS_dT
+        
+        d2S_dT2 = np.sum(X * d2_sqrt_a_i_dT2)
+        d2a_m_dT2 = 2.0 * (dS_dT**2 + S * d2S_dT2)
+        
+        return a_m, b_m, da_m_dT, d2a_m_dT2
+
+    def _srk_Z_factor(self, a_m, b_m, T, P, return_liquid=True):
+        """
+        Compute the compressibility factor Z using the analytical cubic root solution.
+        Specifically isolates the physical liquid root (smallest Z > B) if return_liquid=True.
+        """
+        R = 8.314462618
+        A = a_m * P / (R**2 * T**2)
+        B = b_m * P / (R * T)
+        
+        alpha = -1.0
+        beta = A - B - B**2
+        gamma = -A * B
+        
+        Q = (alpha**2 - 3.0 * beta) / 9.0
+        R_q = (2.0 * alpha**3 - 9.0 * alpha * beta + 27.0 * gamma) / 54.0
+        
+        roots = []
+        if (Q**3 - R_q**2) > 0:
+            # 3 Real roots
+            theta = np.arccos(R_q / np.sqrt(Q**3))
+            sqrt_Q = np.sqrt(Q)
+            roots.append(-2.0 * sqrt_Q * np.cos(theta / 3.0) - alpha / 3.0)
+            roots.append(-2.0 * sqrt_Q * np.cos((theta + 2.0 * np.pi) / 3.0) - alpha / 3.0)
+            roots.append(-2.0 * sqrt_Q * np.cos((theta + 4.0 * np.pi) / 3.0) - alpha / 3.0)
+        else:
+            # 1 Real root
+            S = np.cbrt(R_q + np.sqrt(R_q**2 - Q**3))
+            T_cbrt = np.cbrt(R_q - np.sqrt(R_q**2 - Q**3))
+            roots.append(-S - T_cbrt - alpha / 3.0)
+            
+        # Filter physical roots (Z > B, since V > b)
+        physical_roots = [r for r in roots if r > B and not np.isnan(r)]
+        if not physical_roots:
+            # Fallback to the largest non-NaN real root if all fail
+            real_roots = [r.real for r in np.roots([1.0, alpha, beta, gamma]) if np.isclose(r.imag, 0)]
+            physical_roots = [r for r in real_roots if r > B]
+            if not physical_roots:
+                physical_roots = [max(real_roots)]
+                
+        if return_liquid:
+            return min(physical_roots)
+        else:
+            return max(physical_roots)
+
+    def density_srk(self, T, P, X):
+        """
+        Compute mass density of the mixture using the SRK EoS.
+        
+        :param T: Temperature in Kelvin.
+        :param P: System pressure in Pa.
+        :param X: Mole fractions of each compound.
+        :return: Density of mixture in kg/m^3.
+        """
+        a_m, b_m, _, _ = self._srk_AmBm(T, X)
+        Z = self._srk_Z_factor(a_m, b_m, T, P, return_liquid=True)
+        R = 8.314462618
+        
+        rho_molar = P / (Z * R * T)  # mol/m^3
+        MW_mix = float(np.dot(X, self.MW)) # kg/mol
+        
+        rho_mass = rho_molar * MW_mix # kg/m^3
+        return rho_mass
+
+    def specific_heat_srk(self, T, P, X):
+        """
+        Compute real mixture specific heat capacity using SRK departure functions.
+        Note: The departure function requires the ideal gas heat capacity (C_p,ig) 
+        as a baseline. Currently, this uses self.Cp(T) which may represent 
+        liquid or ideal gas capacity depending on the loaded DB.
+        
+        :param T: Temperature in Kelvin.
+        :param P: System pressure in Pa.
+        :param X: Mole fractions of each compound.
+        :return: Specific heat capacity in J/kg/K.
+        """
+        a_m, b_m, da_m_dT, d2a_m_dT2 = self._srk_AmBm(T, X)
+        Z = self._srk_Z_factor(a_m, b_m, T, P, return_liquid=True)
+        R = 8.314462618
+        
+        v = Z * R * T / P  # Molar volume (m^3/mol)
+        
+        # Ideal gas Cp (molar basis). 
+        Cp_ig_molar = float(np.dot(X, self.Cp(T)))
+        
+        # Departure function intermediate terms
+        K1 = (1.0 / b_m) * np.log1p(b_m / v)
+        
+        dpdT = R / (v - b_m) - da_m_dT / (v * (v + b_m))
+        dpdv = -R * T / (v - b_m)**2 + a_m * (2.0 * v + b_m) / (v**2 * (v + b_m)**2)
+        
+        dhmdT = Cp_ig_molar + T * d2a_m_dT2 * K1 - da_m_dT / (v + b_m) + R * b_m / (v - b_m)
+        dhmdv = -(T * da_m_dT - a_m) / (v * (v + b_m)) + a_m / (v + b_m)**2 - R * T * b_m / (v - b_m)**2
+        
+        Cp_real_molar = dhmdT - (dhmdv / dpdv) * dpdT
+        
+        MW_mix = float(np.dot(X, self.MW)) # kg/mol
+        return Cp_real_molar / MW_mix # J/kg/K
+
+    def fugacities_srk(self, T, P, X):
+        """
+        Compute the partial fugacities of each component in the mixture using SRK.
+        
+        :param T: Temperature in Kelvin.
+        :param P: System pressure in Pa.
+        :param X: Mole fractions of each compound.
+        :return: Array of partial fugacities for each component (Pa).
+        """
+        X = np.asarray(X, dtype=float)
+        a_m, b_m, _, _ = self._srk_AmBm(T, X)
+        Z = self._srk_Z_factor(a_m, b_m, T, P, return_liquid=True)
+        R = 8.314462618
+        
+        a_i, b_i, sqrt_a_i, _, _ = self._srk_params(T)
+        
+        A = a_m * P / (R**2 * T**2)
+        B = b_m * P / (R * T)
+        
+        if Z <= B:
+            Z = B + 1e-6
+            
+        term1 = (b_i / b_m) * (Z - 1.0)
+        term2 = np.log(Z - B)
+        # With geometric mixing rules (kij=0), (2 sum x_j a_ij)/a_m = 2 sqrt(a_i)/sqrt(a_m)
+        term3_factor = (2.0 * sqrt_a_i / np.sqrt(a_m)) - (b_i / b_m)
+        term3 = (A / B) * term3_factor * np.log(1.0 + B / Z)
+        
+        ln_phi_i = term1 - term2 - term3
+        phi_i = np.exp(ln_phi_i)
+        
+        f_i = X * phi_i * P
+        return f_i
 
     def viscosity_kinematic(self, T, comp_idx=None):
         """
