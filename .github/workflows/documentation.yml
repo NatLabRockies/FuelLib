@@ -1,4 +1,4 @@
-name: FuelLib-Docs
+name: Docs
 
 on: 
   workflow_dispatch:
