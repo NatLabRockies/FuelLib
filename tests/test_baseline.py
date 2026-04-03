@@ -62,12 +62,7 @@ for fuel_name in fuel_names:
 
         # Create a dataframe for this property
         df_prop = pd.DataFrame(
-            {
-                "Temperature": T,
-                prop: pred,
-                f"Data_{prop}": data,
-                f"Error_{prop}": np.abs(data - pred),
-            }
+            {"Temperature": T, prop: pred, f"Error_{prop}": np.abs(data - pred)}
         )
 
         if df_combined is None:

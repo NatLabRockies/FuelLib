@@ -58,13 +58,16 @@ class CompTestCase(unittest.TestCase):
 
             for prop in prop_names:
                 with self.subTest(fuel=fuel_name, prop=prop):
-                    # Baseline MAPE computed from stored predictions and experimental data
-                    data_base = df_base[f"Data_{prop}"].dropna().to_numpy()
-                    err_base = df_base[f"Error_{prop}"].dropna().to_numpy()
-                    mape_base = np.mean(err_base / np.abs(data_base)) * 100
-
-                    # Current model predictions
+                    # Current model predictions and experimental reference data
                     T, data, pred = fxns.getPredAndData(fuel_name, prop)
+
+                    # Baseline MAPE: align stored baseline predictions to the same
+                    # temperature points, then compare against the same reference data.
+                    df_base_prop = df_base[["Temperature", prop]].dropna()
+                    pred_base = (
+                        df_base_prop.set_index("Temperature").reindex(T)[prop].to_numpy()
+                    )
+                    mape_base = np.mean(np.abs(data - pred_base) / np.abs(data)) * 100
                     mape = np.mean(np.abs(data - pred) / np.abs(data)) * 100
 
                     # 1. Regression check: MAPE must not exceed the baseline MAPE.
