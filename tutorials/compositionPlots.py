@@ -101,7 +101,11 @@ colors = {
 # Bar plot of the number of compounds in each family
 plt.figure(figsize=(7, 5))
 N = df.nC.unique()
+families_in_data = df["Family"].unique()
 for k, family in enumerate(family_names):
+    if family not in families_in_data:
+        # Only plot families that actually exist in the data
+        continue
     nC = df[df["Family"] == family].nC
     weight = df[df["Family"] == family]["Weight %"]
 
