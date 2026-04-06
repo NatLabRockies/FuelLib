@@ -73,7 +73,7 @@ jobs:
           python-version: '3.11'
       - run: |
           python -m pip install --upgrade pip
-      - run: python tests/test_source_docstrings.py
+      - run: python tests/test_source_docstrings.py -v
   
   Export4Pele-Test:
     runs-on: ubuntu-latest

@@ -65,47 +65,60 @@ def _iter_api_functions(module_node):
 
 
 class SourceDocstringContractTestCase(unittest.TestCase):
-    def test_source_functions_document_inputs_and_outputs(self):
+    def test_source_function_documentation(self):
         source_dir = Path(__file__).resolve().parents[1] / "source"
-        issues = []
+        total_count = 0
+        passed_count = 0
+        current_file = None
+
+        print("\n")  # Add newline to separate from unittest verbose output
 
         for py_file in sorted(source_dir.glob("*.py")):
             tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))
+            file_label = py_file.relative_to(source_dir.parent)
+
+            # Print file header when switching files
+            if current_file != file_label:
+                if current_file is not None:
+                    print()  # Blank line between files
+                print(f"{file_label}:")
+                current_file = file_label
 
             for node in _iter_api_functions(tree):
-                doc = ast.get_docstring(node) or ""
-                documented_params = set(PARAM_RE.findall(doc))
-                documented_types = set(TYPE_RE.findall(doc))
+                total_count += 1
+                func_label = f"{file_label}:{node.lineno} {node.name}"
 
-                for param in _function_params(node):
-                    if param not in documented_params:
-                        issues.append(
-                            f"{py_file.relative_to(source_dir.parent)}:{node.lineno} "
-                            f"{node.name} missing ':param {param}:'"
-                        )
-                    if param not in documented_types:
-                        issues.append(
-                            f"{py_file.relative_to(source_dir.parent)}:{node.lineno} "
-                            f"{node.name} missing ':type {param}:'"
-                        )
+                with self.subTest(function=func_label):
+                    doc = ast.get_docstring(node) or ""
+                    documented_params = set(PARAM_RE.findall(doc))
+                    documented_types = set(TYPE_RE.findall(doc))
+                    issues = []
 
-                if _has_direct_value_return(node):
-                    if ":return:" not in doc:
-                        issues.append(
-                            f"{py_file.relative_to(source_dir.parent)}:{node.lineno} "
-                            f"{node.name} missing ':return:'"
-                        )
-                    if ":rtype:" not in doc:
-                        issues.append(
-                            f"{py_file.relative_to(source_dir.parent)}:{node.lineno} "
-                            f"{node.name} missing ':rtype:'"
-                        )
+                    for param in _function_params(node):
+                        if param not in documented_params:
+                            issues.append(f"missing ':param {param}:'")
+                        if param not in documented_types:
+                            issues.append(f"missing ':type {param}:'")
 
-        if issues:
-            self.fail(
-                "Source docstring contract violations found:\n"
-                + "\n".join(f"- {issue}" for issue in issues)
-            )
+                    if _has_direct_value_return(node):
+                        if ":return:" not in doc:
+                            issues.append("missing ':return:'")
+                        if ":rtype:" not in doc:
+                            issues.append("missing ':rtype:'")
+
+                    if len(issues) == 0:
+                        passed_count += 1
+                        print(f"  ✓ {node.lineno} {node.name}")
+                    else:
+                        print(f"  ✗ {node.lineno} {node.name}: {' | '.join(issues)}")
+
+                    self.assertEqual(
+                        len(issues),
+                        0,
+                        msg=" | ".join(issues) if issues else "",
+                    )
+
+        print(f"\n{passed_count}/{total_count} functions passed docstring requirements")
 
 
 if __name__ == "__main__":
