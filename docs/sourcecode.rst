@@ -37,8 +37,9 @@ FuelLib File Organization
 
 - ``paths.py``: file that defines paths to various directories and files used in FuelLib
 
-API Stability and Compatibility
-------------------------------
+Public API
+----------
+
 FuelLib's public API is continuously validated in CI using ``tests/test_api.py``.
 This test verifies expected public module/class signatures and runs representative
 FuelLib smoke evaluations to catch unintended behavior changes.
