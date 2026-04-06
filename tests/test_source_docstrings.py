@@ -52,15 +52,17 @@ def _has_direct_value_return(node):
 
 
 def _iter_api_functions(module_node):
-    """Yield module-level functions and class methods, skipping nested local functions."""
+    """Yield public module-level functions and class methods, skipping nested local functions."""
 
     for stmt in module_node.body:
         if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            yield stmt
+            if not stmt.name.startswith("_"):
+                yield stmt
         elif isinstance(stmt, ast.ClassDef):
             for class_stmt in stmt.body:
                 if isinstance(class_stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    yield class_stmt
+                    if not class_stmt.name.startswith("_"):
+                        yield class_stmt
 
 
 class SourceDocstringContractTestCase(unittest.TestCase):

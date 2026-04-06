@@ -20,7 +20,7 @@ def _normalize_signature(sig):
         text = str(param)
         if (
             name == "path"
-            and param.default is not inspect._empty
+            and param.default is not inspect.Parameter.empty
             and isinstance(param.default, str)
             and param.default.endswith("exportData")
         ):
