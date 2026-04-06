@@ -8,6 +8,7 @@ import numpy as np
 FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
 if FUELLIB_DIR not in sys.path:
     sys.path.append(FUELLIB_DIR)
+from paths import *
 import FuelLib as fl
 
 
@@ -55,7 +56,9 @@ class FuelLibFunctionTestCase(unittest.TestCase):
                 self.assertTrue(np.allclose(Yi, Yi_back, rtol=1e-10, atol=1e-12))
 
                 mass = Yi * 1.0e-6
-                self.assertTrue(np.allclose(fuel.mass2Y(mass), Yi, rtol=1e-10, atol=1e-12))
+                self.assertTrue(
+                    np.allclose(fuel.mass2Y(mass), Yi, rtol=1e-10, atol=1e-12)
+                )
                 Xi_from_mass = fuel.mass2X(mass)
                 self.assertTrue(np.allclose(np.sum(Xi_from_mass), 1.0))
 
@@ -99,28 +102,42 @@ class FuelLibFunctionTestCase(unittest.TestCase):
 
                 # Antoine coefficient fits (individual compounds)
                 A, B, C, D = fuel.psat_antoine_coeffs(
-                    Tvals=np.array([300.0, 340.0]), units="atm", correlation="Lee-Kesler"
+                    Tvals=np.array([300.0, 340.0]),
+                    units="atm",
+                    correlation="Lee-Kesler",
                 )
                 self.assertEqual(len(A), fuel.num_compounds)
                 self.assertEqual(len(B), fuel.num_compounds)
                 self.assertEqual(len(C), fuel.num_compounds)
                 self.assertEqual(len(D), fuel.num_compounds)
+                # A, B, D must be positive; C can be negative (it's a temperature offset)
+                self._assert_finite_and_positive(A)
+                self._assert_finite_and_positive(B)
                 self._assert_finite_and_positive(D)
+                self.assertTrue(np.all(np.isfinite(C)))
 
                 # Mixture properties
                 self._assert_finite_and_positive(fuel.mixture_density(Yi, self.T))
                 self._assert_finite_and_positive(
-                    fuel.mixture_kinematic_viscosity(Yi, self.T, correlation="Kendall-Monroe")
+                    fuel.mixture_kinematic_viscosity(
+                        Yi, self.T, correlation="Kendall-Monroe"
+                    )
                 )
                 self._assert_finite_and_positive(
-                    fuel.mixture_kinematic_viscosity(Yi, self.T, correlation="Arrhenius")
+                    fuel.mixture_kinematic_viscosity(
+                        Yi, self.T, correlation="Arrhenius"
+                    )
                 )
-                self._assert_finite_and_positive(fuel.mixture_dynamic_viscosity(Yi, self.T))
+                self._assert_finite_and_positive(
+                    fuel.mixture_dynamic_viscosity(Yi, self.T)
+                )
                 self._assert_finite_and_positive(
                     fuel.mixture_vapor_pressure(Yi, self.T, correlation="Lee-Kesler")
                 )
                 self._assert_finite_and_positive(
-                    fuel.mixture_vapor_pressure(Yi, self.T, correlation="Ambrose-Walton")
+                    fuel.mixture_vapor_pressure(
+                        Yi, self.T, correlation="Ambrose-Walton"
+                    )
                 )
 
                 A_mix, B_mix, C_mix, D_mix = fuel.mixture_vapor_pressure_antoine_coeffs(
@@ -129,7 +146,9 @@ class FuelLibFunctionTestCase(unittest.TestCase):
                     units="bar",
                     correlation="Lee-Kesler",
                 )
-                self._assert_finite_and_positive([A_mix, B_mix, C_mix, D_mix])
+                # A, B, D must be positive; C can be negative (it's a temperature offset)
+                self._assert_finite_and_positive([A_mix, B_mix, D_mix])
+                self.assertTrue(np.isfinite(C_mix))
 
                 self._assert_finite_and_positive(
                     fuel.mixture_surface_tension(Yi, self.T, correlation="Brock-Bird")
@@ -137,13 +156,17 @@ class FuelLibFunctionTestCase(unittest.TestCase):
                 self._assert_finite_and_positive(
                     fuel.mixture_surface_tension(Yi, self.T, correlation="Pitzer")
                 )
-                self._assert_finite_and_positive(fuel.mixture_thermal_conductivity(Yi, self.T))
+                self._assert_finite_and_positive(
+                    fuel.mixture_thermal_conductivity(Yi, self.T)
+                )
 
                 # Droplet helpers
                 m = fl.droplet_mass(fuel, 2.0e-5, Yi, self.T)
                 self.assertEqual(m.shape, fuel.MW.shape)
                 self.assertTrue(np.all(m >= 0.0))
-                self.assertTrue(np.allclose(fl.droplet_mass(fuel, 0.0, Yi, self.T), 0.0))
+                self.assertTrue(
+                    np.allclose(fl.droplet_mass(fuel, 0.0, Yi, self.T), 0.0)
+                )
 
 
 if __name__ == "__main__":

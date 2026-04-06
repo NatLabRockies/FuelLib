@@ -65,7 +65,9 @@ class CompTestCase(unittest.TestCase):
                     # temperature points, then compare against the same reference data.
                     df_base_prop = df_base[["Temperature", prop]].dropna()
                     pred_base = (
-                        df_base_prop.set_index("Temperature").reindex(T)[prop].to_numpy()
+                        df_base_prop.set_index("Temperature")
+                        .reindex(T)[prop]
+                        .to_numpy()
                     )
                     mape_base = np.mean(np.abs(data - pred_base) / np.abs(data)) * 100
                     mape = np.mean(np.abs(data - pred) / np.abs(data)) * 100

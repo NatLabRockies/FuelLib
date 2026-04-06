@@ -73,7 +73,6 @@ class SourceDocstringContractTestCase(unittest.TestCase):
             tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))
 
             for node in _iter_api_functions(tree):
-
                 doc = ast.get_docstring(node) or ""
                 documented_params = set(PARAM_RE.findall(doc))
                 documented_types = set(TYPE_RE.findall(doc))
