@@ -38,13 +38,19 @@ FuelLib File Organization
 
 - ``paths.py``: file that defines paths to various directories and files used in FuelLib
 
-Source Code Auto-Documentation
+API Stability and Compatibility
 ------------------------------
-Click on links below for the full auto-documentation.
+FuelLib's public API is continuously validated in CI using ``tests/test_api.py``.
+This test verifies expected public module/class signatures and runs representative
+FuelLib smoke evaluations to catch unintended behavior changes.
+
+The project aims to keep the public API stable across releases. Any intentional
+breaking API change should be explicitly documented in release notes and
+accompanied by updates to tests and user-facing documentation.
+
+Click on links below for the full auto-documentation of the API.
 
 .. autosummary::
     :toctree: generated
 
     FuelLib
-    Export4Pele
-    Export4Converge
