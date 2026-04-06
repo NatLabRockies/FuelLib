@@ -18,7 +18,7 @@ Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, a
 ## Python Environment
 The following conda environment is required to run this code:
 ~~~
-conda create --name fuellib-env matplotlib pandas scipy black 
+conda create --name fuellib-env matplotlib pandas scipy black=26.3.1
 ~~~
 
 ## Running the Code
@@ -30,6 +30,7 @@ New contributions are always welcome.  If you have an idea for a new feature fol
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
 4. Format the source code files using the [Black code formatter](https://github.com/psf/black) by running the following command:
+   (CI currently uses Black version `26.3.1`; use the same version locally.)
    ~~~
    find . -name "*.py" -print0 | xargs -0 black
    ~~~

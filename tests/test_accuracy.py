@@ -2,7 +2,7 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-import test_functions as fxns
+from get_pred_and_data import get_pred_and_data
 import unittest
 
 # Add the FuelLib directory to the Python path
@@ -10,17 +10,13 @@ FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
 if FUELLIB_DIR not in sys.path:
     sys.path.append(FUELLIB_DIR)
 from paths import *
-import FuelLib as fl
 
 
 class CompTestCase(unittest.TestCase):
-    """Test that accuracy is preserved"""
+    """Test that prediction accuracy is preserved across PRs."""
 
     def test_accuracy(self):
-        """Does the PR impact the accuracy of single component fuel predictions?"""
-
-        # Set the percentage for variation in max error
-        max_error_diff = 1e-6
+        """Compare MAPE of PR vs. stored baseline"""
 
         # Fuels to test
         fuel_names = [
@@ -40,32 +36,70 @@ class CompTestCase(unittest.TestCase):
             "SurfaceTension",
             "ThermalConductivity",
         ]
+        prop_width = max(len(p) for p in prop_names)
 
-        # Compare to NIST predictions and previous model predictions
+        total_checks = 0
+        passed_checks = 0
+
+        print("\n\nAccuracy Regression Check via MAPE:")
+
         for fuel_name in fuel_names:
             baseline_file = os.path.join(TESTS_BASELINE_DIR, f"{fuel_name}.csv")
             df_base = pd.read_csv(baseline_file, skiprows=[1])
+            print(f"\n{fuel_name}:")
 
             for prop in prop_names:
-                # Baseline error
-                err_base = df_base[f"Error_{prop}"].dropna().to_numpy()
+                with self.subTest(fuel=fuel_name, prop=prop):
+                    total_checks += 1
 
-                # Cumulative baseline error
-                sum_err_base = np.sum(err_base)
+                    # Current model predictions and experimental reference data
+                    T, data, pred = get_pred_and_data(fuel_name, prop)
 
-                # Allow cumulative error within max_error_diff
-                sum_err_base += sum_err_base * max_error_diff
+                    # Baseline: align stored baseline predictions to the same
+                    # temperature points, then compare against the same reference data.
+                    df_base_prop = df_base[["Temperature", prop]].dropna()
+                    baseline_t = df_base_prop["Temperature"].to_numpy(dtype=float)
+                    self.assertTrue(
+                        np.array_equal(baseline_t, T),
+                        msg=(
+                            f"{fuel_name} / {prop}: baseline temperatures do not match "
+                            "current data temperatures."
+                        ),
+                    )
+                    pred_base = df_base_prop[prop].to_numpy(dtype=float)
+                    mape_base = np.mean(np.abs(data - pred_base) / np.abs(data)) * 100
+                    mape = np.mean(np.abs(data - pred) / np.abs(data)) * 100
 
-                # Get predictions for current model
-                T, data, pred = fxns.getPredAndData(fuel_name, prop)
-                err = np.abs(data - pred)
-                sum_err = np.sum(err)
+                    # Regression check: MAPE must not exceed Baseline.
+                    # np.isclose handles tiny floating-point noise when values
+                    # are numerically equal but differ at machine precision.
+                    regression_ok = (mape <= mape_base) or np.isclose(mape, mape_base)
 
-                np.testing.assert_array_less(
-                    sum_err,
-                    sum_err_base,
-                    err_msg=f"Error: Prediction of {prop} for {fuel_name} is less accurate than previous model!",
-                )
+                    if regression_ok:
+                        passed_checks += 1
+                        print(
+                            "  "
+                            f"✓ {prop:<{prop_width}}  "
+                            f"New={mape:8.4f}%  "
+                            f"Baseline={mape_base:8.4f}%"
+                        )
+                    else:
+                        print(
+                            "  "
+                            f"✗ {prop:<{prop_width}}  "
+                            f"New={mape:8.4f}% exceeds "
+                            f"Baseline={mape_base:8.4f}%"
+                        )
+
+                    self.assertTrue(
+                        regression_ok,
+                        msg=(
+                            f"{fuel_name} / {prop}: MAPE regressed from "
+                            f"{mape_base:.4f}% (baseline) to {mape:.4f}%."
+                        ),
+                    )
+
+        print(f"\n{passed_checks}/{total_checks} fuel-property checks passed")
 
 
 if __name__ == "__main__":

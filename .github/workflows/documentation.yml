@@ -1,4 +1,4 @@
-name: FuelLib-Docs
+name: Docs
 
 on: 
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  build-docs:
+  Build-Docs:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,9 +44,9 @@ jobs:
           name: site
           path: _build
   
-  deploy-docs:
+  Deploy-Docs:
     if: github.event_name == 'push'
-    needs: build-docs
+    needs: Build-Docs
     runs-on: ubuntu-latest
 
     steps:

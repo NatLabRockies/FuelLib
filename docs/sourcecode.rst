@@ -22,10 +22,11 @@ FuelLib File Organization
 
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     
-    - **baselinePredictions:** directory that contains baseline predictions
+    - **baselinePredictions:** directory that contains baseline predictions and script ``generate_baseline.py`` for generating baseline predictions for CI testing.
     - ``test_accuracy.py``: unit test used in CI for verifying new model predictions preserve accuracy
-    - ``test_baseline.py``: generates .csv files for the baseline model predictions, which are stored in **baselinePredictions**
-    - ``test_functions.py``: collection of functions used by ``test_baseline.py`` and ``test_accuracy.py``.
+    - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
+    - ``test_api.py``: combined API/signature and function-evaluation test that checks public ``FuelLib.py`` module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
+    - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 
@@ -36,13 +37,20 @@ FuelLib File Organization
 
 - ``paths.py``: file that defines paths to various directories and files used in FuelLib
 
-Source Code Auto-Documentation
-------------------------------
-Click on links below for the full auto-documentation.
+Public API
+----------
+
+FuelLib's public API is continuously validated in CI using ``tests/test_api.py``.
+This test verifies expected public module/class signatures and runs representative
+FuelLib smoke evaluations to catch unintended behavior changes.
+
+The project aims to keep the public API stable across releases. Any intentional
+breaking API change should be explicitly documented in release notes and
+accompanied by updates to tests and user-facing documentation.
+
+Click on links below for the full auto-documentation of the API.
 
 .. autosummary::
     :toctree: generated
 
     FuelLib
-    Export4Pele
-    Export4Converge

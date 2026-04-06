@@ -2,24 +2,26 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-import test_functions as fxns
 
 """
 Script for calculating baseline FuelLib mixture property predictions for CI testing
 Use this to update threshold values in CI test as model improves
 """
 
-
 # Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
+FUELLIB_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 if FUELLIB_DIR not in sys.path:
     sys.path.append(FUELLIB_DIR)
 from paths import *
+
+sys.path.append(os.path.join(FUELLIB_DIR, "tests"))
 import FuelLib as fl
+from get_pred_and_data import *
 
 # Directories for tests and baseline predictions
-test_dir = os.path.dirname(__file__)
-baseline_dir = os.path.join(test_dir, "baselinePredictions")
+# test_dir = os.path.dirname(__file__)
+baseline_dir = os.path.dirname(__file__)
+# baseline_dir = os.path.join(test_dir, "baselinePredictions")
 
 # Fuel for GCM and data for validation (see fuelData/propertiesData for fuels)
 # Options: 'decane','dodecane', 'heptane', 'posf10264', 'posf10325', 'posf10289'
@@ -58,7 +60,7 @@ for fuel_name in fuel_names:
     df_combined = None
 
     for prop in prop_names:
-        T, data, pred = fxns.getPredAndData(fuel_name, prop)
+        T, data, pred = get_pred_and_data(fuel_name, prop)
 
         # Create a dataframe for this property
         df_prop = pd.DataFrame(

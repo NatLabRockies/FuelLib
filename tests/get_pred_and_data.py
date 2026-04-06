@@ -11,7 +11,7 @@ from paths import *
 import FuelLib as fl
 
 
-def getPredAndData(fuel_name, prop_name):
+def get_pred_and_data(fuel_name, prop_name):
     # Get the fuel properties based on the GCM
     fuel = fl.fuel(fuel_name)
 
@@ -55,3 +55,7 @@ def getPredAndData(fuel_name, prop_name):
             pred[i] = fuel.mixture_thermal_conductivity(Y_li, T_pred[i])
 
     return T_data, prop_data, pred
+
+
+# Backward-compatible alias for older call sites.
+getPredAndData = get_pred_and_data

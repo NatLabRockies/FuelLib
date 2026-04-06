@@ -1,8 +1,8 @@
-Exporting GCM-Based Mixture Properties for Converge
----------------------------------------------------
+Exporting Properties for Converge
+----------------------------------
 
 The export script, ``Export4Converge.py`` generates property data files for use in Converge CFD simulations. 
-There are two main options for exporting data:
+There are two options for exporting data:
 
 1. **Mixture Properties**: This option generates a csv file named ``mixturePropsGCM_<fuel_name>.csv`` containing 
 mixture property predictions for a given fuel over a specified temperature range. 
