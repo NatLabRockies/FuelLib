@@ -58,11 +58,15 @@ class CompTestCase(unittest.TestCase):
                     # Baseline: align stored baseline predictions to the same
                     # temperature points, then compare against the same reference data.
                     df_base_prop = df_base[["Temperature", prop]].dropna()
-                    pred_base = (
-                        df_base_prop.set_index("Temperature")
-                        .reindex(T)[prop]
-                        .to_numpy()
+                    baseline_t = df_base_prop["Temperature"].to_numpy(dtype=float)
+                    self.assertTrue(
+                        np.array_equal(baseline_t, T),
+                        msg=(
+                            f"{fuel_name} / {prop}: baseline temperatures do not match "
+                            "current data temperatures."
+                        ),
                     )
+                    pred_base = df_base_prop[prop].to_numpy(dtype=float)
                     mape_base = np.mean(np.abs(data - pred_base) / np.abs(data)) * 100
                     mape = np.mean(np.abs(data - pred) / np.abs(data)) * 100
 
