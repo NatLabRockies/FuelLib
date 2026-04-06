@@ -46,7 +46,7 @@ jobs:
   
   Deploy-Docs:
     if: github.event_name == 'push'
-    needs: build-docs
+    needs: Build-Docs
     runs-on: ubuntu-latest
 
     steps:
