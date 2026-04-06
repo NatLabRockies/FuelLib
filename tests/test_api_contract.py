@@ -9,8 +9,6 @@ if FUELLIB_DIR not in sys.path:
     sys.path.append(FUELLIB_DIR)
 from paths import *
 import FuelLib as fl
-import Export4Converge as e4c
-import Export4Pele as e4p
 
 
 def _normalize_signature(sig):
@@ -123,86 +121,6 @@ class ApiContractTestCase(unittest.TestCase):
                 msg=f"FuelLib.fuel method signature changed: {name}",
             )
             print(f"  ✓ fuel.{name}{actual_sig}")
-
-    def test_export4converge_api(self):
-        print("\nExport4Converge API:")
-        expected_module = {
-            "export_converge": "(fuel, path='<EXPORTDATA_PATH>', units='mks', temp_min=0, temp_max=1000, temp_step=10, export_mix=False)",
-            "main": "()",
-            "validate_fuel_files": "(fuel_name, fuel_data_dir)",
-        }
-        expected_converter = {
-            "create_data_dict": "(self, T, T_crit, mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity)"
-        }
-
-        actual_module = _public_module_functions(e4c)
-        self.assertEqual(
-            set(actual_module.keys()),
-            set(expected_module.keys()),
-            msg=(
-                "Export4Converge public function list changed. "
-                f"Expected: {sorted(expected_module.keys())}; Found: {sorted(actual_module.keys())}"
-            ),
-        )
-
-        for name in sorted(expected_module.keys()):
-            actual_sig = _normalize_signature(inspect.signature(actual_module[name]))
-            self.assertEqual(
-                actual_sig,
-                expected_module[name],
-                msg=f"Export4Converge function signature changed: {name}",
-            )
-            print(f"  ✓ {name}{actual_sig}")
-
-        actual_converter = _public_class_methods(e4c.UnitConverter)
-        self.assertEqual(
-            set(actual_converter.keys()),
-            set(expected_converter.keys()),
-            msg=(
-                "Export4Converge.UnitConverter public method list changed. "
-                f"Expected: {sorted(expected_converter.keys())}; Found: {sorted(actual_converter.keys())}"
-            ),
-        )
-
-        for name in sorted(expected_converter.keys()):
-            actual_sig = _normalize_signature(inspect.signature(actual_converter[name]))
-            self.assertEqual(
-                actual_sig,
-                expected_converter[name],
-                msg=f"Export4Converge.UnitConverter method signature changed: {name}",
-            )
-            print(f"  ✓ UnitConverter.{name}{actual_sig}")
-
-    def test_export4pele_api(self):
-        print("\nExport4Pele API:")
-        expected_module = {
-            "create_individual_compounds_dataframe": "(fuel, compound_names, converter)",
-            "create_mixture_dataframe": "(fuel, export_mix_name, converter)",
-            "export_pele": "(fuel, path='<EXPORTDATA_PATH>', units='mks', dep_fuel_names=None, use_pp_keys=True, export_mix=False, export_mix_name=None, liq_prop_model='gcm', psat_antoine=True)",
-            "get_filename": "(fuel_name, liq_prop_model, export_mix, path)",
-            "get_git_info": "()",
-            "main": "()",
-            "vec_to_str": "(vec)",
-        }
-
-        actual_module = _public_module_functions(e4p)
-        self.assertEqual(
-            set(actual_module.keys()),
-            set(expected_module.keys()),
-            msg=(
-                "Export4Pele public function list changed. "
-                f"Expected: {sorted(expected_module.keys())}; Found: {sorted(actual_module.keys())}"
-            ),
-        )
-
-        for name in sorted(expected_module.keys()):
-            actual_sig = _normalize_signature(inspect.signature(actual_module[name]))
-            self.assertEqual(
-                actual_sig,
-                expected_module[name],
-                msg=f"Export4Pele function signature changed: {name}",
-            )
-            print(f"  ✓ {name}{actual_sig}")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-import test_functions as fxns
+from get_pred_and_data import get_pred_and_data
 
 """
 Script for calculating baseline FuelLib mixture property predictions for CI testing
@@ -58,7 +58,7 @@ for fuel_name in fuel_names:
     df_combined = None
 
     for prop in prop_names:
-        T, data, pred = fxns.getPredAndData(fuel_name, prop)
+        T, data, pred = get_pred_and_data(fuel_name, prop)
 
         # Create a dataframe for this property
         df_prop = pd.DataFrame(

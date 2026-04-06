@@ -2,7 +2,7 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-import test_functions as fxns
+from get_pred_and_data import get_pred_and_data
 import unittest
 
 # Add the FuelLib directory to the Python path
@@ -58,7 +58,7 @@ class CompTestCase(unittest.TestCase):
             for prop in prop_names:
                 with self.subTest(fuel=fuel_name, prop=prop):
                     # Current model predictions and experimental reference data
-                    T, data, pred = fxns.getPredAndData(fuel_name, prop)
+                    T, data, pred = get_pred_and_data(fuel_name, prop)
 
                     # Baseline MAPE: align stored baseline predictions to the same
                     # temperature points, then compare against the same reference data.
