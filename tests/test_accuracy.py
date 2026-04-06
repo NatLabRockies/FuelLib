@@ -51,12 +51,20 @@ class CompTestCase(unittest.TestCase):
             "ThermalConductivity",
         ]
 
+        total_checks = 0
+        passed_checks = 0
+
+        print("\nAccuracy Regression Check:")
+
         for fuel_name in fuel_names:
             baseline_file = os.path.join(TESTS_BASELINE_DIR, f"{fuel_name}.csv")
             df_base = pd.read_csv(baseline_file, skiprows=[1])
+            print(f"\n{fuel_name}:")
 
             for prop in prop_names:
                 with self.subTest(fuel=fuel_name, prop=prop):
+                    total_checks += 1
+
                     # Current model predictions and experimental reference data
                     T, data, pred = get_pred_and_data(fuel_name, prop)
 
@@ -70,28 +78,52 @@ class CompTestCase(unittest.TestCase):
                     )
                     mape_base = np.mean(np.abs(data - pred_base) / np.abs(data)) * 100
                     mape = np.mean(np.abs(data - pred) / np.abs(data)) * 100
+                    abs_limit = ABS_MAPE_THRESHOLDS[prop]
 
                     # 1. Regression check: MAPE must not exceed the baseline MAPE.
                     mape_limit = mape_base * (1 + max_error_diff)
-                    self.assertLessEqual(
-                        mape,
-                        mape_limit,
+                    regression_ok = mape <= mape_limit
+                    absolute_ok = mape < abs_limit
+
+                    if regression_ok and absolute_ok:
+                        passed_checks += 1
+                        print(
+                            "  "
+                            f"✓ {prop}: MAPE={mape:.4f}%, "
+                            f"baseline={mape_base:.4f}%, "
+                            f"regression_limit={mape_limit:.4f}%, "
+                            f"absolute_limit={abs_limit:.4f}%"
+                        )
+                    elif not regression_ok:
+                        print(
+                            "  "
+                            f"✗ {prop}: MAPE={mape:.4f}% exceeds "
+                            f"regression_limit={mape_limit:.4f}% "
+                            f"(baseline={mape_base:.4f}%)"
+                        )
+                    else:
+                        print(
+                            "  "
+                            f"✗ {prop}: MAPE={mape:.4f}% exceeds "
+                            f"absolute_limit={abs_limit:.4f}%"
+                        )
+
+                    self.assertTrue(
+                        regression_ok,
                         msg=(
                             f"{fuel_name} / {prop}: MAPE regressed from "
                             f"{mape_base:.4f}% (baseline) to {mape:.4f}%."
                         ),
                     )
-
-                    # 2. Absolute check: MAPE must stay below a property-specific ceiling.
-                    abs_limit = ABS_MAPE_THRESHOLDS[prop]
-                    self.assertLess(
-                        mape,
-                        abs_limit,
+                    self.assertTrue(
+                        absolute_ok,
                         msg=(
                             f"{fuel_name} / {prop}: MAPE of {mape:.4f}% exceeds "
                             f"absolute threshold of {abs_limit}%."
                         ),
                     )
+
+        print(f"\n{passed_checks}/{total_checks} fuel-property checks passed")
 
 
 if __name__ == "__main__":

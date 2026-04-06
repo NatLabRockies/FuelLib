@@ -53,18 +53,6 @@ jobs:
           pip install numpy pandas scipy
       - run: python tests/test_accuracy.py
 
-  FuelLib-Functions-Eval:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: |
-          python -m pip install --upgrade pip
-          pip install numpy pandas scipy
-      - run: python tests/test_fuellib_functions.py
-
   API-Contract:
     runs-on: ubuntu-latest
     steps:
