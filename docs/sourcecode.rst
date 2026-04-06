@@ -25,9 +25,9 @@ FuelLib File Organization
     - **baselinePredictions:** directory that contains baseline predictions
     - ``test_accuracy.py``: unit test used in CI for verifying new model predictions preserve accuracy
     - ``test_baseline.py``: generates .csv files for the baseline model predictions, which are stored in **baselinePredictions**
-    - ``get_pred_and_data.py``: helper function used by ``test_baseline.py`` and ``test_accuracy.py`` to compute predictions and load validation data.
     - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
-    - ``test_api_contract.py``: combined API/signature and function-evaluation test that checks public ``FuelLib.py`` module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
+    - ``test_api.py``: combined API/signature and function-evaluation test that checks public ``FuelLib.py`` module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
+    - ``get_pred_and_data.py``: helper function used by ``test_baseline.py`` and ``test_accuracy.py`` to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 
