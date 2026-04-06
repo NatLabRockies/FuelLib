@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  build-docs:
+  Build-Docs:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +44,7 @@ jobs:
           name: site
           path: _build
   
-  deploy-docs:
+  Deploy-Docs:
     if: github.event_name == 'push'
     needs: build-docs
     runs-on: ubuntu-latest
