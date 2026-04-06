@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: psf/black@stable
         with:
+          version: "26.3.1"
           options: "--check --verbose"
   
   Codespell:
@@ -40,7 +41,7 @@ jobs:
       - name: Run codespell
         run: codespell --skip="*.bib,*.csv,*.pdf"
   
-  Accuracy-Test:
+  Accuracy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +53,7 @@ jobs:
           pip install numpy pandas scipy
       - run: python tests/test_accuracy.py
 
-  FuelLib-Functions-Test:
+  FuelLib-Functions-Eval:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,7 +65,19 @@ jobs:
           pip install numpy pandas scipy
       - run: python tests/test_fuellib_functions.py
 
-  Source-Docstrings-Test:
+  API-Contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas scipy
+      - run: python tests/test_api_contract.py -v
+
+  Source-Docstrings:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +88,7 @@ jobs:
           python -m pip install --upgrade pip
       - run: python tests/test_source_docstrings.py -v
   
-  Export4Pele-Test:
+  Export4Pele:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,7 +109,7 @@ jobs:
       - name: Test with single deposit species
         run: python source/Export4Pele.py --fuel_name posf10264 --dep_fuel_names POSF10264
   
-  Export4Converge-Test:
+  Export4Converge:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

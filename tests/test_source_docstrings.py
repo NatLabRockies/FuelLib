@@ -3,7 +3,6 @@ import re
 import unittest
 from pathlib import Path
 
-
 PARAM_RE = re.compile(r":param\s+([A-Za-z_][A-Za-z0-9_]*)\s*:")
 TYPE_RE = re.compile(r":type\s+([A-Za-z_][A-Za-z0-9_]*)\s*:")
 

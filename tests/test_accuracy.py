@@ -12,7 +12,6 @@ if FUELLIB_DIR not in sys.path:
 from paths import *
 import FuelLib as fl
 
-
 # Maximum MAPE (%) allowed for each property, regardless of baseline.
 # These act as absolute sanity checks to catch catastrophic regressions.
 ABS_MAPE_THRESHOLDS = {
