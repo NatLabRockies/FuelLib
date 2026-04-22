@@ -88,14 +88,20 @@ def getPredAndData(fuel_name, prop_name):
     fuel = fl.fuel(fuel_name)
 
     data_file = f"{fuel_name}.csv"
-    data = pd.read_csv(os.path.join(FUELDATA_PROPS_DIR, data_file), skiprows=[1])
-
-    # Separate properties and associated temperatures from data
-    T_data = data.Temperature[data[prop_name].notna()]
-    prop_data = data[prop_name].dropna()
-
-    # Vectors for temperature (convert from C to K)
-    T_pred = fl.C2K(np.linspace(min(T_data), max(T_data), 100))
+    try:
+        data = pd.read_csv(os.path.join(FUELDATA_PROPS_DIR, data_file), skiprows=[1])
+        # Separate properties and associated temperatures from data
+        T_data = data.Temperature[data[prop_name].notna()]
+        prop_data = data[prop_name].dropna()
+        # Vectors for temperature (convert from C to K)
+        T_pred = fl.C2K(np.linspace(min(T_data), max(T_data), 100))
+    except (FileNotFoundError, KeyError):
+        # If propertyData is not found, set temp min/max from xticks_posf
+        T_data = pd.Series()
+        prop_data = pd.Series()
+        temp_min = min(xticks_posf[prop_name])
+        temp_max = max(xticks_posf[prop_name])
+        T_pred = fl.C2K(np.linspace(temp_min, temp_max, 100))
 
     # Vectors for density, viscosity and vapor pressure
     pred = np.zeros_like(T_pred)
