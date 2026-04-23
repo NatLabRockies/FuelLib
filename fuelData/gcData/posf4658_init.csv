@@ -1,46 +1,68 @@
-﻿Compound,Weight %
-Xylene,1.45437295
-"Benzene, propyl-",3.145607582
-"Benzene, 1-ethyl-2-methyl-",3.549502759
-"Benzene, 1,2,3-trimethyl-",1.846509531
-"Benzene, 1,3,5-trimethyl-",1.81364819
-"Benzene, 1-methyl-3-(1-methylethyl)-",3.986095285
-"Benzene, 1-ethyl-2,4-dimethyl-",1.571332572
-"Benzene, 2-ethyl-1,4-dimethyl-",1.424983446
-"Benzene, 3-ethyl-1,4-dimethyl-",1.57291941
-"Benzene, 1-methyl-4-(1-methylpropyl)-",2.410348091
-"Benzene, (1-methyl-1-butenyl)-",2.884044103
-"Cyclohexane, 2-butyl-1,1,3-trimethyl-",1.292695568
-"Cyclohexane, (2-methylpropyl)-",2.195784822
-"Cyclohexane, heptyl-",1.78851462
-"Cyclohexane, octyl-",1.388878722
-"Cyclohexane, 1,1,3-trimethyl-",1.346871143
-"Cyclohexane, (1,3-dimethylbutyl)-",1.093953188
-"Naphthalene, 1,2,3,4-tetrahydro-",1.50789969
-"Naphthalene, 1,2,3,4-tetrahydro-6,7-dimethyl-",1.016007366
-"Naphthalene, 1-methyl-",1.075749124
-Heptane,1.670836538
-"Heptane, 2,6-dimethyl-",1.413771783
-Nonane,3.759554121
-"Octane, 3,6-dimethyl-",2.156827362
-Decane,6.412835419
-"Decane, 4-methyl-",2.143422131
-"Nonane, 3,7-dimethyl-",0.999605433
-"Decane, 2-methyl-",1.476045824
-"Decane, 3-methyl-",1.554699898
-Undecane,6.938931362
-"Undecane, 5-methyl-",1.078675588
-"Undecane, 4-methyl-",1.575594427
-"Undecane, 2-methyl-",2.140846396
-Dodecane,7.261606232
-"Undecane, 2,4-dimethyl-",1.399830137
-"Dodecane, 5-methyl-",0.820595792
-"Dodecane, 4-methyl-",1.370105712
-"Dodecane, 2-methyl-",2.618524984
-Tridecane,6.007286012
-"Tridecane, 2-methyl-",0.812035922
-"Tridecane, 3-methyl-",0.8650917
-"Dodecane, 4,6-dimethyl-",1.028597105
-Tetradecane,3.577794112
-Pentadecane,1.827704995
-Hexadecane,0.723462855
+﻿Compound,Reference Compound,PelePhysics Key,Weight %
+Toluene,toluene,C6H5CH3,0.16
+C2-Benzene,ethyl benzene,C6H5C2H5,0.78
+C3-Benzene,propyl benzene,C6H5C3H7,2.24
+C4-Benzene,butyl benzene,C6H5C4H9,3.02
+C5-Benzene,pentyl benzene,C6H5C5H11,2.48
+C6-Benzene,hexyl benzene,C6H5C6H13,1.93
+C7-Benzene,heptyl benzene,C6H5C7H15,1.19
+C8-Benzene,octyl benzene,C6H5C8H17,0.89
+C9-Benzene,nonyl benzene,C6H5C9H19,1.00
+Diaromatic-C10,naphthalene,NAPH,0.12
+Diaromatic-C11,1-methyl naphthalene,METHYLNAPH-1,0.42
+Diaromatic-C12,1-ethyl naphthalene,ETHYLNAPH-1,0.60
+Diaromatic-C13,1-propyl naphthalene,PROPYLNAPH-1,0.63
+Cycloaromatic-C09,indane,INDANE,0.04
+Cycloaromatic-C10,tetralin,TETRA,0.43
+Cycloaromatic-C11,2-methyl tetralin,METHYLTETRA-2,1.13
+Cycloaromatic-C12,2-ethly tetralin,ETHYLTETRA-2,1.63
+Cycloaromatic-C13,2-propyl tetralin,PROPYLTETRA-2,1.45
+Cycloaromatic-C14,2-butyl tetralin,BUTYLTETRA-2,1.12
+C07-Isoparaffin,2-methyl hexane,C7H16-2,0.23
+C08-Isoparaffin,2-methyl heptane,C8H18-2,0.56
+C09-Isoparaffin,2-methyl octane,C9H20-2,1.08
+C10-Isoparaffin,2-methyl nonane,C10H22-2,3.59
+C11-Isoparaffin,2-methyl decane,C11H24-2,5.12
+C12-Isoparaffin,2-methyl undecane,C12H26-2,5.31
+C13-Isoparaffin,2-methyl dodecane,C13H28-2,5.25
+C14-Isoparaffin,2-methyl tridecane,C14H30-2,4.44
+C15-Isoparaffin,2-methyl tetradecane,C15H32-2,3.10
+C16-Isoparaffin,2-methyl pentadecane,C16H34-2,1.66
+C17-Isoparaffin,2-methyl hexadecane,C17H36-2,0.69
+C18-Isoparaffin,2-methyl heptadecane,C18H38-2,0.19
+C19-Isoparaffin,2-methyl octadecane,C19H40-2,0.08
+C20-Isoparaffin,2-methyl nonadecane,C20H42-2,0.02
+n-C07,n-heptane,NC7H16,0.15
+n-C08,n-octane,NC8H18,0.54
+n-C09,n-nonane,NC9H20,1.14
+n-C10,n-decane,NC10H22,2.55
+n-C11,n-undecane,NC11H24,3.62
+n-C12,n-dodecane,NC12H26,3.70
+n-C13,n-tridecane,NC13H28,2.86
+n-C14,n-tetradecane,NC14H30,2.17
+n-C15,n-pentadecane,NC15H32,1.28
+n-C16,n-hexadecane (cetane),NC16H34,0.61
+n-C17,n-heptadecane,NC17H36,0.27
+n-C18,n-octadecane,NC18H38,0.07
+C07-Monocycloparaffin,methyl cyclohexane,C6H11CH3,0.20
+C08-Monocycloparaffin,ethyl cyclohexane,C6H11C2H5,0.69
+C09-Monocycloparaffin,propyl cyclohexane,C6H11C3H7,1.67
+C10-Monocycloparaffin,butyl cyclohexane,C6H11C4H9,3.26
+C11-Monocycloparaffin,pentyl cyclohexane,C6H11C5H11,4.11
+C12-Monocycloparaffin,hexyl cyclohexane,C6H11C6H13,4.07
+C13-Monocycloparaffin,heptyl cyclohexane,C6H11C7H15,3.65
+C14-Monocycloparaffin,octyl cyclohexane,C6H11C8H17,2.43
+C15-Monocycloparaffin,nonyl cyclohexane,C6H11C9H19,1.55
+C16-Monocycloparaffin,decyl cyclohexane,C6H11C10H21,0.64
+C17-Monocycloparaffin,undecyl cyclohexane,C6H11C11H23,0.37
+C08-Dicycloparaffin,Octahydropentalene,OHPEN,0.02
+C09-Dicycloparaffin,Hydrindane,HYDRIND,0.29
+C10-Dicycloparaffin,Decalin,DECALIN,0.43
+C11-Dicycloparaffin,2-methyldecalin,METHYLDECALIN-2,1.26
+C12-Dicycloparaffin,2-ethyldecalin,ETHYLDECALIN-2,1.22
+C13-Dicycloparaffin,2-propyldecalin,PROPYLDECALIN-2,1.42
+C14-Dicycloparaffin,2-butyldecalin,BUTYLDECALIN-2,0.82
+C15-Dicycloparaffin,2-pentyldacalin,PENTYLDECALIN-2,0.26
+C10-Tricycloparaffin,C1CC2C(C1)C1CCCC21,TRICYCLO-C10,0.00
+C11-Tricycloparaffin,C1CC2CC3CCCC3C2C1,TRICYCLO-C11,0.05
+C12-Tricycloparaffin,C1CC2CC3CCCC3CC2C1,TRICYCLO-C12,0.00
