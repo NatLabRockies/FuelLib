@@ -10,7 +10,6 @@ The GCxGC data for the POSF fuels comes from the [National Jet Fuels Combustion 
 * gcData/posf10289_init.csv
 * gcData/posf10325_init.csv
 * gcData/posf11498_init.csv
-* gcData/posf4658_init.csv
 
 ## HEFA:Jet-A Blends
 GCxGC data for HEFA fuels produced from diﬀerent feedstocks (camelina, tallow, and mixed fat) courtesy of [Vozka et al. (2018)](https://doi.org/10.1021/acs.energyfuels.8b02787). Note that these can be blended with Jet-A to reproduce the density and viscosity measurement data from that paper:

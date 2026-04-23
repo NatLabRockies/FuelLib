@@ -97,8 +97,8 @@ def getPredAndData(fuel_name, prop_name):
         T_pred = fl.C2K(np.linspace(min(T_data), max(T_data), 100))
     except (FileNotFoundError, KeyError):
         # If propertyData is not found, set temp min/max from xticks_posf
-        T_data = pd.Series()
-        prop_data = pd.Series()
+        T_data = pd.Series(dtype=float)
+        prop_data = pd.Series(dtype=float)
         temp_min = min(xticks_posf[prop_name])
         temp_max = max(xticks_posf[prop_name])
         T_pred = fl.C2K(np.linspace(temp_min, temp_max, 100))
