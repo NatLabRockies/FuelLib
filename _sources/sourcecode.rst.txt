@@ -1,0 +1,56 @@
+Source Code
+===========
+
+This page provides an overview of the source code available at `github.com/NatLabRockies/FuelLib <https://github.com/NatLabRockies/FuelLib>`_.
+
+.. _source-code-structure:
+
+FuelLib File Organization
+-------------------------
+
+- **docs:** directory containing the documentation source files
+- **fuelData:** 
+    - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
+    - **groupDecompositionData:** directory containing a collection of functional group decompositions
+    - **propertiesData:** directory containing measurement or predicted data for validation (see *fuelData/dataReferences.md*)
+- **gcmTableData:** directory that contains the pre-tabulated group contributions
+- **source:** directory containing the main source code files
+
+    - ``Export4Converge.py``: script that exports mixture properties over a range of user specified temperatures for use in Converge simulations.
+    - ``Export4Pele.py``: script that exports critical properties and initial mass fraction data for use in Pele simulations.
+    - ``FuelLib.py``: class for enabling GCM predictions
+
+- **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
+    
+    - **baselinePredictions:** directory that contains baseline predictions and script ``generate_baseline.py`` for generating baseline predictions for CI testing.
+    - ``test_accuracy.py``: unit test used in CI for verifying new model predictions preserve accuracy
+    - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
+    - ``test_api.py``: combined API/signature and function-evaluation test that checks public ``FuelLib.py`` module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
+    - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
+
+- **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
+
+    - ``basic.py``: example script that demonstrates basic usage of FuelLib
+    - ``compositionPlots.py``: example script that generates composition plots for a given fuel
+    - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
+    - ``mixtureProperties.py``: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.
+
+- ``paths.py``: file that defines paths to various directories and files used in FuelLib
+
+Public API
+----------
+
+FuelLib's public API is continuously validated in CI using ``tests/test_api.py``.
+This test verifies expected public module/class signatures and runs representative
+FuelLib smoke evaluations to catch unintended behavior changes.
+
+The project aims to keep the public API stable across releases. Any intentional
+breaking API change should be explicitly documented in release notes and
+accompanied by updates to tests and user-facing documentation.
+
+Click on links below for the full auto-documentation of the API.
+
+.. autosummary::
+    :toctree: generated
+
+    FuelLib
