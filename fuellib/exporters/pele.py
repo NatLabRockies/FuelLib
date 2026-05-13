@@ -568,7 +568,7 @@ def main():
 
     # Optional argument for fuel data directory
     parser.add_argument(
-        "-D",
+        "-dir",
         "--fuel_data_dir",
         default=FUELDATA_DIR,
         metavar="PATH",
@@ -577,7 +577,7 @@ def main():
 
     # Optional argument for decomposition file name
     parser.add_argument(
-        "-c",
+        "-decomp",
         "--fuel_decomp_name",
         default=None,
         metavar="NAME",
@@ -596,7 +596,7 @@ def main():
 
     # Optional argument for deposition fuel names
     parser.add_argument(
-        "-d",
+        "-dep",
         "--dep_fuel_names",
         nargs="+",  # Accepts one or more values
         default=None,
@@ -635,7 +635,7 @@ def main():
 
     # Optional argument for mixture name if different than fuel_name
     parser.add_argument(
-        "-n",
+        "-mn",
         "--export_mix_name",
         default=None,
         metavar="NAME",

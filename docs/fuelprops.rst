@@ -138,7 +138,7 @@ provided :math:`T` in K unless noted otherwise.
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.viscosity_kinematic
+.. automethod:: fuellib.fuel.viscosity_kinematic
    :noindex:
 
 The kinematic viscosity of the *i-th* compound of the fuel, 
@@ -159,7 +159,7 @@ Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{
 Latent heat of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.latent_heat_vaporization
+.. automethod:: fuellib.fuel.latent_heat_vaporization
    :noindex:
 
 The latent heat of vaporization for each compound at standard pressure and 
@@ -178,7 +178,7 @@ temperature\ :footcite:p:`govindaraju_group_2016`:
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.molar_liquid_vol
+.. automethod:: fuellib.fuel.molar_liquid_vol
    :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using 
@@ -203,7 +203,7 @@ where
 Density
 ^^^^^^^
 
-.. automethod:: FuelLib.fuel.density
+.. automethod:: fuellib.fuel.density
    :noindex:
 
 The density of the *i-th* compound is given by
@@ -215,7 +215,7 @@ The density of the *i-th* compound is given by
 Liquid specific heat capacity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.Cl
+.. automethod:: fuellib.fuel.Cl
    :noindex:
 
 The liquid specific heat capacity for each compound at standard pressure temperature is calculated from the specific heat capacity as:
@@ -228,7 +228,7 @@ The liquid specific heat capacity for each compound at standard pressure tempera
 Saturated vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.psat
+.. automethod:: fuellib.fuel.psat
    :noindex:
 
 The saturated vapor pressure for each compound is calculated as a function of 
@@ -260,7 +260,7 @@ The Ambrose-Walton\ :footcite:p:`ambrose_vapour_1989` correlation sets:
 
 with :math:`\tau_i = 1 - T_{r,i}`.
 
-.. automethod:: FuelLib.fuel.psat_antoine_coeffs
+.. automethod:: fuellib.fuel.psat_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -279,7 +279,7 @@ for additional information.
 Surface tension
 ^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.surface_tension
+.. automethod:: fuellib.fuel.surface_tension
    :noindex:
 
 Surface tension for each compound is approximated using the relation:
@@ -302,7 +302,7 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.thermal_conductivity
+.. automethod:: fuellib.fuel.thermal_conductivity
    :noindex:
 
 Thermal conductivity for each compound is computed according to the method of 
@@ -389,7 +389,7 @@ are used throughout this section.
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: FuelLib.mixing_rule
+.. autofunction:: fuellib.mixing_rule
    :noindex:
 
 While many of the mixture properties in FuelLib have a unique mixing rule,
@@ -415,7 +415,7 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 Mixture density
 ^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_density
+.. automethod:: fuellib.fuel.mixture_density
    :noindex:
 
 The mixture's density is calculated as:
@@ -428,7 +428,7 @@ The mixture's density is calculated as:
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_kinematic_viscosity
+.. automethod:: fuellib.fuel.mixture_kinematic_viscosity
    :noindex:
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
@@ -453,7 +453,7 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_vapor_pressure
+.. automethod:: fuellib.fuel.mixture_vapor_pressure
    :noindex:
 
 The vapor pressure of the mixture is calculated according to Raoult's law:
@@ -462,7 +462,7 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 
    p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.
 
-.. automethod:: FuelLib.fuel.mixture_vapor_pressure_antoine_coeffs
+.. automethod:: fuellib.fuel.mixture_vapor_pressure_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -481,7 +481,7 @@ for additional information.
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_surface_tension
+.. automethod:: fuellib.fuel.mixture_surface_tension
    :noindex:
 
 The surface tension of the mixture is calculated using the :ref:`conventional-mixing-rules`
@@ -494,7 +494,7 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_thermal_conductivity
+.. automethod:: fuellib.fuel.mixture_thermal_conductivity
    :noindex:
 
 The thermal conductivity of the mixture is calculated using the power law method of 

@@ -55,4 +55,4 @@ Click on links below for the full auto-documentation of the API.
 .. autosummary::
     :toctree: generated
 
-    FuelLib
+    fuellib

@@ -553,7 +553,7 @@ def main():
 
     # Optional argument for fuel data directory
     parser.add_argument(
-        "-D",
+        "-dir",
         "--fuel_data_dir",
         default=FUELDATA_DIR,
         metavar="PATH",

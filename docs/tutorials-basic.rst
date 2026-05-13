@@ -11,15 +11,20 @@ Download and Setup
 Clone the FuelLib repository from GitHub: ::
 
     git clone https://github.com/NatLabRockies/FuelLib.git
+    cd FuelLib
 
-Create and activate a Conda environment, install the required dependencies: ::
+Create and activate a Conda environment with the required dependencies: ::
 
-    conda create --name fuellib-env matplotlib pandas scipy
+    conda create --name fuellib-env python numpy pandas scipy matplotlib
     conda activate fuellib-env
 
-Change to the FuelLib/tutorials directory: ::
+Install FuelLib: ::
 
-    cd FuelLib/tutorials
+    pip install -e .
+
+Change to the tutorials directory: ::
+
+    cd tutorials
 
 Required Input Files and Decomposing Fuel Components
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -75,14 +80,7 @@ as ``basic.py``. To begin, we will import the necessary modules and create a ``f
 
 .. code-block:: python
 
-    import os
-    import sys
-
-    # Add the FuelLib directory to the Python path
-    FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-    sys.path.append(FUELLIB_DIR)
-    import paths
-    import FuelLib as fl
+    import fuellib as fl
 
     # Create a fuel object for the fuel "heptane-decane"
     fuel = fl.fuel("heptane-decane")

@@ -41,7 +41,7 @@ for each compound in the fuel:
 - Optionally, Antoine coefficients for vapor pressure
 
 
-The export script, ``Export4Pele.py``, generates an input file containing 
+The ``fl-export-pele`` command generates an input file containing 
 the necessary properties for each compound in the fuel. The following sections 
 walk through the process and the available options for exporting properties from FuelLib 
 to Pele.
@@ -120,14 +120,14 @@ Additional Options
 
 There are many additional options that can be specified when running the ``fl-export-pele`` command:
 
-- ``-c, --fuel_decomp_name NAME``: Name of the decomposition file (optional). If not provided, defaults to fuel name.
-- ``-D, --fuel_data_dir PATH``: Directory containing the fuel data files. Default: ``FuelLib/fuelData``.
+- ``-decomp, --fuel_decomp_name NAME``: Name of the decomposition file (optional). If not provided, defaults to fuel name.
+- ``-dir, --fuel_data_dir PATH``: Directory containing the fuel data files. Default: ``FuelLib/fuelData``.
 - ``-u, --units {mks,cgs}``: Units for the properties. Default: ``mks`` (use ``cgs`` for PeleC).
-- ``-d, --dep_fuel_names NAME [NAME ...]``: Gas-phase species that liquid fuel deposits to. Default: fuel compound names.
+- ``-dep, --dep_fuel_names NAME [NAME ...]``: Gas-phase species that liquid fuel deposits to. Default: fuel compound names.
 - ``-pp, --use_pp_keys {true,false}``: Use PelePhysics keys for each compound. Default: ``true``.
 - ``-o, --export_dir PATH``: Directory to export the file. Default: ``./exportData``.
 - ``-m, --export_mix {true,false}``: Export fuel as a single mixture species. Default: ``false``.
-- ``-n, --export_mix_name NAME``: Name of the mixture species if ``-m`` is set to true. Default: fuel name.
+- ``-mn, --export_mix_name NAME``: Name of the mixture species if ``-m`` is set to true. Default: fuel name.
 - ``-l, --liq_prop_model {gcm,mp}``: Liquid property model to use. Default: ``gcm``.
 - ``-psat, --psat_antoine {true,false}``: Use Antoine coefficients for vapor pressure in MP model. Default: ``true``.
 
@@ -136,7 +136,7 @@ Liquid Species Deposit to Single Gas-Phase Species
 
 To specify all liquid fuel species deposit to a single gas-phase species, run: ::
 
-    fl-export-pele -f heptane-decane -d SINGLE_GAS
+    fl-export-pele -f heptane-decane -dep SINGLE_GAS
 
 Or with long options: ::
 
@@ -206,10 +206,9 @@ where the liquid fuel is modeled as a single component that deposits to the HyCh
 Exporting Properties for the MP Model in Pele
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Users can export properties for the MP model in Pele by specifying ``--liq_prop_model mp`` when running the export script: ::
+Users can export properties for the MP model in Pele by specifying ``--liq_prop_model mp`` when running the export command: ::
     
-    cd FuelLib/source
-    python Export4Pele.py --fuel_name heptane-decane --liq_prop_model mp
+    fl-export-pele --fuel_name heptane-decane --liq_prop_model mp
 
 This generates the following input file, ``FuelLib/exportData/sprayPropsMP_heptane-decane.inp``, for use in a PeleLMeX simulation: ::
     
@@ -243,10 +242,9 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsMP_hepta
     particles.NC10H22_rho = 726.195341 # kg/m^3
     particles.NC10H22_psat = 4.380101435197679 1702.1569216938776 -60.0774808903445 100000.0 # Pa
 
-Users can choose to not use Antoine coefficients for vapor pressure in the MP model by specifying ``--psat_antoine False`` when running the export script: ::
+Users can choose to not use Antoine coefficients for vapor pressure in the MP model by specifying ``--psat_antoine False`` when running the export command: ::
     
-    cd FuelLib/source
-    python Export4Pele.py --fuel_name heptane-decane --liq_prop_model mp --psat_antoine False
+    fl-export-pele --fuel_name heptane-decane --liq_prop_model mp --psat_antoine False
 
 This generates a similar input file as above, but without the Antoine coefficients for vapor pressure.
 

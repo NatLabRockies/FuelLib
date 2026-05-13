@@ -15,12 +15,6 @@ If you use FuelLib in your research, please cite the following software record:
 Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, and Binswanger, Adam. FuelLib (Fuel Library) [SWR-25-26]. Computer Software. https://github.com/NatLabRockies/FuelLib. USDOE Office of Energy Efficiency and Renewable Energy (EERE), Office of Sustainable Transportation. Vehicle Technologies Office (VTO). 27 Feb. 2025. Web. doi:10.11578/dc.20250317.1.
 ~~~
 
-## Python Environment
-The following conda environment is required to run this code:
-~~~
-conda create --name fuellib-env matplotlib pandas scipy black=26.3.1
-~~~
-
 ## Installation
 
 1. **Clone the repository:**
@@ -31,16 +25,23 @@ conda create --name fuellib-env matplotlib pandas scipy black=26.3.1
 
 2. **Create and activate the conda environment:**
    ~~~
-   conda create --name fuellib-env matplotlib pandas scipy black=26.3.1
+   conda create --name fuellib-env python numpy pandas scipy matplotlib
    conda activate fuellib-env
    ~~~
 
-3. **Install FuelLib in development mode:**
+3. **Install FuelLib:**
+
+   **Option A: Basic installation**:
    ~~~
    pip install -e .
    ~~~
 
-This will install FuelLib and make the command-line exporters (`fl-export-pele` and `fl-export-converge`) available in your environment.
+   **Option B: Full development installation** (includes documentation, testing, and formatting tools):
+   ~~~
+   pip install -e ".[dev]"
+   ~~~
+
+This will install FuelLib and make the command-line exporters (`fl-export-pele` and `fl-export-converge`) available in your environment. If you installed with `[dev]`, you can also use `fl-build-docs` and `fl-clean-docs` to manage documentation, and `fl-format` to format code.
 
 ## Running the Code
 This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction]. The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
@@ -64,23 +65,25 @@ New contributions are always welcome.  If you have an idea for a new feature fol
 1. Fork the main repository
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
-4. Format the source code files using the [Black code formatter](https://github.com/psf/black) by running the following command:
-   (CI currently uses Black version `26.3.1`; use the same version locally.)
+4. Format the source code files using the provided CLI command:
    ~~~
-   find . -name "*.py" -print0 | xargs -0 black
+   fl-format
    ~~~
+   (Requires installing with `pip install -e ".[dev]"`. Uses Black version `26.3.1`.)
 5. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.
 
 ## Sphinx Documentation
-This repository uses [Sphinx](https://www.sphinx-doc.org/en/master/usage/quickstart.html) to generate documentation.  This requires the following Conda environment:
+This repository uses [Sphinx](https://www.sphinx-doc.org/en/master/usage/quickstart.html) to generate documentation.
+
+To build the documentation, first install FuelLib with development support:
 ~~~
-conda create --name sphinx-env sphinx sphinx_rtd_theme sphinxcontrib-bibtex pandas scipy
+pip install -e ".[dev]"
 ~~~
 
-To view the documentation locally, build the html using the following: 
+Then use the provided CLI command:
 ~~~
-cd FuelLib/docs/
-sphinx-build -M html . _build/
+fl-build-docs
 ~~~
-You should now be able to view the html by opening `FuelLib/docs/_build/html/index.html` in a web browser. 
+
+The HTML documentation will be generated in `docs/_build/html/`. Open `docs/_build/html/index.html` in your web browser to view it. 
 

@@ -5,7 +5,8 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../source"))
+# Add parent directory to path so we can import fuellib
+sys.path.insert(0, os.path.abspath(".."))
 
 
 # -- Project information -----------------------------------------------------
