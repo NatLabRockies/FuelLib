@@ -213,7 +213,7 @@ The density of the *i-th* compound is given by
 
 
 Mass specific heat capacity of the liquid
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automethod:: fuellib.fuel.Cl
    :noindex:
