@@ -50,7 +50,7 @@ jobs:
           python-version: '3.11'
       - run: |
           python -m pip install --upgrade pip
-          pip install numpy pandas scipy
+          pip install -e .
       - run: python tests/test_accuracy.py
 
   API:
@@ -62,7 +62,7 @@ jobs:
           python-version: '3.11'
       - run: |
           python -m pip install --upgrade pip
-          pip install numpy pandas scipy
+          pip install -e .
       - run: python tests/test_api.py -v
 
   Source-Docstrings:
@@ -74,6 +74,7 @@ jobs:
           python-version: '3.11'
       - run: |
           python -m pip install --upgrade pip
+          pip install -e .
       - run: python tests/test_source_docstrings.py -v
   
   Exporting-Scripts:
@@ -85,19 +86,19 @@ jobs:
           python-version: '3.11'
       - run: |
           python -m pip install --upgrade pip
-          pip install numpy pandas scipy
-      - name: Export4Pele - individual component export
-        run: python source/Export4Pele.py --fuel_name posf10264
-      - name: Export4Pele - mixture export with GCM model
-        run: python source/Export4Pele.py --fuel_name posf10264 --export_mix True
-      - name: Export4Pele - mixture export with MP model
-        run: python source/Export4Pele.py --fuel_name posf10264 --export_mix True --liq_prop_model mp
-      - name: Export4Pele - mixture export with CGS units
-        run: python source/Export4Pele.py --fuel_name posf10264 --export_mix True --units cgs
-      - name: Export4Pele - single deposit species
-        run: python source/Export4Pele.py --fuel_name posf10264 --dep_fuel_names POSF10264
-      - name: Export4Converge - individual component export
-        run: python source/Export4Converge.py --fuel_name posf10264
-      - name: Export4Converge - mixture export
-        run: python source/Export4Converge.py --fuel_name posf10264 --export_mix 1 --temp_min 280 --temp_max 400 --temp_step 10
+          pip install -e .
+      - name: fl-export-pele - individual component export
+        run: fl-export-pele -f posf10264
+      - name: fl-export-pele - mixture export with GCM model
+        run: fl-export-pele -f posf10264 -m true
+      - name: fl-export-pele - mixture export with MP model
+        run: fl-export-pele -f posf10264 -m true -l mp
+      - name: fl-export-pele - mixture export with CGS units
+        run: fl-export-pele -f posf10264 -m true -u cgs
+      - name: fl-export-pele - single deposit species
+        run: fl-export-pele -f posf10264 -dep POSF10264
+      - name: fl-export-converge - individual component export
+        run: fl-export-converge -f posf10264
+      - name: fl-export-converge - mixture export
+        run: fl-export-converge -f posf10264 -m true -t 280 -T 400 -s 10
   
