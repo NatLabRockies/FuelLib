@@ -41,17 +41,15 @@ New contributions are always welcome! To contribute:
 2. Create a new branch for your feature: ``git checkout -b newFeature``
 3. Make your changes and update documentation as needed
 4. Ensure development dependencies are installed (see Development Setup above)
-5. Format your code using Black:
-
-   .. code-block:: bash
-
-      fl-format
+5. Format your code using Black ``fl-format``
 
 6. Run tests to verify your changes:
 
    .. code-block:: bash
 
-      pytest tests/
+      python tests/test_api.py
+      python tests/test_accuracy.py
+      python tests/test_source_docstrings.py
 
 7. Open a Pull Request (PR) from your fork to the main FuelLib repository
 

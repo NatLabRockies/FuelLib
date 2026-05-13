@@ -55,7 +55,7 @@ to Pele.
 Default Options
 ^^^^^^^^^^^^^^^
     
-After installing FuelLib with ``pip install -e .``, run the following command in the terminal to export 
+After installing FuelLib with ``pip install fuellib``, run the following command in the terminal to export 
 the required GCM parameters. The fuel here, "heptane-decane", is a binary mixture 
 of heptane and decane. Note that ``--fuel_name`` is the only required input: ::
     

@@ -68,7 +68,7 @@ def _iter_api_functions(module_node):
 class SourceDocstringContractTestCase(unittest.TestCase):
     def test_source_function_documentation(self):
         fuellib_dir = Path(__file__).resolve().parents[1] / "fuellib"
-        
+
         # Check main module, exporter scripts, and CLI entry points
         py_files = [
             fuellib_dir / "__init__.py",
@@ -78,7 +78,7 @@ class SourceDocstringContractTestCase(unittest.TestCase):
             fuellib_dir / "clean_docs.py",
             fuellib_dir / "format_code.py",
         ]
-        
+
         total_count = 0
         passed_count = 0
         current_file = None
