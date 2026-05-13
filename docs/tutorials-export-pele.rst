@@ -27,7 +27,7 @@ the following for each compound in the fuel for the GCM:
 - Boiling point
 - Accentric factor
 - Molar volume
-- Specific heat coefficients
+- Mass specific heat coefficients
 - Latent heat of vaporization
 
 The MP model in PelePhysics requires properties at a specified reference temperature 

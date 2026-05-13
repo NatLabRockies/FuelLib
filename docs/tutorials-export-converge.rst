@@ -18,7 +18,7 @@ The properties include:
 - Latent heat of vaporization
 - Vapor pressure
 - Density
-- Specific heat
+- Mass specific heat
 - Thermal conductivity
 
 .. note::

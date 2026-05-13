@@ -220,7 +220,7 @@ class fuel:
         self.Vm_stp = 0.01211 + np.matmul(self.Nij, Vmk)  # m^3/kmol
         self.Vm_stp *= 1e-3  # Convert to m^3/mol
 
-        # C_p,stp (specific heat at 298 K)
+        # C_p,stp (molar specific heat at 298 K)
         self.Cp_stp = np.matmul(self.Nij, cpak) - 19.7779  # J/mol/K
 
         # Temperature corrections for C_p
@@ -407,13 +407,13 @@ class fuel:
 
     def Cp(self, T, comp_idx=None):
         """
-        Compute specific heat capacity at a given temperature.
+        Compute molar specific heat capacity at a given temperature.
 
         :param T: Temperature in Kelvin.
         :type T: float
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
-        :return: Specific heat capacity in J/mol/K.
+        :return: Molar specific heat capacity in J/mol/K.
         :rtype: np.ndarray
         """
 
@@ -433,13 +433,13 @@ class fuel:
 
     def Cl(self, T, comp_idx=None):
         """
-        Compute liquid specific heat capacity in J/kg/K at a given temperature.
+        Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
 
         :param T: Temperature in Kelvin.
         :type T: float
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
-        :return: Specific heat capacity in J/kg/K.
+        :return: Mass specific heat capacity in J/kg/K.
         :rtype: np.ndarray
         """
         if comp_idx is None:

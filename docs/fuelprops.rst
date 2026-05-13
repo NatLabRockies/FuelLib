@@ -46,7 +46,7 @@ Table of GCM properties
    :math:`\Delta H_{v,\textit{stp},i}`   J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
    :math:`\omega_i`                      1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
    :math:`V_{m,\textit{stp},i}`          m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
-   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
+   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
    ====================================  =====================  ===========================================  ====================  ===========================================================
 
 .. _eq-GCM-properties:
@@ -113,7 +113,7 @@ provided :math:`T` in K unless noted otherwise.
    :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
-   :math:`C_{\ell,i}`             J/kg/K                 Liquid specific heat capacity\ :footcite:p:`govindaraju_group_2016`. 
+   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity. 
    :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
@@ -212,13 +212,13 @@ The density of the *i-th* compound is given by
    \rho_i = \frac{M_{w,i}}{V_{m,i}}.
 
 
-Liquid specific heat capacity
+Mass specific heat capacity of the liquid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automethod:: fuellib.fuel.Cl
    :noindex:
 
-The liquid specific heat capacity for each compound at standard pressure temperature is calculated from the specific heat capacity as:
+The mass specific heat capacity for each compound at standard pressure temperature is calculated from the molar specific heat capacity as:
 
 .. math::
    C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}} 
