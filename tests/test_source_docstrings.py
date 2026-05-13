@@ -67,16 +67,29 @@ def _iter_api_functions(module_node):
 
 class SourceDocstringContractTestCase(unittest.TestCase):
     def test_source_function_documentation(self):
-        source_dir = Path(__file__).resolve().parents[1] / "source"
+        fuellib_dir = Path(__file__).resolve().parents[1] / "fuellib"
+        
+        # Check main module, exporter scripts, and CLI entry points
+        py_files = [
+            fuellib_dir / "__init__.py",
+            fuellib_dir / "exporters" / "pele.py",
+            fuellib_dir / "exporters" / "converge.py",
+            fuellib_dir / "build_docs.py",
+            fuellib_dir / "clean_docs.py",
+            fuellib_dir / "format_code.py",
+        ]
+        
         total_count = 0
         passed_count = 0
         current_file = None
 
         print("\n")  # Add newline to separate from unittest verbose output
 
-        for py_file in sorted(source_dir.glob("*.py")):
+        for py_file in py_files:
+            if not py_file.exists():
+                continue
             tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))
-            file_label = py_file.relative_to(source_dir.parent)
+            file_label = py_file.relative_to(fuellib_dir.parent)
 
             # Print file header when switching files
             if current_file != file_label:

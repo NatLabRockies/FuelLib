@@ -26,8 +26,8 @@ def main():
     docs_dir = os.path.join(project_root, "docs")
 
     # Ensure fuellib is in the Python path for autodoc
-    if fuellib_dir not in sys.path:
-        sys.path.insert(0, os.path.dirname(fuellib_dir))
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
 
     # Build command
     build_cmd = [

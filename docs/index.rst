@@ -14,43 +14,6 @@ The source code is available at `github.com/NatLabRockies/FuelLib <https://githu
    :width: 600pt
    :align: center
 
-
-Installation
-------------
-
-The easiest way to install FuelLib is via pip:
-
-.. code-block:: bash
-
-   # Basic installation
-   pip install fuellib
-
-   # Or with development tools (docs, testing, formatting)
-   pip install 'fuellib[dev]'
-
-For development or to install from source, see the `tutorials-basic <tutorials/tutorials-basic.html>`_ page for detailed installation instructions.
-
-After installation, the command-line exporters will be available:
-
-.. code-block:: bash
-
-   fl-export-pele -h          # Export for PelePhysics simulations
-   fl-export-converge -h      # Export for Converge simulations
-   fl-build-docs              # Build documentation (requires [dev])
-   fl-format                  # Format code with Black (requires [dev])
-
-**Package Requirements**
-
-FuelLib requires:
-
-- **Core dependencies:** numpy ≥1.19.0, pandas ≥1.0.0, scipy ≥1.5.0
-- **Optional dependencies** (``[dev]`` extra): 
-  - Documentation: sphinx ≥4.0, sphinx-rtd-theme ≥1.0, sphinxcontrib-bibtex ≥2.0
-  - Code formatting: black ≥26.3.1
-  - Testing: pytest ≥6.0
-  - Plotting: matplotlib ≥3.0
-
-
 Citing this work
 ----------------
 
@@ -73,13 +36,40 @@ If you use FuelLib in your research, please cite the following software record:
       month = {feb}
    }
 
+Installation
+------------
+
+The easiest way to install FuelLib is via pip:
+
+.. code-block:: bash
+
+   pip install fuellib
+
+After installation, the command-line exporters for exporting fuel data will be available:
+
+.. code-block:: bash
+
+   fl-export-pele -h          # Export for PelePhysics simulations
+   fl-export-converge -h      # Export for Converge simulations
+
+For more detailed information or development setup, see the `Contributing <contributing.html>`_ page.
+
+**Package Requirements**
+
+FuelLib requires:
+
+- numpy ≥1.19.0, pandas ≥1.0.0, scipy ≥1.5.0
+
+Development tools (Sphinx, Black, pytest, matplotlib) are available for developers installing from source; see the installation instructions in the tutorials section.
+
 .. toctree::
    :maxdepth: 4
    :includehidden:
    :caption: Contents:
 
    fuelprops
-   sourcecode
    tutorials
+   sourcecode   
+   development
 
 .. footbibliography::

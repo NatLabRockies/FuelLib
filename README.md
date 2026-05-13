@@ -22,14 +22,10 @@ Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, a
 The easiest way to install FuelLib is via pip:
 
 ```bash
-# Basic installation
 pip install fuellib
-
-# Or with development tools (docs, testing, formatting)
-pip install 'fuellib[dev]'
 ```
 
-This will make the command-line exporters (`fl-export-pele` and `fl-export-converge`) available. With the `[dev]` extra, you'll also have `fl-build-docs`, `fl-clean-docs`, and `fl-format` commands.
+This will make the command-line exporters (`fl-export-pele` and `fl-export-converge`) available.
 
 ### Option 2: Development Installation (For Contributors)
 
@@ -38,10 +34,10 @@ Clone the repository and install in editable mode:
 ```bash
 git clone https://github.com/NatLabRockies/FuelLib.git
 cd FuelLib
-pip install -e .           # Basic installation
-# or
-pip install -e ".[dev]"    # Full development installation
+pip install -e '.[dev]'  # Install with development tools (docs, testing, formatting)
 ```
+
+See the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page for more detailed setup instructions and contribution guidelines.
 
 ### Optional: Create a Conda Environment
 
@@ -50,7 +46,7 @@ To use a specific conda environment:
 ```bash
 conda create --name fuellib-env python numpy pandas scipy matplotlib
 conda activate fuellib-env
-pip install 'fuellib[dev]'  # or pip install fuellib
+pip install fuellib
 ```
 
 ## Running the Code
@@ -71,16 +67,22 @@ fl-export-converge -f posf10325
 Run `fl-export-pele -h` or `fl-export-converge -h` for detailed usage information. 
 
 # Contributing
-New contributions are always welcome.  If you have an idea for a new feature follow these steps:
+New contributions are always welcome! For detailed contribution guidelines, installation instructions, and development setup, see the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page in the documentation.
+
+Quick start:
 1. Fork the main repository
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
-4. Format the source code files using the provided CLI command:
+4. Install development dependencies:
+   ```bash
+   pip install -e '.[dev]'
+   ```
+5. Format the source code files using the provided CLI command:
    ~~~
    fl-format
    ~~~
-   (Requires installing with `pip install -e ".[dev]"`. Uses Black version `26.3.1`.)
-5. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.
+6. Run tests and build documentation locally to verify your changes
+7. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.
 
 ## Sphinx Documentation
 This repository uses [Sphinx](https://www.sphinx-doc.org/en/master/usage/quickstart.html) to generate documentation.

@@ -8,33 +8,15 @@ provides a basic introduction to using FuelLib, including installation, required
 Download and Setup
 ^^^^^^^^^^^^^^^^^^
 
-**Option 1: Install from PyPI (Recommended)**
+Install FuelLib using pip:
 
-Install FuelLib using pip: ::
+.. code-block:: bash
 
-    pip install fuellib
+   pip install fuellib
 
-Or with development tools: ::
+For information about contributing or development setup, see the `Contributing <development.html>`_ page.
 
-    pip install 'fuellib[dev]'
-
-**Option 2: Development Installation (From Source)**
-
-Clone the FuelLib repository from GitHub: ::
-
-    git clone https://github.com/NatLabRockies/FuelLib.git
-    cd FuelLib
-
-Create and activate a Conda environment with the required dependencies: ::
-
-    conda create --name fuellib-env python numpy pandas scipy matplotlib
-    conda activate fuellib-env
-
-Install FuelLib: ::
-
-    pip install -e .
-
-Change to the tutorials directory: ::
+After installation, change to the tutorials directory to run the examples:
 
     cd tutorials
 
