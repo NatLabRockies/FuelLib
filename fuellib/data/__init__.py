@@ -1,0 +1,1 @@
+"""FuelLib embedded data package."""

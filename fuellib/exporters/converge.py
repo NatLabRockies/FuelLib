@@ -1,15 +1,11 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 import argparse
-import FuelLib as fl
+import fuellib as fl
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-if FUELLIB_DIR not in sys.path:
-    sys.path.append(FUELLIB_DIR)
-from paths import *
+# Default data directory - use fuellib's embedded data
+FUELDATA_DIR = fl.get_fueldata_dir()
 
 """
 Script that exports mixture properties over large temperature range for use in
@@ -20,7 +16,7 @@ a file named "mixturePropsGCM_<fuel_name>.csv" in the specified directory.
 The file contains mixture properties for the fuel, formatted for Converge.
 
 Usage:
-    python Export4Converge.py --fuel_name <fuel_name>
+    fl-export-converge --fuel_name <fuel_name>
 
 Options:
         --units <units>
@@ -141,7 +137,7 @@ class UnitConverter:
 
 def export_converge(
     fuel,
-    path=os.path.join(FUELLIB_DIR, "exportData"),
+    path=None,
     units="mks",
     temp_min=0,
     temp_max=1000,
@@ -155,7 +151,7 @@ def export_converge(
     :type fuel: fl.fuel
 
     :param path: Directory to save the input file.
-    :type path: str, optional (default: FuelLib/exportData)
+    :type path: str, optional (default: current directory/exportData)
 
     :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
     :type units: str, optional (default: "mks")
@@ -178,6 +174,9 @@ def export_converge(
     :raises ValueError: If input parameters are invalid
     :raises TypeError: If fuel object is not a FuelLib fuel instance
     """
+    if path is None:
+        path = os.path.join(os.getcwd(), "exportData")
+
     # Input validation
     if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
         raise TypeError("fuel parameter must be a valid FuelLib fuel object")
@@ -507,30 +506,6 @@ def export_converge(
         export_properties_to_csv(composition_file, composition_data)
 
 
-def validate_fuel_files(fuel_name, fuel_data_dir):
-    """
-    Validate that required fuel data files exist.
-
-    :param fuel_name: Name of the fuel.
-    :type fuel_name: str
-    :param fuel_data_dir: Directory containing fuel data files.
-    :type fuel_data_dir: str
-    :raises FileNotFoundError: If required files are missing.
-    """
-    gcxgc_file = os.path.join(fuel_data_dir, f"gcData/{fuel_name}_init.csv")
-    decomp_file = os.path.join(fuel_data_dir, f"groupDecompositionData/{fuel_name}.csv")
-
-    if not os.path.exists(gcxgc_file):
-        raise FileNotFoundError(f"GCXGC file for {fuel_name} not found: {gcxgc_file}")
-
-    if not os.path.exists(decomp_file):
-        raise FileNotFoundError(
-            f"Decomposition file for {fuel_name} not found: {decomp_file}"
-        )
-
-    print("All required files found.")
-
-
 def main():
     """
     Main function to execute the export process.
@@ -554,7 +529,7 @@ def main():
     :type --temp_step: float, optional (default: 10 K)
 
     :param --export_dir: Directory to export the properties.
-    :type --export_dir: str, optional (default: FuelLib/exportData)
+    :type --export_dir: str, optional (default: current directory/exportData)
 
     :param --export_mix: Whether to export individual component or mixture properties.
     :type --export_mix: bool, optional (default: False)
@@ -569,63 +544,79 @@ def main():
 
     # Mandatory argument for fuel name
     parser.add_argument(
+        "-f",
         "--fuel_name",
         required=True,
+        metavar="NAME",
         help="Name of the fuel (mandatory).",
     )
 
     # Optional argument for fuel data directory
     parser.add_argument(
+        "-D",
         "--fuel_data_dir",
         default=FUELDATA_DIR,
+        metavar="PATH",
         help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
     )
 
     # Optional argument for units
     # Default is 'mks', but can be set to 'cgs'
     parser.add_argument(
+        "-u",
         "--units",
         default="mks",
-        help="Units for critical properties: mks or cgs (optional, default: mks).",
+        metavar="{mks,cgs}",
+        help="Units for critical properties (optional, default: mks).",
     )
 
     # Optional argument for minimum temperature
     parser.add_argument(
+        "-t",
         "--temp_min",
         type=float,
         default=0,
-        help="Minimum temperature (K) for the property calculations (optional, default: 0).",
+        metavar="K",
+        help="Minimum temperature for property calculations (optional, default: 0).",
     )
 
     # Optional argument for maximum temperature
     parser.add_argument(
+        "-T",
         "--temp_max",
         type=float,
         default=1000,
-        help="Maximum temperature (K) for the property calculations (optional, default: 1000).",
+        metavar="K",
+        help="Maximum temperature for property calculations (optional, default: 1000).",
     )
 
     # Optional argument for temperature step size
     parser.add_argument(
+        "-s",
         "--temp_step",
         type=int,
         default=10,
-        help="Step size for temperature (K) (optional, default: 10).",
+        metavar="K",
+        help="Step size for temperature (optional, default: 10).",
     )
 
     # Optional argument for export directory
     parser.add_argument(
+        "-o",
         "--export_dir",
-        default=os.path.join(FUELLIB_DIR, "exportData"),
-        help="Directory to export the properties (optional, default: FuelLib/exportData).",
+        default=os.path.join(os.getcwd(), "exportData"),
+        metavar="PATH",
+        help="Directory to export the properties (optional, default: ./exportData).",
     )
 
     # Optional argument for exporting mixture properties
     parser.add_argument(
+        "-m",
         "--export_mix",
         type=lambda x: str(x).lower() in ["true", "1"],
         default=False,
-        help="Option to export mixture properties of the fuel (True or False, default: False).",
+        metavar="{true,false}",
+        help="Export mixture properties of the fuel (optional, default: false).",
     )
 
     # Parse arguments

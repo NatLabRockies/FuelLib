@@ -14,11 +14,13 @@ FuelLib File Organization
     - **groupDecompositionData:** directory containing a collection of functional group decompositions
     - **propertiesData:** directory containing measurement or predicted data for validation (see *fuelData/dataReferences.md*)
 - **gcmTableData:** directory that contains the pre-tabulated group contributions
-- **source:** directory containing the main source code files
+- **fuellib:** main package directory containing:
 
-    - ``Export4Converge.py``: script that exports mixture properties over a range of user specified temperatures for use in Converge simulations.
-    - ``Export4Pele.py``: script that exports critical properties and initial mass fraction data for use in Pele simulations.
     - ``FuelLib.py``: class for enabling GCM predictions
+    - **exporters:** subpackage with CLI exporters for generating fuel properties
+    
+        - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)
+        - ``pele.py``: exporter for PelePhysics simulations (CLI: ``fl-export-pele``)
 
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     

@@ -1,15 +1,9 @@
-import os
-import sys
 import numpy as np
 import pandas as pd
 import re
 import matplotlib.pyplot as plt
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(FUELLIB_DIR)
-import paths
-import FuelLib as fl
+import fuellib as fl
 
 fuel_name = "posf10325"
 

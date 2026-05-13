@@ -1,17 +1,13 @@
 import os
-import sys
 import pandas as pd
 import argparse
 import subprocess
 from datetime import datetime
 from scipy import stats as st
-import FuelLib as fl
+import fuellib as fl
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-if FUELLIB_DIR not in sys.path:
-    sys.path.append(FUELLIB_DIR)
-from paths import *
+# Default data directory - use fuellib's embedded data
+FUELDATA_DIR = fl.get_fueldata_dir()
 
 """
 Script that exports critical properties and initial mass fraction data
@@ -23,7 +19,7 @@ in the specified directory. The file contains properties for each compound in
 the fuel, formatted for Pele.
 
 Usage:
-    python Export4Pele.py --fuel_name <fuel_name>
+    fl-export-pele --fuel_name <fuel_name>
 
 Options:
         --units <mks or cgs>
@@ -246,7 +242,7 @@ def vec_to_str(vec):
 
 def export_pele(
     fuel,
-    path=os.path.join(FUELLIB_DIR, "exportData"),
+    path=None,
     units="mks",
     dep_fuel_names=None,
     use_pp_keys=True,
@@ -262,7 +258,7 @@ def export_pele(
     :type fuel: fuel object
 
     :param path: Directory to save the input file.
-    :type path: str, optional (default: FuelLib/exportData)
+    :type path: str, optional (default: current directory/exportData)
 
     :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
     :type units: str, optional (default: "mks")
@@ -291,6 +287,9 @@ def export_pele(
     :raises ValueError: If input parameters are invalid
     :raises TypeError: If fuel object is not a FuelLib fuel instance
     """
+    if path is None:
+        path = os.path.join(os.getcwd(), "exportData")
+
     # Input validation
     if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
         raise TypeError("fuel parameter must be a valid FuelLib fuel object")
@@ -535,7 +534,7 @@ def main():
     :param --use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is True.
     :type --use_pp_keys: bool, optional
 
-    :param --export_dir: Directory to export the properties. Default is "FuelLib/exportData".
+    :param --export_dir: Directory to export the properties. Default is "current directory/exportData".
     :type --export_dir: str, optional
 
     :param --export_mix: Option to export mixture properties of the fuel (True or False). Default is False.
@@ -560,84 +559,106 @@ def main():
 
     # Mandatory argument for fuel name
     parser.add_argument(
+        "-f",
         "--fuel_name",
         required=True,
+        metavar="NAME",
         help="Name of the fuel (mandatory).",
     )
 
     # Optional argument for fuel data directory
     parser.add_argument(
+        "-D",
         "--fuel_data_dir",
         default=FUELDATA_DIR,
+        metavar="PATH",
         help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
     )
 
     # Optional argument for decomposition file name
     parser.add_argument(
+        "-c",
         "--fuel_decomp_name",
         default=None,
+        metavar="NAME",
         help="Name of the decomposition file (optional). If not provided, defaults to fuel_name.",
     )
 
     # Optional argument for units
     # Default is 'mks', but can be set to 'cgs'
     parser.add_argument(
+        "-u",
         "--units",
         default="mks",
-        help="Units for critical properties: mks or cgs (optional, default: mks).",
+        metavar="{mks,cgs}",
+        help="Units for critical properties (optional, default: mks).",
     )
 
     # Optional argument for deposition fuel names
     parser.add_argument(
+        "-d",
         "--dep_fuel_names",
         nargs="+",  # Accepts one or more values
         default=None,
+        metavar="NAME",
         help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.compounds).",
     )
 
     # Optional argument for using PelePhysics key
     parser.add_argument(
+        "-pp",
         "--use_pp_keys",
         type=lambda x: str(x).lower() in ["true", "1"],
         default=True,
-        help="Use the PelePhysics key for each compound (True or False, default: True).",
+        metavar="{true,false}",
+        help="Use PelePhysics keys for each compound (optional, default: true).",
     )
 
     # Optional argument for export directory
     parser.add_argument(
+        "-o",
         "--export_dir",
-        default=os.path.join(FUELLIB_DIR, "exportData"),
-        help="Directory to export the properties (optional, default: FuelLib/exportData).",
+        default=os.path.join(os.getcwd(), "exportData"),
+        metavar="PATH",
+        help="Directory to export the properties (optional, default: ./exportData).",
     )
 
     # Optional argument for exporting mixture properties
     parser.add_argument(
+        "-m",
         "--export_mix",
         type=lambda x: str(x).lower() in ["true", "1"],
         default=False,
-        help="Option to export mixture properties of the fuel (True or False, default: False).",
+        metavar="{true,false}",
+        help="Export mixture properties of the fuel (optional, default: false).",
     )
 
     # Optional argument for mixture name if different than fuel_name
     parser.add_argument(
+        "-n",
         "--export_mix_name",
         default=None,
+        metavar="NAME",
         help="Name the mixture if different than fuel_name (optional, default: fuel_name).",
     )
 
     # Optional argument for liquid property model
     parser.add_argument(
+        "-l",
         "--liq_prop_model",
         default="gcm",
-        help='Model for liquid properties: "gcm" (default) or "mp" (optional, default: gcm).',
+        metavar="{gcm,mp}",
+        help="Model for liquid properties (optional, default: gcm).",
     )
 
     # Optional argument for printing Antoine coefficients in MP model
     parser.add_argument(
+        "-psat",
         "--psat_antoine",
         type=lambda x: str(x).lower() in ["true", "1"],
         default=True,
-        help="Use Antoine coefficients for vapor pressure in MP model (True or False, default: True).",
+        metavar="{true,false}",
+        help="Use Antoine coefficients for vapor pressure in MP model (optional, default: true).",
     )
 
     # Parse arguments

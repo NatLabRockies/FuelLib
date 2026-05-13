@@ -1,14 +1,9 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(FUELLIB_DIR)
-from paths import *
-import FuelLib as fl
+import fuellib as fl
 
 # -----------------------------------------------------------------------------
 # Calculate mixture properties from the group contribution properties
@@ -89,7 +84,7 @@ def getPredAndData(fuel_name, prop_name):
 
     data_file = f"{fuel_name}.csv"
     try:
-        data = pd.read_csv(os.path.join(FUELDATA_PROPS_DIR, data_file), skiprows=[1])
+        data = pd.read_csv(os.path.join(fl.get_fueldata_props_dir(), data_file), skiprows=[1])
         # Separate properties and associated temperatures from data
         T_data = data.Temperature[data[prop_name].notna()]
         prop_data = data[prop_name].dropna()

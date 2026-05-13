@@ -16,7 +16,7 @@ and the original `PeleMP (MP) model <https://amrex-combustion.github.io/PelePhys
 The GCM is a replica of the model implemented in FuelLib and the MP model is the original model described in Owen et al. :footcite:p:`owen_pelemp_2024`
 
 Each model has its own specific set of inputs required for Pele. The default parameters
-for the export script ``Export4Pele.py`` are set for the GCM.  PelePhysics requires 
+for the ``fl-export-pele`` command are set for the GCM.  PelePhysics requires 
 the following for each compound in the fuel for the GCM:
 
 - Hydrocarbon family
@@ -49,18 +49,21 @@ to Pele.
 .. note::
     The units for PeleLMeX are MKS while the units for PeleC are CGS. This is the same for 
     the spray inputs. Therefore, when running a spray simulation coupled with PeleC, the units for the 
-    liquid fuel properties must be in CGS. The default units for the ``Export4Pele.py`` script is MKS, 
-    but users can specify CGS by using the ``--units cgs`` option.
+    liquid fuel properties must be in CGS. The default units for the ``fl-export-pele`` command is MKS, 
+    but users can specify CGS by using the ``-u cgs`` or ``--units cgs`` option.
 
 Default Options
 ^^^^^^^^^^^^^^^
     
-From the ``FuelLib`` directory, navigate to the source directory and run the following command in the terminal to export 
+After installing FuelLib with ``pip install -e .``, run the following command in the terminal to export 
 the required GCM parameters. The fuel here, "heptane-decane", is a binary mixture 
 of heptane and decane. Note that ``--fuel_name`` is the only required input: ::
     
-    cd FuelLib/source
-    python Export4Pele.py --fuel_name heptane-decane
+    fl-export-pele --fuel_name heptane-decane
+
+Or using the short option ``-f``: ::
+
+    fl-export-pele -f heptane-decane
 
 
 This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_heptane-decane.inp``, for use in a PeleLMeX simulation: ::
@@ -115,43 +118,36 @@ file to the specific case directory and include the following line in your Pele 
 Additional Options
 ^^^^^^^^^^^^^^^^^^
 
-There are many additional options that can be specified when running the export script:
+There are many additional options that can be specified when running the ``fl-export-pele`` command:
 
-- ``--fuel_decomp_name``: Name of the decomposition file (optional). If not provided, defaults to ``fuel_name``.
-- ``--fuel_data_dir``: Specify the directory containing the fuel data files. The default is ``"FuelLib/fuelData"``.
-- ``--units``: Specify the units for the properties. The default is "mks" but users can set the units to "cgs" for use in PeleC.
-- ``--dep_fuel_names``: Specify which gas-phase species the liquid fuel deposits. The default is the same as the fuel name, but users can specify a single gas-phase species or a list of gas-phase species.
-- ``--use_pp_keys``: Use the PelePhysics key for each compound (True or False). The default is True if keys are available.
-- ``--export_dir``: Specify the directory to export the file. The default is "FuelLib/exportData".
-- ``--export_mix``: Export the fuel as a single mixture species. The default is 0 or False.
-- ``--export_mix_name``: Specify the name of the mixture species if ``--export_mix`` is set to True. The default is the same as the fuel name.
-- ``--fuel_data_dir``: Specify the directory containing the fuel data files. The default is "FuelLib/fuelData".
-- ``--liq_prop_model``: Specify the liquid property model to use. The default is ``"gcm"`` but users can set it to ``"mp"`` to export properties for the MP model in Pele.
-- ``--psat_antoine``: Option to use Antoine coefficients for vapor pressure in the MP model. The default is True, but users can set it to False to not use Antoine coefficients.
+- ``-c, --fuel_decomp_name NAME``: Name of the decomposition file (optional). If not provided, defaults to fuel name.
+- ``-D, --fuel_data_dir PATH``: Directory containing the fuel data files. Default: ``FuelLib/fuelData``.
+- ``-u, --units {mks,cgs}``: Units for the properties. Default: ``mks`` (use ``cgs`` for PeleC).
+- ``-d, --dep_fuel_names NAME [NAME ...]``: Gas-phase species that liquid fuel deposits to. Default: fuel compound names.
+- ``-pp, --use_pp_keys {true,false}``: Use PelePhysics keys for each compound. Default: ``true``.
+- ``-o, --export_dir PATH``: Directory to export the file. Default: ``./exportData``.
+- ``-m, --export_mix {true,false}``: Export fuel as a single mixture species. Default: ``false``.
+- ``-n, --export_mix_name NAME``: Name of the mixture species if ``-m`` is set to true. Default: fuel name.
+- ``-l, --liq_prop_model {gcm,mp}``: Liquid property model to use. Default: ``gcm``.
+- ``-psat, --psat_antoine {true,false}``: Use Antoine coefficients for vapor pressure in MP model. Default: ``true``.
 
 Liquid Species Deposit to Single Gas-Phase Species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To specify all liquid fuel species deposity to a single gas-phase species, run the following command: ::
+To specify all liquid fuel species deposit to a single gas-phase species, run: ::
 
-    cd FuelLib/source
-    python Export4Pele.py --fuel_name heptane-decane --dep_fuel_names SINGLE_GAS
+    fl-export-pele -f heptane-decane -d SINGLE_GAS
 
-This will result in the following: ::
+Or with long options: ::
 
-    particles.fuel_species = NC7H16 NC10H22
-    particles.Y_0 = 0.7375 0.2625
-    particles.dep_fuel_names = SINGLE_GAS SINGLE_GAS
-
-    # Properties for NC7H16 in MKS
-    ...
+    fl-export-pele --fuel_name heptane-decane --dep_fuel_names SINGLE_GAS
 
 Liquid Species Deposit to Specific Gas-Phase Species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Alternatively, users can specify a list of gas-phase species, run the following command: ::
+Alternatively, users can specify a list of gas-phase species: ::
 
-    python Export4Pele.py --fuel_name heptane-decane --dep_fuel_names GAS_1 GAS_2
+    fl-export-pele -f heptane-decane -d GAS_1 GAS_2
 
 which produces: ::
 
@@ -165,10 +161,13 @@ which produces: ::
 Export Liquid Fuel as Single Mixture Species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To export mixture properties of a multicomponent fuel as a single component, run the following command: ::
+To export mixture properties of a multicomponent fuel as a single component, run: ::
 
-    cd FuelLib/source
-    python Export4Pele.py --fuel_name heptane-decane --export_mix True
+    fl-export-pele -f heptane-decane -m true
+
+Or with long options: ::
+
+    fl-export-pele --fuel_name heptane-decane --export_mix true
 
 This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_mixture_heptane-decane.inp``: ::
 

@@ -1,14 +1,33 @@
+"""
+FuelLib: Fuel Library for Group Contribution Method calculations.
+
+FuelLib utilizes the Group Contribution Method (GCM) as proposed by Constantinou 
+and Gani (1994, 1995) to calculate thermodynamic and mixture properties of fuels.
+"""
+
 import os
-import sys
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-if FUELLIB_DIR not in sys.path:
-    sys.path.append(FUELLIB_DIR)
-from paths import *
+from ._data_locator import (
+    get_gcmtable_dir,
+    get_fueldata_dir,
+    get_fueldata_gc_dir,
+    get_fueldata_decomp_dir,
+    get_fueldata_props_dir,
+)
+
+__version__ = "0.1.0"
+__all__ = [
+    "fuel",
+    "C2K",
+    "K2C",
+    "mixing_rule",
+    "droplet_volume",
+    "droplet_mass",
+    "get_fueldata_props_dir",
+]
 
 
 class fuel:
@@ -19,7 +38,7 @@ class fuel:
     :type name: str
     :param decompName: Name of the groupDecomposition file if different from name. Defaults to None.
     :type decompName: str, optional
-    :param fuelDataDir: Directory where the fuel data is stored. Defaults to FuelLib/fuelData.
+    :param fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
     :type fuelDataDir: str, optional
     """
 
@@ -30,7 +49,7 @@ class fuel:
     # Boltzmann's constant J/K
     k_B = 1.380649e-23
 
-    def __init__(self, name, decompName=None, fuelDataDir=FUELDATA_DIR):
+    def __init__(self, name, decompName=None, fuelDataDir=None):
         """
         Initialize the fuel object and calculate GCM properties.
 
@@ -38,27 +57,34 @@ class fuel:
         :type name: str
         :param decompName: Name of the groupDecomposition file if different from name.
         :type decompName: str, optional
-        :param fuelDataDir: Directory where the fuel data is stored.
+        :param fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
         :type fuelDataDir: str, optional
         """
 
         self.name = name
         if decompName is None:
             decompName = name
-        if fuelDataDir != FUELDATA_DIR:
+
+        # Determine which data directories to use
+        if fuelDataDir is None:
+            # Use built-in embedded data
+            self.fuelDataDir = get_fueldata_dir()
+            self.fuelDataGcDir = get_fueldata_gc_dir()
+            self.fuelDataDecompDir = get_fueldata_decomp_dir()
+        else:
+            # Use user-provided custom data directory
             self.fuelDataDir = fuelDataDir
             self.fuelDataGcDir = os.path.join(self.fuelDataDir, "gcData")
             self.fuelDataDecompDir = os.path.join(
                 self.fuelDataDir, "groupDecompositionData"
             )
-        else:
-            self.fuelDataDir = FUELDATA_DIR
-            self.fuelDataGcDir = FUELDATA_GC_DIR
-            self.fuelDataDecompDir = FUELDATA_DECOMP_DIR
+
+        # Get GCM table directory (always from built-in data)
+        gcmtable_dir = get_gcmtable_dir()
 
         self.groupDecompFile = os.path.join(self.fuelDataDecompDir, f"{decompName}.csv")
         self.gcxgcFile = os.path.join(self.fuelDataGcDir, f"{name}_init.csv")
-        self.gcmTableFile = os.path.join(GCMTABLE_DIR, "gcmTable.csv")
+        self.gcmTableFile = os.path.join(gcmtable_dir, "gcmTable.csv")
 
         # Read functional group data for mixture (num_compounds,num_groups)
         df_Nij = pd.read_csv(self.groupDecompFile)
@@ -1004,7 +1030,8 @@ class fuel:
 
 # -----------------------------------------------------------------------------
 # Utility functions
-# -----------------------------------------------------------------------------
+# -------
+
 def C2K(T):
     """
     Convert temperature from Celsius to Kelvin.
@@ -1072,8 +1099,8 @@ def droplet_mass(fuel, r, Yi, T):
     """
     Calculate the mass of each compound in the fuel provided the radius of the droplet.
 
-    :param fuel: An instance of the groupContribution class.
-    :type fuel: groupContribution object
+    :param fuel: An instance of the fuel class.
+    :type fuel: fuel object
     :param r: Radius of the droplet in meters.
     :type r: float
     :param Yi: Mass fractions of each compound.

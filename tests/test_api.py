@@ -1,15 +1,8 @@
 import inspect
-import os
-import sys
 import unittest
 import numpy as np
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-if FUELLIB_DIR not in sys.path:
-    sys.path.append(FUELLIB_DIR)
-from paths import *
-import FuelLib as fl
+import fuellib as fl
 
 
 def _normalize_signature(sig):

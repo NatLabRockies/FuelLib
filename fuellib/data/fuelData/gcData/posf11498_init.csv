@@ -1,0 +1,14 @@
+﻿Compound,Reference Compound,PelePhysics Key,Weight %
+C07-Isoparaffin,2-methyl hexane,C7H16-2,0.02
+C08-Isoparaffin,2-methyl heptane,C8H18-2,0.61
+C09-Isoparaffin,2-methyl octane,C9H20-2,0.17
+C10-Isoparaffin,2-methyl nonane,C10H22-2,0.22
+C11-Isoparaffin,2-methyl decane,C11H24-2,0.52
+C12-Isoparaffin,2-methyl undecane,C12H26-2,78.28
+C13-Isoparaffin,2-methyl dodecane,C13H28-2,1.23
+C14-Isoparaffin,2-methyl tridecane,C14H30-2,0.53
+C16-Isoparaffin,2-methyl pentadecane,C16H34-2,16.25
+C20-Isoparaffin,2-methyl nonadecane,C20H42-2,1.69
+C24-Isoparaffin,2-methyltricosane,C24H50-2,0.12
+C12-Alkene,1-dodecene,DODECENE-1,0.08
+C16-Alkene,1-hexadecene,HEXADECENE-1,0.24
