@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fuellib"
-version = "2.1.2a1"
+version = "2.1.2a2"
 description = "FuelLib: A Python library for Group Contribution Method (GCM) calculations of fuel properties"
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = {text = "BSD-3-Clause"}
 authors = [
     {name = "NLR", email = "david.montgomery@nlr.gov"},
 ]
