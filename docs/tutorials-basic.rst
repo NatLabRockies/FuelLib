@@ -8,6 +8,18 @@ provides a basic introduction to using FuelLib, including installation, required
 Download and Setup
 ^^^^^^^^^^^^^^^^^^
 
+**Option 1: Install from PyPI (Recommended)**
+
+Install FuelLib using pip: ::
+
+    pip install fuellib
+
+Or with development tools: ::
+
+    pip install 'fuellib[dev]'
+
+**Option 2: Development Installation (From Source)**
+
 Clone the FuelLib repository from GitHub: ::
 
     git clone https://github.com/NatLabRockies/FuelLib.git

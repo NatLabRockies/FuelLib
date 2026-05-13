@@ -17,31 +17,41 @@ Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, a
 
 ## Installation
 
-1. **Clone the repository:**
-   ~~~
-   git clone https://github.com/NatLabRockies/FuelLib.git
-   cd FuelLib
-   ~~~
+### Option 1: Install from PyPI (Recommended)
 
-2. **Create and activate the conda environment:**
-   ~~~
-   conda create --name fuellib-env python numpy pandas scipy matplotlib
-   conda activate fuellib-env
-   ~~~
+The easiest way to install FuelLib is via pip:
 
-3. **Install FuelLib:**
+```bash
+# Basic installation
+pip install fuellib
 
-   **Option A: Basic installation**:
-   ~~~
-   pip install -e .
-   ~~~
+# Or with development tools (docs, testing, formatting)
+pip install 'fuellib[dev]'
+```
 
-   **Option B: Full development installation** (includes documentation, testing, and formatting tools):
-   ~~~
-   pip install -e ".[dev]"
-   ~~~
+This will make the command-line exporters (`fl-export-pele` and `fl-export-converge`) available. With the `[dev]` extra, you'll also have `fl-build-docs`, `fl-clean-docs`, and `fl-format` commands.
 
-This will install FuelLib and make the command-line exporters (`fl-export-pele` and `fl-export-converge`) available in your environment. If you installed with `[dev]`, you can also use `fl-build-docs` and `fl-clean-docs` to manage documentation, and `fl-format` to format code.
+### Option 2: Development Installation (For Contributors)
+
+Clone the repository and install in editable mode:
+
+```bash
+git clone https://github.com/NatLabRockies/FuelLib.git
+cd FuelLib
+pip install -e .           # Basic installation
+# or
+pip install -e ".[dev]"    # Full development installation
+```
+
+### Optional: Create a Conda Environment
+
+To use a specific conda environment:
+
+```bash
+conda create --name fuellib-env python numpy pandas scipy matplotlib
+conda activate fuellib-env
+pip install 'fuellib[dev]'  # or pip install fuellib
+```
 
 ## Running the Code
 This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction]. The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).

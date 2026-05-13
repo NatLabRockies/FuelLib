@@ -37,8 +37,6 @@ FuelLib File Organization
     - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
     - ``mixtureProperties.py``: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.
 
-- ``paths.py``: file that defines paths to various directories and files used in FuelLib
-
 Public API
 ----------
 
