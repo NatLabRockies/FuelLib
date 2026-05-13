@@ -53,7 +53,7 @@ pip install fuellib
 This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction]. The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
 
 ### Command-Line Exporters
-After installing FuelLib with `pip install fuellib .`, you can use the command-line exporters to generate fuel properties for CFD simulations:
+After installing FuelLib using one of the methods above, you can use the command-line exporters to generate fuel properties for CFD simulations:
 
 - `fl-export-pele`: Export fuel properties for PelePhysics simulations
 - `fl-export-converge`: Export fuel properties for Converge simulations
