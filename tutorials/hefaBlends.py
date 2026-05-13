@@ -60,7 +60,9 @@ def getPredAndData(fuel_name, prop_name, blend):
     jetA = fl.fuel(conv_fuel_name)
 
     data_file = "hefa-jet-a-blends.csv"
-    data = pd.read_csv(os.path.join(fl.get_fueldata_props_dir(), data_file), skiprows=[1])
+    data = pd.read_csv(
+        os.path.join(fl.get_fueldata_props_dir(), data_file), skiprows=[1]
+    )
     col = f"{prop_name}_{fuel_name[5:].upper()}"
     prop_data = data[col]
     blend_data = data["HEFA_concentration"]
