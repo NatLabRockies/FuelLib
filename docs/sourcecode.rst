@@ -22,12 +22,18 @@ FuelLib File Organization
         - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)
         - ``pele.py``: exporter for PelePhysics simulations (CLI: ``fl-export-pele``)
 
+    - **utilities:** subpackage with CLI utility tools for data conversion
+    
+        - ``epsilon_converter.py``: convert Lennard-Jones well depth from J/mol to characteristic temperature in Kelvin (CLI: ``fl-eps2K``)
+        - ``temp_converter.py``: convert temperature between Celsius and Kelvin (CLI: ``fl-C2K``, ``fl-K2C``)
+
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     
     - **baselinePredictions:** directory that contains baseline predictions and script ``generate_baseline.py`` for generating baseline predictions for CI testing.
     - ``test_accuracy.py``: unit test used in CI for verifying new model predictions preserve accuracy
     - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public ``FuelLib.py`` module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
+    - ``test_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
