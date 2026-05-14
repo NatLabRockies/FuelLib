@@ -47,6 +47,7 @@ class ApiContractTestCase(unittest.TestCase):
             "mixing_rule": "(var_n, X, pseudo_prop='arithmetic')",
             "droplet_volume": "(r)",
             "droplet_mass": "(fuel, r, Yi, T)",
+            "epsilon_to_characteristic_temperature": "(epsilon_j_per_mol)",
         }
 
         actual = _public_module_functions(fl)
