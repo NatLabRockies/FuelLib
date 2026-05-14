@@ -49,8 +49,8 @@ conda activate fuellib-env
 pip install fuellib
 ```
 
-## Running the Code
-This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction]. The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
+## Library Usage
+This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction](https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction). The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
 
 ### Command-Line Tools
 After installing FuelLib using one of the methods above, you have access to several command-line tools:
@@ -101,14 +101,8 @@ Quick start:
 1. Fork the main repository
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
-4. Install development dependencies:
-   ```bash
-   pip install -e '.[dev]'
-   ```
-5. Format the source code files using the provided CLI command:
-   ~~~
-   fl-format
-   ~~~
+4. Install development dependencies: `pip install -e '.[dev]`
+5. Format the source code files using the provided CLI command: `fl-format`
 6. Run tests and build documentation locally to verify your changes
 7. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.
 
