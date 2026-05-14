@@ -25,13 +25,20 @@ from ._data_locator import (
     get_fueldata_props_dir,
 )
 
+# Physical constants
+k_B = 1.380649e-23  # Boltzmann's constant in J/K
+N_A = 6.02214076e23  # Avogadro's number in 1/mol
+
 __all__ = [
     "fuel",
+    "k_B",
+    "N_A",
     "C2K",
     "K2C",
     "mixing_rule",
     "droplet_volume",
     "droplet_mass",
+    "epsilon_to_characteristic_temperature",
     "get_fueldata_props_dir",
 ]
 
@@ -51,9 +58,6 @@ class fuel:
     # Number of first and second order groups from Constantinou and Gani
     N_g1 = 78
     N_g2 = 43
-
-    # Boltzmann's constant J/K
-    k_B = 1.380649e-23
 
     def __init__(self, name, decompName=None, fuelDataDir=None):
         """
@@ -1036,7 +1040,26 @@ class fuel:
 
 # -----------------------------------------------------------------------------
 # Utility functions
-# -------
+# -----------------------------------------------------------------------------
+
+
+def epsilon_to_characteristic_temperature(epsilon_j_per_mol):
+    """
+    Convert Lennard-Jones epsilon from J/mol to characteristic temperature in Kelvin.
+
+    The characteristic temperature (epsilon/k_B) is used in transport property
+    correlations and is required by combustion codes like CHEMKIN.
+
+    Uses the relation: T* = (epsilon_J/mol) / (N_A * k_B)
+
+    :param epsilon_j_per_mol: Lennard-Jones well depth epsilon in J/mol.
+    :type epsilon_j_per_mol: float
+    :return: Characteristic temperature (epsilon/k_B) in Kelvin.
+    :rtype: float
+    """
+    epsilon_per_molecule = epsilon_j_per_mol / N_A
+    lj_welldepth_K = epsilon_per_molecule / k_B
+    return lj_welldepth_K
 
 
 def C2K(T):

@@ -52,19 +52,47 @@ pip install fuellib
 ## Running the Code
 This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, `tutorials/basic.py`, which is documented at [https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction]. The script `tutorials/mixtureProperties.py` calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
 
-### Command-Line Exporters
-After installing FuelLib using one of the methods above, you can use the command-line exporters to generate fuel properties for CFD simulations:
+### Command-Line Tools
+After installing FuelLib using one of the methods above, you have access to several command-line tools:
+
+#### Exporters
+Export fuel properties for CFD simulations:
 
 - `fl-export-pele`: Export fuel properties for PelePhysics simulations
 - `fl-export-converge`: Export fuel properties for Converge simulations
 
-For example:
+Example:
 ```bash
 fl-export-pele -f posf10264
 fl-export-converge -f posf10325
 ```
 
-Run `fl-export-pele -h` or `fl-export-converge -h` for detailed usage information. 
+Run `fl-export-pele -h` or `fl-export-converge -h` for detailed usage information.
+
+#### Utilities
+Utility functions for combustion simulations:
+
+**Temperature Conversion:**
+- `fl-C2K`: Convert temperature from Celsius to Kelvin
+- `fl-K2C`: Convert temperature from Kelvin to Celsius
+
+Example:
+```bash
+fl-C2K 25.0
+# Output: 25.0 °C = 298.15 K
+
+fl-K2C 373.15
+# Output: 373.15 K = 100.00 °C
+```
+
+**Transport Properties:**
+- `fl-eps2K`: Convert Lennard-Jones well depth from J/mol to characteristic temperature in Kelvin. Useful when preparing CHEMKIN chemical mechanisms which requires the characteristic temperature (epsilon/k_B) rather than the well depth energy directly.
+
+Example:
+```bash
+fl-eps2K 4066.75
+# Output: Characteristic temperature: 489.118 K
+``` 
 
 # Contributing
 New contributions are always welcome! For detailed contribution guidelines, installation instructions, and development setup, see the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page in the documentation.

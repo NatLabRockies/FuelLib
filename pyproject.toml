@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fuellib"
-version = "2.1.2a3"
+version = "2.1.2a4"
 description = "FuelLib: A Python library for Group Contribution Method (GCM) calculations of fuel properties"
 readme = "README.md"
 license = {text = "BSD-3-Clause"}
@@ -50,6 +50,9 @@ fl-export-pele = "fuellib.exporters.pele:main"
 fl-build-docs = "fuellib.build_docs:main"
 fl-clean-docs = "fuellib.clean_docs:main"
 fl-format = "fuellib.format_code:main"
+fl-eps2K = "fuellib.utilities.transport_props_converter:eps2K_main"
+fl-C2K = "fuellib.utilities.temp_converter:c2k_main"
+fl-K2C = "fuellib.utilities.temp_converter:k2c_main"
 
 [project.urls]
 Repository = "https://github.com/NatLabRockies/FuelLib"
@@ -57,7 +60,7 @@ Issues = "https://github.com/NatLabRockies/FuelLib/issues"
 Documentation = "https://NatLabRockies.github.io/FuelLib"
 
 [tool.setuptools]
-packages = ["fuellib", "fuellib.exporters"]
+packages = ["fuellib", "fuellib.exporters", "fuellib.utilities"]
 
 [tool.setuptools.package-data]
 fuellib = [
