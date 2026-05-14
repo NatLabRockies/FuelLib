@@ -10,6 +10,13 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
+try:
+    from importlib.metadata import version
+
+    __version__ = version("fuellib")
+except Exception:
+    __version__ = "unknown"
+
 from ._data_locator import (
     get_gcmtable_dir,
     get_fueldata_dir,
@@ -18,7 +25,6 @@ from ._data_locator import (
     get_fueldata_props_dir,
 )
 
-__version__ = "0.1.0"
 __all__ = [
     "fuel",
     "C2K",
