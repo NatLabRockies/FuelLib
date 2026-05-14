@@ -22,10 +22,14 @@ FuelLib File Organization
         - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)
         - ``pele.py``: exporter for PelePhysics simulations (CLI: ``fl-export-pele``)
 
-    - **utilities:** subpackage with CLI utility tools for data conversion
+    - **utilities:** subpackage with CLI utility tools for data conversion and analysis
     
-        - ``epsilon_converter.py``: convert Lennard-Jones well depth from J/mol to characteristic temperature in Kelvin (CLI: ``fl-eps2K``)
+        - ``transport_props_converter.py``: convert Lennard-Jones well depth from J/mol to characteristic temperature in Kelvin (CLI: ``fl-eps2K``)
         - ``temp_converter.py``: convert temperature between Celsius and Kelvin (CLI: ``fl-C2K``, ``fl-K2C``)
+        - ``plotting.py``: plot fuel composition and mixture properties
+        
+            - ``plot_composition()``: plot fuel composition by compound and chemical family (CLI: ``fl-plt-comp``)
+            - ``plot_mixture_properties()``: plot mixture properties over temperature range with optional experimental data (CLI: ``fl-plt-props``)
 
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     

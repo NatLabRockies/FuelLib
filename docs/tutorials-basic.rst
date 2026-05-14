@@ -20,8 +20,8 @@ For information about contributing or development setup, see the `Contributing <
 
 If you want to run the example scripts, you can either clone the repository or download individual tutorial files from the `tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_ directory on GitHub.
 
-Required Input Files and Decomposing Fuel Components
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Required Input Files
+^^^^^^^^^^^^^^^^^^^^^
 
 FuelLib requires two input files for any given fuel, ``<fuel_name>``:
 
@@ -29,6 +29,10 @@ FuelLib requires two input files for any given fuel, ``<fuel_name>``:
 - ``FuelLib/fuelData/groupDecompositionData/<fuel_name>.csv``: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as `gcmTable <https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv>`_)
 
 These two required files must have the same number of rows and the same order of components. Many examples can be found in the `fuelData <https://github.com/NatLabRockies/FuelLib/tree/main/fuelData>`_ directory.
+
+**Fuel Metadata**
+
+For custom fuels, a ``fuel_metadata.yaml`` file is required to define decomposition name mappings. This allows you to map fuel variants to the correct group decomposition file. See the `Adding Custom Fuels <tutorials-custom-fuels.html>`_ tutorial for details on the metadata file format and structure.
 
 Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

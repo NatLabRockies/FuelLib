@@ -23,6 +23,7 @@ from ._data_locator import (
     get_fueldata_gc_dir,
     get_fueldata_decomp_dir,
     get_fueldata_props_dir,
+    get_decomp_name_from_metadata,
 )
 
 # Physical constants
@@ -73,7 +74,8 @@ class fuel:
 
         self.name = name
         if decompName is None:
-            decompName = name
+            # Try to get decomposition name from metadata
+            decompName = get_decomp_name_from_metadata(name, fuelDataDir)
 
         # Determine which data directories to use
         if fuelDataDir is None:
@@ -108,28 +110,81 @@ class fuel:
         # 2: cycloparaffins
         # 3: olefins
         self.fam = np.zeros(self.num_compounds, dtype=int)
+        
+        # Classify hydrocarbon by type (n-alkane, iso-alkane, cyclo-alkane, aromatic)
+        # Based on group decompositions from Constantinou-Gani method
+        self.hc_type = np.array([''] * self.num_compounds, dtype=object)
+        
         aromatics = 10  # starting index for aromatic groups
         num_aromatics = 5
-        cyclos = 84  # starting index for membered ring groups
+        branching = 78  # starting index for branching groups (Group j (CH3)2CH through C(CH3)2C(CH3)2)
+        num_branching = 5  # groups 78-82 inclusive
+        cyclos = 83  # starting index for membered ring groups (3-7 membered rings)
         num_cyclos = 5
         olefins = 4  # starting index for double bound groups
         num_olefins = 6
+        
         for i in range(self.num_compounds):
             # Check if aromatic: does it contain AC's?
             if sum(self.Nij[i, aromatics : aromatics + num_aromatics]) > 0:
                 self.fam[i] = 1
+                self.hc_type[i] = 'aromatic'
             # Check if cycloparaffin: does it contain rings?
             elif sum(self.Nij[i, cyclos : cyclos + num_cyclos]) > 0:
                 self.fam[i] = 2
+                self.hc_type[i] = 'cyclo-alkane'
             # Check if olefin: does it contain double bonds?
             elif sum(self.Nij[i, olefins : olefins + num_olefins]) > 0:
                 self.fam[i] = 3
+                self.hc_type[i] = 'alkene'
+            # Check for branching groups (CH, C quaternary carbons)
+            elif sum(self.Nij[i, branching : branching + num_branching]) > 0:
+                self.hc_type[i] = 'iso-alkane'
+            else:
+                # Only CH3 and CH2 -> n-alkane (linear)
+                self.hc_type[i] = 'n-alkane'
 
-        # Read initial liquid composition of mixture and normalize to get mass frac
+        # Calculate carbon and hydrogen numbers from first-order group decomposition
+        # For jet fuels, use only alkyl (0-3) and aromatic (10-14) groups
+        # Alkyl: CH3=1C,3H; CH2=1C,2H; CH=1C,1H; C=1C,0H
+        # Aromatic: ACH=1C,1H; AC=1C,0H; ACCH3=2C,3H; ACCH2=2C,2H; ACCH=2C,1H
+        alkyl_carbons = np.array([1, 1, 1, 1])  # groups 0-3
+        alkyl_hydrogens = np.array([3, 2, 1, 0])
+        # Olefinic: group 4 appears to represent 2 carbons with 3 hydrogens in UNIFAC-based system
+        olefinic_carbons = np.array([2, 1, 1, 0, 0, 0])  # groups 4-9
+        olefinic_hydrogens = np.array([3, 1, 0, 0, 0, 0])
+        aromatic_carbons = np.array([1, 1, 2, 2, 2])  # groups 10-14
+        aromatic_hydrogens = np.array([1, 0, 3, 2, 1])
+
+        self.nC = np.zeros(self.num_compounds, dtype=float)
+        self.nH = np.zeros(self.num_compounds, dtype=float)
+        for i in range(self.num_compounds):
+            # Alkyl contribution (groups 0-3)
+            self.nC[i] = np.dot(self.Nij[i, 0:4], alkyl_carbons)
+            self.nH[i] = np.dot(self.Nij[i, 0:4], alkyl_hydrogens)
+            # Olefinic contribution (groups 4-9)
+            self.nC[i] += np.dot(self.Nij[i, 4:10], olefinic_carbons)
+            self.nH[i] += np.dot(self.Nij[i, 4:10], olefinic_hydrogens)
+            # Aromatic contribution (groups 10-14)
+            self.nC[i] += np.dot(self.Nij[i, 10:15], aromatic_carbons)
+            self.nH[i] += np.dot(self.Nij[i, 10:15], aromatic_hydrogens)
+
+        # Read GCxGC/compound data
         df_gcxgc = pd.read_csv(self.gcxgcFile)
+
         self.compounds = [
             compound.strip() for compound in df_gcxgc["Compound"].to_list()
         ]
+        
+        # Load molecular formulas if available
+        if "Formula" in df_gcxgc.columns:
+            self.formulas = [
+                formula.strip() if pd.notna(formula) else None 
+                for formula in df_gcxgc["Formula"].to_list()
+            ]
+        else:
+            self.formulas = None
+            
         if "PelePhysics Key" in df_gcxgc.columns:
             self.pelephysics_keys = [
                 key.strip() for key in df_gcxgc["PelePhysics Key"].to_list()

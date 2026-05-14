@@ -19,20 +19,10 @@ in the specified directory. The file contains properties for each compound in
 the fuel, formatted for Pele.
 
 Usage:
-    fl-export-pele --fuel_name <fuel_name>
+    fl-export-pele -f <fuel_name>
 
-Options:
-        --units <mks or cgs>
-        --fuel_decomp_name <name of decomposition file, if not provided defaults to fuel_name>
-        --fuel_data_dir <directory where fuel data files are located>
-        --dep_fuel_names <list of fuels to deposit to>
-        --use_pp_keys <True or False to use PelePhysics key for each compound>
-        --export_dir <directory where file is exported>
-        --export_mix <True or False to export mixture properties of fuel>
-        --export_mix_name <name the mixture if different than fuel_name>
-        --fuel_data_dir <directory where fuel data files are located>
-        --liq_prop_model <gcm or mp>
-        --psat_antoine <True or False for Antoine coefficients in MP model>
+For detailed options, run:
+    fl-export-pele -h
 """
 
 

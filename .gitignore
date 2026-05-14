@@ -20,3 +20,6 @@ build/
 env/
 venv/
 
+# Figures from plotting tools
+composition_*.png
+mixture_*.png

@@ -16,15 +16,10 @@ a file named "mixturePropsGCM_<fuel_name>.csv" in the specified directory.
 The file contains mixture properties for the fuel, formatted for Converge.
 
 Usage:
-    fl-export-converge --fuel_name <fuel_name>
+    fl-export-converge -f <fuel_name>
 
-Options:
-        --units <units>
-        --temp_min <temp_min> (K) 
-        --temp_max <temp_max> (K)
-        --temp_step <temp_step> (K)
-        --export_dir <export_dir>
-        --export_mix <export_mix>
+For detailed options, run:
+    fl-export-converge -h
 """
 
 

@@ -31,6 +31,7 @@ dependencies = [
     "numpy>=1.19.0",
     "pandas>=1.0.0",
     "scipy>=1.5.0",
+    "pyyaml>=5.0",
     "importlib-resources>=5.0; python_version < '3.9'",
 ]
 
@@ -53,6 +54,9 @@ fl-format = "fuellib.format_code:main"
 fl-eps2K = "fuellib.utilities.transport_props_converter:eps2K_main"
 fl-C2K = "fuellib.utilities.temp_converter:c2k_main"
 fl-K2C = "fuellib.utilities.temp_converter:k2c_main"
+fl-plt-comp = "fuellib.utilities.plotting:comp_main"
+fl-plt-props = "fuellib.utilities.plotting:props_main"
+fl-fuels = "fuellib.utilities.fuel_manager:list_fuels_main"
 
 [project.urls]
 Repository = "https://github.com/NatLabRockies/FuelLib"

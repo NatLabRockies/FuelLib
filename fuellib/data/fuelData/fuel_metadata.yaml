@@ -1,0 +1,115 @@
+# Fuel Library Metadata
+# Contains source information and properties for fuels in FuelLib
+
+fuels:
+  # POSF Fuels (Petroleum Surrogate Fuels)
+  posf4658:
+    name: POSF4658
+    category: Conventional
+    source: Edwards et al. (2017)
+    reference: https://doi.org/10.2514/6.2017-0146
+    description: 2004 physical average jet fuel constructed by blending 5 separate jet fuels from across the U.S.
+    decomp_name: posf4658
+  
+  posf10264:
+    name: A-1 POSF10264 JP-8
+    category: Conventional
+    source: Edwards et al. (2020)
+    reference: https://apps.dtic.mil/sti/pdfs/AD1093317.pdf
+    description: Best case fuel from NJFCP. Low viscosity, low density, and a low flash point.
+    decomp_name: posf10264
+  
+  posf10289:
+    name: A-3 POSF10289 JP-5
+    category: Conventional
+    source: Edwards et al. (2020)
+    reference: https://apps.dtic.mil/sti/pdfs/AD1093317.pdf
+    description: Worst case fuel from NJFCP. High viscosity, high density, and a high flash point.
+    decomp_name: posf10289
+  
+  posf10325:
+    name: A-2 POSF10325 Jet A
+    category: Conventional
+    source: Edwards et al. (2020)
+    reference: https://apps.dtic.mil/sti/pdfs/AD1093317.pdf
+    description: Baseline fuel from NJFCP. Average density, average viscosity, and average flash point.
+    decomp_name: posf10325
+  
+  posf11498:
+    name: C-1 POSF11498 ATJ
+    category: SATF
+    source: Edwards et al. (2020)
+    reference: https://apps.dtic.mil/sti/pdfs/AD1093317.pdf
+    description: Atypical alternative fuel from NJFCP. Isoparaffinic-only with low density, average viscosity, and a flat distillation curve.
+    decomp_name: posf11498
+
+  # HEFA Fuels (Hydroprocessed Esters and Fatty Acids)
+  hefa-came:
+    name: HEFA-CAME
+    category: SATF
+    source: Vozka et al. (2018)
+    reference: https://doi.org/10.1021/acs.energyfuels.8b02787
+    description: HEFA-SPK from camelina oil feedstock
+    decomp_name: hefa
+  
+  hefa-mfat:
+    name: HEFA-MFAT
+    category: SATF
+    source: Vozka et al. (2018)
+    reference: https://doi.org/10.1021/acs.energyfuels.8b02787
+    description: HEFA from mixed fat feedstock
+    decomp_name: hefa
+  
+  hefa-tall:
+    name: HEFA-TALL
+    category: SATF
+    source: Vozka et al. (2018)
+    reference: https://doi.org/10.1021/acs.energyfuels.8b02787
+    description: HEFA from tallow feedstock
+    decomp_name: hefa
+
+  # Jet-A (Conventional Jet Fuel)
+  jet-a:
+    name: Jet-A
+    category: Conventional
+    source: Vozka et al. (2018)
+    reference: https://doi.org/10.1021/acs.energyfuels.8b02787
+    description: Conventional Jet-A
+    decomp_name: jet-A
+
+  # Single Component Reference Fuels
+  decane:
+    name: n-Decane
+    category: Simple
+    source: NIST
+    reference: null
+    description: 100% n-decane
+    decomp_name: decane
+    props_data: decane
+  
+  dodecane:
+    name: n-Dodecane
+    category: Simple
+    source: NIST
+    reference: null
+    description: 100% n-dodecane 
+    decomp_name: dodecane
+    props_data: dodecane
+  
+  heptane:
+    name: n-Heptane
+    category: Simple
+    source: NIST
+    reference: null
+    description: 100% n-heptane
+    decomp_name: heptane
+    props_data: heptane
+  
+  heptane-decane:
+    name: n-Heptane/n-Decane Blend
+    category: Simple
+    source: null
+    reference: null
+    description: 50/50 (mass) blend of n-heptane and n-decane
+    decomp_name: heptane-decane
+    props_data: null
