@@ -23,11 +23,16 @@ def _normalize_signature(sig):
 
 
 def _public_module_functions(module):
-    return {
-        name: obj
-        for name, obj in inspect.getmembers(module, inspect.isfunction)
-        if not name.startswith("_") and obj.__module__ == module.__name__
-    }
+    """Get public functions from module, including re-exported ones from __all__."""
+    functions = {}
+    # Check all public names in __all__
+    if hasattr(module, "__all__"):
+        for name in module.__all__:
+            if not name.startswith("_"):
+                obj = getattr(module, name, None)
+                if inspect.isfunction(obj) or inspect.isbuiltin(obj):
+                    functions[name] = obj
+    return functions
 
 
 def _public_class_methods(cls):
@@ -52,6 +57,12 @@ class ApiContractTestCase(unittest.TestCase):
             "droplet_volume": "(r)",
             "droplet_mass": "(fuel, r, Yi, T)",
             "epsilon_to_characteristic_temperature": "(epsilon_j_per_mol)",
+            "get_fueldata_dir": "()",
+            "get_fueldata_gc_dir": "()",
+            "get_fueldata_decomp_dir": "()",
+            "get_fueldata_props_dir": "()",
+            "get_decomp_name_from_metadata": "(fuel_name, fuel_data_dir=None)",
+            "get_props_data_from_metadata": "(fuel_name, fuel_data_dir=None)",
         }
 
         actual = _public_module_functions(fl)
