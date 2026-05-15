@@ -24,23 +24,23 @@ except ImportError:
 def _validate_fuel_data_dir(fuel_data_dir):
     """
     Validate that a custom fuel data directory has required subdirectories.
-    
+
     :param fuel_data_dir: Path to fuel data directory.
     :type fuel_data_dir: str
     :raises ValueError: If required subdirectories are missing.
     """
     if fuel_data_dir is None:
         return
-    
+
     gc_dir = os.path.join(fuel_data_dir, "gcData")
     decomp_dir = os.path.join(fuel_data_dir, "groupDecompositionData")
-    
+
     if not os.path.isdir(gc_dir):
         raise ValueError(
             f"Custom fuel data directory is missing 'gcData' subdirectory:\n"
             f"  Expected: {gc_dir}"
         )
-    
+
     if not os.path.isdir(decomp_dir):
         raise ValueError(
             f"Custom fuel data directory is missing 'groupDecompositionData' subdirectory:\n"
@@ -51,7 +51,7 @@ def _validate_fuel_data_dir(fuel_data_dir):
 def _get_props_dir_for_fueldata(fuel_data_dir):
     """
     Get the properties directory for a fuel data directory, or None if it doesn't exist.
-    
+
     :param fuel_data_dir: Path to fuel data directory.
     :type fuel_data_dir: str
     :return: Path to properties directory, or None if not found.
@@ -116,7 +116,7 @@ def get_fueldata_decomp_dir():
 def get_fueldata_props_dir():
     """
     Get the path to FuelLib's properties data subdirectory, or None if not found.
-    
+
     This directory is optional.
 
     :return: Absolute path to embedded fuelData/propertiesData directory, or None if not found.
@@ -210,7 +210,7 @@ def get_decomp_name_from_metadata(fuel_name, fuel_data_dir=None):
 def get_props_data_from_metadata(fuel_name, fuel_data_dir=None):
     """
     Load properties data name mapping from fuel_metadata.yaml.
-    
+
     Returns None if props_data is not specified in metadata (it's optional).
 
     :param fuel_name: Name of the fuel to look up.
@@ -246,6 +246,6 @@ def get_props_data_from_metadata(fuel_name, fuel_data_dir=None):
         return None
 
     fuel_meta = data["fuels"][fuel_name]
-    
+
     # Return props_data if present, otherwise None
     return fuel_meta.get("props_data", None)

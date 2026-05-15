@@ -144,7 +144,11 @@ class fuel:
             self.fuelDataPropsDir = get_fueldata_props_dir()
         else:
             # Validate and use custom fuel directory
-            from ._data_locator import _validate_fuel_data_dir, _get_props_dir_for_fueldata
+            from ._data_locator import (
+                _validate_fuel_data_dir,
+                _get_props_dir_for_fueldata,
+            )
+
             _validate_fuel_data_dir(fuelDataDir)
             self.fuelDataDir = fuelDataDir
             self.fuelDataGcDir = os.path.join(fuelDataDir, "gcData")

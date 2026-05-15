@@ -398,7 +398,7 @@ def plot_mixture_properties(
 
         # Try to load experimental data
         props_dir = fuel.fuelDataPropsDir
-        
+
         T_data = pd.Series(dtype=float)
         prop_data = pd.Series(dtype=float)
 
@@ -406,7 +406,7 @@ def plot_mixture_properties(
             # Check if metadata specifies a different props_data filename
             props_data_name = fl.get_props_data_from_metadata(fuel_name, fuel_data_dir)
             data_filename = props_data_name if props_data_name else fuel_name
-            
+
             data_file = os.path.join(props_dir, f"{data_filename}.csv")
             if os.path.exists(data_file):
                 try:
@@ -484,7 +484,9 @@ def plot_mixture_properties(
             # Plot experimental data if available
             if len(prop_data) > 0:
                 # Get props_data name for the legend
-                props_data_name = fl.get_props_data_from_metadata(fuel_name, fuel_data_dir)
+                props_data_name = fl.get_props_data_from_metadata(
+                    fuel_name, fuel_data_dir
+                )
                 data_label = props_data_name if props_data_name else fuel_name
                 ax[i].scatter(
                     T_data,
