@@ -12,11 +12,14 @@ fuel = fl.fuel(fuel_name)
 # Create a DataFrame with the compounds and their families
 # Use the hydrocarbon type classification from group decompositions
 family_names = ["n-alkane", "iso-alkane", "cyclo-alkane", "aromatic"]
-df = pd.DataFrame({
-    "Compound": fuel.compounds,
-    "Weight %": fuel.Y_0 * 100,
-    "Family": fuel.hc_type,
-})
+df = pd.DataFrame(
+    {
+        "Compound": fuel.compounds,
+        "Weight %": fuel.Y_0 * 100,
+        "Family": fuel.hc_type,
+    }
+)
+
 
 # Determine carbon number from compound name
 def determine_carbon_number(compound):
@@ -39,6 +42,7 @@ def determine_carbon_number(compound):
             except ValueError:
                 return np.nan
         return np.nan
+
 
 df["nC"] = df["Compound"].apply(determine_carbon_number)
 
@@ -108,7 +112,9 @@ ax1.legend(fontsize=12, loc="upper left")
 
 # Plot 2: Pie chart of family composition
 # Only include families that have weight > 0
-families_present = [f for f in family_names if f in family_weights.index and family_weights[f] > 0]
+families_present = [
+    f for f in family_names if f in family_weights.index and family_weights[f] > 0
+]
 family_weights_sorted = family_weights[families_present]
 
 # Create pie chart without labels/percentages (we'll add them outside)
@@ -121,15 +127,17 @@ wedges, texts = ax2.pie(
 )
 
 # Add percentages outside the pie with arrows
-for wedge, value, family in zip(wedges, family_weights_sorted.values, family_weights_sorted.index):
+for wedge, value, family in zip(
+    wedges, family_weights_sorted.values, family_weights_sorted.index
+):
     angle = (wedge.theta2 + wedge.theta1) / 2
     radius = 1.3
     x = radius * np.cos(np.radians(angle))
     y = radius * np.sin(np.radians(angle))
-    
+
     # Determine horizontal alignment based on position
     ha = "left" if x > 0 else "right"
-    
+
     # Add annotation with arrow
     ax2.annotate(
         f"{value:.1f}%",
@@ -162,4 +170,3 @@ fig.legend(
 fig.suptitle("Fuel Composition", fontsize=16, fontweight="bold")
 
 plt.show()
-

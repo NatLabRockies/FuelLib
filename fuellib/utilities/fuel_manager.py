@@ -11,6 +11,7 @@ import fuellib as fl
 
 try:
     import yaml
+
     HAS_YAML = True
 except ImportError:
     HAS_YAML = False
@@ -19,7 +20,7 @@ except ImportError:
 def load_fuel_metadata(fuel_data_dir=None):
     """
     Load fuel metadata from YAML file if available.
-    
+
     :param fuel_data_dir: Optional directory containing fuel data (e.g., customFuels/fuelData).
                          If None, loads from embedded FuelLib data.
     :type fuel_data_dir: str, optional
@@ -28,26 +29,23 @@ def load_fuel_metadata(fuel_data_dir=None):
     """
     if not HAS_YAML:
         return {}
-    
+
     # Determine which metadata file to load
     if fuel_data_dir is None:
         # Load from embedded data
-        metadata_file = os.path.join(
-            fl.get_fueldata_dir(),
-            "fuel_metadata.yaml"
-        )
+        metadata_file = os.path.join(fl.get_fueldata_dir(), "fuel_metadata.yaml")
     else:
         # Load from custom directory
         metadata_file = os.path.join(fuel_data_dir, "fuel_metadata.yaml")
-    
+
     try:
         if os.path.exists(metadata_file):
-            with open(metadata_file, 'r') as f:
+            with open(metadata_file, "r") as f:
                 data = yaml.safe_load(f)
-                return data.get('fuels', {}) if data else {}
+                return data.get("fuels", {}) if data else {}
     except Exception as e:
         pass
-    
+
     return {}
 
 
@@ -105,15 +103,15 @@ def list_fuels_main():
         else:
             print("Available Fuels in FuelLib")
         print("=" * 80)
-        
+
         if args.verbose and metadata:
             # Verbose output with metadata
             for i, fuel_name in enumerate(fuel_names, 1):
                 meta = metadata.get(fuel_name, {})
-                category = meta.get('category', 'Unknown')
-                source = meta.get('source')
-                description = meta.get('description', '')
-                
+                category = meta.get("category", "Unknown")
+                source = meta.get("source")
+                description = meta.get("description", "")
+
                 print(f"{i:2d}. {fuel_name}")
                 print(f"    Category:      {category}")
                 if source:
@@ -125,18 +123,20 @@ def list_fuels_main():
             # Simple list output
             for i, fuel_name in enumerate(fuel_names, 1):
                 if metadata and fuel_name in metadata:
-                    source = metadata[fuel_name].get('source', '')
+                    source = metadata[fuel_name].get("source", "")
                     if source:
                         print(f"{i:2d}. {fuel_name:<20} [{source}]")
                     else:
                         print(f"{i:2d}. {fuel_name}")
                 else:
                     print(f"{i:2d}. {fuel_name}")
-        
+
         print("=" * 80)
         print(f"Total: {len(fuel_names)} fuel(s)")
         if not args.verbose and metadata:
-            print("Use -v/--verbose for detailed information including source and category")
+            print(
+                "Use -v/--verbose for detailed information including source and category"
+            )
         print("=" * 80 + "\n")
 
     except Exception as e:

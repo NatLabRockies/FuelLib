@@ -110,11 +110,11 @@ class fuel:
         # 2: cycloparaffins
         # 3: olefins
         self.fam = np.zeros(self.num_compounds, dtype=int)
-        
+
         # Classify hydrocarbon by type (n-alkane, iso-alkane, cyclo-alkane, aromatic)
         # Based on group decompositions from Constantinou-Gani method
-        self.hc_type = np.array([''] * self.num_compounds, dtype=object)
-        
+        self.hc_type = np.array([""] * self.num_compounds, dtype=object)
+
         aromatics = 10  # starting index for aromatic groups
         num_aromatics = 5
         branching = 78  # starting index for branching groups (Group j (CH3)2CH through C(CH3)2C(CH3)2)
@@ -123,26 +123,26 @@ class fuel:
         num_cyclos = 5
         olefins = 4  # starting index for double bound groups
         num_olefins = 6
-        
+
         for i in range(self.num_compounds):
             # Check if aromatic: does it contain AC's?
             if sum(self.Nij[i, aromatics : aromatics + num_aromatics]) > 0:
                 self.fam[i] = 1
-                self.hc_type[i] = 'aromatic'
+                self.hc_type[i] = "aromatic"
             # Check if cycloparaffin: does it contain rings?
             elif sum(self.Nij[i, cyclos : cyclos + num_cyclos]) > 0:
                 self.fam[i] = 2
-                self.hc_type[i] = 'cyclo-alkane'
+                self.hc_type[i] = "cyclo-alkane"
             # Check if olefin: does it contain double bonds?
             elif sum(self.Nij[i, olefins : olefins + num_olefins]) > 0:
                 self.fam[i] = 3
-                self.hc_type[i] = 'alkene'
+                self.hc_type[i] = "alkene"
             # Check for branching groups (CH, C quaternary carbons)
             elif sum(self.Nij[i, branching : branching + num_branching]) > 0:
-                self.hc_type[i] = 'iso-alkane'
+                self.hc_type[i] = "iso-alkane"
             else:
                 # Only CH3 and CH2 -> n-alkane (linear)
-                self.hc_type[i] = 'n-alkane'
+                self.hc_type[i] = "n-alkane"
 
         # Calculate carbon and hydrogen numbers from first-order group decomposition
         # For jet fuels, use only alkyl (0-3) and aromatic (10-14) groups
@@ -175,16 +175,16 @@ class fuel:
         self.compounds = [
             compound.strip() for compound in df_gcxgc["Compound"].to_list()
         ]
-        
+
         # Load molecular formulas if available
         if "Formula" in df_gcxgc.columns:
             self.formulas = [
-                formula.strip() if pd.notna(formula) else None 
+                formula.strip() if pd.notna(formula) else None
                 for formula in df_gcxgc["Formula"].to_list()
             ]
         else:
             self.formulas = None
-            
+
         if "PelePhysics Key" in df_gcxgc.columns:
             self.pelephysics_keys = [
                 key.strip() for key in df_gcxgc["PelePhysics Key"].to_list()

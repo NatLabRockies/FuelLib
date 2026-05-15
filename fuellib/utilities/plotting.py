@@ -15,7 +15,15 @@ import argparse
 import fuellib as fl
 
 
-def plot_composition(fuel_name, fuel_data_dir=None, output_dir=None, title=None, decomp_name=None, save=True, display=False):
+def plot_composition(
+    fuel_name,
+    fuel_data_dir=None,
+    output_dir=None,
+    title=None,
+    decomp_name=None,
+    save=True,
+    display=False,
+):
     """
     Plot the composition of a given fuel.
 
@@ -55,11 +63,13 @@ def plot_composition(fuel_name, fuel_data_dir=None, output_dir=None, title=None,
 
     # Create DataFrame with compound data
     family_names = ["n-alkane", "iso-alkane", "cyclo-alkane", "aromatic"]
-    df = pd.DataFrame({
-        "Compound": fuel.compounds,
-        "Weight %": fuel.Y_0 * 100,
-        "Family": fuel.hc_type,
-    })
+    df = pd.DataFrame(
+        {
+            "Compound": fuel.compounds,
+            "Weight %": fuel.Y_0 * 100,
+            "Family": fuel.hc_type,
+        }
+    )
 
     # Determine carbon number from compound name
     def determine_carbon_number(compound):
@@ -84,7 +94,7 @@ def plot_composition(fuel_name, fuel_data_dir=None, output_dir=None, title=None,
             return np.nan
 
     df["nC"] = df["Compound"].apply(determine_carbon_number)
-    
+
     # Remove rows with weight % <= 0.01
     df = df[df["Weight %"] > 0.01]
 
@@ -152,7 +162,9 @@ def plot_composition(fuel_name, fuel_data_dir=None, output_dir=None, title=None,
 
     # Plot 2: Pie chart of family composition
     # Only include families that have weight > 0
-    families_present = [f for f in family_names if f in family_weights.index and family_weights[f] > 0]
+    families_present = [
+        f for f in family_names if f in family_weights.index and family_weights[f] > 0
+    ]
     family_weights_sorted = family_weights[families_present]
 
     # Create pie chart without labels/percentages (we'll add them outside)
@@ -161,19 +173,23 @@ def plot_composition(fuel_name, fuel_data_dir=None, output_dir=None, title=None,
         labels=None,
         autopct=None,
         startangle=140,
-        colors=[colors.get(family, "#7f7f7f") for family in family_weights_sorted.index],
+        colors=[
+            colors.get(family, "#7f7f7f") for family in family_weights_sorted.index
+        ],
     )
 
     # Add percentages outside the pie with arrows
-    for wedge, value, family in zip(wedges, family_weights_sorted.values, family_weights_sorted.index):
+    for wedge, value, family in zip(
+        wedges, family_weights_sorted.values, family_weights_sorted.index
+    ):
         angle = (wedge.theta2 + wedge.theta1) / 2
         radius = 1.3
         x = radius * np.cos(np.radians(angle))
         y = radius * np.sin(np.radians(angle))
-        
+
         # Determine horizontal alignment based on position
         ha = "left" if x > 0 else "right"
-        
+
         # Add annotation with arrow
         ax2.annotate(
             f"{value:.1f}%",
@@ -221,7 +237,14 @@ def plot_composition(fuel_name, fuel_data_dir=None, output_dir=None, title=None,
 
 
 def plot_mixture_properties(
-    fuel_names, property_names=None, fuel_data_dir=None, output_dir=None, title=None, decomp_name=None, save=True, display=False
+    fuel_names,
+    property_names=None,
+    fuel_data_dir=None,
+    output_dir=None,
+    title=None,
+    decomp_name=None,
+    save=True,
+    display=False,
 ):
     """
     Plot mixture properties for fuel(s) over a temperature range.
@@ -325,7 +348,7 @@ def plot_mixture_properties(
 
     def get_line_spec(fuel_name, fuel_index=0):
         """Get line color and marker style for fuel.
-        
+
         :param fuel_name: Name of the fuel
         :param fuel_index: Index of fuel in the plot (for cycling through colors)
         :return: Tuple of (color, marker_style)
@@ -336,7 +359,7 @@ def plot_mixture_properties(
             if key in fuel_name.lower():
                 marker_style = spec[0]
                 break
-        
+
         # Get color from palette using fuel index
         color = color_palette[fuel_index % len(color_palette)]
         return (color, marker_style)
@@ -352,7 +375,9 @@ def plot_mixture_properties(
 
     def get_temp_range(prop_name):
         """Get default temperature range for a property."""
-        return default_ranges_by_property.get(prop_name, [0, 100])  # Fallback to [0, 100]
+        return default_ranges_by_property.get(
+            prop_name, [0, 100]
+        )  # Fallback to [0, 100]
 
     def get_predictions_and_data(fuel_name, prop_name):
         """Get predicted and experimental data for a property."""
@@ -391,11 +416,17 @@ def plot_mixture_properties(
         for i, T in enumerate(T_pred):
             try:
                 if prop_name == "Density":
-                    pred[i] = fuel.mixture_density(Y_li, T) * 1.0e-03  # Convert to g/cm^3
+                    pred[i] = (
+                        fuel.mixture_density(Y_li, T) * 1.0e-03
+                    )  # Convert to g/cm^3
                 elif prop_name == "VaporPressure":
-                    pred[i] = fuel.mixture_vapor_pressure(Y_li, T) * 1.0e-03  # Convert to kPa
+                    pred[i] = (
+                        fuel.mixture_vapor_pressure(Y_li, T) * 1.0e-03
+                    )  # Convert to kPa
                 elif prop_name == "Viscosity":
-                    pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T) * 1.0e6  # Convert to mm^2/s
+                    pred[i] = (
+                        fuel.mixture_kinematic_viscosity(Y_li, T) * 1.0e6
+                    )  # Convert to mm^2/s
                 elif prop_name == "SurfaceTension":
                     pred[i] = fuel.mixture_surface_tension(Y_li, T)
                 elif prop_name == "ThermalConductivity":
@@ -408,9 +439,7 @@ def plot_mixture_properties(
     # Create figure with subplots
     n_props = len(property_names)
     figW = 4.25 * n_props
-    fig, ax = plt.subplots(
-        1, n_props, figsize=(figW, 5.5), constrained_layout=True
-    )
+    fig, ax = plt.subplots(1, n_props, figsize=(figW, 5.5), constrained_layout=True)
 
     # Handle single subplot case
     if n_props == 1:
@@ -647,7 +676,9 @@ def main():
     )
 
     # Subparsers for different plot types
-    subparsers = parser.add_subparsers(dest="plot_type", help="Type of plot to generate")
+    subparsers = parser.add_subparsers(
+        dest="plot_type", help="Type of plot to generate"
+    )
 
     # Composition plotter subcommand
     comp_parser = subparsers.add_parser("comp", help="Plot fuel composition")
