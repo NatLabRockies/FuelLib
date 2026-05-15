@@ -10,7 +10,7 @@ Create a fuel data directory with this structure:
 
 .. code-block:: text
 
-    your_fueldata_dir/
+    customFuels/
     ├── gcData/
     │   └── your_fuel_name_init.csv
     ├── groupDecompositionData/
@@ -89,39 +89,28 @@ See the `Basic Usage tutorial <tutorials-basic.html#decomposing-fuel-components-
 Using Custom Fuels
 ------------------
 
-Once your fuel data directory is set up, you can use it like any built-in fuel:
+Once your custom fuel directory is set up, you can use it like any built-in fuel by specifying the ``fuelDataDir`` when creating a fuel object:
 
 .. code-block:: python
 
     import fuellib as fl
 
     # Load a custom fuel
-    fuel = fl.fuel("new-satf", fuelDataDir="/path/to/custom_fuels")
-
-    # Display fuel name, components, initial composition, and critical temperature
-    print(f"Fuel name: {fuel.name}")
-    print(f"Fuel components: {fuel.compounds}")
-    print(f"Initial composition: {fuel.Y_0}")
-    print(f"Critical temperature: {fuel.Tc} K")
+    fuel = fl.fuel("new-satf", fuelDataDir="/path/to/customFuels")
 
     # Calculate the saturated vapor pressure at 320 K
     T = 320  # K
     p_sat_i = fuel.psat(T)
     p_sat_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
-    print(f"Saturated vapor pressure at {T} K: {p_sat_i} Pa")
-    print(f"Mixture saturated vapor pressure at {T} K: {p_sat_mix:.2f} Pa")
 
 Tips and Best Practices
 -----------------------
 
 1. **Composition Normalization**: Weight percentages don't need to sum to exactly 100% - FuelLib normalizes them automatically.
 
-2. **Group Decomposition Accuracy**: Predictions depend heavily on decomposition quality. When possible:
-   - Use literature values or validated decompositions
-   - Validate against measured properties
-   - Document your decomposition sources
+2. **Group Decomposition Accuracy**: Predictions depend heavily on decomposition quality. When possible you should validate individual compound properties against measured properties or NIST WebBook.
 
-3. **Fuel Variants**: Use ``decomp_name`` to map multiple fuel variants to the same decomposition file when they have identical bulk composition:
+3. **Fuel Variants**: Use ``decomp_name`` to map multiple fuel variants to the same decomposition file when they have identical compounds but different weight percentages.
 
    .. code-block:: yaml
 

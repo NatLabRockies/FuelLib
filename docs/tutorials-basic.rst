@@ -23,7 +23,7 @@ If you want to run the example scripts, you can either clone the repository or d
 Required Input Files
 ^^^^^^^^^^^^^^^^^^^^^
 
-FuelLib requires two input files for any given fuel, ``<fuel_name>``:
+FuelLib comes with a variety of built-in fuels with pre-populated input files, but you can also add your own custom fuels by providing the required input files. Each fuel requires two input files:
 
 - ``FuelLib/fuelData/gcData/<fuel_name>_init.csv``: the initial weight percentage composition of the fuel components (must include columns "Compound" and "Weight %")
 - ``FuelLib/fuelData/groupDecompositionData/<fuel_name>.csv``: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as `gcmTable <https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv>`_)
@@ -32,7 +32,7 @@ These two required files must have the same number of rows and the same order of
 
 **Fuel Metadata**
 
-For custom fuels, a ``fuel_metadata.yaml`` file is required to define decomposition name mappings. This allows you to map fuel variants to the correct group decomposition file. See the `Adding Custom Fuels <tutorials-custom-fuels.html>`_ tutorial for details on the metadata file format and structure.
+A ``fuel_metadata.yaml`` file is required to define decomposition name mappings. This allows you to map multiple fuel variants to a shared group decomposition file. See the `Adding Custom Fuels <tutorials-custom-fuels.html>`_ tutorial for details on the metadata file format and structure.
 
 Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -65,6 +65,12 @@ the remaining branch with a single CH3 group bonded to a CH2 group is not define
     +--------------------------------+-------+-------+-------+-----+----------+-----------------+
     | (1,5-dimethylhexyl)cyclohexane | 3     | 8     | 3     | ... | 1        | 1               |
     +--------------------------------+-------+-------+-------+-----+----------+-----------------+
+
+.. note::
+    All group decomposition files must follow the groups defined in `gcmTable`_, there are :math:`N_{g1} = 78` 
+    first-order groups and :math:`N_{g2} = 43` second order groups. The second-order groups start with the 
+    branching structure `(CH3)2CH`. Not all branching structures are defined in the `gcmTable`_. We recommend
+    starting with `groupDecompositionData/refCompounds.csv` and adapting the decompositions and compounds for your fuel. 
 
 Basic Usage
 ^^^^^^^^^^^

@@ -43,14 +43,7 @@ New contributions are always welcome! To contribute:
 4. Ensure development dependencies are installed (see Development Setup above)
 5. Format your code using Black ``fl-format``
 
-6. Run tests to verify your changes:
-
-   .. code-block:: bash
-
-      python tests/test_api.py
-      python tests/test_accuracy.py
-      python tests/test_source_docstrings.py
-
+6. Run tests to verify your changes. See `.github/workflows/ci.yml` for the most up-to-date list of tests run in CI
 7. Open a Pull Request (PR) from your fork to the main FuelLib repository
 
 Building and Viewing Documentation Locally
