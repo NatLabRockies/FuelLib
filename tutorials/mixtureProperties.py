@@ -91,14 +91,14 @@ def getPredAndData(fuel_name, prop_name):
         T_data = data.Temperature[data[prop_name].notna()]
         prop_data = data[prop_name].dropna()
         # Vectors for temperature (convert from C to K)
-        T_pred = fl.C2K(np.linspace(min(T_data), max(T_data), 100))
+        T_pred = fl.convert.C2K(np.linspace(min(T_data), max(T_data), 100))
     except (FileNotFoundError, KeyError):
         # If propertyData is not found, set temp min/max from xticks_posf
         T_data = pd.Series(dtype=float)
         prop_data = pd.Series(dtype=float)
         temp_min = min(xticks_posf[prop_name])
         temp_max = max(xticks_posf[prop_name])
-        T_pred = fl.C2K(np.linspace(temp_min, temp_max, 100))
+        T_pred = fl.convert.C2K(np.linspace(temp_min, temp_max, 100))
 
     # Vectors for density, viscosity and vapor pressure
     pred = np.zeros_like(T_pred)
@@ -142,7 +142,7 @@ for i in range(len(prop_names)):
 
         # Plot GCM predictions and data
         ax[i].plot(
-            fl.K2C(T),
+            fl.convert.K2C(T),
             pred,
             "-",
             color=line_color,

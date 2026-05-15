@@ -69,9 +69,9 @@ def getPredAndData(fuel_name, prop_name, blend):
 
     # Separate properties and associated temperatures from data
     if prop_name == "Density":
-        T = fl.C2K(15)
+        T = fl.convert.C2K(15)
     elif prop_name == "Viscosity":
-        T = fl.C2K(-20)
+        T = fl.convert.C2K(-20)
 
     # Vector for FuelLib predictions
     prop_pred = np.zeros_like(blend)
@@ -139,7 +139,7 @@ for i in range(len(prop_names)):
     # Add labels and adjust ticks
     ax[i].set_xlabel("HEFA Concentration [wt %]", fontsize=fsize)
     ax[i].set_xticks([0, 20, 40, 60, 80, 100])
-    ax[i].set_ylabel(ylab(prop_names[i], fl.K2C(T)), fontsize=fsize)
+    ax[i].set_ylabel(ylab(prop_names[i], fl.convert.K2C(T)), fontsize=fsize)
     ax[i].tick_params(labelsize=ticksize)
 
 handles, labels = ax[0].get_legend_handles_labels()

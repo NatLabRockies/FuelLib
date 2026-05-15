@@ -23,7 +23,7 @@ def get_pred_and_data(fuel_name, prop_name):
     pred = np.zeros_like(T_data)
 
     # Vectors for temperature (convert from C to K)
-    T_pred = fl.C2K(T_data)
+    T_pred = fl.convert.C2K(T_data)
 
     for i in range(0, len(T_pred)):
         Y_li = fuel.Y_0

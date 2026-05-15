@@ -6,8 +6,8 @@ import pandas as pd
 from scipy.optimize import curve_fit
 
 from .constants import k_B, N_A
-from .conversions import K2C
-from .utilities import mixing_rule
+from .convert import K2C
+from .utility import mixing_rule
 from ._data_locator import (
     get_gcmtable_dir,
     get_fueldata_dir,
@@ -28,59 +28,101 @@ class fuel:
     :type decompName: str, optional
     :param fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
     :type fuelDataDir: str, optional
-
-    **Data Directory Attributes:**
-
-    :ivar fuelDataDir: Root directory for fuel data (custom or embedded).
-    :ivar fuelDataGcDir: Directory containing GCxGC compositional data files.
-    :ivar fuelDataDecompDir: Directory containing functional group decomposition files.
-    :ivar fuelDataPropsDir: Directory containing experimental property data (may be None).
-
-    **Composition Attributes:**
-
-    :ivar name: Name of the fuel/mixture.
-    :ivar compounds: List of compound names in the mixture.
-    :ivar formulas: Molecular formulas for each compound (if available).
-    :ivar Y_0: Mass fractions of each compound (array, shape: num_compounds).
-    :ivar Nij: Functional group decomposition matrix (array, shape: num_compounds × num_groups).
-    :ivar num_compounds: Number of compounds in the mixture.
-    :ivar num_groups: Number of functional groups in the decomposition.
-
-    **Pure Component Properties (Critical, Molecular):**
-
-    :ivar MW: Molecular weights in kg/mol (array, shape: num_compounds).
-    :ivar Tc: Critical temperatures in K (array, shape: num_compounds).
-    :ivar Pc: Critical pressures in Pa (array, shape: num_compounds).
-    :ivar Vc: Critical volumes in m³/mol (array, shape: num_compounds).
-    :ivar Tb: Boiling temperatures in K (array, shape: num_compounds).
-    :ivar Tm: Melting temperatures in K (array, shape: num_compounds).
-
-    **Thermodynamic Properties (at 298.15 K):**
-
-    :ivar Hf: Enthalpy of formation in J/mol (array, shape: num_compounds).
-    :ivar Gf: Gibbs free energy in J/mol (array, shape: num_compounds).
-    :ivar Hv_stp: Enthalpy of vaporization at 298 K in J/mol (array, shape: num_compounds).
-    :ivar Lv_stp: Latent heat of vaporization at 298 K in J/kg (array, shape: num_compounds).
-    :ivar Cp_stp: Molar specific heat at 298 K in J/mol/K (array, shape: num_compounds).
-    :ivar Vm_stp: Molar liquid volume at 298 K in m³/mol (array, shape: num_compounds).
-    :ivar omega: Acentric factors (array, shape: num_compounds).
-
-    **Lennard-Jones Transport Parameters:**
-
-    :ivar sigma: Lennard-Jones collision diameters in m (array, shape: num_compounds).
-    :ivar epsilonByKB: Lennard-Jones well depths in K (array, shape: num_compounds).
-
-    **Classification Attributes:**
-
-    :ivar hc_type: Hydrocarbon types ("n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene").
-    :ivar fam: Family codes for thermal conductivity (0: saturated, 1: aromatic, 2: cycloparaffin, 3: olefin).
-    :ivar nC: Carbon numbers (array, shape: num_compounds).
-    :ivar nH: Hydrogen numbers (array, shape: num_compounds).
-
-    **Optional Attributes:**
-
-    :ivar pelephysics_keys: PelePhysics keys for each compound (if available).
     """
+
+    # Type annotations for documented attributes
+    #: Root directory for fuel data (custom or embedded)
+    fuelDataDir: str
+
+    #: Directory containing GCxGC compositional data files
+    fuelDataGcDir: str
+
+    #: Directory containing functional group decomposition files
+    fuelDataDecompDir: str
+
+    #: Directory containing experimental property data (may be None)
+    fuelDataPropsDir: str
+
+    #: Name of the fuel/mixture
+    name: str
+
+    #: List of compound names in the mixture
+    compounds: list
+
+    #: Molecular formulas for each compound
+    formulas: np.ndarray
+
+    #: Mass fractions of each compound. Shape: (num_compounds,)
+    Y_0: np.ndarray
+
+    #: Functional group decomposition matrix. Shape: (num_compounds, num_groups)
+    Nij: np.ndarray
+
+    #: Number of compounds in the mixture
+    num_compounds: int
+
+    #: Number of functional groups in the decomposition
+    num_groups: int
+
+    #: Molecular weights in kg/mol. Shape: (num_compounds,)
+    MW: np.ndarray
+
+    #: Critical temperatures in K. Shape: (num_compounds,)
+    Tc: np.ndarray
+
+    #: Critical pressures in Pa. Shape: (num_compounds,)
+    Pc: np.ndarray
+
+    #: Critical volumes in m³/mol. Shape: (num_compounds,)
+    Vc: np.ndarray
+
+    #: Boiling temperatures in K. Shape: (num_compounds,)
+    Tb: np.ndarray
+
+    #: Melting temperatures in K. Shape: (num_compounds,)
+    Tm: np.ndarray
+
+    #: Enthalpy of formation in J/mol. Shape: (num_compounds,)
+    Hf: np.ndarray
+
+    #: Gibbs free energy in J/mol. Shape: (num_compounds,)
+    Gf: np.ndarray
+
+    #: Enthalpy of vaporization at 298 K in J/mol. Shape: (num_compounds,)
+    Hv_stp: np.ndarray
+
+    #: Latent heat of vaporization at 298 K in J/kg. Shape: (num_compounds,)
+    Lv_stp: np.ndarray
+
+    #: Molar specific heat at 298 K in J/mol/K. Shape: (num_compounds,)
+    Cp_stp: np.ndarray
+
+    #: Molar liquid volume at 298 K in m³/mol. Shape: (num_compounds,)
+    Vm_stp: np.ndarray
+
+    #: Acentric factors. Shape: (num_compounds,)
+    omega: np.ndarray
+
+    #: Lennard-Jones collision diameters in m. Shape: (num_compounds,)
+    sigma: np.ndarray
+
+    #: Lennard-Jones well depths in K. Shape: (num_compounds,)
+    epsilonByKB: np.ndarray
+
+    #: Hydrocarbon types ("n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene")
+    hc_type: np.ndarray
+
+    #: Family codes for thermal conductivity (0: saturated, 1: aromatic, 2: cycloparaffin, 3: olefin)
+    fam: np.ndarray
+
+    #: Carbon numbers. Shape: (num_compounds,)
+    nC: np.ndarray
+
+    #: Hydrogen numbers. Shape: (num_compounds,)
+    nH: np.ndarray
+
+    #: PelePhysics keys for each compound (if available)
+    pelephysics_keys: np.ndarray
 
     # Number of first and second order groups from Constantinou and Gani
     N_g1 = 78

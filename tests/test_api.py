@@ -1,4 +1,5 @@
 import inspect
+import types
 import unittest
 import numpy as np
 
@@ -46,43 +47,94 @@ def _public_class_methods(cls):
 class ApiContractTestCase(unittest.TestCase):
     def test_fuellib_module_api(self):
         print("\nFuelLib Module API:")
-        expected = {
+        expected_top_level = {
+            "fuel": "class",
+            "k_B": "constant",
+            "N_A": "constant",
+            "constants": "module",
+            "convert": "module",
+            "utility": "module",
+        }
+
+        # Check top-level API
+        for name, obj_type in expected_top_level.items():
+            self.assertTrue(
+                hasattr(fl, name),
+                msg=f"FuelLib module missing expected attribute: {name}",
+            )
+            if obj_type == "class":
+                self.assertTrue(
+                    inspect.isclass(getattr(fl, name)),
+                    msg=f"FuelLib.{name} should be a class",
+                )
+            elif obj_type == "module":
+                import types
+
+                self.assertTrue(
+                    isinstance(getattr(fl, name), types.ModuleType),
+                    msg=f"FuelLib.{name} should be a module",
+                )
+            print(f"  ✓ {name} ({obj_type})")
+
+        # Check convert submodule
+        print("\nFuelLib.convert Module API:")
+        convert_funcs = {
             "C2K": "(T)",
             "K2C": "(T)",
             "C2F": "(T)",
             "F2C": "(T)",
             "F2K": "(T)",
             "K2F": "(T)",
+            "epsilon_to_characteristic_temperature": "(epsilon_j_per_mol)",
+        }
+        for name, sig_expected in convert_funcs.items():
+            self.assertTrue(
+                hasattr(fl.convert, name), msg=f"fuellib.convert missing: {name}"
+            )
+            func = getattr(fl.convert, name)
+            actual_sig = _normalize_signature(inspect.signature(func))
+            self.assertEqual(
+                actual_sig,
+                sig_expected,
+                msg=f"fuellib.convert.{name} signature changed",
+            )
+            print(f"  ✓ {name}{actual_sig}")
+
+        # Check utility submodule
+        print("\nFuelLib.utility Module API:")
+        utility_funcs = {
             "mixing_rule": "(var_n, X, pseudo_prop='arithmetic')",
             "droplet_volume": "(r)",
             "droplet_mass": "(fuel, r, Yi, T)",
-            "epsilon_to_characteristic_temperature": "(epsilon_j_per_mol)",
-            "get_fueldata_dir": "()",
-            "get_fueldata_gc_dir": "()",
-            "get_fueldata_decomp_dir": "()",
-            "get_fueldata_props_dir": "()",
-            "get_decomp_name_from_metadata": "(fuel_name, fuel_data_dir=None)",
-            "get_props_data_from_metadata": "(fuel_name, fuel_data_dir=None)",
         }
-
-        actual = _public_module_functions(fl)
-        self.assertEqual(
-            set(actual.keys()),
-            set(expected.keys()),
-            msg=(
-                "FuelLib module public function list changed. "
-                f"Expected: {sorted(expected.keys())}; Found: {sorted(actual.keys())}"
-            ),
-        )
-
-        for name in sorted(expected.keys()):
-            actual_sig = _normalize_signature(inspect.signature(actual[name]))
+        for name, sig_expected in utility_funcs.items():
+            self.assertTrue(
+                hasattr(fl.utility, name), msg=f"fuellib.utility missing: {name}"
+            )
+            func = getattr(fl.utility, name)
+            actual_sig = _normalize_signature(inspect.signature(func))
             self.assertEqual(
                 actual_sig,
-                expected[name],
-                msg=f"FuelLib module function signature changed: {name}",
+                sig_expected,
+                msg=f"fuellib.utility.{name} signature changed",
             )
             print(f"  ✓ {name}{actual_sig}")
+
+        # Check constants submodule
+        print("\nFuelLib.constants Module API:")
+        constants_vals = {
+            "k_B": "Boltzmann constant",
+            "N_A": "Avogadro number",
+        }
+        for name in constants_vals.keys():
+            self.assertTrue(
+                hasattr(fl.constants, name), msg=f"fuellib.constants missing: {name}"
+            )
+            val = getattr(fl.constants, name)
+            self.assertIsInstance(
+                val, (int, float), msg=f"fuellib.constants.{name} should be numeric"
+            )
+            print(f"  ✓ {name}")
 
     def test_fuellib_class_api(self):
         print("\nFuelLib.fuel Class API:")
@@ -162,24 +214,24 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Utility functions (run per fuel for consistent CI grouping)
                 print("  Utility Functions:")
-                self.assertAlmostEqual(fl.C2K(25.0), 298.15)
-                print("    ✓ C2K")
-                self.assertAlmostEqual(fl.K2C(298.15), 25.0)
-                print("    ✓ K2C")
+                self.assertAlmostEqual(fl.convert.C2K(25.0), 298.15)
+                print("    ✓ convert.C2K")
+                self.assertAlmostEqual(fl.convert.K2C(298.15), 25.0)
+                print("    ✓ convert.K2C")
                 self.assertAlmostEqual(
-                    fl.droplet_volume(1e-4), 4.0 / 3.0 * np.pi * (1e-4) ** 3
+                    fl.utility.droplet_volume(1e-4), 4.0 / 3.0 * np.pi * (1e-4) ** 3
                 )
-                print("    ✓ droplet_volume")
+                print("    ✓ utility.droplet_volume")
 
                 Xi = fuel.Y2X(Yi)
                 self._assert_finite_and_positive(
-                    fl.mixing_rule(fuel.Tc, Xi, pseudo_prop="arithmetic")
+                    fl.utility.mixing_rule(fuel.Tc, Xi, pseudo_prop="arithmetic")
                 )
-                print("    ✓ mixing_rule (arithmetic)")
+                print("    ✓ utility.mixing_rule (arithmetic)")
                 self._assert_finite_and_positive(
-                    fl.mixing_rule(fuel.Tc, Xi, pseudo_prop="geometric")
+                    fl.utility.mixing_rule(fuel.Tc, Xi, pseudo_prop="geometric")
                 )
-                print("    ✓ mixing_rule (geometric)")
+                print("    ✓ utility.mixing_rule (geometric)")
 
                 # Composition conversion methods
                 print("  Composition Conversions:")
@@ -339,13 +391,13 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Droplet helpers
                 print("  Droplet Properties:")
-                m = fl.droplet_mass(fuel, 2.0e-5, Yi, self.T)
+                m = fl.utility.droplet_mass(fuel, 2.0e-5, Yi, self.T)
                 self.assertEqual(m.shape, fuel.MW.shape)
                 self.assertTrue(np.all(m >= 0.0))
                 self.assertTrue(
-                    np.allclose(fl.droplet_mass(fuel, 0.0, Yi, self.T), 0.0)
+                    np.allclose(fl.utility.droplet_mass(fuel, 0.0, Yi, self.T), 0.0)
                 )
-                print("    ✓ droplet_mass")
+                print("    ✓ utility.droplet_mass")
 
 
 if __name__ == "__main__":

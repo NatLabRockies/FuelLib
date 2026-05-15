@@ -1,7 +1,7 @@
 """Command-line tools to convert temperatures."""
 
 import sys
-from .. import C2K, K2C, C2F, F2C, F2K, K2F
+from .. import convert
 
 
 def c2k_main():
@@ -13,7 +13,7 @@ def c2k_main():
 
     try:
         temp_c = float(sys.argv[1])
-        result = C2K(temp_c)
+        result = convert.C2K(temp_c)
         print(f"{temp_c} °C = {result:.2f} K")
     except ValueError:
         print(f"Error: '{sys.argv[1]}' is not a valid number")
@@ -29,7 +29,7 @@ def k2c_main():
 
     try:
         temp_k = float(sys.argv[1])
-        result = K2C(temp_k)
+        result = convert.K2C(temp_k)
         print(f"{temp_k} K = {result:.2f} °C")
     except ValueError:
         print(f"Error: '{sys.argv[1]}' is not a valid number")
@@ -45,7 +45,7 @@ def c2f_main():
 
     try:
         temp_c = float(sys.argv[1])
-        result = C2F(temp_c)
+        result = convert.C2F(temp_c)
         print(f"{temp_c} °C = {result:.2f} °F")
     except ValueError:
         print(f"Error: '{sys.argv[1]}' is not a valid number")
@@ -61,7 +61,7 @@ def f2c_main():
 
     try:
         temp_f = float(sys.argv[1])
-        result = F2C(temp_f)
+        result = convert.F2C(temp_f)
         print(f"{temp_f} °F = {result:.2f} °C")
     except ValueError:
         print(f"Error: '{sys.argv[1]}' is not a valid number")
@@ -77,7 +77,7 @@ def f2k_main():
 
     try:
         temp_f = float(sys.argv[1])
-        result = F2K(temp_f)
+        result = convert.F2K(temp_f)
         print(f"{temp_f} °F = {result:.2f} K")
     except ValueError:
         print(f"Error: '{sys.argv[1]}' is not a valid number")
@@ -93,7 +93,7 @@ def k2f_main():
 
     try:
         temp_k = float(sys.argv[1])
-        result = K2F(temp_k)
+        result = convert.K2F(temp_k)
         print(f"{temp_k} K = {result:.2f} °F")
     except ValueError:
         print(f"Error: '{sys.argv[1]}' is not a valid number")

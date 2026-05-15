@@ -389,7 +389,7 @@ are used throughout this section.
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: fuellib.mixing_rule
+.. autofunction:: fuellib.utility.mixing_rule
    :noindex:
 
 While many of the mixture properties in FuelLib have a unique mixing rule,
@@ -517,7 +517,7 @@ For ease of reference, the reference compounds and keys corresponding to a PeleP
 When provided, the PelePhysics keys can be used to link the compounds in FuelLib to species in PelePhysics simulations via ``Export4Pele.py`` as described in :ref:`Exporting to PelePhysics <sec-exporting-to-pelephysics>`.
 
 .. csv-table:: Reference compounds, chemical formulas, and corresponding PelePhysics keys by GCxGC bin.
-   :file: ../fuelData/refCompounds.csv
+   :file: ../fuellib/data/fuelData/refCompounds.csv
    :header-rows: 1
    :align: center
    :widths: auto

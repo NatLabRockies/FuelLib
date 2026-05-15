@@ -9,18 +9,20 @@ FuelLib File Organization
 -------------------------
 
 - **docs:** directory containing the documentation source files
-- **fuelData:** 
-    - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
-    - **groupDecompositionData:** directory containing a collection of functional group decompositions
-    - **propertiesData:** directory containing measurement or predicted data for validation (see *fuelData/dataReferences.md*)
 - **gcmTableData:** directory that contains the pre-tabulated group contributions
 - **fuellib:** main package directory containing:
 
     - ``fuel.py``: core :class:`fuel` class for Group Contribution Method calculations
     - ``constants.py``: physical constants (Boltzmann, Avogadro)
-    - ``conversions.py``: temperature conversion functions and Lennard-Jones calculations
-    - ``utilities.py``: utility functions for mixture properties and droplet calculations
+    - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
+    - ``utility.py``: utility functions for mixture properties and droplet calculations
     - ``_data_locator.py``: internal module for locating and validating fuel data directories
+    - **data**: directory containing fuel data and metadata    
+        - **fuelData:** 
+            - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
+            - **groupDecompositionData:** directory containing a collection of functional group decompositions
+            - **propertiesData:** directory containing measurement or predicted data for validation (see *fuelData/dataReferences.md*)
+            - ``fuel_metadata.yaml``: YAML file that maps fuel names to their decomposition files and optional metadata fields (see *fuelData/fuel_metadata_template.yaml* for template)
     - **exporters:** subpackage with CLI exporters for generating fuel properties
     
         - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)
@@ -66,4 +68,7 @@ Click on links below for the full auto-documentation of the API.
 .. autosummary::
     :toctree: generated
 
-    fuellib
+    fuellib.fuel
+    fuellib.constants
+    fuellib.convert
+    fuellib.utility

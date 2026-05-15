@@ -17,51 +17,33 @@ except Exception:
 # Import constants
 from .constants import k_B, N_A
 
-# Import temperature conversions and characteristic temperature
-from .conversions import (
-    C2K,
-    K2C,
-    C2F,
-    F2C,
-    F2K,
-    K2F,
-    epsilon_to_characteristic_temperature,
-)
-
-# Import utility functions
-from .utilities import mixing_rule, droplet_volume, droplet_mass
-
 # Import fuel class
 from .fuel import fuel
 
-# Import data locator functions
+# Import data locator functions for convenience
 from ._data_locator import (
     get_fueldata_dir,
     get_fueldata_gc_dir,
     get_fueldata_decomp_dir,
     get_fueldata_props_dir,
-    get_decomp_name_from_metadata,
-    get_props_data_from_metadata,
+    get_gcmtable_dir,
 )
+
+# Import submodules for namespacing
+from . import constants
+from . import convert
+from . import utility
 
 __all__ = [
     "fuel",
     "k_B",
     "N_A",
-    "C2K",
-    "K2C",
-    "C2F",
-    "F2C",
-    "F2K",
-    "K2F",
-    "epsilon_to_characteristic_temperature",
-    "mixing_rule",
-    "droplet_volume",
-    "droplet_mass",
     "get_fueldata_dir",
     "get_fueldata_gc_dir",
     "get_fueldata_decomp_dir",
     "get_fueldata_props_dir",
-    "get_decomp_name_from_metadata",
-    "get_props_data_from_metadata",
+    "get_gcmtable_dir",
+    "constants",
+    "convert",
+    "utility",
 ]
