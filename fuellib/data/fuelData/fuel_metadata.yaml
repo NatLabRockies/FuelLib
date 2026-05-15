@@ -75,7 +75,7 @@ fuels:
     source: Vozka et al. (2018)
     reference: https://doi.org/10.1021/acs.energyfuels.8b02787
     description: Conventional Jet-A
-    decomp_name: jet-A
+    decomp_name: jet-a
 
   # Single Component Reference Fuels
   decane:
