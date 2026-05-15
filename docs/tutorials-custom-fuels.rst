@@ -56,7 +56,9 @@ You can add additional metadata for documentation:
         source: Citation or origin of fuel data
         reference: URL to source paper
         description: Brief description of the fuel
-        decomp_name: your_fuel
+        decomp_name: name_of_decomposition_file in ``groupDecompositionData/`` (without ``.csv`` extension)
+        props_data: Name of any related properties data file in ``propertiesData/`` (without ``.csv`` extension)
+
 
 Note that you can assign the same decomposition to multiple fuel variants if they have identical bulk composition.
 

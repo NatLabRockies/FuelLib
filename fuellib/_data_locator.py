@@ -21,9 +21,49 @@ except ImportError:
     HAS_YAML = False
 
 
+def _validate_fuel_data_dir(fuel_data_dir):
+    """
+    Validate that a custom fuel data directory has required subdirectories.
+    
+    :param fuel_data_dir: Path to fuel data directory.
+    :type fuel_data_dir: str
+    :raises ValueError: If required subdirectories are missing.
+    """
+    if fuel_data_dir is None:
+        return
+    
+    gc_dir = os.path.join(fuel_data_dir, "gcData")
+    decomp_dir = os.path.join(fuel_data_dir, "groupDecompositionData")
+    
+    if not os.path.isdir(gc_dir):
+        raise ValueError(
+            f"Custom fuel data directory is missing 'gcData' subdirectory:\n"
+            f"  Expected: {gc_dir}"
+        )
+    
+    if not os.path.isdir(decomp_dir):
+        raise ValueError(
+            f"Custom fuel data directory is missing 'groupDecompositionData' subdirectory:\n"
+            f"  Expected: {decomp_dir}"
+        )
+
+
+def _get_props_dir_for_fueldata(fuel_data_dir):
+    """
+    Get the properties directory for a fuel data directory, or None if it doesn't exist.
+    
+    :param fuel_data_dir: Path to fuel data directory.
+    :type fuel_data_dir: str
+    :return: Path to properties directory, or None if not found.
+    :rtype: str or None
+    """
+    props_dir = os.path.join(fuel_data_dir, "propertiesData")
+    return props_dir if os.path.isdir(props_dir) else None
+
+
 def get_data_dir():
     """
-    Get the path to the embedded data directory.
+    Get the path to FuelLib's data directory.
 
     :return: Absolute path to the data directory.
     :rtype: str
@@ -45,9 +85,9 @@ def get_gcmtable_dir():
 
 def get_fueldata_dir():
     """
-    Get the path to the fuel data directory.
+    Get the path to FuelLib's fuel data directory.
 
-    :return: Absolute path to fuelData directory.
+    :return: Absolute path to embedded fuelData directory.
     :rtype: str
     """
     return os.path.join(get_data_dir(), "fuelData")
@@ -55,9 +95,9 @@ def get_fueldata_dir():
 
 def get_fueldata_gc_dir():
     """
-    Get the path to the GC data subdirectory.
+    Get the path to FuelLib's GC data subdirectory.
 
-    :return: Absolute path to fuelData/gcData directory.
+    :return: Absolute path to embedded fuelData/gcData directory.
     :rtype: str
     """
     return os.path.join(get_fueldata_dir(), "gcData")
@@ -65,9 +105,9 @@ def get_fueldata_gc_dir():
 
 def get_fueldata_decomp_dir():
     """
-    Get the path to the group decomposition data subdirectory.
+    Get the path to FuelLib's group decomposition data subdirectory.
 
-    :return: Absolute path to fuelData/groupDecompositionData directory.
+    :return: Absolute path to embedded fuelData/groupDecompositionData directory.
     :rtype: str
     """
     return os.path.join(get_fueldata_dir(), "groupDecompositionData")
@@ -75,12 +115,14 @@ def get_fueldata_decomp_dir():
 
 def get_fueldata_props_dir():
     """
-    Get the path to the properties data subdirectory.
+    Get the path to FuelLib's properties data subdirectory, or None if not found.
+    
+    This directory is optional.
 
-    :return: Absolute path to fuelData/propertiesData directory.
-    :rtype: str
+    :return: Absolute path to embedded fuelData/propertiesData directory, or None if not found.
+    :rtype: str or None
     """
-    return os.path.join(get_fueldata_dir(), "propertiesData")
+    return _get_props_dir_for_fueldata(get_fueldata_dir())
 
 
 def get_decomp_name_from_metadata(fuel_name, fuel_data_dir=None):
@@ -163,3 +205,47 @@ def get_decomp_name_from_metadata(fuel_name, fuel_data_dir=None):
         )
 
     return fuel_meta["decomp_name"]
+
+
+def get_props_data_from_metadata(fuel_name, fuel_data_dir=None):
+    """
+    Load properties data name mapping from fuel_metadata.yaml.
+    
+    Returns None if props_data is not specified in metadata (it's optional).
+
+    :param fuel_name: Name of the fuel to look up.
+    :type fuel_name: str
+    :param fuel_data_dir: Directory containing fuel data. If None, uses embedded data.
+    :type fuel_data_dir: str, optional
+    :return: Properties data name from metadata, or None if not specified.
+    :rtype: str or None
+    :raises FileNotFoundError: If fuel_metadata.yaml is missing or fuel not found in metadata
+    """
+    if not HAS_YAML:
+        raise ImportError(
+            "PyYAML is required to use custom fuels. Install it with: pip install pyyaml"
+        )
+
+    if fuel_data_dir is None:
+        # Use embedded data
+        metadata_file = os.path.join(get_fueldata_dir(), "fuel_metadata.yaml")
+    else:
+        # Use custom data directory
+        metadata_file = os.path.join(fuel_data_dir, "fuel_metadata.yaml")
+
+    if not os.path.exists(metadata_file):
+        return None
+
+    try:
+        with open(metadata_file, "r") as f:
+            data = yaml.safe_load(f)
+    except Exception:
+        return None
+
+    if not data or "fuels" not in data or fuel_name not in data["fuels"]:
+        return None
+
+    fuel_meta = data["fuels"][fuel_name]
+    
+    # Return props_data if present, otherwise None
+    return fuel_meta.get("props_data", None)

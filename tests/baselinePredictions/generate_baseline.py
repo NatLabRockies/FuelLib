@@ -11,12 +11,15 @@ Use this to update threshold values in CI test as model improves
 # Add the FuelLib directory to the Python path
 FUELLIB_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 if FUELLIB_DIR not in sys.path:
-    sys.path.append(FUELLIB_DIR)
-from paths import *
+    sys.path.insert(0, FUELLIB_DIR)
 
-sys.path.append(os.path.join(FUELLIB_DIR, "tests"))
-import FuelLib as fl
-from get_pred_and_data import *
+# Add the tests directory to import get_pred_and_data
+TESTS_DIR = os.path.dirname(os.path.dirname(__file__))
+if TESTS_DIR not in sys.path:
+    sys.path.insert(0, TESTS_DIR)
+
+import fuellib as fl
+from get_pred_and_data import get_pred_and_data
 
 # Directories for tests and baseline predictions
 # test_dir = os.path.dirname(__file__)

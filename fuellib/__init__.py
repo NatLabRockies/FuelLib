@@ -24,6 +24,7 @@ from ._data_locator import (
     get_fueldata_decomp_dir,
     get_fueldata_props_dir,
     get_decomp_name_from_metadata,
+    get_props_data_from_metadata,
 )
 
 # Physical constants
@@ -40,7 +41,12 @@ __all__ = [
     "droplet_volume",
     "droplet_mass",
     "epsilon_to_characteristic_temperature",
+    "get_fueldata_dir",
+    "get_fueldata_gc_dir",
+    "get_fueldata_decomp_dir",
     "get_fueldata_props_dir",
+    "get_decomp_name_from_metadata",
+    "get_props_data_from_metadata",
 ]
 
 
@@ -54,6 +60,58 @@ class fuel:
     :type decompName: str, optional
     :param fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
     :type fuelDataDir: str, optional
+
+    **Data Directory Attributes:**
+
+    :ivar fuelDataDir: Root directory for fuel data (custom or embedded).
+    :ivar fuelDataGcDir: Directory containing GCxGC compositional data files.
+    :ivar fuelDataDecompDir: Directory containing functional group decomposition files.
+    :ivar fuelDataPropsDir: Directory containing experimental property data (may be None).
+
+    **Composition Attributes:**
+
+    :ivar name: Name of the fuel/mixture.
+    :ivar compounds: List of compound names in the mixture.
+    :ivar formulas: Molecular formulas for each compound (if available).
+    :ivar Y_0: Mass fractions of each compound (array, shape: num_compounds).
+    :ivar Nij: Functional group decomposition matrix (array, shape: num_compounds × num_groups).
+    :ivar num_compounds: Number of compounds in the mixture.
+    :ivar num_groups: Number of functional groups in the decomposition.
+
+    **Pure Component Properties (Critical, Molecular):**
+
+    :ivar MW: Molecular weights in kg/mol (array, shape: num_compounds).
+    :ivar Tc: Critical temperatures in K (array, shape: num_compounds).
+    :ivar Pc: Critical pressures in Pa (array, shape: num_compounds).
+    :ivar Vc: Critical volumes in m³/mol (array, shape: num_compounds).
+    :ivar Tb: Boiling temperatures in K (array, shape: num_compounds).
+    :ivar Tm: Melting temperatures in K (array, shape: num_compounds).
+
+    **Thermodynamic Properties (at 298.15 K):**
+
+    :ivar Hf: Enthalpy of formation in J/mol (array, shape: num_compounds).
+    :ivar Gf: Gibbs free energy in J/mol (array, shape: num_compounds).
+    :ivar Hv_stp: Enthalpy of vaporization at 298 K in J/mol (array, shape: num_compounds).
+    :ivar Lv_stp: Latent heat of vaporization at 298 K in J/kg (array, shape: num_compounds).
+    :ivar Cp_stp: Molar specific heat at 298 K in J/mol/K (array, shape: num_compounds).
+    :ivar Vm_stp: Molar liquid volume at 298 K in m³/mol (array, shape: num_compounds).
+    :ivar omega: Acentric factors (array, shape: num_compounds).
+
+    **Lennard-Jones Transport Parameters:**
+
+    :ivar sigma: Lennard-Jones collision diameters in m (array, shape: num_compounds).
+    :ivar epsilonByKB: Lennard-Jones well depths in K (array, shape: num_compounds).
+
+    **Classification Attributes:**
+
+    :ivar hc_type: Hydrocarbon types ("n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene").
+    :ivar fam: Family codes for thermal conductivity (0: saturated, 1: aromatic, 2: cycloparaffin, 3: olefin).
+    :ivar nC: Carbon numbers (array, shape: num_compounds).
+    :ivar nH: Hydrogen numbers (array, shape: num_compounds).
+
+    **Optional Attributes:**
+
+    :ivar pelephysics_keys: PelePhysics keys for each compound (if available).
     """
 
     # Number of first and second order groups from Constantinou and Gani
@@ -77,19 +135,21 @@ class fuel:
             # Try to get decomposition name from metadata
             decompName = get_decomp_name_from_metadata(name, fuelDataDir)
 
-        # Determine which data directories to use
+        # Determine and set data directories for this fuel instance
         if fuelDataDir is None:
             # Use built-in embedded data
             self.fuelDataDir = get_fueldata_dir()
             self.fuelDataGcDir = get_fueldata_gc_dir()
             self.fuelDataDecompDir = get_fueldata_decomp_dir()
+            self.fuelDataPropsDir = get_fueldata_props_dir()
         else:
-            # Use user-provided custom data directory
+            # Validate and use custom fuel directory
+            from ._data_locator import _validate_fuel_data_dir, _get_props_dir_for_fueldata
+            _validate_fuel_data_dir(fuelDataDir)
             self.fuelDataDir = fuelDataDir
-            self.fuelDataGcDir = os.path.join(self.fuelDataDir, "gcData")
-            self.fuelDataDecompDir = os.path.join(
-                self.fuelDataDir, "groupDecompositionData"
-            )
+            self.fuelDataGcDir = os.path.join(fuelDataDir, "gcData")
+            self.fuelDataDecompDir = os.path.join(fuelDataDir, "groupDecompositionData")
+            self.fuelDataPropsDir = _get_props_dir_for_fueldata(fuelDataDir)
 
         # Get GCM table directory (always from built-in data)
         gcmtable_dir = get_gcmtable_dir()

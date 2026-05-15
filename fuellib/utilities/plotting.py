@@ -320,17 +320,27 @@ def plot_mixture_properties(
         "ThermalConductivity": r"Thermal Conductivity [W/m/K]",
     }
 
-    # Line specs for different fuels
+    # Line specs for different fuels (marker styles)
     line_specs_map = {
-        "decane": ("o", "o"),
-        "posf10325": ("o", "o"),
-        "dodecane": ("s", "s"),
-        "posf10289": ("s", "s"),
-        "heptane": ("D", "D"),
-        "posf10264": ("D", "D"),
-        "posf11498": ("^", "^"),
-        "jet-a": ("v", "v"),
-        "hefa": ("p", "p"),
+        "decane": "o",
+        "posf10325": "o",
+        "dodecane": "s",
+        "posf10289": "s",
+        "heptane": "D",
+        "posf10264": "D",
+        "posf11498": "^",
+        "jet-a": "v",
+        "hefa": "p",
+    }
+
+    # Fuel-specific colors
+    fuel_color_map = {
+        "posf10264": "#2980B9",  # Primary Blue
+        "posf10325": "#7f7f7f",  # 50% Gray
+        "posf10289": "#333333",  # Dark Gray
+        "heptane": "#2980B9",  # Primary Blue
+        "decane": "#7f7f7f",  # 50% Gray
+        "dodecane": "#333333",  # Dark Gray
     }
 
     # Color palette for cycling through distinct colors
@@ -357,11 +367,14 @@ def plot_mixture_properties(
         marker_style = "o"  # Default
         for key, spec in line_specs_map.items():
             if key in fuel_name.lower():
-                marker_style = spec[0]
+                marker_style = spec
                 break
 
-        # Get color from palette using fuel index
-        color = color_palette[fuel_index % len(color_palette)]
+        # Get color: use fuel-specific mapping if available, otherwise use palette
+        if fuel_name in fuel_color_map:
+            color = fuel_color_map[fuel_name]
+        else:
+            color = color_palette[fuel_index % len(color_palette)]
         return (color, marker_style)
 
     def get_legend_label(fuel_name):
@@ -384,21 +397,26 @@ def plot_mixture_properties(
         fuel = fl.fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
 
         # Try to load experimental data
-        props_dir = fl.get_fueldata_props_dir()
-        data_file = os.path.join(props_dir, f"{fuel_name}.csv")
-
+        props_dir = fuel.fuelDataPropsDir
+        
         T_data = pd.Series(dtype=float)
         prop_data = pd.Series(dtype=float)
 
-        if os.path.exists(data_file):
-            try:
-                data = pd.read_csv(data_file, skiprows=[1])
-                if prop_name in data.columns:
-                    mask = data[prop_name].notna()
-                    T_data = data.loc[mask, "Temperature"]
-                    prop_data = data.loc[mask, prop_name]
-            except Exception:
-                pass
+        if props_dir and os.path.exists(props_dir):
+            # Check if metadata specifies a different props_data filename
+            props_data_name = fl.get_props_data_from_metadata(fuel_name, fuel_data_dir)
+            data_filename = props_data_name if props_data_name else fuel_name
+            
+            data_file = os.path.join(props_dir, f"{data_filename}.csv")
+            if os.path.exists(data_file):
+                try:
+                    data = pd.read_csv(data_file, skiprows=[1])
+                    if prop_name in data.columns:
+                        mask = data[prop_name].notna()
+                        T_data = data.loc[mask, "Temperature"]
+                        prop_data = data.loc[mask, prop_name]
+                except Exception:
+                    pass
 
         # Generate predictions over temperature range
         # First check if experimental data exists - use its range if available
@@ -460,31 +478,34 @@ def plot_mixture_properties(
                 "-",
                 color=line_color,
                 label=f"FuelLib: {get_legend_label(fuel_name)}",
-                linewidth=2,
+                linewidth=4,
             )
 
             # Plot experimental data if available
             if len(prop_data) > 0:
+                # Get props_data name for the legend
+                props_data_name = fl.get_props_data_from_metadata(fuel_name, fuel_data_dir)
+                data_label = props_data_name if props_data_name else fuel_name
                 ax[i].scatter(
                     T_data,
                     prop_data,
                     marker=marker_style,
-                    label=f"Data: {get_legend_label(fuel_name)}",
+                    label=f"Data: {get_legend_label(data_label)}",
                     facecolors=line_color,
-                    s=50,
+                    s=75,
                     zorder=5,
                 )
 
         # Format subplot
-        ax[i].set_xlabel("T [°C]", fontsize=12)
-        ax[i].set_ylabel(ylab.get(prop_name, prop_name), fontsize=12)
-        ax[i].tick_params(labelsize=10)
+        ax[i].set_xlabel("T [°C]", fontsize=18)
+        ax[i].set_ylabel(ylab.get(prop_name, prop_name), fontsize=18)
+        ax[i].tick_params(labelsize=18)
         ax[i].grid(alpha=0.3)
 
     # Add legend
     handles, labels = ax[0].get_legend_handles_labels()
     fig.legend(
-        handles, labels, loc="outside lower center", ncol=len(fuel_names), fontsize=10
+        handles, labels, loc="outside lower center", ncol=len(fuel_names), fontsize=18
     )
 
     if title:
