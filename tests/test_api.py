@@ -44,6 +44,10 @@ class ApiContractTestCase(unittest.TestCase):
         expected = {
             "C2K": "(T)",
             "K2C": "(T)",
+            "C2F": "(T)",
+            "F2C": "(T)",
+            "F2K": "(T)",
+            "K2F": "(T)",
             "mixing_rule": "(var_n, X, pseudo_prop='arithmetic')",
             "droplet_volume": "(r)",
             "droplet_mass": "(fuel, r, Yi, T)",
