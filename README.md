@@ -50,65 +50,10 @@ pip install fuellib
 ```
 
 ## Library Usage
-This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, [`tutorials/basic.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/basic.py), which is documented at [https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction](https://NatLabRockies.github.io/FuelLib/tutorials.html#introduction). The script [`tutorials/mixtureProperties.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/mixtureProperties.py) calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
+This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, [`tutorials/basic.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/basic.py), which is documented at [https://natlabrockies.github.io/FuelLib/tutorials-basic.html](https://natlabrockies.github.io/FuelLib/tutorials-basic.html). The script [`tutorials/mixtureProperties.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/mixtureProperties.py) calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
 
 ### Command-Line Tools
-After installing FuelLib using one of the methods above, you have access to several command-line tools:
-
-#### Exporters
-Export fuel properties for CFD simulations:
-
-- `fl-export-pele`: Export fuel properties for PelePhysics simulations
-- `fl-export-converge`: Export fuel properties for Converge simulations
-
-Example:
-```bash
-fl-export-pele -f posf10264
-fl-export-converge -f posf10325
-```
-
-Run `fl-export-pele -h` or `fl-export-converge -h` for detailed usage information.
-
-#### Utilities
-Utility functions for combustion simulations:
-
-**Temperature Conversion:**
-- `fl-C2K`: Convert temperature from Celsius to Kelvin
-- `fl-K2C`: Convert temperature from Kelvin to Celsius
-  ```bash
-  fl-C2K 25.0
-  # Output: 25.0 °C = 298.15 K
-  fl-K2C 373.15
-  # Output: 373.15 K = 100.00 °C
-  ```
-
-**Transport Properties:**
-- `fl-eps2K`: Convert Lennard-Jones well depth from J/mol to characteristic temperature in Kelvin (for CHEMKIN chemical mechanisms)
-  ```bash
-  fl-eps2K 4066.75
-  # Output: Characteristic temperature: 489.118 K
-  ```
-
-**Available Fuels:**
-- `fl-fuels`: List all available fuels in the library (built-in and custom)
-  ```bash
-  fl-fuels              # Simple list
-  fl-fuels -v           # Detailed listing with metadata
-  fl-fuels -dir path/to/custom/fuelData  # List custom fuels
-  ```
-
-**Analysis & Visualization:**
-
-- `fl-plt-comp`: Plot fuel composition by compound and chemical family
-  ```bash
-  fl-plt-comp -f posf10264
-  ```
-
-- `fl-plt-props`: Plot mixture properties (density, viscosity, vapor pressure, surface tension, thermal conductivity) vs. temperature
-  ```bash
-  fl-plt-props -f posf10264
-  fl-plt-props -f posf10264 posf10325 posf10289  # Multiple fuels
-  ``` 
+After installing FuelLib using one of the methods above, you have access to several command-line tools for plotting, unit conversion, and exporting fuel data. A comprehensive list is provided in the documentation at [https://natlabrockies.github.io/FuelLib/tutorials-cli.html](https://natlabrockies.github.io/FuelLib/tutorials-cli.html).
 
 # Contributing
 New contributions are always welcome! For detailed contribution guidelines, installation instructions, and development setup, see the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page in the documentation.

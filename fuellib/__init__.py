@@ -37,6 +37,10 @@ __all__ = [
     "N_A",
     "C2K",
     "K2C",
+    "C2F",
+    "F2C",
+    "F2K",
+    "K2F",
     "mixing_rule",
     "droplet_volume",
     "droplet_mass",
@@ -1203,6 +1207,54 @@ def K2C(T):
     :rtype: float or np.ndarray
     """
     return T - 273.15
+
+
+def C2F(T):
+    """
+    Convert temperature from Celsius to Fahrenheit.
+
+    :param T: Temperature in Celsius.
+    :type T: float or np.ndarray
+    :return: Temperature in Fahrenheit.
+    :rtype: float or np.ndarray
+    """
+    return T * 9 / 5 + 32
+
+
+def F2C(T):
+    """
+    Convert temperature from Fahrenheit to Celsius.
+
+    :param T: Temperature in Fahrenheit.
+    :type T: float or np.ndarray
+    :return: Temperature in Celsius.
+    :rtype: float or np.ndarray
+    """
+    return (T - 32) * 5 / 9
+
+
+def F2K(T):
+    """
+    Convert temperature from Fahrenheit to Kelvin.
+
+    :param T: Temperature in Fahrenheit.
+    :type T: float or np.ndarray
+    :return: Temperature in Kelvin.
+    :rtype: float or np.ndarray
+    """
+    return C2K(F2C(T))
+
+
+def K2F(T):
+    """
+    Convert temperature from Kelvin to Fahrenheit.
+
+    :param T: Temperature in Kelvin.
+    :type T: float or np.ndarray
+    :return: Temperature in Fahrenheit.
+    :rtype: float or np.ndarray
+    """
+    return C2F(K2C(T))
 
 
 def mixing_rule(var_n, X, pseudo_prop="arithmetic"):

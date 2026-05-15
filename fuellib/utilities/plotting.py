@@ -158,7 +158,6 @@ def plot_composition(
     ax1.set_ylabel("Weight %", fontsize=16)
     ax1.tick_params(axis="y", labelsize=14)
     ax1.grid(axis="y", alpha=0.3)
-    ax1.legend(fontsize=12, loc="upper left")
 
     # Plot 2: Pie chart of family composition
     # Only include families that have weight > 0
