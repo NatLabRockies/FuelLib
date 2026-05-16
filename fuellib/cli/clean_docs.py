@@ -12,8 +12,11 @@ def main():
     Cleans up the Sphinx build output in docs/_build/ and
     generated documentation in docs/generated/
     """
-    # Get the directory of this script (fuellib package)
-    fuellib_dir = os.path.dirname(os.path.abspath(__file__))
+    # Get the directory of this script (fuellib/cli)
+    cli_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Get the fuellib package directory (one level up from cli)
+    fuellib_dir = os.path.dirname(cli_dir)
 
     # Get the project root (one level up from fuellib package)
     project_root = os.path.dirname(fuellib_dir)

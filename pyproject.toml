@@ -48,9 +48,9 @@ dev = [
 [project.scripts]
 fl-export-converge = "fuellib.exporters.converge:main"
 fl-export-pele = "fuellib.exporters.pele:main"
-fl-build-docs = "fuellib.build_docs:main"
-fl-clean-docs = "fuellib.clean_docs:main"
-fl-format = "fuellib.format_code:main"
+fl-build-docs = "fuellib.cli.build_docs:main"
+fl-clean-docs = "fuellib.cli.clean_docs:main"
+fl-format = "fuellib.cli.format_code:main"
 fl-eps2K = "fuellib.cli.transport_props_converter:eps2K_main"
 fl-C2K = "fuellib.cli.temp_converter:c2k_main"
 fl-K2C = "fuellib.cli.temp_converter:k2c_main"
@@ -60,7 +60,7 @@ fl-F2K = "fuellib.cli.temp_converter:f2k_main"
 fl-K2F = "fuellib.cli.temp_converter:k2f_main"
 fl-plt-comp = "fuellib.cli.plotting:comp_main"
 fl-plt-props = "fuellib.cli.plotting:props_main"
-fl-fuels = "fuellib.cli._fuel_manager:list_fuels_main"
+fl-fuels = "fuellib.cli.fuel_manager:list_fuels_main"
 
 [project.urls]
 Repository = "https://github.com/NatLabRockies/FuelLib"

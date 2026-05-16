@@ -30,10 +30,13 @@ FuelLib File Organization
 
     - **cli:** subpackage with command-line interface tools for data conversion and analysis
     
-        - ``temp_converter.py``: temperature conversion utilities (CLI: ``fl-C2K``, ``fl-K2C``, ``fl-C2F``, ``fl-F2C``, ``fl-F2K``, ``fl-K2F``)
-        - ``transport_props_converter.py``: Lennard-Jones parameter conversion (CLI: ``fl-eps2K``)
-        - ``plotting.py``: plotting utilities for composition and properties (CLI: ``fl-plt-comp``, ``fl-plt-props``)
-        - ``_fuel_manager.py``: fuel manager utility (CLI: ``fl-fuels``)
+        - ``temp_converter.py``: temperature conversion utilities
+        - ``transport_props_converter.py``: transport properties conversion utilities
+        - ``plotting.py``: plotting utilities for composition and properties
+        - ``fuel_manager.py``: fuel manager utility
+        - ``build_docs.py``: documentation builder utility
+        - ``clean_docs.py``: documentation cleaner utility
+        - ``format_code.py``: code formatter utility
 
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     

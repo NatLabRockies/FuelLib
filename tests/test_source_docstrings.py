@@ -77,9 +77,10 @@ class SourceDocstringContractTestCase(unittest.TestCase):
             fuellib_dir / "utility.py",
             fuellib_dir / "exporters" / "pele.py",
             fuellib_dir / "exporters" / "converge.py",
-            fuellib_dir / "build_docs.py",
-            fuellib_dir / "clean_docs.py",
-            fuellib_dir / "format_code.py",
+            fuellib_dir / "cli" / "fuel_manager.py",
+            fuellib_dir / "cli" / "build_docs.py",
+            fuellib_dir / "cli" / "clean_docs.py",
+            fuellib_dir / "cli" / "format_code.py",
         ]
 
         total_count = 0
