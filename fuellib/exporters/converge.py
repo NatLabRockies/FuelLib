@@ -343,8 +343,10 @@ def export_converge(
             thermal_conductivity[k] = fuel.mixture_thermal_conductivity(Y_li, Temp)
 
             # Generic mixing rules for latent heat and specific heat
-            Lv[k] = fl.mixing_rule(fuel.latent_heat_vaporization(Temp), X_li)  # J/kg
-            Cl[k] = fl.mixing_rule(fuel.Cl(Temp), X_li)  # J/kg/K
+            Lv[k] = fl.utility.mixing_rule(
+                fuel.latent_heat_vaporization(Temp), X_li
+            )  # J/kg
+            Cl[k] = fl.utility.mixing_rule(fuel.Cl(Temp), X_li)  # J/kg/K
 
         return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
 
@@ -411,8 +413,8 @@ def export_converge(
         T = np.linspace(temp_min, temp_max, nT)
 
         # Estimate freezing point and critical temp of mixture
-        T_freeze = fl.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
-        T_crit = fl.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
+        T_freeze = fl.utility.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
+        T_crit = fl.utility.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
 
         print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
         print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")

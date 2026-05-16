@@ -187,9 +187,9 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
     # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
     X = fuel.Y2X(fuel.Y_0)
-    Cp_A = fl.mixing_rule(fuel.Cp_stp / fuel.MW, X)
-    Cp_B = fl.mixing_rule(fuel.Cp_B / fuel.MW, X)
-    Cp_C = fl.mixing_rule(fuel.Cp_C / fuel.MW, X)
+    Cp_A = fl.utility.mixing_rule(fuel.Cp_stp / fuel.MW, X)
+    Cp_B = fl.utility.mixing_rule(fuel.Cp_B / fuel.MW, X)
+    Cp_C = fl.utility.mixing_rule(fuel.Cp_C / fuel.MW, X)
 
     return pd.DataFrame(
         {
@@ -197,17 +197,17 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
             "Family": [st.mode(fuel.fam).mode],
             "Y_0": [1.0],
             "MW": [fuel.mean_molecular_weight(fuel.Y_0) * converter.MW],
-            "Tc": [fl.mixing_rule(fuel.Tc, X)],
-            "Pc": [fl.mixing_rule(fuel.Pc, X) * converter.P],
-            "Vc": [fl.mixing_rule(fuel.Vc, X) * converter.Vm],
-            "Tb": [fl.mixing_rule(fuel.Tb, X)],
-            "omega": [fl.mixing_rule(fuel.omega, X)],
-            "Vm_stp": [fl.mixing_rule(fuel.Vm_stp, X) * converter.Vm],
+            "Tc": [fl.utility.mixing_rule(fuel.Tc, X)],
+            "Pc": [fl.utility.mixing_rule(fuel.Pc, X) * converter.P],
+            "Vc": [fl.utility.mixing_rule(fuel.Vc, X) * converter.Vm],
+            "Tb": [fl.utility.mixing_rule(fuel.Tb, X)],
+            "omega": [fl.utility.mixing_rule(fuel.omega, X)],
+            "Vm_stp": [fl.utility.mixing_rule(fuel.Vm_stp, X) * converter.Vm],
             "Cp_A": [Cp_A * converter.Cp],
             "Cp_B": [Cp_B * converter.Cp],
             "Cp_C": [Cp_C * converter.Cp],
             "Cp_stp": [Cp_A * converter.Cp],  # For MP model: Cp_stp = Cp_A
-            "Lv_stp": [fl.mixing_rule(fuel.Lv_stp, X) * converter.Lv],
+            "Lv_stp": [fl.utility.mixing_rule(fuel.Lv_stp, X) * converter.Lv],
         }
     )
 
