@@ -69,9 +69,12 @@ class SourceDocstringContractTestCase(unittest.TestCase):
     def test_source_function_documentation(self):
         fuellib_dir = Path(__file__).resolve().parents[1] / "fuellib"
 
-        # Check main module, exporter scripts, and CLI entry points
+        # Check main module, public API modules, exporter scripts, and CLI entry points
         py_files = [
             fuellib_dir / "__init__.py",
+            fuellib_dir / "fuel.py",
+            fuellib_dir / "convert.py",
+            fuellib_dir / "utility.py",
             fuellib_dir / "exporters" / "pele.py",
             fuellib_dir / "exporters" / "converge.py",
             fuellib_dir / "build_docs.py",
