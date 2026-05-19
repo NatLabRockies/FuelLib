@@ -9,7 +9,7 @@ fuels:
     source: Edwards et al. (2017)
     reference: https://doi.org/10.2514/6.2017-0146
     description: 2004 physical average jet fuel constructed by blending 5 separate jet fuels from across the U.S.
-    decomp_name: posf4658
+    decomp_name: posf-cat-a
   
   posf10264:
     name: A-1 POSF10264 JP-8
@@ -17,7 +17,7 @@ fuels:
     source: Edwards et al. (2020)
     reference: https://apps.dtic.mil/sti/pdfs/AD1093317.pdf
     description: Best case fuel from NJFCP. Low viscosity, low density, and a low flash point.
-    decomp_name: posf10264
+    decomp_name: posf-cat-a
   
   posf10289:
     name: A-3 POSF10289 JP-5
@@ -25,7 +25,7 @@ fuels:
     source: Edwards et al. (2020)
     reference: https://apps.dtic.mil/sti/pdfs/AD1093317.pdf
     description: Worst case fuel from NJFCP. High viscosity, high density, and a high flash point.
-    decomp_name: posf10289
+    decomp_name: posf-cat-a
   
   posf10325:
     name: A-2 POSF10325 Jet A
@@ -33,7 +33,7 @@ fuels:
     source: Edwards et al. (2020)
     reference: https://apps.dtic.mil/sti/pdfs/AD1093317.pdf
     description: Baseline fuel from NJFCP. Average density, average viscosity, and average flash point.
-    decomp_name: posf10325
+    decomp_name: posf-cat-a
   
   posf11498:
     name: C-1 POSF11498 ATJ
