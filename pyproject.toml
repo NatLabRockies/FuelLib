@@ -73,6 +73,7 @@ packages = ["fuellib", "fuellib.exporters", "fuellib.cli"]
 [tool.setuptools.package-data]
 fuellib = [
     "data/**/*.csv",
+    "data/**/*.yaml",
 ]
 
 [tool.black]

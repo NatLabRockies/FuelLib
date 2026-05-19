@@ -72,6 +72,7 @@ class SourceDocstringContractTestCase(unittest.TestCase):
         # Check main module, public API modules, exporter scripts, and CLI entry points
         py_files = [
             fuellib_dir / "__init__.py",
+            fuellib_dir / "_data_locator.py",
             fuellib_dir / "fuel.py",
             fuellib_dir / "convert.py",
             fuellib_dir / "utility.py",

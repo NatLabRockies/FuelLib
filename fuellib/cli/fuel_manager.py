@@ -7,6 +7,7 @@ in the FuelLib database, including source information and metadata.
 
 import os
 import argparse
+import warnings
 import fuellib as fl
 
 try:
@@ -21,7 +22,8 @@ def load_fuel_metadata(fuel_data_dir=None):
     """
     Load fuel metadata from YAML file if available.
 
-    :param fuel_data_dir: Optional directory containing fuel data (e.g., customFuels/fuelData).
+    :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/, 
+                         groupDecompositionData/, and fuel_metadata.yaml).
                          If None, loads from embedded FuelLib data.
     :type fuel_data_dir: str, optional
     :return: Dictionary of fuel metadata or empty dict if not available
@@ -43,8 +45,16 @@ def load_fuel_metadata(fuel_data_dir=None):
             with open(metadata_file, "r") as f:
                 data = yaml.safe_load(f)
                 return data.get("fuels", {}) if data else {}
-    except Exception as e:
-        pass
+    except yaml.YAMLError as e:
+        warnings.warn(
+            f"Failed to parse fuel metadata from {metadata_file}: {e}",
+            stacklevel=2
+        )
+    except OSError as e:
+        warnings.warn(
+            f"Failed to read fuel metadata from {metadata_file}: {e}",
+            stacklevel=2
+        )
 
     return {}
 
@@ -62,7 +72,8 @@ def list_fuels_main():
         "--fuel_data_dir",
         default=None,
         metavar="PATH",
-        help="Directory where fuel data files are located (e.g., customFuels/fuelData). If not specified, uses embedded FuelLib data.",
+        help="Directory containing fuel data (with gcData/, groupDecompositionData/, and fuel_metadata.yaml). "
+             "If not specified, uses embedded FuelLib data.",
     )
     parser.add_argument(
         "-v",

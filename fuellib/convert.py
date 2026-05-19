@@ -1,6 +1,5 @@
 """Unit conversion functions."""
 
-import numpy as np
 from .constants import k_B, N_A
 
 
