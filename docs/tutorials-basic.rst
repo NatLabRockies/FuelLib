@@ -70,7 +70,7 @@ the remaining branch with a single CH3 group bonded to a CH2 group is not define
     All group decomposition files must follow the groups defined in `gcmTable`_, there are :math:`N_{g1} = 78` 
     first-order groups and :math:`N_{g2} = 43` second order groups. The second-order groups start with the 
     branching structure `(CH3)2CH`. Not all branching structures are defined in the `gcmTable`_. We recommend
-    starting with `groupDecompositionData/refCompounds.csv` and adapting the decompositions and compounds for your fuel. 
+    starting with `fuellib/data/fuelData/groupDecompositionData/refCompounds.csv` and adapting the decompositions and compounds for your fuel. 
 
 Basic Usage
 ^^^^^^^^^^^

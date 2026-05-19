@@ -90,9 +90,15 @@ class SourceDocstringContractTestCase(unittest.TestCase):
 
         print("\n")  # Add newline to separate from unittest verbose output
 
+        # Verify all expected files exist before checking docstrings
         for py_file in py_files:
-            if not py_file.exists():
-                continue
+            self.assertTrue(
+                py_file.exists(),
+                msg=f"Expected file not found: {py_file.relative_to(fuellib_dir.parent)} "
+                f"(packaging issue or accidental deletion?)",
+            )
+
+        for py_file in py_files:
             tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))
             file_label = py_file.relative_to(fuellib_dir.parent)
 

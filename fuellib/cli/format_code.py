@@ -17,28 +17,15 @@ def main():
     project_root = os.path.dirname(fuellib_dir)
 
     try:
+        # Call Black directly with the project root
+        # Black will recursively find and format all .py files
         result = subprocess.run(
-            ["find", project_root, "-name", "*.py", "-print0"],
-            capture_output=True,
-            text=False,
+            [sys.executable, "-m", "black", project_root],
             check=True,
         )
-
-        # Use xargs to pass files to black
-        process = subprocess.Popen(
-            ["xargs", "-0", "black"],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        stdout, stderr = process.communicate(input=result.stdout)
-
-        if stdout:
-            print(stdout.decode())
-        if stderr:
-            print(stderr.decode(), file=sys.stderr)
-
-        sys.exit(process.returncode)
+        sys.exit(result.returncode)
+    except subprocess.CalledProcessError as e:
+        sys.exit(e.returncode)
     except Exception as e:
         print(f"Error running black formatter: {e}", file=sys.stderr)
         sys.exit(1)

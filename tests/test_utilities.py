@@ -83,13 +83,13 @@ class TestUtilityCLI(unittest.TestCase):
         """Test fl-eps2K CLI with invalid input."""
         returncode, stdout, stderr = self._run_cli_command("fl-eps2K", "not_a_number")
         self.assertNotEqual(returncode, 0)
-        self.assertIn("Error", stdout)
+        self.assertIn("error", stderr)
 
     def test_fl_eps2K_no_args(self):
         """Test fl-eps2K CLI with no arguments."""
         returncode, stdout, stderr = self._run_cli_command("fl-eps2K")
         self.assertNotEqual(returncode, 0)
-        self.assertIn("Usage", stdout)
+        self.assertIn("usage", stderr)
 
     def test_fl_C2K_basic(self):
         """Test fl-C2K CLI command."""
@@ -102,13 +102,13 @@ class TestUtilityCLI(unittest.TestCase):
         """Test fl-C2K CLI with invalid input."""
         returncode, stdout, stderr = self._run_cli_command("fl-C2K", "not_a_number")
         self.assertNotEqual(returncode, 0)
-        self.assertIn("Error", stdout)
+        self.assertIn("error", stderr)
 
     def test_fl_C2K_no_args(self):
         """Test fl-C2K CLI with no arguments."""
         returncode, stdout, stderr = self._run_cli_command("fl-C2K")
         self.assertNotEqual(returncode, 0)
-        self.assertIn("Usage", stdout)
+        self.assertIn("usage", stderr)
 
     def test_fl_K2C_basic(self):
         """Test fl-K2C CLI command."""
@@ -121,13 +121,13 @@ class TestUtilityCLI(unittest.TestCase):
         """Test fl-K2C CLI with invalid input."""
         returncode, stdout, stderr = self._run_cli_command("fl-K2C", "not_a_number")
         self.assertNotEqual(returncode, 0)
-        self.assertIn("Error", stdout)
+        self.assertIn("error", stderr)
 
     def test_fl_K2C_no_args(self):
         """Test fl-K2C CLI with no arguments."""
         returncode, stdout, stderr = self._run_cli_command("fl-K2C")
         self.assertNotEqual(returncode, 0)
-        self.assertIn("Usage", stdout)
+        self.assertIn("usage", stderr)
 
 
 if __name__ == "__main__":
