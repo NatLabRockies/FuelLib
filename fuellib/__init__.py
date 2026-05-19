@@ -14,9 +14,6 @@ try:
 except Exception:
     __version__ = "unknown"
 
-# Import constants
-from .constants import k_B, N_A
-
 # Import fuel class
 from .fuel import fuel
 
