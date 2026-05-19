@@ -66,7 +66,7 @@ Quick start:
 1. Fork the main repository
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
-4. Install development dependencies: `pip install -e '.[dev]`
+4. Install development dependencies: `pip install -e '.[dev]'`
 5. Format the source code files using the provided CLI command: `fl-format`
 6. Run tests and build documentation locally to verify your changes
 7. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.

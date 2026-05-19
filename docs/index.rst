@@ -44,7 +44,7 @@ The easiest way to install FuelLib is via pip:
 
    pip install fuellib
 
-After installation, several command command-line tools will be available for exporting fuel data and plotting fuel properties. See the `CLI Tutorials <tutorials-cli.html>`_ for detailed usage examples and options.
+After installation, several command-line tools will be available for exporting fuel data and plotting fuel properties. See the `CLI Tutorials <tutorials-cli.html>`_ for detailed usage examples and options.
 
 For more detailed information on a development setup, see the `Contributing <development.html>`_ page.
 
