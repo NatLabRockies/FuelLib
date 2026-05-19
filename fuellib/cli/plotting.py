@@ -13,6 +13,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 import fuellib as fl
+from fuellib.convert import C2K, K2C
+from fuellib._data_locator import get_props_data_from_metadata
 
 
 def plot_composition(
@@ -403,7 +405,7 @@ def plot_mixture_properties(
 
         if props_dir and os.path.exists(props_dir):
             # Check if metadata specifies a different props_data filename
-            props_data_name = fl.get_props_data_from_metadata(fuel_name, fuel_data_dir)
+            props_data_name = get_props_data_from_metadata(fuel_name, fuel_data_dir)
             data_filename = props_data_name if props_data_name else fuel_name
 
             data_file = os.path.join(props_dir, f"{data_filename}.csv")
@@ -421,11 +423,11 @@ def plot_mixture_properties(
         # First check if experimental data exists - use its range if available
         if len(T_data) > 0:
             # Use data range if available
-            T_pred = fl.C2K(np.linspace(T_data.min(), T_data.max(), 100))
+            T_pred = C2K(np.linspace(T_data.min(), T_data.max(), 100))
         else:
             # Use property-specific default range
             temp_min, temp_max = get_temp_range(prop_name)
-            T_pred = fl.C2K(np.linspace(temp_min, temp_max, 100))
+            T_pred = C2K(np.linspace(temp_min, temp_max, 100))
 
         pred = np.zeros_like(T_pred)
         Y_li = fuel.Y_0
@@ -472,7 +474,7 @@ def plot_mixture_properties(
 
             # Plot predictions
             ax[i].plot(
-                fl.K2C(T_pred),
+                K2C(T_pred),
                 pred,
                 "-",
                 color=line_color,
@@ -483,7 +485,7 @@ def plot_mixture_properties(
             # Plot experimental data if available
             if len(prop_data) > 0:
                 # Get props_data name for the legend
-                props_data_name = fl.get_props_data_from_metadata(
+                props_data_name = get_props_data_from_metadata(
                     fuel_name, fuel_data_dir
                 )
                 data_label = props_data_name if props_data_name else fuel_name
