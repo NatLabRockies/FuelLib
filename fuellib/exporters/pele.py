@@ -656,6 +656,15 @@ def main():
     fuel_name = args.fuel_name
     fuel_decomp_name = args.fuel_decomp_name
     fuel_data_dir = args.fuel_data_dir
+    
+    # If decomposition name not provided, read from metadata
+    if fuel_decomp_name is None:
+        try:
+            fuel_decomp_name = fl.get_decomp_name_from_metadata(fuel_name, fuel_data_dir)
+        except (FileNotFoundError, KeyError):
+            # If metadata lookup fails, fall back to fuel_name
+            fuel_decomp_name = None
+    
     units = args.units.lower()
     dep_fuel_names = args.dep_fuel_names
     use_pp_keys = args.use_pp_keys

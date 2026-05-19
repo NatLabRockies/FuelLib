@@ -21,6 +21,18 @@ except ImportError:
     HAS_YAML = False
 
 
+__all__ = [
+    "get_data_dir",
+    "get_gcmtable_dir",
+    "get_fueldata_dir",
+    "get_fueldata_gc_dir",
+    "get_fueldata_decomp_dir",
+    "get_fueldata_props_dir",
+    "get_decomp_name_from_metadata",
+    "get_fueldata_propsdata",
+]
+
+
 def _validate_fuel_data_dir(fuel_data_dir):
     """
     Validate that a custom fuel data directory has required subdirectories.

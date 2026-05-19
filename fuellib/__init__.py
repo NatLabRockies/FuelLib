@@ -20,18 +20,8 @@ from .constants import k_B, N_A
 # Import fuel class
 from .fuel import fuel
 
-# Import data locator functions for convenience
-from ._data_locator import (
-    get_fueldata_dir,
-    get_fueldata_gc_dir,
-    get_fueldata_decomp_dir,
-    get_fueldata_props_dir,
-    get_gcmtable_dir,
-    get_fueldata_propsdata,
-)
-
-# Import conversion functions for convenience
-from .convert import C2K, K2C
+# Import data locator functions
+from ._data_locator import *
 
 # Import submodules for namespacing
 from . import constants
@@ -40,16 +30,14 @@ from . import utility
 
 __all__ = [
     "fuel",
-    "k_B",
-    "N_A",
+    "get_data_dir",
+    "get_gcmtable_dir",
     "get_fueldata_dir",
     "get_fueldata_gc_dir",
     "get_fueldata_decomp_dir",
     "get_fueldata_props_dir",
-    "get_gcmtable_dir",
+    "get_decomp_name_from_metadata",
     "get_fueldata_propsdata",
-    "C2K",
-    "K2C",
     "constants",
     "convert",
     "utility",
