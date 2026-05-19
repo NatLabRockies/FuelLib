@@ -27,7 +27,11 @@ from ._data_locator import (
     get_fueldata_decomp_dir,
     get_fueldata_props_dir,
     get_gcmtable_dir,
+    get_fueldata_propsdata,
 )
+
+# Import conversion functions for convenience
+from .convert import C2K, K2C
 
 # Import submodules for namespacing
 from . import constants
@@ -43,6 +47,9 @@ __all__ = [
     "get_fueldata_decomp_dir",
     "get_fueldata_props_dir",
     "get_gcmtable_dir",
+    "get_fueldata_propsdata",
+    "C2K",
+    "K2C",
     "constants",
     "convert",
     "utility",

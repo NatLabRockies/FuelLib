@@ -207,7 +207,7 @@ def get_decomp_name_from_metadata(fuel_name, fuel_data_dir=None):
     return fuel_meta["decomp_name"]
 
 
-def get_props_data_from_metadata(fuel_name, fuel_data_dir=None):
+def get_fueldata_propsdata(fuel_name, fuel_data_dir=None):
     """
     Load properties data name mapping from fuel_metadata.yaml.
 
