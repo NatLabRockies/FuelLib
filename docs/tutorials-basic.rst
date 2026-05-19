@@ -25,10 +25,10 @@ Required Input Files
 
 FuelLib comes with a variety of built-in fuels with pre-populated input files, but you can also add your own custom fuels by providing the required input files. Each fuel requires two input files:
 
-- ``FuelLib/fuelData/gcData/<fuel_name>_init.csv``: the initial weight percentage composition of the fuel components (must include columns "Compound" and "Weight %")
-- ``FuelLib/fuelData/groupDecompositionData/<fuel_name>.csv``: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as `gcmTable <https://github.com/NatLabRockies/FuelLib/blob/main/gcmTableData/gcmTable.csv>`_)
+- ``fuellib/data/fuelData/gcData/<fuel_name>_init.csv``: the initial weight percentage composition of the fuel components (must include columns "Compound" and "Weight %")
+- ``fuellib/data/fuelData/groupDecompositionData/<fuel_name>.csv``: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as `gcmTable <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/gcmTableData/gcmTable.csv>`_)
 
-These two required files must have the same number of rows and the same order of components. Many examples can be found in the `fuelData <https://github.com/NatLabRockies/FuelLib/tree/main/fuelData>`_ directory.
+These two required files must have the same number of rows and the same order of components. Many examples can be found in the `fuellib/data/fuelData <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data/fuelData>`_ directory in the repository. When working with an installed package, prefer ``fuellib.get_fueldata_dir()`` to discover the local fuel-data directory instead of hard-coding package paths.
 
 **Fuel Metadata**
 

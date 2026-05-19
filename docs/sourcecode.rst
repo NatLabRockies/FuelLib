@@ -21,8 +21,8 @@ FuelLib File Organization
         - **fuelData:** 
             - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
             - **groupDecompositionData:** directory containing a collection of functional group decompositions
-            - **propertiesData:** directory containing measurement or predicted data for validation (see *fuelData/dataReferences.md*)
-            - ``fuel_metadata.yaml``: YAML file that maps fuel names to their decomposition files and optional metadata fields (see *fuelData/fuel_metadata_template.yaml* for template)
+            - **propertiesData:** directory containing measurement or predicted data used for validation
+            - ``fuel_metadata.yaml``: YAML file that maps fuel names to their decomposition files and optional metadata fields
     - **exporters:** subpackage with CLI exporters for generating fuel properties
     
         - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)

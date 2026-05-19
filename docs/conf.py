@@ -6,7 +6,9 @@ import os
 import sys
 
 # Add parent directory to path so we can import fuellib
-sys.path.insert(0, os.path.abspath(".."))
+DOCS_DIR = os.path.abspath(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(DOCS_DIR, ".."))
+sys.path.insert(0, PROJECT_ROOT)
 
 
 # -- Project information -----------------------------------------------------

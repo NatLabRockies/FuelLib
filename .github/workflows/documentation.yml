@@ -36,7 +36,7 @@ jobs:
 
       - name: Build docs
         run: |
-          fl-build-docs
+          fl-build-docs -W
 
       - name: Upload artifact (for PR preview or later steps)
         uses: actions/upload-artifact@v4

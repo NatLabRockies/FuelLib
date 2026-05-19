@@ -52,7 +52,7 @@ After installation, the command-line exporters for exporting fuel data will be a
    fl-export-pele -h          # Export for PelePhysics simulations
    fl-export-converge -h      # Export for Converge simulations
 
-For more detailed information or development setup, see the `Contributing <contributing.html>`_ page.
+For more detailed information or development setup, see the `Contributing <development.html>`_ page.
 
 **Package Requirements**
 
