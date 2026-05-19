@@ -28,8 +28,8 @@ __all__ = [
     "get_fueldata_gc_dir",
     "get_fueldata_decomp_dir",
     "get_fueldata_props_dir",
-    "get_decomp_name_from_metadata",
-    "get_fueldata_propsdata",
+    "get_metadata_decomp_name",
+    "get_metadata_props_data",
 ]
 
 
@@ -137,7 +137,7 @@ def get_fueldata_props_dir():
     return _get_props_dir_for_fueldata(get_fueldata_dir())
 
 
-def get_decomp_name_from_metadata(fuel_name, fuel_data_dir=None):
+def get_metadata_decomp_name(fuel_name, fuel_data_dir=None):
     """
     Load decomposition name mapping from fuel_metadata.yaml.
 
@@ -219,7 +219,7 @@ def get_decomp_name_from_metadata(fuel_name, fuel_data_dir=None):
     return fuel_meta["decomp_name"]
 
 
-def get_fueldata_propsdata(fuel_name, fuel_data_dir=None):
+def get_metadata_props_data(fuel_name, fuel_data_dir=None):
     """
     Load properties data name mapping from fuel_metadata.yaml.
 

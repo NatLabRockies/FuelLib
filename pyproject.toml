@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fuellib"
-version = "3.0.0a2"
+version = "3.0.0a3"
 description = "FuelLib: A Python library for Group Contribution Method (GCM) calculations of fuel properties"
 readme = "README.md"
 license = {text = "BSD-3-Clause"}
@@ -32,6 +32,7 @@ dependencies = [
     "pandas>=1.0.0",
     "scipy>=1.5.0",
     "pyyaml>=5.0",
+    "matplotlib>=3.0",
     "importlib-resources>=5.0; python_version < '3.9'",
 ]
 
@@ -39,7 +40,6 @@ dependencies = [
 dev = [
     "black>=26.3.1",
     "pytest>=6.0",
-    "matplotlib>=3.0",
     "sphinx>=4.0",
     "sphinx-rtd-theme>=1.0",
     "sphinxcontrib-bibtex>=2.0",

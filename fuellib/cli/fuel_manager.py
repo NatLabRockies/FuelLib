@@ -22,7 +22,7 @@ def load_fuel_metadata(fuel_data_dir=None):
     """
     Load fuel metadata from YAML file if available.
 
-    :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/, 
+    :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/,
                          groupDecompositionData/, and fuel_metadata.yaml).
                          If None, loads from embedded FuelLib data.
     :type fuel_data_dir: str, optional
@@ -47,13 +47,11 @@ def load_fuel_metadata(fuel_data_dir=None):
                 return data.get("fuels", {}) if data else {}
     except yaml.YAMLError as e:
         warnings.warn(
-            f"Failed to parse fuel metadata from {metadata_file}: {e}",
-            stacklevel=2
+            f"Failed to parse fuel metadata from {metadata_file}: {e}", stacklevel=2
         )
     except OSError as e:
         warnings.warn(
-            f"Failed to read fuel metadata from {metadata_file}: {e}",
-            stacklevel=2
+            f"Failed to read fuel metadata from {metadata_file}: {e}", stacklevel=2
         )
 
     return {}
@@ -73,7 +71,7 @@ def list_fuels_main():
         default=None,
         metavar="PATH",
         help="Directory containing fuel data (with gcData/, groupDecompositionData/, and fuel_metadata.yaml). "
-             "If not specified, uses embedded FuelLib data.",
+        "If not specified, uses embedded FuelLib data.",
     )
     parser.add_argument(
         "-v",

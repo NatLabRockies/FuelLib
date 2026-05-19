@@ -61,39 +61,20 @@ def plot_composition(
     # Load the fuel
     fuel = fl.fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
 
-    # Create DataFrame with compound data
-    family_names = ["n-alkane", "iso-alkane", "cyclo-alkane", "aromatic"]
+    # Create DataFrame with compound data and carbon numbers from fuel object
     df = pd.DataFrame(
         {
             "Compound": fuel.compounds,
             "Weight %": fuel.Y_0 * 100,
             "Family": fuel.hc_type,
+            "nC": fuel.nC,
         }
     )
 
-    # Determine carbon number from compound name
-    def determine_carbon_number(compound):
-        """Extract carbon number from compound name."""
-        if "Toluene" in compound:
-            return 7
-        elif "benzene" in compound.lower():
-            match = re.search(r"C(\d+)", compound)
-            if match:
-                try:
-                    return int(match.group(1)) + 6
-                except ValueError:
-                    return np.nan
-            return np.nan
-        else:
-            match = re.search(r"C(\d+)", compound)
-            if match:
-                try:
-                    return int(match.group(1))
-                except ValueError:
-                    return np.nan
-            return np.nan
-
-    df["nC"] = df["Compound"].apply(determine_carbon_number)
+    # Get unique families from the fuel data in canonical order
+    canonical_order = ["n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene"]
+    unique_families = list(np.unique(fuel.hc_type))
+    family_names = [f for f in canonical_order if f in unique_families]
 
     # Remove rows with weight % <= 0.01
     df = df[df["Weight %"] > 0.01]
@@ -106,8 +87,10 @@ def plot_composition(
     print("Relative Weight % of Each Compound Family")
     print(f"Fuel: {fuel_name}")
     print("=" * 50)
-    for family, weight in family_weights.items():
-        print(f"  {family:<20} {weight:>8.2f}%")
+    for family in family_names:
+        if family in family_weights.index:
+            weight = family_weights[family]
+            print(f"  {family:<20} {weight:>8.2f}%")
     print("-" * 50)
     print(f"  {'Total':<20} {family_weights.sum():>8.2f}%")
     print("=" * 50 + "\n")
@@ -124,27 +107,23 @@ def plot_composition(
     # Create figure with two subplots side by side
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5), constrained_layout=True)
 
-    # Plot 1: Bar chart grouped by carbon number
+    # Plot 1: Bar chart grouped by carbon number, colored by hydrocarbon type
     spacing = [-0.2985, -0.099, 0.099, 0.2985]
-    N = df.nC.unique()
-    families_in_data = df["Family"].unique()
+    nC_values = sorted(df["nC"].unique())
 
-    for k, family in enumerate(family_names):
-        if family not in families_in_data:
-            continue
+    # Get unique families that are in the filtered data
+    families_in_data = [f for f in family_names if f in df["Family"].values]
+
+    # Create bars for each family at each carbon number
+    for k, family in enumerate(families_in_data):
         df_family = df[df["Family"] == family]
-        nC = df_family.nC
-        weight = df_family["Weight %"]
 
-        # Check for duplicate carbon numbers and sum weights
-        if len(nC) != len(set(nC)):
-            df_grouped = df_family.groupby("nC")["Weight %"].sum().reset_index()
-            nC = df_grouped["nC"]
-            weight = df_grouped["Weight %"]
+        # Group by carbon number and sum weights
+        family_by_nC = df_family.groupby("nC")["Weight %"].sum()
 
         ax1.bar(
-            nC + spacing[k],
-            weight,
+            family_by_nC.index + spacing[k],
+            family_by_nC.values,
             label=family,
             alpha=1,
             color=colors.get(family, "#7f7f7f"),
@@ -152,15 +131,17 @@ def plot_composition(
         )
 
     ax1.set_xlabel("Carbon Number", fontsize=16)
-    ax1.set_xticks(sorted(N))
-    ax1.set_xticklabels(sorted(N), fontsize=14)
-    ax1.set_xlim(min(N) - 0.5, max(N) + 0.5)
     ax1.set_ylabel("Weight %", fontsize=16)
+    ax1.set_xticks(nC_values)
+    ax1.set_xticklabels(
+        [int(n) if n == int(n) else f"{n:.1f}" for n in nC_values], fontsize=14
+    )
+    ax1.set_xlim(min(nC_values) - 0.5, max(nC_values) + 0.5)
     ax1.tick_params(axis="y", labelsize=14)
     ax1.grid(axis="y", alpha=0.3)
 
     # Plot 2: Pie chart of family composition
-    # Only include families that have weight > 0
+    # Only include families that have weight > 0, in canonical order
     families_present = [
         f for f in family_names if f in family_weights.index and family_weights[f] > 0
     ]
@@ -403,7 +384,7 @@ def plot_mixture_properties(
 
         if props_dir and os.path.exists(props_dir):
             # Check if metadata specifies a different props_data filename
-            props_data_name = fl.get_fueldata_propsdata(fuel_name, fuel_data_dir)
+            props_data_name = fl.get_metadata_props_data(fuel_name, fuel_data_dir)
             data_filename = props_data_name if props_data_name else fuel_name
 
             data_file = os.path.join(props_dir, f"{data_filename}.csv")
@@ -483,9 +464,7 @@ def plot_mixture_properties(
             # Plot experimental data if available
             if len(prop_data) > 0:
                 # Get props_data name for the legend
-                props_data_name = fl.get_fueldata_propsdata(
-                    fuel_name, fuel_data_dir
-                )
+                props_data_name = fl.get_metadata_props_data(fuel_name, fuel_data_dir)
                 data_label = props_data_name if props_data_name else fuel_name
                 ax[i].scatter(
                     T_data,

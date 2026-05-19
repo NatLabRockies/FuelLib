@@ -49,8 +49,6 @@ class ApiContractTestCase(unittest.TestCase):
         print("\nFuelLib Module API:")
         expected_top_level = {
             "fuel": "class",
-            "k_B": "constant",
-            "N_A": "constant",
             "constants": "module",
             "convert": "module",
             "utility": "module",
@@ -74,9 +72,18 @@ class ApiContractTestCase(unittest.TestCase):
                     isinstance(getattr(fl, name), types.ModuleType),
                     msg=f"FuelLib.{name} should be a module",
                 )
-            print(f"  ✓ {name} ({obj_type})")
+            else:
+                print(f"  ✓ {name} ({obj_type})")
 
-        # Check convert submodule
+        # Check that constants are available via module
+        self.assertTrue(
+            hasattr(fl.constants, "k_B"), msg="FuelLib.constants.k_B not found"
+        )
+        self.assertTrue(
+            hasattr(fl.constants, "N_A"), msg="FuelLib.constants.N_A not found"
+        )
+        print(f"  ✓ constants.k_B (constant)")
+        print(f"  ✓ constants.N_A (constant)")
         print("\nFuelLib.convert Module API:")
         convert_funcs = {
             "C2K": "(T)",

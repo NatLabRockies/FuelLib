@@ -22,16 +22,15 @@ Create a fuel data directory with this structure:
 - ``gcData/``: Contains GC×GC composition data (one file per fuel)
 - ``groupDecompositionData/``: Contains functional group decomposition data (one file per fuel)
 
-**Required file:**
+**Required metadata:**
 
 - ``fuel_metadata.yaml``: Configuration file that maps fuel names to their decomposition files
 
 Metadata Configuration
 ----------------------
 
-Each custom fuel directory must have a ``fuel_metadata.yaml`` file at the root of the ``fuelData`` directory. This file defines the mapping from fuel names to their group decomposition files.
-
-**Minimal format:**
+Each custom fuel directory must have a ``fuel_metadata.yaml`` file at the root of the directory. This file defines the mapping from fuel names to their group decomposition files.
+At a minimum, each fuel entry must include the ``decomp_name`` field that specifies the name of the decomposition file (without the ``.csv`` extension) in the ``groupDecompositionData/`` directory as shown below.
 
 .. code-block:: yaml
 
@@ -39,13 +38,7 @@ Each custom fuel directory must have a ``fuel_metadata.yaml`` file at the root o
       your_fuel:
         decomp_name: your_fuel
 
-**Fields:**
-
-- ``decomp_name`` (required): Name of the decomposition CSV file (without ``.csv`` extension). Must match a file in ``groupDecompositionData/``
-
-**Optional fields:**
-
-You can add additional metadata for documentation:
+Additional metadata can be included for documentation purposes, but is not required for FuelLib to function. The following fields are available for each fuel:
 
 .. code-block:: yaml
 

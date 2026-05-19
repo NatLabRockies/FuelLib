@@ -14,9 +14,9 @@ Install FuelLib using pip:
 
    pip install fuellib
 
-The required dependencies (numpy ≥1.19.0, pandas ≥1.0.0, scipy ≥1.5.0) will be installed automatically.
+The required dependencies will be installed automatically.
 
-For information about contributing or development setup, see the `Contributing <development.html>`_ page.
+For information about contributing or installation for development, see the `Contributing <development.html>`_ page.
 
 If you want to run the example scripts, you can either clone the repository or download individual tutorial files from the `tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_ directory on GitHub.
 

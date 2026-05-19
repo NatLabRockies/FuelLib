@@ -16,7 +16,7 @@ class TestUtilityFunctions(unittest.TestCase):
         # epsilon_molecule = 1000 / 6.02214076e23 J
         # T* = epsilon_molecule / k_B = (1000 / 6.02214076e23) / 1.380649e-23 K
         result = fl.convert.epsilon_to_characteristic_temperature(1000.0)
-        expected = (1000.0 / fl.N_A) / fl.k_B
+        expected = (1000.0 / fl.constants.N_A) / fl.constants.k_B
         self.assertAlmostEqual(result, expected, places=10)
 
     def test_epsilon_to_characteristic_temperature_zero(self):
@@ -27,7 +27,7 @@ class TestUtilityFunctions(unittest.TestCase):
     def test_epsilon_to_characteristic_temperature_negative(self):
         """Test epsilon conversion with negative input."""
         result = fl.convert.epsilon_to_characteristic_temperature(-1000.0)
-        expected = (-1000.0 / fl.N_A) / fl.k_B
+        expected = (-1000.0 / fl.constants.N_A) / fl.constants.k_B
         self.assertAlmostEqual(result, expected, places=10)
 
     def test_C2K(self):

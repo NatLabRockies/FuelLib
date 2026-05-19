@@ -19,7 +19,6 @@ This installs FuelLib with all development tools:
 - **Documentation:** Sphinx, sphinx-rtd-theme, sphinxcontrib-bibtex
 - **Code formatting:** Black
 - **Testing:** pytest
-- **Plotting:** matplotlib
 
 Optional: Conda Environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

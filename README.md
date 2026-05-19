@@ -25,7 +25,11 @@ The easiest way to install FuelLib is via pip:
 pip install fuellib
 ```
 
-This will make the command-line exporters (`fl-export-pele` and `fl-export-converge`) available.
+This will make the command-line tools available, including:
+- `fl-export-pele` and `fl-export-converge` for exporting fuel properties
+- `fl-plt-props` and `fl-plt-comp` for plotting fuel composition and properties
+- `fl-fuels` for listing available fuels
+- Temperature and unit conversion utilities
 
 ### Option 2: Development Installation (For Contributors)
 
@@ -39,12 +43,12 @@ pip install -e '.[dev]'  # Install with development tools (docs, testing, format
 
 See the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page for more detailed setup instructions and contribution guidelines.
 
-### Optional: Create a Conda Environment
+### Optional: Use a Dedicated Conda Environment
 
-To use a specific conda environment:
+For better dependency isolation, you can create a conda environment first:
 
 ```bash
-conda create --name fuellib-env python numpy pandas scipy matplotlib
+conda create --name fuellib-env python
 conda activate fuellib-env
 pip install fuellib
 ```

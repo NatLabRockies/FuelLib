@@ -5,6 +5,10 @@ This test module verifies that the export CLI commands work correctly.
 
 import subprocess
 import sys
+import tempfile
+import shutil
+import os
+import fuellib as fl
 
 
 def run_export_command(cmd):
@@ -75,6 +79,50 @@ def test_converge_mixture():
     )
 
 
+def test_pele_custom_fuel_data_dir():
+    """Test fl-export-pele with custom fuel data directory (not embedded data)."""
+    # Create a temporary directory and copy fuelData to it
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Copy the embedded fuelData to a temp location
+        embedded_fueldata = fl.get_fueldata_dir()
+        custom_fueldata = os.path.join(tmpdir, "fuelData")
+        shutil.copytree(embedded_fueldata, custom_fueldata)
+
+        # Export from custom location
+        run_export_command(
+            ["fl-export-pele", "-f", "posf10264", "-dir", custom_fueldata]
+        )
+
+
+def test_converge_custom_fuel_data_dir():
+    """Test fl-export-converge with custom fuel data directory (not embedded data)."""
+    # Create a temporary directory and copy fuelData to it
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Copy the embedded fuelData to a temp location
+        embedded_fueldata = fl.get_fueldata_dir()
+        custom_fueldata = os.path.join(tmpdir, "fuelData")
+        shutil.copytree(embedded_fueldata, custom_fueldata)
+
+        # Export from custom location
+        run_export_command(
+            [
+                "fl-export-converge",
+                "-f",
+                "posf10264",
+                "-dir",
+                custom_fueldata,
+                "-m",
+                "true",
+                "-t",
+                "280",
+                "-T",
+                "400",
+                "-s",
+                "10",
+            ]
+        )
+
+
 if __name__ == "__main__":
     print("Running exporter tests...\n")
 
@@ -88,10 +136,18 @@ if __name__ == "__main__":
         ("fl-export-pele - mixture export with CGS units", test_pele_mixture_cgs),
         ("fl-export-pele - single deposit species", test_pele_deposit_species),
         (
+            "fl-export-pele - custom fuel data directory",
+            test_pele_custom_fuel_data_dir,
+        ),
+        (
             "fl-export-converge - individual component export",
             test_converge_individual_component,
         ),
         ("fl-export-converge - mixture export", test_converge_mixture),
+        (
+            "fl-export-converge - custom fuel data directory",
+            test_converge_custom_fuel_data_dir,
+        ),
     ]
 
     failed = []

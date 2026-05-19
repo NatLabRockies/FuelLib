@@ -14,7 +14,7 @@ from ._data_locator import (
     get_fueldata_gc_dir,
     get_fueldata_decomp_dir,
     get_fueldata_props_dir,
-    get_decomp_name_from_metadata,
+    get_metadata_decomp_name,
 )
 
 
@@ -143,7 +143,7 @@ class fuel:
         self.name = name
         if decompName is None:
             # Try to get decomposition name from metadata
-            decompName = get_decomp_name_from_metadata(name, fuelDataDir)
+            decompName = get_metadata_decomp_name(name, fuelDataDir)
 
         # Determine and set data directories for this fuel instance
         if fuelDataDir is None:

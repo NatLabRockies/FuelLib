@@ -17,12 +17,15 @@ FuelLib File Organization
     - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
     - ``utility.py``: utility functions for mixture properties and droplet calculations
     - ``_data_locator.py``: internal module for locating and validating fuel data directories
+    
     - **data**: directory containing fuel data and metadata    
+        
         - **fuelData:** 
             - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
             - **groupDecompositionData:** directory containing a collection of functional group decompositions
             - **propertiesData:** directory containing measurement or predicted data used for validation
             - ``fuel_metadata.yaml``: YAML file that maps fuel names to their decomposition files and optional metadata fields
+    
     - **exporters:** subpackage with CLI exporters for generating fuel properties
     
         - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)

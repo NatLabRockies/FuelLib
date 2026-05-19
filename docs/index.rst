@@ -19,16 +19,15 @@ Citing this work
 
 If you use FuelLib in your research, please cite the following software record:
 
-.. code-block:: none
+Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, and Binswanger, Adam. FuelLib (Fuel Library) [SWR-25-26]. Computer Software. https://github.com/NatLabRockies/FuelLib. USDOE Office of Energy Efficiency and Renewable Energy (EERE), Office of Sustainable Transportation. Vehicle Technologies Office (VTO). 27 Feb. 2025. Web. `doi:10.11578/dc.20250317.1 <https://doi.org/10.11578/dc.20250317.1>`_.
 
-   Montgomery, David, Appukuttan, Sreejith, Yellapantula, Shashank, Perry, Bruce, and Binswanger, Adam. FuelLib (Fuel Library) [SWR-25-26]. Computer Software. https://github.com/NatLabRockies/FuelLib. USDOE Office of Energy Efficiency and Renewable Energy (EERE), Office of Sustainable Transportation. Vehicle Technologies Office (VTO). 27 Feb. 2025. Web. doi:10.11578/dc.20250317.1.
+Or in BibTeX format:
 
 .. code-block:: bibtex
 
-   @misc{montgomery_fuellib_2025,
+   @misc{fuellib_2025,
       title = {FuelLib (Fuel Library) [SWR-25-26]},
       author = {Montgomery, David and Appukuttan, Sreejith and Yellapantula, Shashank and Perry, Bruce and Binswanger, Adam},
-      abstractNote = {FuelLib is a library that utilizes the group contribution method (GCM) for calculating thermodynamic properties of hydro-carbon jet fuels. FuelLib utilizes the tables and functions of the GCM as proposed by Constantinou and Gani (1994) and Constantinou, Gani and O'Connel (1995), with additional physical properties discussed in Govindaraju & Ihme (2016). The code is based on Pavan B. Govindaraju's Matlab implementation of the GCM, and has been expanded to include additional thermodynamic properties and mixture properties. The fuel library contains gas chromatography (GC x GC) data for a variety of fuels ranging from simple single component fuels to complex jet fuels. The GC x GC data for POSF jet fuels comes from Edwards (2020).},
       doi = {10.11578/dc.20250317.1},
       url = {https://doi.org/10.11578/dc.20250317.1},
       howpublished = {[Computer Software] \url{https://doi.org/10.11578/dc.20250317.1}},
@@ -45,22 +44,20 @@ The easiest way to install FuelLib is via pip:
 
    pip install fuellib
 
-After installation, the command-line exporters for exporting fuel data will be available:
+After installation, several command command-line tools will be available for exporting fuel data and plotting fuel properties. See the `CLI Tutorials <tutorials-cli.html>`_ for detailed usage examples and options.
 
-.. code-block:: bash
-
-   fl-export-pele -h          # Export for PelePhysics simulations
-   fl-export-converge -h      # Export for Converge simulations
-
-For more detailed information or development setup, see the `Contributing <development.html>`_ page.
+For more detailed information on a development setup, see the `Contributing <development.html>`_ page.
 
 **Package Requirements**
 
 FuelLib requires:
 
-- numpy ≥1.19.0, pandas ≥1.0.0, scipy ≥1.5.0
+- numpy ≥1.19.0
+- pandas ≥1.0.0
+- scipy ≥1.5.0
+- matplotlib ≥3.0.0
 
-Development tools (Sphinx, Black, pytest, matplotlib) are available for developers installing from source; see the installation instructions in the tutorials section.
+Development tools (Sphinx, Black, pytest) are available for developers installing from source; see the installation instructions in the `Contributing <development.html>`_ section.
 
 .. toctree::
    :maxdepth: 4

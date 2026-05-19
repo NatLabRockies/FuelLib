@@ -639,24 +639,8 @@ def main():
     print(f"    Export directory: {export_dir}")
     print(f"    Fuel data directory: {fuel_data_dir}")
 
-    # Get decomposition name from metadata
-    try:
-        decomp_name = fl.get_decomp_name_from_metadata(fuel_name, fuel_data_dir)
-    except (FileNotFoundError, KeyError):
-        # If metadata lookup fails, fall back to fuel_name
-        decomp_name = fuel_name
-
-    # Check if necessary files exist in the fuelData directory
-    print("\nChecking for required files...")
-    gcxgc_file = os.path.join(fuel_data_dir, f"gcData/{fuel_name}_init.csv")
-    decomp_file = os.path.join(fuel_data_dir, f"groupDecompositionData/{decomp_name}.csv")
-    if not os.path.exists(gcxgc_file):
-        err = f"GCXGC file for {fuel_name} not found in {fuel_data_dir}/gcData. gcxgc_file = {gcxgc_file}"
-        raise FileNotFoundError(err)
-    if not os.path.exists(decomp_file):
-        err = f"Decomposition file for {fuel_name} not found in {fuel_data_dir}/groupDecompositionData. decomp_file = {decomp_file}"
-        raise FileNotFoundError(err)
-    print("All required files found.")
+    # Get decomposition name from metadata (required)
+    decomp_name = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
 
     # Create the fuel object
     fuel = fl.fuel(fuel_name, fuelDataDir=fuel_data_dir)

@@ -656,15 +656,11 @@ def main():
     fuel_name = args.fuel_name
     fuel_decomp_name = args.fuel_decomp_name
     fuel_data_dir = args.fuel_data_dir
-    
-    # If decomposition name not provided, read from metadata
+
+    # If decomposition name not provided, read from metadata (required)
     if fuel_decomp_name is None:
-        try:
-            fuel_decomp_name = fl.get_decomp_name_from_metadata(fuel_name, fuel_data_dir)
-        except (FileNotFoundError, KeyError):
-            # If metadata lookup fails, fall back to fuel_name
-            fuel_decomp_name = None
-    
+        fuel_decomp_name = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
+
     units = args.units.lower()
     dep_fuel_names = args.dep_fuel_names
     use_pp_keys = args.use_pp_keys
@@ -677,8 +673,7 @@ def main():
     # Print the parsed arguments
     print(f"Preparing to export properties:")
     print(f"    Fuel name: {fuel_name}")
-    if fuel_decomp_name is not None:
-        print(f"    Decomposition name: {fuel_decomp_name}")
+    print(f"    Decomposition name: {fuel_decomp_name}")
     print(f"    Units: {units}")
     print(f"    Liquid property model: {liq_prop_model}")
     if liq_prop_model.lower() == "mp":
@@ -686,25 +681,6 @@ def main():
     print(f"    Export mixture properties: {export_mix}")
     print(f"    Export directory: {export_dir}")
     print(f"    Fuel data directory: {fuel_data_dir}")
-
-    # Check if necessary files exist in the fuelData directory
-    print("\nChecking for required files...")
-    gcxgc_file = os.path.join(fuel_data_dir, f"gcData/{fuel_name}_init.csv")
-    if fuel_decomp_name is None:
-        decomp_file = os.path.join(
-            fuel_data_dir, f"groupDecompositionData/{fuel_name}.csv"
-        )
-    else:
-        decomp_file = os.path.join(
-            fuel_data_dir, f"groupDecompositionData/{fuel_decomp_name}.csv"
-        )
-    if not os.path.exists(gcxgc_file):
-        err = f"GCXGC file for {fuel_name} not found in {fuel_data_dir}/gcData. gxcgc_file = {gcxgc_file}"
-        raise FileNotFoundError(err)
-    if not os.path.exists(decomp_file):
-        err = f"Decomposition file for {fuel_name} not found in {fuel_data_dir}/groupDecompositionData. decomp_file = {decomp_file}"
-        raise FileNotFoundError(err)
-    print("All required files found.")
 
     # Create the groupContribution object for the specified fuel
     fuel = fl.fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
