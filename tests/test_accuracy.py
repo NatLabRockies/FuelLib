@@ -1,15 +1,12 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 from get_pred_and_data import get_pred_and_data
 import unittest
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-if FUELLIB_DIR not in sys.path:
-    sys.path.append(FUELLIB_DIR)
-from paths import *
+# Locate the tests baseline directory
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+TESTS_BASELINE_DIR = os.path.join(TESTS_DIR, "baselinePredictions")
 
 
 class CompTestCase(unittest.TestCase):

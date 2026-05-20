@@ -1,14 +1,9 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(FUELLIB_DIR)
-from paths import *
-import FuelLib as fl
+import fuellib as fl
 
 # -----------------------------------------------------------------------------
 # Calculate mixture properties from the group contribution properties
@@ -65,16 +60,18 @@ def getPredAndData(fuel_name, prop_name, blend):
     jetA = fl.fuel(conv_fuel_name)
 
     data_file = "hefa-jet-a-blends.csv"
-    data = pd.read_csv(os.path.join(FUELDATA_PROPS_DIR, data_file), skiprows=[1])
+    data = pd.read_csv(
+        os.path.join(fl.get_fueldata_props_dir(), data_file), skiprows=[1]
+    )
     col = f"{prop_name}_{fuel_name[5:].upper()}"
     prop_data = data[col]
     blend_data = data["HEFA_concentration"]
 
     # Separate properties and associated temperatures from data
     if prop_name == "Density":
-        T = fl.C2K(15)
+        T = fl.convert.C2K(15)
     elif prop_name == "Viscosity":
-        T = fl.C2K(-20)
+        T = fl.convert.C2K(-20)
 
     # Vector for FuelLib predictions
     prop_pred = np.zeros_like(blend)
@@ -142,7 +139,7 @@ for i in range(len(prop_names)):
     # Add labels and adjust ticks
     ax[i].set_xlabel("HEFA Concentration [wt %]", fontsize=fsize)
     ax[i].set_xticks([0, 20, 40, 60, 80, 100])
-    ax[i].set_ylabel(ylab(prop_names[i], fl.K2C(T)), fontsize=fsize)
+    ax[i].set_ylabel(ylab(prop_names[i], fl.convert.K2C(T)), fontsize=fsize)
     ax[i].tick_params(labelsize=ticksize)
 
 handles, labels = ax[0].get_legend_handles_labels()

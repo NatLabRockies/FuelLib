@@ -9,23 +9,46 @@ FuelLib File Organization
 -------------------------
 
 - **docs:** directory containing the documentation source files
-- **fuelData:** 
-    - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
-    - **groupDecompositionData:** directory containing a collection of functional group decompositions
-    - **propertiesData:** directory containing measurement or predicted data for validation (see *fuelData/dataReferences.md*)
 - **gcmTableData:** directory that contains the pre-tabulated group contributions
-- **source:** directory containing the main source code files
+- **fuellib:** main package directory containing:
 
-    - ``Export4Converge.py``: script that exports mixture properties over a range of user specified temperatures for use in Converge simulations.
-    - ``Export4Pele.py``: script that exports critical properties and initial mass fraction data for use in Pele simulations.
-    - ``FuelLib.py``: class for enabling GCM predictions
+    - ``fuel.py``: core :class:`fuel` class for Group Contribution Method calculations
+    - ``constants.py``: physical constants (Boltzmann, Avogadro)
+    - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
+    - ``utility.py``: utility functions for mixture properties and droplet calculations
+    - ``_data_locator.py``: internal module for locating and validating fuel data directories
+    
+    - **data**: directory containing fuel data and metadata    
+        
+        - **fuelData:** 
+            - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
+            - **groupDecompositionData:** directory containing a collection of functional group decompositions
+            - **propertiesData:** directory containing measurement or predicted data used for validation
+            - ``fuel_metadata.yaml``: YAML file that maps fuel names to their decomposition files and optional metadata fields
+    
+    - **exporters:** subpackage with CLI exporters for generating fuel properties
+    
+        - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)
+        - ``pele.py``: exporter for PelePhysics simulations (CLI: ``fl-export-pele``)
+
+    - **cli:** subpackage with command-line interface tools for data conversion and analysis
+    
+        - ``temp_converter.py``: temperature conversion utilities
+        - ``transport_props_converter.py``: transport properties conversion utilities
+        - ``plotting.py``: plotting utilities for composition and properties
+        - ``fuel_manager.py``: fuel manager utility
+        - ``build_docs.py``: documentation builder utility
+        - ``clean_docs.py``: documentation cleaner utility
+        - ``format_code.py``: code formatter utility
 
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     
     - **baselinePredictions:** directory that contains baseline predictions and script ``generate_baseline.py`` for generating baseline predictions for CI testing.
     - ``test_accuracy.py``: unit test used in CI for verifying new model predictions preserve accuracy
     - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
-    - ``test_api.py``: combined API/signature and function-evaluation test that checks public ``FuelLib.py`` module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
+    - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
+    - ``test_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
+    - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
     - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
@@ -34,8 +57,6 @@ FuelLib File Organization
     - ``compositionPlots.py``: example script that generates composition plots for a given fuel
     - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
     - ``mixtureProperties.py``: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.
-
-- ``paths.py``: file that defines paths to various directories and files used in FuelLib
 
 Public API
 ----------
@@ -53,4 +74,7 @@ Click on links below for the full auto-documentation of the API.
 .. autosummary::
     :toctree: generated
 
-    FuelLib
+    fuellib.fuel
+    fuellib.constants
+    fuellib.convert
+    fuellib.utility

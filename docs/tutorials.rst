@@ -7,8 +7,10 @@ This section provides tutorials on how to use the FuelLib library.
    :maxdepth: 4
 
    tutorials-basic
-   tutorials-export4pele
-   tutorials-export4converge
+   tutorials-cli
+   tutorials-custom-fuels
+   tutorials-export-pele
+   tutorials-export-converge
 
 
 

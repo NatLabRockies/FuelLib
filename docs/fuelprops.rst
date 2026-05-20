@@ -46,7 +46,7 @@ Table of GCM properties
    :math:`\Delta H_{v,\textit{stp},i}`   J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
    :math:`\omega_i`                      1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
    :math:`V_{m,\textit{stp},i}`          m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
-   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
+   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
    ====================================  =====================  ===========================================  ====================  ===========================================================
 
 .. _eq-GCM-properties:
@@ -113,7 +113,7 @@ provided :math:`T` in K unless noted otherwise.
    :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
-   :math:`C_{\ell,i}`             J/kg/K                 Liquid specific heat capacity\ :footcite:p:`govindaraju_group_2016`. 
+   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity. 
    :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
@@ -138,7 +138,7 @@ provided :math:`T` in K unless noted otherwise.
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.viscosity_kinematic
+.. automethod:: fuellib.fuel.viscosity_kinematic
    :noindex:
 
 The kinematic viscosity of the *i-th* compound of the fuel, 
@@ -159,7 +159,7 @@ Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{
 Latent heat of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.latent_heat_vaporization
+.. automethod:: fuellib.fuel.latent_heat_vaporization
    :noindex:
 
 The latent heat of vaporization for each compound at standard pressure and 
@@ -178,7 +178,7 @@ temperature\ :footcite:p:`govindaraju_group_2016`:
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.molar_liquid_vol
+.. automethod:: fuellib.fuel.molar_liquid_vol
    :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using 
@@ -203,7 +203,7 @@ where
 Density
 ^^^^^^^
 
-.. automethod:: FuelLib.fuel.density
+.. automethod:: fuellib.fuel.density
    :noindex:
 
 The density of the *i-th* compound is given by
@@ -212,13 +212,13 @@ The density of the *i-th* compound is given by
    \rho_i = \frac{M_{w,i}}{V_{m,i}}.
 
 
-Liquid specific heat capacity
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Mass specific heat capacity of the liquid
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.Cl
+.. automethod:: fuellib.fuel.Cl
    :noindex:
 
-The liquid specific heat capacity for each compound at standard pressure temperature is calculated from the specific heat capacity as:
+The mass specific heat capacity for each compound at standard pressure temperature is calculated from the molar specific heat capacity as:
 
 .. math::
    C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}} 
@@ -228,7 +228,7 @@ The liquid specific heat capacity for each compound at standard pressure tempera
 Saturated vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.psat
+.. automethod:: fuellib.fuel.psat
    :noindex:
 
 The saturated vapor pressure for each compound is calculated as a function of 
@@ -260,7 +260,7 @@ The Ambrose-Walton\ :footcite:p:`ambrose_vapour_1989` correlation sets:
 
 with :math:`\tau_i = 1 - T_{r,i}`.
 
-.. automethod:: FuelLib.fuel.psat_antoine_coeffs
+.. automethod:: fuellib.fuel.psat_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -279,7 +279,7 @@ for additional information.
 Surface tension
 ^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.surface_tension
+.. automethod:: fuellib.fuel.surface_tension
    :noindex:
 
 Surface tension for each compound is approximated using the relation:
@@ -302,7 +302,7 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.thermal_conductivity
+.. automethod:: fuellib.fuel.thermal_conductivity
    :noindex:
 
 Thermal conductivity for each compound is computed according to the method of 
@@ -389,7 +389,7 @@ are used throughout this section.
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: FuelLib.mixing_rule
+.. autofunction:: fuellib.utility.mixing_rule
    :noindex:
 
 While many of the mixture properties in FuelLib have a unique mixing rule,
@@ -415,7 +415,7 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 Mixture density
 ^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_density
+.. automethod:: fuellib.fuel.mixture_density
    :noindex:
 
 The mixture's density is calculated as:
@@ -428,7 +428,7 @@ The mixture's density is calculated as:
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_kinematic_viscosity
+.. automethod:: fuellib.fuel.mixture_kinematic_viscosity
    :noindex:
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
@@ -453,7 +453,7 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_vapor_pressure
+.. automethod:: fuellib.fuel.mixture_vapor_pressure
    :noindex:
 
 The vapor pressure of the mixture is calculated according to Raoult's law:
@@ -462,7 +462,7 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 
    p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.
 
-.. automethod:: FuelLib.fuel.mixture_vapor_pressure_antoine_coeffs
+.. automethod:: fuellib.fuel.mixture_vapor_pressure_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -481,7 +481,7 @@ for additional information.
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_surface_tension
+.. automethod:: fuellib.fuel.mixture_surface_tension
    :noindex:
 
 The surface tension of the mixture is calculated using the :ref:`conventional-mixing-rules`
@@ -494,7 +494,7 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: FuelLib.fuel.mixture_thermal_conductivity
+.. automethod:: fuellib.fuel.mixture_thermal_conductivity
    :noindex:
 
 The thermal conductivity of the mixture is calculated using the power law method of 
@@ -517,7 +517,7 @@ For ease of reference, the reference compounds and keys corresponding to a PeleP
 When provided, the PelePhysics keys can be used to link the compounds in FuelLib to species in PelePhysics simulations via ``Export4Pele.py`` as described in :ref:`Exporting to PelePhysics <sec-exporting-to-pelephysics>`.
 
 .. csv-table:: Reference compounds, chemical formulas, and corresponding PelePhysics keys by GCxGC bin.
-   :file: ../fuelData/refCompounds.csv
+   :file: ../fuellib/data/fuelData/refCompounds.csv
    :header-rows: 1
    :align: center
    :widths: auto
