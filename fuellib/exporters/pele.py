@@ -248,7 +248,7 @@ def export_pele(
     :type fuel: fuel object
 
     :param path: Directory to save the input file.
-    :type path: str, optional (default: current directory/exportData)
+    :type path: str, optional (default: current working directory)
 
     :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
     :type units: str, optional (default: "mks")
@@ -278,7 +278,7 @@ def export_pele(
     :raises TypeError: If fuel object is not a FuelLib fuel instance
     """
     if path is None:
-        path = os.path.join(os.getcwd(), "exportData")
+        path = os.getcwd()
 
     # Input validation
     if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
@@ -524,7 +524,7 @@ def main():
     :param --use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is True.
     :type --use_pp_keys: bool, optional
 
-    :param --export_dir: Directory to export the properties. Default is "current directory/exportData".
+    :param --export_dir: Directory to export the properties. Default is the current working directory.
     :type --export_dir: str, optional
 
     :param --export_mix: Option to export mixture properties of the fuel (True or False). Default is False.
@@ -608,9 +608,9 @@ def main():
     parser.add_argument(
         "-o",
         "--export_dir",
-        default=os.path.join(os.getcwd(), "exportData"),
+        default=os.getcwd(),
         metavar="PATH",
-        help="Directory to export the properties (optional, default: ./exportData).",
+        help="Directory to export the properties (optional, default: current working directory).",
     )
 
     # Optional argument for exporting mixture properties
