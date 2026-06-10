@@ -1,14 +1,11 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-if FUELLIB_DIR not in sys.path:
-    sys.path.append(FUELLIB_DIR)
-from paths import *
-import FuelLib as fl
+import fuellib as fl
+from fuellib._data_locator import get_fueldata_props_dir
+
+FUELDATA_PROPS_DIR = get_fueldata_props_dir()
 
 
 def get_pred_and_data(fuel_name, prop_name):
@@ -26,7 +23,7 @@ def get_pred_and_data(fuel_name, prop_name):
     pred = np.zeros_like(T_data)
 
     # Vectors for temperature (convert from C to K)
-    T_pred = fl.C2K(T_data)
+    T_pred = fl.convert.C2K(T_data)
 
     for i in range(0, len(T_pred)):
         Y_li = fuel.Y_0

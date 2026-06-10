@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fuellib"
+version = "3.0.0a5"
+description = "FuelLib: A Python library for Group Contribution Method (GCM) calculations of fuel properties"
+readme = "README.md"
+license = {text = "BSD-3-Clause"}
+authors = [
+    {name = "NLR", email = "david.montgomery@nlr.gov"},
+]
+requires-python = ">=3.8"
+keywords = ["fuel", "thermodynamics", "group-contribution", "properties"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+
+dependencies = [
+    "numpy>=1.19.0",
+    "pandas>=1.0.0",
+    "scipy>=1.5.0",
+    "pyyaml>=5.0",
+    "matplotlib>=3.0",
+    "importlib-resources>=5.0; python_version < '3.9'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=26.3.1",
+    "pytest>=6.0",
+    "sphinx>=4.0",
+    "sphinx-rtd-theme>=1.0",
+    "sphinxcontrib-bibtex>=2.0",
+]
+
+[project.scripts]
+fl-export-converge = "fuellib.exporters.converge:main"
+fl-export-pele = "fuellib.exporters.pele:main"
+fl-build-docs = "fuellib.cli.build_docs:main"
+fl-clean-docs = "fuellib.cli.clean_docs:main"
+fl-format = "fuellib.cli.format_code:main"
+fl-eps2K = "fuellib.cli.transport_props_converter:eps2K_main"
+fl-C2K = "fuellib.cli.temp_converter:c2k_main"
+fl-K2C = "fuellib.cli.temp_converter:k2c_main"
+fl-C2F = "fuellib.cli.temp_converter:c2f_main"
+fl-F2C = "fuellib.cli.temp_converter:f2c_main"
+fl-F2K = "fuellib.cli.temp_converter:f2k_main"
+fl-K2F = "fuellib.cli.temp_converter:k2f_main"
+fl-plt-comp = "fuellib.cli.plotting:comp_main"
+fl-plt-props = "fuellib.cli.plotting:props_main"
+fl-fuels = "fuellib.cli.fuel_manager:list_fuels_main"
+
+[project.urls]
+Repository = "https://github.com/NatLabRockies/FuelLib"
+Issues = "https://github.com/NatLabRockies/FuelLib/issues"
+Documentation = "https://NatLabRockies.github.io/FuelLib"
+
+[tool.setuptools]
+packages = ["fuellib", "fuellib.exporters", "fuellib.cli"]
+
+[tool.setuptools.package-data]
+fuellib = [
+    "data/**/*.csv",
+    "data/**/*.yaml",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''

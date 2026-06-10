@@ -1,11 +1,4 @@
-import os
-import sys
-
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(FUELLIB_DIR)
-import paths
-import FuelLib as fl
+import fuellib as fl
 
 # Create a fuel object for the fuel "heptane-decane"
 fuel = fl.fuel("heptane-decane")

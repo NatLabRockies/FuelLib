@@ -6,5 +6,20 @@ _build*
 generated*
 sprayPropsGCM*
 mixturePropsGCM*
+exportData
 
+# Python packaging
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
 
+# Virtual environments
+.env
+env/
+venv/
+
+# Figures from plotting tools
+composition_*.png
+mixture_*.png

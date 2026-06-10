@@ -1,14 +1,9 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(FUELLIB_DIR)
-from paths import *
-import FuelLib as fl
+import fuellib as fl
 
 # -----------------------------------------------------------------------------
 # Calculate mixture properties from the group contribution properties
@@ -89,19 +84,21 @@ def getPredAndData(fuel_name, prop_name):
 
     data_file = f"{fuel_name}.csv"
     try:
-        data = pd.read_csv(os.path.join(FUELDATA_PROPS_DIR, data_file), skiprows=[1])
+        data = pd.read_csv(
+            os.path.join(fl.get_fueldata_props_dir(), data_file), skiprows=[1]
+        )
         # Separate properties and associated temperatures from data
         T_data = data.Temperature[data[prop_name].notna()]
         prop_data = data[prop_name].dropna()
         # Vectors for temperature (convert from C to K)
-        T_pred = fl.C2K(np.linspace(min(T_data), max(T_data), 100))
+        T_pred = fl.convert.C2K(np.linspace(min(T_data), max(T_data), 100))
     except (FileNotFoundError, KeyError):
         # If propertyData is not found, set temp min/max from xticks_posf
         T_data = pd.Series(dtype=float)
         prop_data = pd.Series(dtype=float)
         temp_min = min(xticks_posf[prop_name])
         temp_max = max(xticks_posf[prop_name])
-        T_pred = fl.C2K(np.linspace(temp_min, temp_max, 100))
+        T_pred = fl.convert.C2K(np.linspace(temp_min, temp_max, 100))
 
     # Vectors for density, viscosity and vapor pressure
     pred = np.zeros_like(T_pred)
@@ -145,7 +142,7 @@ for i in range(len(prop_names)):
 
         # Plot GCM predictions and data
         ax[i].plot(
-            fl.K2C(T),
+            fl.convert.K2C(T),
             pred,
             "-",
             color=line_color,
