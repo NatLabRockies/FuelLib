@@ -1,0 +1,13 @@
+﻿fuellib.constants
+=================
+
+.. automodule:: fuellib.constants
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      k_B
+      N_A
+   

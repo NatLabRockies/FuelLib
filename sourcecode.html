@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Source Code &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="fuellib.fuel" href="generated/fuellib.fuel.html" />
+    <link rel="prev" title="Exporting Properties for Converge" href="tutorials-export-converge.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mass-specific-heat-capacity-of-the-liquid">Mass specific heat capacity of the liquid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#required-input-files">Required Input Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-cli.html">Command-Line Interface (CLI) Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#unit-conversion-tools">Unit Conversion Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#fuel-management">Fuel Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#export-for-cfd">Export for CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#developer-tools">Developer Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-custom-fuels.html">Adding Custom Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#metadata-configuration">Metadata Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#gcxgc-composition-data">GCxGC Composition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#group-decomposition-data">Group Decomposition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#using-custom-fuels">Using Custom Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#tips-and-best-practices">Tips and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-converge.html">Exporting Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#public-api">Public API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.html">fuellib.fuel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.constants.html">fuellib.constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.convert.html">fuellib.convert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utility.html">fuellib.utility</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Contributing to FuelLib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#optional-conda-environment">Optional: Conda Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#contributing-guidelines">Contributing Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#building-and-viewing-documentation-locally">Building and Viewing Documentation Locally</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Source Code</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/sourcecode.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="source-code">
+<h1>Source Code<a class="headerlink" href="#source-code" title="Link to this heading"></a></h1>
+<p>This page provides an overview of the source code available at <a class="reference external" href="https://github.com/NatLabRockies/FuelLib">github.com/NatLabRockies/FuelLib</a>.</p>
+<section id="fuellib-file-organization">
+<span id="source-code-structure"></span><h2>FuelLib File Organization<a class="headerlink" href="#fuellib-file-organization" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>docs:</strong> directory containing the documentation source files</p></li>
+<li><p><strong>gcmTableData:</strong> directory that contains the pre-tabulated group contributions</p></li>
+<li><p><strong>fuellib:</strong> main package directory containing:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">fuel.py</span></code>: core <code class="xref py py-class docutils literal notranslate"><span class="pre">fuel</span></code> class for Group Contribution Method calculations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constants.py</span></code>: physical constants (Boltzmann, Avogadro)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convert.py</span></code>: temperature conversion functions and Lennard-Jones calculations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">utility.py</span></code>: utility functions for mixture properties and droplet calculations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_data_locator.py</span></code>: internal module for locating and validating fuel data directories</p></li>
+<li><p><strong>data</strong>: directory containing fuel data and metadata</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><strong>fuelData:</strong></dt><dd><ul>
+<li><p><strong>gcData:</strong> directory containing a collection of GCxGC compositional data by weight percentages</p></li>
+<li><p><strong>groupDecompositionData:</strong> directory containing a collection of functional group decompositions</p></li>
+<li><p><strong>propertiesData:</strong> directory containing measurement or predicted data used for validation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fuel_metadata.yaml</span></code>: YAML file that maps fuel names to their decomposition files and optional metadata fields</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>exporters:</strong> subpackage with CLI exporters for generating fuel properties</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">converge.py</span></code>: exporter for Converge CFD simulations (CLI: <code class="docutils literal notranslate"><span class="pre">fl-export-converge</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pele.py</span></code>: exporter for PelePhysics simulations (CLI: <code class="docutils literal notranslate"><span class="pre">fl-export-pele</span></code>)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>cli:</strong> subpackage with command-line interface tools for data conversion and analysis</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">temp_converter.py</span></code>: temperature conversion utilities</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">transport_props_converter.py</span></code>: transport properties conversion utilities</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plotting.py</span></code>: plotting utilities for composition and properties</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fuel_manager.py</span></code>: fuel manager utility</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_docs.py</span></code>: documentation builder utility</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clean_docs.py</span></code>: documentation cleaner utility</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">format_code.py</span></code>: code formatter utility</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>tests:</strong>  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>baselinePredictions:</strong> directory that contains baseline predictions and script <code class="docutils literal notranslate"><span class="pre">generate_baseline.py</span></code> for generating baseline predictions for CI testing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_accuracy.py</span></code>: unit test used in CI for verifying new model predictions preserve accuracy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_source_docstrings.py</span></code>: documentation contract test that checks public source functions include required docstring fields (<code class="docutils literal notranslate"><span class="pre">:param:</span></code>, <code class="docutils literal notranslate"><span class="pre">:type:</span></code>, <code class="docutils literal notranslate"><span class="pre">:return:</span></code>, <code class="docutils literal notranslate"><span class="pre">:rtype:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_api.py</span></code>: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_utilities.py</span></code>: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_hc_identification.py</span></code>: unit test for hydrocarbon classification logic.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_pred_and_data.py</span></code>: helper function used by <code class="docutils literal notranslate"><span class="pre">test_accuracy.py</span></code> and <code class="docutils literal notranslate"><span class="pre">baselinePredictions/generate_baseline.py</span></code> to compute predictions and load validation data.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>tutorials:</strong> directory containing example scripts that demonstrate how to use FuelLib</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">basic.py</span></code>: example script that demonstrates basic usage of FuelLib</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compositionPlots.py</span></code>: example script that generates composition plots for a given fuel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hefaBlends.py</span></code>: example script that calculates properties of HEFA:Jet-A blends</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mixtureProperties.py</span></code>: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="public-api">
+<h2>Public API<a class="headerlink" href="#public-api" title="Link to this heading"></a></h2>
+<p>FuelLib’s public API is continuously validated in CI using <code class="docutils literal notranslate"><span class="pre">tests/test_api.py</span></code>.
+This test verifies expected public module/class signatures and runs representative
+FuelLib smoke evaluations to catch unintended behavior changes.</p>
+<p>The project aims to keep the public API stable across releases. Any intentional
+breaking API change should be explicitly documented in release notes and
+accompanied by updates to tests and user-facing documentation.</p>
+<p>Click on links below for the full auto-documentation of the API.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.html#fuellib.fuel" title="fuellib.fuel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuellib.fuel</span></code></a>(name[, decompName, fuelDataDir])</p></td>
+<td><p>Class for handling group contribution calculations of thermodynamic and mixture properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.constants.html#module-fuellib.constants" title="fuellib.constants"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuellib.constants</span></code></a></p></td>
+<td><p>Physical constants used in FuelLib calculations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.convert.html#module-fuellib.convert" title="fuellib.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuellib.convert</span></code></a></p></td>
+<td><p>Unit conversion functions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.utility.html#module-fuellib.utility" title="fuellib.utility"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuellib.utility</span></code></a></p></td>
+<td><p>Utility functions for mixture calculations and droplet properties.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials-export-converge.html" class="btn btn-neutral float-left" title="Exporting Properties for Converge" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/fuellib.fuel.html" class="btn btn-neutral float-right" title="fuellib.fuel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+﻿fuellib.utility
+===============
+
+.. automodule:: fuellib.utility
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      droplet_mass
+      droplet_volume
+      mixing_rule
+   

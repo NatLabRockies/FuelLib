@@ -1,0 +1,18 @@
+﻿fuellib.convert
+===============
+
+.. automodule:: fuellib.convert
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      C2F
+      C2K
+      F2C
+      F2K
+      K2C
+      K2F
+      epsilon_to_characteristic_temperature
+   

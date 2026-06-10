@@ -1,0 +1,84 @@
+﻿fuellib.fuel
+============
+
+.. currentmodule:: fuellib
+
+.. autoclass:: fuel
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~fuel.Cl
+      ~fuel.Cp
+      ~fuel.X2Y
+      ~fuel.Y2X
+      ~fuel.__init__
+      ~fuel.density
+      ~fuel.diffusion_coeff
+      ~fuel.latent_heat_vaporization
+      ~fuel.mass2X
+      ~fuel.mass2Y
+      ~fuel.mean_molecular_weight
+      ~fuel.mixture_density
+      ~fuel.mixture_dynamic_viscosity
+      ~fuel.mixture_kinematic_viscosity
+      ~fuel.mixture_surface_tension
+      ~fuel.mixture_thermal_conductivity
+      ~fuel.mixture_vapor_pressure
+      ~fuel.mixture_vapor_pressure_antoine_coeffs
+      ~fuel.molar_liquid_vol
+      ~fuel.psat
+      ~fuel.psat_antoine_coeffs
+      ~fuel.surface_tension
+      ~fuel.thermal_conductivity
+      ~fuel.viscosity_dynamic
+      ~fuel.viscosity_kinematic
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~fuel.N_g1
+      ~fuel.N_g2
+      ~fuel.fuelDataDir
+      ~fuel.fuelDataGcDir
+      ~fuel.fuelDataDecompDir
+      ~fuel.fuelDataPropsDir
+      ~fuel.name
+      ~fuel.compounds
+      ~fuel.formulas
+      ~fuel.Y_0
+      ~fuel.Nij
+      ~fuel.num_compounds
+      ~fuel.num_groups
+      ~fuel.MW
+      ~fuel.Tc
+      ~fuel.Pc
+      ~fuel.Vc
+      ~fuel.Tb
+      ~fuel.Tm
+      ~fuel.Hf
+      ~fuel.Gf
+      ~fuel.Hv_stp
+      ~fuel.Lv_stp
+      ~fuel.Cp_stp
+      ~fuel.Vm_stp
+      ~fuel.omega
+      ~fuel.sigma
+      ~fuel.epsilonByKB
+      ~fuel.hc_type
+      ~fuel.fam
+      ~fuel.nC
+      ~fuel.nH
+      ~fuel.pelephysics_keys
+   
+   
