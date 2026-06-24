@@ -71,27 +71,45 @@ class UnitConverter:
 
 def get_git_info():
     """
-    Get git commit hash and remote URL for file header.
+    Get git commit hash and remote URL for FuelLib.
+    
+    Checks for git info within the FuelLib package directory to ensure
+    we get FuelLib's version/remote, not another repo if running from
+    inside a non-related git repository.
 
     :return: Tuple containing git commit hash and remote URL.
     :rtype: tuple[str, str]
     """
+    # Get the directory where FuelLib is installed
+    fuellib_dir = os.path.dirname(os.path.dirname(os.path.abspath(fl.__file__)))
+    
     try:
         git_commit = (
-            subprocess.check_output(["git", "rev-parse", "HEAD"])
+            subprocess.check_output(
+                ["git", "-C", fuellib_dir, "rev-parse", "HEAD"],
+                stderr=subprocess.DEVNULL
+            )
             .strip()
             .decode("utf-8")
         )
     except Exception:
-        git_commit = "N/A"
+        # Fall back to package version
+        try:
+            git_commit = fl.__version__
+        except Exception:
+            git_commit = "N/A"
 
     try:
         git_remote = (
-            subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
+            subprocess.check_output(
+                ["git", "-C", fuellib_dir, "config", "--get", "remote.origin.url"],
+                stderr=subprocess.DEVNULL
+            )
             .strip()
             .decode("utf-8")
         )
     except Exception:
+        # Cannot determine remote URL if not in a git repository
         git_remote = "N/A"
 
     return git_commit, git_remote
