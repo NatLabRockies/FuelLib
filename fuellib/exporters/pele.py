@@ -75,7 +75,7 @@ class UnitConverter:
 def get_git_info():
     """
     Get git commit hash and remote URL for FuelLib.
-    
+
     Checks for git info within the FuelLib package directory to ensure
     we get FuelLib's version/remote, not another repo if running from
     inside a non-related git repository.
@@ -85,12 +85,12 @@ def get_git_info():
     """
     # Get the directory where FuelLib is installed
     fuellib_dir = os.path.dirname(os.path.dirname(os.path.abspath(fl.__file__)))
-    
+
     try:
         git_commit = (
             subprocess.check_output(
                 ["git", "-C", fuellib_dir, "rev-parse", "HEAD"],
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
             )
             .strip()
             .decode("utf-8")
@@ -106,7 +106,7 @@ def get_git_info():
         git_remote = (
             subprocess.check_output(
                 ["git", "-C", fuellib_dir, "config", "--get", "remote.origin.url"],
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
             )
             .strip()
             .decode("utf-8")
@@ -128,10 +128,10 @@ def _get_pypi_repo_url():
     try:
         version = fl.__version__
         pypi_api_url = f"https://pypi.org/pypi/fuellib/{version}/json"
-        
+
         with urllib.request.urlopen(pypi_api_url, timeout=5) as response:
             data = json.loads(response.read().decode("utf-8"))
-            
+
             # Try to get repository URL from project URLs
             if "info" in data and "project_urls" in data["info"]:
                 project_urls = data["info"]["project_urls"]
@@ -140,13 +140,17 @@ def _get_pypi_repo_url():
                     for key in ["Repository", "Homepage", "Source Code", "Code"]:
                         if key in project_urls:
                             return project_urls[key]
-            
+
             # Fallback to home page
-            if "info" in data and "home_page" in data["info"] and data["info"]["home_page"]:
+            if (
+                "info" in data
+                and "home_page" in data["info"]
+                and data["info"]["home_page"]
+            ):
                 return data["info"]["home_page"]
     except Exception:
         pass
-    
+
     # Final fallback: PyPI package URL
     try:
         version = fl.__version__
