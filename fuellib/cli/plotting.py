@@ -105,7 +105,7 @@ def plot_composition(
     }
 
     # Create figure with two subplots side by side
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5), constrained_layout=True)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.5))
 
     # Plot 1: Bar chart grouped by carbon number, colored by hydrocarbon type
     spacing = [-0.2985, -0.099, 0.099, 0.2985]
@@ -184,6 +184,9 @@ def plot_composition(
 
     ax2.axis("equal")
 
+    # Adjust layout to make room for legend BEFORE adding it
+    plt.tight_layout(rect=[0, 0.08, 1, 0.96])
+
     # Add a single figure-level legend for all families
     legend_handles = [
         plt.Rectangle((0, 0), 1, 1, fc=colors.get(family, "#7f7f7f"))
@@ -192,8 +195,8 @@ def plot_composition(
     fig.legend(
         legend_handles,
         family_weights_sorted.index,
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.02),
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.02),
         ncol=4,
         fontsize=13,
         frameon=True,
@@ -206,7 +209,7 @@ def plot_composition(
     # Save the plot if requested
     if save:
         plot_file = os.path.join(output_dir, f"composition_{fuel_name}.png")
-        fig.savefig(plot_file, dpi=300, bbox_inches="tight")
+        fig.savefig(plot_file, dpi=300, bbox_inches="tight", pad_inches=0.3)
         print(f"Composition plot saved to {plot_file}")
 
     # Display the plot if requested
