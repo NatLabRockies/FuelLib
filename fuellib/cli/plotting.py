@@ -555,16 +555,16 @@ def comp_main():
     parser.add_argument(
         "-d",
         "--display",
-        action="store_true",
-        help="Display the plot with plt.show() (optional, default: False).",
+        type=lambda x: str(x).lower() not in ["false", "0"],
+        default=True,
+        metavar="{true,false}",
+        help="Display the plot with plt.show() (optional, default: True).",
     )
     parser.add_argument(
         "-s",
         "--save",
-        type=lambda x: str(x).lower() not in ["false", "0"],
-        default=True,
-        metavar="{true,false}",
-        help="Save the plot to a file (optional, default: True).",
+        action="store_true",
+        help="Save the plot to a file (optional, default: False).",
     )
 
     args = parser.parse_args()
@@ -639,16 +639,16 @@ def props_main():
     parser.add_argument(
         "-d",
         "--display",
-        action="store_true",
-        help="Display the plot with plt.show() (optional, default: False).",
+        type=lambda x: str(x).lower() not in ["false", "0"],
+        default=True,
+        metavar="{true,false}",
+        help="Display the plot with plt.show() (optional, default: True).",
     )
     parser.add_argument(
         "-s",
         "--save",
-        type=lambda x: str(x).lower() not in ["false", "0"],
-        default=True,
-        metavar="{true,false}",
-        help="Save the plot to a file (optional, default: True).",
+        action="store_true",
+        help="Save the plot to a file (optional, default: False).",
     )
 
     args = parser.parse_args()

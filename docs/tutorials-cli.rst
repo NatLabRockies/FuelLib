@@ -22,9 +22,9 @@ Examples:
 
     fl-plt-comp -f posf10325
     fl-plt-props -f posf10264 posf10325 posf10289
-    fl-plt-props -f my-fuel -dir customFuels/fuelData -p Density Viscosity -d
+    fl-plt-props -f my-fuel -dir customFuels/fuelData -p Density Viscosity
 
-The first two commands provide the following plots for the specified fuels:
+The first two commands provide the following plots for the specified fuels, while the third command plots only the density and viscosity of a custom fuel:
 
 .. figure:: /figures/composition_posf10325.png
    :width: 600pt
