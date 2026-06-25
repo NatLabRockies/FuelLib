@@ -185,7 +185,7 @@ def plot_composition(
     ax2.axis("equal")
 
     # Adjust layout to make room for legend BEFORE adding it
-    plt.tight_layout(rect=[0, 0.08, 1, 0.96])
+    fig.tight_layout(rect=[0, 0.08, 1, 0.96])
 
     # Add a single figure-level legend for all families
     legend_handles = [

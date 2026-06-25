@@ -7,7 +7,6 @@ from scipy import stats as st
 import fuellib as fl
 import json
 import urllib.request
-import urllib.error
 
 # Default data directory - use fuellib's embedded data
 FUELDATA_DIR = fl.get_fueldata_dir()
@@ -74,11 +73,11 @@ class UnitConverter:
 
 def get_git_info():
     """
-    Get git commit hash and remote URL for FuelLib.
+    Get git commit hash and remote URL for FuelLib (with fallbacks).
 
-    Checks for git info within the FuelLib package directory to ensure
-    we get FuelLib's version/remote, not another repo if running from
-    inside a non-related git repository.
+    The commit is read from the FuelLib git repo when available; otherwise the
+    installed package version is returned. The remote URL falls back to package
+    metadata when git is unavailable.
 
     :return: Tuple containing git commit hash and remote URL.
     :rtype: tuple[str, str]
