@@ -14,7 +14,7 @@ alpha-olefins, alkylbenzenes, alkylnaphthalenes, monocycloparaffins,
 dicycloparaffins, cycloaromatics).
 
 Validation: compared against existing hand-decomposed data in
-FuelLib/fuelData/groupDecompositionData/refCompounds.csv 
+FuelLib/fuelData/groupDecompositionData/refCompounds.csv
 """
 
 import csv
@@ -64,40 +64,127 @@ FIRST_ORDER_CH = {
 # Second-order groups start at index 78 in this list.
 CG_GROUP_NAMES = [
     # -- First-order groups (indices 0-77) --
-    "CH3", "CH2", "CH", "C",
-    "CH2=CH", "CH=CH", "CH2=C", "CH=C", "C=C", "CH2=C=CH",
-    "ACH", "AC", "ACCH3", "ACCH2", "ACCH",
-    "OH", "ACOH", "CH3CO", "CH2CO", "CHO",
-    "CH3COO", "CH2COO", "HCOO", "CH3O", "CH2O", "CH-O", "FCH2O",
-    "CH2NH2", "CHNH2", "CH3NH", "CH2NH", "CHNH", "CH3N", "CH2N",
-    "ACNH2", "C5H4N", "C5H3N", "CH2CN", "COOH",
-    "CH2CL", "CHCL", "CCL", "CHCL2", "CCL2", "CCL3", "ACCL",
-    "CH2NO2", "CHNO2", "ACNO2", "CH2SH",
-    "I", "Br", "CH≡C", "C≡C", "CL—(C=C)", "ACF",
-    "HCON(CH2)2", "CF3", "CF2", "CF", "COO", "CCL2F", "HCCLF", "CCLF2",
-    "Fspecial", "CONH2", "CONHCH3", "CONHCH2", "CON(CH3)2", "CONCH3CH2",
-    "CON(CH2)2", "C2H5O2", "C2H4O2", "CH3S", "CH2S", "CHS", "C4H3S", "C4H2S",
+    "CH3",
+    "CH2",
+    "CH",
+    "C",
+    "CH2=CH",
+    "CH=CH",
+    "CH2=C",
+    "CH=C",
+    "C=C",
+    "CH2=C=CH",
+    "ACH",
+    "AC",
+    "ACCH3",
+    "ACCH2",
+    "ACCH",
+    "OH",
+    "ACOH",
+    "CH3CO",
+    "CH2CO",
+    "CHO",
+    "CH3COO",
+    "CH2COO",
+    "HCOO",
+    "CH3O",
+    "CH2O",
+    "CH-O",
+    "FCH2O",
+    "CH2NH2",
+    "CHNH2",
+    "CH3NH",
+    "CH2NH",
+    "CHNH",
+    "CH3N",
+    "CH2N",
+    "ACNH2",
+    "C5H4N",
+    "C5H3N",
+    "CH2CN",
+    "COOH",
+    "CH2CL",
+    "CHCL",
+    "CCL",
+    "CHCL2",
+    "CCL2",
+    "CCL3",
+    "ACCL",
+    "CH2NO2",
+    "CHNO2",
+    "ACNO2",
+    "CH2SH",
+    "I",
+    "Br",
+    "CH≡C",
+    "C≡C",
+    "CL—(C=C)",
+    "ACF",
+    "HCON(CH2)2",
+    "CF3",
+    "CF2",
+    "CF",
+    "COO",
+    "CCL2F",
+    "HCCLF",
+    "CCLF2",
+    "Fspecial",
+    "CONH2",
+    "CONHCH3",
+    "CONHCH2",
+    "CON(CH3)2",
+    "CONCH3CH2",
+    "CON(CH2)2",
+    "C2H5O2",
+    "C2H4O2",
+    "CH3S",
+    "CH2S",
+    "CHS",
+    "C4H3S",
+    "C4H2S",
     # -- Second-order groups (indices 78-120) --
-    "(CH3)2CH", "(CH3)3C", "CH(CH3)CH(CH3)", "CH(CH3)C(CH3)2", "C(CH3)2C(CH3)2",
-    "3 membered ring", "4 membered ring", "5 membered ring",
-    "6 membered ring", "7 membered ring",
+    "(CH3)2CH",
+    "(CH3)3C",
+    "CH(CH3)CH(CH3)",
+    "CH(CH3)C(CH3)2",
+    "C(CH3)2C(CH3)2",
+    "3 membered ring",
+    "4 membered ring",
+    "5 membered ring",
+    "6 membered ring",
+    "7 membered ring",
     "CHn=CHm—CHp=CHk k,n,m,p in (0,2)",
     "CH3-CHm=CH, m in (0,1), n in (0,2)",
     "CH2-CHm=CHn, m, n in (0,2)",
     "CH-CHm=CHn or C-CHm=CHn, m,n m in (0,2)",
     "Alicyclic side-chain CcyclicCm m > 1",
     "CH3CH3",
-    "CHCHO or CCHO", "CH3COCH2", "CH3COCH or CH3COC", "Ccyclic(=0)",
-    "ACCHO", "CHCOOH or CCOOH", "ACCOOH",
-    "CH3COOCH or CH3COOC", "COCH2COO or COCHCOO or COCCOO",
-    " CO-O-CO", "ACCOO",
-    "CHOH", "COH", "CHm(OH)CHn(OH), m,n in (0,2)",
-    "CHm cyclic-OH, m in (0,1)", "CHm(OH)CHn(NHp), m,n,p in (0,3)",
-    "CHm(NH2)CHn(NH2)", "CHm cyclic-NHp-CHn cyclic, m,n,p in (0,2)",
-    "Chm=Chn-F, m,n in (0,2)", "AC-O-CHm",
+    "CHCHO or CCHO",
+    "CH3COCH2",
+    "CH3COCH or CH3COC",
+    "Ccyclic(=0)",
+    "ACCHO",
+    "CHCOOH or CCOOH",
+    "ACCOOH",
+    "CH3COOCH or CH3COOC",
+    "COCH2COO or COCHCOO or COCCOO",
+    " CO-O-CO",
+    "ACCOO",
+    "CHOH",
+    "COH",
+    "CHm(OH)CHn(OH), m,n in (0,2)",
+    "CHm cyclic-OH, m in (0,1)",
+    "CHm(OH)CHn(NHp), m,n,p in (0,3)",
+    "CHm(NH2)CHn(NH2)",
+    "CHm cyclic-NHp-CHn cyclic, m,n,p in (0,2)",
+    "Chm=Chn-F, m,n in (0,2)",
+    "AC-O-CHm",
     "CHm cyclic-S-CHn cyclic, m,n in (0,2)",
-    "CHm=CHn—F, m,n in (0,2)", "CHm=CHn—Br, m,n in (0,2)",
-    "CHm=CHn—I, m,n in (0,2)", "ACBr", "ACI",
+    "CHm=CHn—F, m,n in (0,2)",
+    "CHm=CHn—Br, m,n in (0,2)",
+    "CHm=CHn—I, m,n in (0,2)",
+    "ACBr",
+    "ACI",
     "CHm(NH2)-COOH, m,n in (0,2)",
 ]
 
@@ -107,6 +194,7 @@ assert len(CG_GROUP_NAMES) == 121, f"Expected 121 groups, got {len(CG_GROUP_NAME
 # =============================================================================
 # First-order decomposition
 # =============================================================================
+
 
 def _find_terminal_vinyls(mol):
     """
@@ -154,8 +242,7 @@ def _find_aromatic_substituents(mol, excluded):
         if atom.GetSymbol() != "C" or atom.GetIsAromatic():
             continue
         arom_C_neighbors = [
-            n for n in atom.GetNeighbors()
-            if n.GetSymbol() == "C" and n.GetIsAromatic()
+            n for n in atom.GetNeighbors() if n.GetSymbol() == "C" and n.GetIsAromatic()
         ]
         if not arom_C_neighbors:
             continue
@@ -173,7 +260,8 @@ def _find_aromatic_substituents(mol, excluded):
         consumed_aromatic.add(arom_C.GetIdx())
 
         n_alC = sum(
-            1 for n in atom.GetNeighbors()
+            1
+            for n in atom.GetNeighbors()
             if n.GetSymbol() == "C" and not n.GetIsAromatic()
         )
         if n_alC == 0:
@@ -196,9 +284,7 @@ def _classify_aliphatic_atom(atom):
     Only for atoms not already assigned to vinyl or aromatic-substituent groups.
     """
     if atom.GetSymbol() != "C":
-        raise UnsupportedGroupError(
-            f"Non-carbon atom (symbol={atom.GetSymbol()})."
-        )
+        raise UnsupportedGroupError(f"Non-carbon atom (symbol={atom.GetSymbol()}).")
     for bond in atom.GetBonds():
         bt = bond.GetBondTypeAsDouble()
         if bt not in (1.0, 1.5):
@@ -217,8 +303,7 @@ def _classify_aliphatic_atom(atom):
         )
     # Aliphatic: classify by number of aliphatic C neighbors
     aliphatic_C_neighbors = sum(
-        1 for n in atom.GetNeighbors()
-        if n.GetSymbol() == "C" and not n.GetIsAromatic()
+        1 for n in atom.GetNeighbors() if n.GetSymbol() == "C" and not n.GetIsAromatic()
     )
     if aliphatic_C_neighbors == 1:
         return "CH3"
@@ -266,6 +351,7 @@ def _first_order_decomposition(mol):
 # Second-order decomposition
 # =============================================================================
 
+
 def _detect_branching_groups(mol):
     """
     Detect second-order branching groups:
@@ -282,8 +368,12 @@ def _detect_branching_groups(mol):
         """Count terminal-CH3 neighbors of an aliphatic atom."""
         n = 0
         for nbr in atom.GetNeighbors():
-            if (nbr.GetSymbol() == "C" and not nbr.GetIsAromatic()
-                    and nbr.GetTotalNumHs() == 3 and nbr.GetDegree() == 1):
+            if (
+                nbr.GetSymbol() == "C"
+                and not nbr.GetIsAromatic()
+                and nbr.GetTotalNumHs() == 3
+                and nbr.GetDegree() == 1
+            ):
                 n += 1
         return n
 
@@ -292,8 +382,11 @@ def _detect_branching_groups(mol):
 
     def _aliphatic_C_degree(atom):
         """Number of C-C bonds (aliphatic neighbors)."""
-        return sum(1 for n in atom.GetNeighbors()
-                   if n.GetSymbol() == "C" and not n.GetIsAromatic())
+        return sum(
+            1
+            for n in atom.GetNeighbors()
+            if n.GetSymbol() == "C" and not n.GetIsAromatic()
+        )
 
     # (CH3)2CH: CH with 2 CH3 neighbors
     ch3_2_ch_atoms = set()
@@ -325,8 +418,8 @@ def _detect_branching_groups(mol):
         if not (_is_aliphatic_C(a) and _is_aliphatic_C(b)):
             continue
         # Both must be CH (1H, degree 3 aliphatic neighbors)
-        a_is_ch = (a.GetTotalNumHs() == 1 and _aliphatic_C_degree(a) == 3)
-        b_is_ch = (b.GetTotalNumHs() == 1 and _aliphatic_C_degree(b) == 3)
+        a_is_ch = a.GetTotalNumHs() == 1 and _aliphatic_C_degree(a) == 3
+        b_is_ch = b.GetTotalNumHs() == 1 and _aliphatic_C_degree(b) == 3
         if a_is_ch and b_is_ch:
             if _ch3_neighbor_count(a) >= 1 and _ch3_neighbor_count(b) >= 1:
                 pair = tuple(sorted([a.GetIdx(), b.GetIdx()]))
@@ -341,15 +434,15 @@ def _detect_branching_groups(mol):
         if not (_is_aliphatic_C(a) and _is_aliphatic_C(b)):
             continue
         # Check a=CH with CH3, b=C with 2 CH3
-        a_is_ch = (a.GetTotalNumHs() == 1 and _aliphatic_C_degree(a) == 3)
-        b_is_quat = (b.GetTotalNumHs() == 0 and _aliphatic_C_degree(b) == 4)
+        a_is_ch = a.GetTotalNumHs() == 1 and _aliphatic_C_degree(a) == 3
+        b_is_quat = b.GetTotalNumHs() == 0 and _aliphatic_C_degree(b) == 4
         if a_is_ch and b_is_quat:
             if _ch3_neighbor_count(a) >= 1 and _ch3_neighbor_count(b) >= 2:
                 pair = tuple(sorted([a.GetIdx(), b.GetIdx()]))
                 ch_c_pairs.add(pair)
         # Symmetric check
-        b_is_ch = (b.GetTotalNumHs() == 1 and _aliphatic_C_degree(b) == 3)
-        a_is_quat = (a.GetTotalNumHs() == 0 and _aliphatic_C_degree(a) == 4)
+        b_is_ch = b.GetTotalNumHs() == 1 and _aliphatic_C_degree(b) == 3
+        a_is_quat = a.GetTotalNumHs() == 0 and _aliphatic_C_degree(a) == 4
         if b_is_ch and a_is_quat:
             if _ch3_neighbor_count(b) >= 1 and _ch3_neighbor_count(a) >= 2:
                 pair = tuple(sorted([a.GetIdx(), b.GetIdx()]))
@@ -363,8 +456,8 @@ def _detect_branching_groups(mol):
         a, b = bond.GetBeginAtom(), bond.GetEndAtom()
         if not (_is_aliphatic_C(a) and _is_aliphatic_C(b)):
             continue
-        a_quat = (a.GetTotalNumHs() == 0 and _aliphatic_C_degree(a) == 4)
-        b_quat = (b.GetTotalNumHs() == 0 and _aliphatic_C_degree(b) == 4)
+        a_quat = a.GetTotalNumHs() == 0 and _aliphatic_C_degree(a) == 4
+        b_quat = b.GetTotalNumHs() == 0 and _aliphatic_C_degree(b) == 4
         if a_quat and b_quat:
             if _ch3_neighbor_count(a) >= 2 and _ch3_neighbor_count(b) >= 2:
                 pair = tuple(sorted([a.GetIdx(), b.GetIdx()]))
@@ -389,9 +482,7 @@ def _detect_rings(mol):
     ring_info = mol.GetRingInfo()
     for ring in ring_info.AtomRings():
         # Skip fully aromatic rings (e.g., benzene ring in tetralin)
-        all_aromatic = all(
-            mol.GetAtomWithIdx(idx).GetIsAromatic() for idx in ring
-        )
+        all_aromatic = all(mol.GetAtomWithIdx(idx).GetIsAromatic() for idx in ring)
         if all_aromatic:
             continue
         size = len(ring)
@@ -422,8 +513,12 @@ def _detect_ch3ch3(mol):
     """Detect CH3CH3 (ethane) second-order group. Only for ethane itself."""
     if mol.GetNumAtoms() == 2:
         a, b = mol.GetAtomWithIdx(0), mol.GetAtomWithIdx(1)
-        if (a.GetSymbol() == "C" and b.GetSymbol() == "C"
-                and a.GetTotalNumHs() == 3 and b.GetTotalNumHs() == 3):
+        if (
+            a.GetSymbol() == "C"
+            and b.GetSymbol() == "C"
+            and a.GetTotalNumHs() == 3
+            and b.GetTotalNumHs() == 3
+        ):
             return 1
     return 0
 
@@ -459,6 +554,7 @@ def _second_order_decomposition(mol):
 # =============================================================================
 # Public API
 # =============================================================================
+
 
 def decompose(smiles):
     """
@@ -516,17 +612,20 @@ def verify_formula(smiles, counts):
 
 
 # =============================================================================
-# Validation against FuelLib 
+# Validation against FuelLib
 # =============================================================================
+
 
 def _load_refcompounds():
     """
-    Load refCompounds.csv from FuelLib 
+    Load refCompounds.csv from FuelLib
     Returns dict: compound_name → list of 121 int counts.
     """
     ref_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "fuelData", "groupDecompositionData", "refCompounds.csv"
+        "fuelData",
+        "groupDecompositionData",
+        "refCompounds.csv",
     )
     if not os.path.exists(ref_path):
         return None
@@ -604,7 +703,7 @@ if __name__ == "__main__":
         ("C=CCCCCCCCCCC", "1-dodecene", "C12-Alkene"),
     ]
 
-    # Load FuelLib reference data 
+    # Load FuelLib reference data
     ref_data = _load_refcompounds()
     if ref_data:
         print(f"Loaded {len(ref_data)} compounds from FuelLib refCompounds.csv")
