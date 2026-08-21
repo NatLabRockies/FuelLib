@@ -1,0 +1,6 @@
+[codespell]
+# Codespell configuration for FuelLib
+
+skip = *.bib,*.csv,*.pdf
+
+ignore-words-list = mape,coo,aci

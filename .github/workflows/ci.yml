@@ -39,7 +39,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install codespell
       - name: Run codespell
-        run: codespell --skip="*.bib,*.csv,*.pdf" --ignore-words-list="mape"
+        run: codespell
   
   Accuracy:
     runs-on: ubuntu-latest

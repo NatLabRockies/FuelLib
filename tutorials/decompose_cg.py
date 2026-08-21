@@ -19,16 +19,8 @@ FuelLib/fuelData/groupDecompositionData/refCompounds.csv
 
 import csv
 import os
-import sys
-
-try:
-    from rdkit import Chem
-    from rdkit.Chem import rdmolops
-except ImportError as e:
-    raise ImportError(
-        "RDKit is required for the CG decomposition tool. "
-        "Install with: pip install rdkit"
-    ) from e
+from rdkit import Chem
+from rdkit.Chem import rdmolops
 
 
 class UnsupportedGroupError(ValueError):
@@ -572,12 +564,12 @@ def decompose(smiles):
     counts = {}
 
     # First-order
-    fo = _first_order_decomposition(mol)
-    counts.update(fo)
+    first_order = _first_order_decomposition(mol)
+    counts.update(first_order)
 
     # Second-order
-    so = _second_order_decomposition(mol)
-    counts.update(so)
+    second_order = _second_order_decomposition(mol)
+    counts.update(second_order)
 
     return counts
 
@@ -728,13 +720,13 @@ if __name__ == "__main__":
             status = "✓" if ok else "✗"
 
             # Separate first-order and second-order for display
-            fo_parts = {k: v for k, v in d.items() if k in FIRST_ORDER_CH}
-            so_parts = {k: v for k, v in d.items() if k not in FIRST_ORDER_CH}
+            first_order_parts = {k: v for k, v in d.items() if k in FIRST_ORDER_CH}
+            second_order_parts = {k: v for k, v in d.items() if k not in FIRST_ORDER_CH}
 
-            fo_str = str(fo_parts) if fo_parts else "{}"
-            so_str = str(so_parts) if so_parts else "{}"
+            first_order_str = str(first_order_parts) if first_order_parts else "{}"
+            second_order_str = str(second_order_parts) if second_order_parts else "{}"
 
-            print(f"{status} {name:<20} {smi:<28} {msg:12} {fo_str:<40} {so_str}")
+            print(f"{status} {name:<20} {smi:<28} {msg:12} {first_order_str:<40} {second_order_str}")
 
             if not ok:
                 n_fail += 1
