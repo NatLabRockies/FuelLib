@@ -33,6 +33,7 @@ dependencies = [
     "scipy>=1.5.0",
     "pyyaml>=5.0",
     "matplotlib>=3.0",
+    "rdkit>=2022.3.1",
     "importlib-resources>=5.0; python_version < '3.9'",
 ]
 

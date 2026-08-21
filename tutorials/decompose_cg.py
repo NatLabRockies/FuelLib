@@ -623,6 +623,8 @@ def _load_refcompounds():
     """
     ref_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "fuellib",
+        "data",
         "fuelData",
         "groupDecompositionData",
         "refCompounds.csv",
