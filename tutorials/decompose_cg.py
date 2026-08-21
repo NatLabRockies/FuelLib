@@ -726,7 +726,9 @@ if __name__ == "__main__":
             first_order_str = str(first_order_parts) if first_order_parts else "{}"
             second_order_str = str(second_order_parts) if second_order_parts else "{}"
 
-            print(f"{status} {name:<20} {smi:<28} {msg:12} {first_order_str:<40} {second_order_str}")
+            print(
+                f"{status} {name:<20} {smi:<28} {msg:12} {first_order_str:<40} {second_order_str}"
+            )
 
             if not ok:
                 n_fail += 1
