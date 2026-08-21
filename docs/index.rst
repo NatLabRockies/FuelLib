@@ -56,6 +56,7 @@ FuelLib requires:
 - pandas ≥1.0.0
 - scipy ≥1.5.0
 - matplotlib ≥3.0.0
+- rdkit ≥2022.3.1
 
 Development tools (Sphinx, Black, pytest) are available for developers installing from source; see the installation instructions in the `Contributing <development.html>`_ section.
 
