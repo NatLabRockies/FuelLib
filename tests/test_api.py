@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 
 import fuellib as fl
+from fuellib.units import Q_, ureg
 
 
 def _normalize_signature(sig):
@@ -139,7 +140,7 @@ class ApiContractTestCase(unittest.TestCase):
             )
             val = getattr(fl.constants, name)
             self.assertIsInstance(
-                val, (int, float), msg=f"fuellib.constants.{name} should be numeric"
+                val, ureg.Quantity, msg=f"fuellib.constants.{name} should be a Quantity"
             )
             print(f"  ✓ {name}")
 
@@ -151,7 +152,11 @@ class ApiContractTestCase(unittest.TestCase):
             "X2Y": "(self, Xi)",
             "Y2X": "(self, Yi)",
             "density": "(self, T, comp_idx=None)",
-            "diffusion_coeff": "(self, p, T, sigma_gas=3.62e-10, epsilonByKB_gas=97.0, MW_gas=0.02897, correlation='Tee')",
+            "diffusion_coeff": (
+                "(self, p, T, sigma_gas=<Quantity(3.62e-10, 'meter')>, "
+                "epsilonByKB_gas=<Quantity(97.0, 'kelvin')>, "
+                "MW_gas=<Quantity(0.02897, 'kilogram / mole')>, correlation='Tee')"
+            ),
             "latent_heat_vaporization": "(self, T, comp_idx=None)",
             "mass2X": "(self, mass)",
             "mass2Y": "(self, mass)",
@@ -201,10 +206,12 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
             "decane": fl.fuel("decane"),
             "posf10325": fl.fuel("posf10325"),
         }
-        cls.T = 320.0
-        cls.p = 101325.0
+        cls.T = Q_(320.0, "K")
+        cls.p = Q_(101325.0, "Pa")
 
     def _assert_finite_and_positive(self, value):
+        if hasattr(value, "magnitude"):
+            value = value.magnitude
         arr = np.asarray(value)
         self.assertTrue(np.all(np.isfinite(arr)))
         self.assertTrue(np.all(arr > 0.0))
@@ -221,12 +228,15 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Utility functions (run per fuel for consistent CI grouping)
                 print("  Utility Functions:")
-                self.assertAlmostEqual(fl.convert.C2K(25.0), 298.15)
+                self.assertAlmostEqual(
+                    fl.convert.C2K(Q_(25.0, "degC")).magnitude, 298.15
+                )
                 print("    ✓ convert.C2K")
-                self.assertAlmostEqual(fl.convert.K2C(298.15), 25.0)
+                self.assertAlmostEqual(fl.convert.K2C(Q_(298.15, "K")).magnitude, 25.0)
                 print("    ✓ convert.K2C")
                 self.assertAlmostEqual(
-                    fl.utility.droplet_volume(1e-4), 4.0 / 3.0 * np.pi * (1e-4) ** 3
+                    fl.utility.droplet_volume(Q_(1e-4, "m")).magnitude,
+                    4.0 / 3.0 * np.pi * (1e-4) ** 3,
                 )
                 print("    ✓ utility.droplet_volume")
 
@@ -261,7 +271,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 self.assertTrue(np.allclose(Yi, Yi_back, rtol=1e-10, atol=1e-12))
                 print("    ✓ Y2X/X2Y roundtrip")
 
-                mass = Yi * 1.0e-6
+                mass = Q_(Yi * 1.0e-6, "kg")
                 self.assertTrue(
                     np.allclose(fuel.mass2Y(mass), Yi, rtol=1e-10, atol=1e-12)
                 )
@@ -325,7 +335,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Antoine coefficient fits (individual compounds)
                 A, B, C, D = fuel.psat_antoine_coeffs(
-                    Tvals=np.array([300.0, 340.0]),
+                    Tvals=Q_(np.array([300.0, 340.0]), "K"),
                     units="atm",
                     correlation="Lee-Kesler",
                 )
@@ -343,7 +353,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 # Antoine coefficient fits (mixture)
                 A_mix, B_mix, C_mix, D_mix = fuel.mixture_vapor_pressure_antoine_coeffs(
                     Yi,
-                    Tvals=np.array([300.0, 340.0]),
+                    Tvals=Q_(np.array([300.0, 340.0]), "K"),
                     units="bar",
                     correlation="Lee-Kesler",
                 )
@@ -414,11 +424,16 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Droplet helpers
                 print("  Droplet Properties:")
-                m = fl.utility.droplet_mass(fuel, 2.0e-5, Yi, self.T)
+                m = fl.utility.droplet_mass(fuel, Q_(2.0e-5, "m"), Yi, self.T)
                 self.assertEqual(m.shape, fuel.MW.shape)
-                self.assertTrue(np.all(m >= 0.0))
+                self.assertTrue(np.all(m.magnitude >= 0.0))
                 self.assertTrue(
-                    np.allclose(fl.utility.droplet_mass(fuel, 0.0, Yi, self.T), 0.0)
+                    np.allclose(
+                        fl.utility.droplet_mass(
+                            fuel, Q_(0.0, "m"), Yi, self.T
+                        ).magnitude,
+                        0.0,
+                    )
                 )
                 print("    ✓ utility.droplet_mass")
 

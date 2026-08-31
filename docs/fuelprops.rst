@@ -23,6 +23,14 @@ mixture such as density, viscosity, vapor pressure, surface tension, and thermal
 outlines the properties for the *i-th* compound in a mixture, which depends on 
 the *k-th* first-order and *j-th* second-order group contributions.
 
+.. note::
+    All dimensioned quantities in `FuelLib`'s API (temperatures, pressures, and every property
+    listed below) are `pint <https://pint.readthedocs.io>`_ ``Quantity`` objects rather than
+    plain floats or NumPy arrays. Construct inputs with ``fuellib.units.Q_``, e.g.
+    ``Q_(320.0, "K")``, and convert results to a specific unit with ``.to(...)`` before
+    extracting the numeric value via ``.magnitude``. The units shown in the tables and
+    equations below describe each quantity's dimensionality, not a fixed numeric representation.
+
 .. _tab-GCM-properties:
 
 Table of GCM properties

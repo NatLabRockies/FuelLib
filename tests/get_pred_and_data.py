@@ -5,6 +5,7 @@ import pandas as pd
 
 import fuellib as fl
 from fuellib._data_locator import get_fueldata_props_dir
+from fuellib.units import Q_
 
 FUELDATA_PROPS_DIR = get_fueldata_props_dir()
 
@@ -24,33 +25,31 @@ def get_pred_and_data(fuel_name, prop_name):
     pred = np.zeros_like(T_data)
 
     # Vectors for temperature (convert from C to K)
-    T_pred = fl.convert.C2K(T_data)
+    T_pred = fl.convert.C2K(Q_(T_data, "degC"))
 
     for i in range(len(T_pred)):
         Y_li = fuel.Y_0
+        T_i = T_pred[i]
 
         if prop_name == "Density":
-            # Mixture density (returns rho in kg/m^3)
-            pred[i] = fuel.mixture_density(Y_li, T_pred[i])
-            # Convert density to CGS (g/cm^3)
-            pred[i] *= 1.0e-03
+            # Mixture density, converted to CGS (g/cm^3)
+            pred[i] = fuel.mixture_density(Y_li, T_i).to("g / cm ** 3").magnitude
 
         if prop_name == "VaporPressure":
-            # Mixture vapor pressure (returns pv in Pa)
-            pred[i] = fuel.mixture_vapor_pressure(Y_li, T_pred[i])
-            # Convert vapor pressure to kPa
-            pred[i] *= 1.0e-03
+            # Mixture vapor pressure, converted to kPa
+            pred[i] = fuel.mixture_vapor_pressure(Y_li, T_i).to("kPa").magnitude
 
         if prop_name == "Viscosity":
-            pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T_pred[i])
-            # Convert viscosity to mm^2/s
-            pred[i] *= 1.0e06
+            # Converted to mm^2/s
+            pred[i] = (
+                fuel.mixture_kinematic_viscosity(Y_li, T_i).to("mm ** 2 / s").magnitude
+            )
 
         if prop_name == "SurfaceTension":
-            pred[i] = fuel.mixture_surface_tension(Y_li, T_pred[i])
+            pred[i] = fuel.mixture_surface_tension(Y_li, T_i).to("N/m").magnitude
 
         if prop_name == "ThermalConductivity":
-            pred[i] = fuel.mixture_thermal_conductivity(Y_li, T_pred[i])
+            pred[i] = fuel.mixture_thermal_conductivity(Y_li, T_i).to("W/m/K").magnitude
 
     return T_data, prop_data, pred
 

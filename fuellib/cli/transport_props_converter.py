@@ -3,6 +3,7 @@
 import argparse
 
 from .. import convert
+from ..units import Q_
 
 
 def eps2K_main():
@@ -18,5 +19,5 @@ def eps2K_main():
     )
 
     args = parser.parse_args()
-    result = convert.epsilon_to_characteristic_temperature(args.epsilon)
-    print(f"Characteristic temperature: {result:.3f} K")
+    result = convert.epsilon_to_characteristic_temperature(Q_(args.epsilon, "J/mol"))
+    print(f"Characteristic temperature: {result.magnitude:.3f} K")

@@ -33,6 +33,7 @@ dependencies = [
     "rdkit>=2022.3.1",
     "importlib-resources>=5.0; python_version < '3.9'",
     "keepachangelog>=2.0.0",
+    "pint>=0.25.3",
 ]
 
 [project.optional-dependencies]

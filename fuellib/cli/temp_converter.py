@@ -3,6 +3,7 @@
 import argparse
 
 from .. import convert
+from ..units import Q_
 
 
 def c2k_main():
@@ -18,8 +19,8 @@ def c2k_main():
     )
 
     args = parser.parse_args()
-    result = convert.C2K(args.temperature)
-    print(f"{args.temperature} °C = {result:.2f} K")
+    result = convert.C2K(Q_(args.temperature, "degC"))
+    print(f"{args.temperature} °C = {result.magnitude:.2f} K")
 
 
 def k2c_main():
@@ -35,8 +36,8 @@ def k2c_main():
     )
 
     args = parser.parse_args()
-    result = convert.K2C(args.temperature)
-    print(f"{args.temperature} K = {result:.2f} °C")
+    result = convert.K2C(Q_(args.temperature, "K"))
+    print(f"{args.temperature} K = {result.magnitude:.2f} °C")
 
 
 def c2f_main():
@@ -52,8 +53,8 @@ def c2f_main():
     )
 
     args = parser.parse_args()
-    result = convert.C2F(args.temperature)
-    print(f"{args.temperature} °C = {result:.2f} °F")
+    result = convert.C2F(Q_(args.temperature, "degC"))
+    print(f"{args.temperature} °C = {result.magnitude:.2f} °F")
 
 
 def f2c_main():
@@ -69,8 +70,8 @@ def f2c_main():
     )
 
     args = parser.parse_args()
-    result = convert.F2C(args.temperature)
-    print(f"{args.temperature} °F = {result:.2f} °C")
+    result = convert.F2C(Q_(args.temperature, "degF"))
+    print(f"{args.temperature} °F = {result.magnitude:.2f} °C")
 
 
 def f2k_main():
@@ -86,8 +87,8 @@ def f2k_main():
     )
 
     args = parser.parse_args()
-    result = convert.F2K(args.temperature)
-    print(f"{args.temperature} °F = {result:.2f} K")
+    result = convert.F2K(Q_(args.temperature, "degF"))
+    print(f"{args.temperature} °F = {result.magnitude:.2f} K")
 
 
 def k2f_main():
@@ -103,5 +104,5 @@ def k2f_main():
     )
 
     args = parser.parse_args()
-    result = convert.K2F(args.temperature)
-    print(f"{args.temperature} K = {result:.2f} °F")
+    result = convert.K2F(Q_(args.temperature, "K"))
+    print(f"{args.temperature} K = {result.magnitude:.2f} °F")

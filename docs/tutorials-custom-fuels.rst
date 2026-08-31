@@ -89,12 +89,13 @@ Once your custom fuel directory is set up, you can use it like any built-in fuel
 .. code-block:: python
 
     import fuellib as fl
+    from fuellib.units import Q_
 
     # Load a custom fuel
     fuel = fl.fuel("new-satf", fuelDataDir="/path/to/customFuels")
 
     # Calculate the saturated vapor pressure at 320 K
-    T = 320  # K
+    T = Q_(320.0, "K")
     p_sat_i = fuel.psat(T)
     p_sat_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
 

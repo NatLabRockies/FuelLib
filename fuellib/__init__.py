@@ -16,7 +16,7 @@ except ImportError:
 
 # Import fuel class
 # Import submodules for namespacing
-from . import constants, convert, utility
+from . import constants, convert, units, utility
 
 # Import data locator functions
 from ._data_locator import *
@@ -34,5 +34,6 @@ __all__ = [
     "get_gcmtable_dir",
     "get_metadata_decomp_name",
     "get_metadata_props_data",
+    "units",
     "utility",
 ]

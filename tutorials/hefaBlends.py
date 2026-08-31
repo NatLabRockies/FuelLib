@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import fuellib as fl
+from fuellib.units import Q_
 
 # -----------------------------------------------------------------------------
 # Calculate mixture properties from the group contribution properties
@@ -69,9 +70,9 @@ def getPredAndData(fuel_name, prop_name, blend):
 
     # Separate properties and associated temperatures from data
     if prop_name == "Density":
-        T = fl.convert.C2K(15)
+        T = fl.convert.C2K(Q_(15.0, "degC"))
     elif prop_name == "Viscosity":
-        T = fl.convert.C2K(-20)
+        T = fl.convert.C2K(Q_(-20.0, "degC"))
 
     # Vector for FuelLib predictions
     prop_pred = np.zeros_like(blend)
@@ -81,18 +82,17 @@ def getPredAndData(fuel_name, prop_name, blend):
         Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
 
         if prop_name == "Density":
-            # Mixture density (returns rho in kg/m^3)
-            prop_pred[i] = fuel.mixture_density(Y_li, T)
-            # Convert density to CGS (g/cm^3)
-            prop_pred[i] *= 1.0e-03
+            # Mixture density, reported in CGS (g/cm^3)
+            prop_pred[i] = fuel.mixture_density(Y_li, T).to("g/cm ** 3").magnitude
 
         if prop_name == "Viscosity":
             # initial liquid mass fractions
             Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
 
-            prop_pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T)
-            # Convert viscosity to mm^2/s
-            prop_pred[i] *= 1.0e06
+            # Mixture kinematic viscosity, reported in mm^2/s
+            prop_pred[i] = (
+                fuel.mixture_kinematic_viscosity(Y_li, T).to("mm ** 2 / s").magnitude
+            )
 
     return T, prop_data, blend_data, prop_pred
 
@@ -139,7 +139,7 @@ for i in range(len(prop_names)):
     # Add labels and adjust ticks
     ax[i].set_xlabel("HEFA Concentration [wt %]", fontsize=fsize)
     ax[i].set_xticks([0, 20, 40, 60, 80, 100])
-    ax[i].set_ylabel(ylab(prop_names[i], fl.convert.K2C(T)), fontsize=fsize)
+    ax[i].set_ylabel(ylab(prop_names[i], fl.convert.K2C(T).magnitude), fontsize=fsize)
     ax[i].tick_params(labelsize=ticksize)
 
 handles, labels = ax[0].get_legend_handles_labels()

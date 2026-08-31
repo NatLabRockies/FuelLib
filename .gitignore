@@ -24,14 +24,14 @@ venv/
 composition_*.png
 mixture_*.png
 
-# pixi environments
+# environment management
 .pixi/*
 !.pixi/config.toml
 pixi.lock
 uv.lock
 
-# pytest
-.coverage
-
 # VS Code settings
 .vscode/
+
+# pytest coverage reports
+.coverage

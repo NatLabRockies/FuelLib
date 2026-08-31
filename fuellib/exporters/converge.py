@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 import fuellib as fl
+from fuellib.units import Q_
 
 # Default data directory - use fuellib's embedded data
 FUELDATA_DIR = fl.get_fueldata_dir()
@@ -25,8 +26,14 @@ For detailed options, run:
 """
 
 
+def _stack_quantities(values):
+    """Stack a list of scalar pint Quantities (same dimensionality) into one Quantity array."""
+    unit = values[0].units
+    return Q_(np.array([v.to(unit).magnitude for v in values]), unit)
+
+
 class UnitConverter:
-    """Unit conversion factors and labels for different unit systems."""
+    """Target units and labels for different unit systems."""
 
     def __init__(self, units: str):
         """
@@ -40,27 +47,26 @@ class UnitConverter:
         self._set_labels()
 
     def _set_conversion_factors(self):
-        """Set conversion factors based on unit system."""
+        """Set pint-parseable target unit strings based on unit system."""
         if self.units == "cgs":
-            # Convert from MKS to CGS
-            self.mw = 1e3  # kg/mol to g/mol
-            self.mu = 1e2  # Pa*s to Poise
-            self.surface_tension = 1e7  # N/m to dyne/cm
-            self.Lv = 1e4  # J/kg to erg/g
-            self.P = 1e1  # Pa to dyne/cm^2
-            self.rho = 1e3  # kg/m^3 to g/cm^3
-            self.Cl = 1e4  # J/kg/K to erg/g/K
-            self.thermal_conductivity = 1e5  # W/m/K to erg/cm/s/K
+            self.mw = "g/mol"
+            self.mu = "poise"
+            self.surface_tension = "dyn/cm"
+            self.Lv = "erg/g"
+            self.P = "dyn/cm ** 2"
+            self.rho = "g/cm ** 3"
+            self.Cl = "erg/g/K"
+            self.thermal_conductivity = "erg/cm/s/K"
         else:
-            # MKS units (no conversion)
-            self.mw = 1
-            self.mu = 1
-            self.surface_tension = 1
-            self.Lv = 1
-            self.P = 1
-            self.rho = 1
-            self.Cl = 1
-            self.thermal_conductivity = 1
+            # MKS units (SI)
+            self.mw = "kg/mol"
+            self.mu = "Pa*s"
+            self.surface_tension = "N/m"
+            self.Lv = "J/kg"
+            self.P = "Pa"
+            self.rho = "kg/m ** 3"
+            self.Cl = "J/kg/K"
+            self.thermal_conductivity = "W/m/K"
 
     def _set_labels(self):
         """Set unit labels for DataFrame columns."""
@@ -97,38 +103,41 @@ class UnitConverter:
         """
         Create a data dictionary with converted units and appropriate labels.
 
-        :param T: Temperature array.
+        :param T: Temperature array (K magnitudes).
         :type T: np.ndarray
-        :param T_crit: Critical temperature.
+        :param T_crit: Critical temperature (K magnitude).
         :type T_crit: float
         :param mu: Viscosity array.
-        :type mu: np.ndarray
+        :type mu: pint.Quantity
         :param surface_tension: Surface tension array.
-        :type surface_tension: np.ndarray
+        :type surface_tension: pint.Quantity
         :param Lv: Heat of vaporization array.
-        :type Lv: np.ndarray
+        :type Lv: pint.Quantity
         :param pv: Vapor pressure array.
-        :type pv: np.ndarray
+        :type pv: pint.Quantity
         :param rho: Density array.
-        :type rho: np.ndarray
+        :type rho: pint.Quantity
         :param Cl: Specific heat array.
-        :type Cl: np.ndarray
+        :type Cl: pint.Quantity
         :param thermal_conductivity: Thermal conductivity array.
-        :type thermal_conductivity: np.ndarray
+        :type thermal_conductivity: pint.Quantity
         :return: Dictionary with converted properties and labels.
         :rtype: dict
         """
         return {
             self.labels["temperature"]: T,
             self.labels["critical_temp"]: T_crit + np.zeros_like(T),
-            self.labels["viscosity"]: mu * self.mu,
-            self.labels["surface_tension"]: surface_tension * self.surface_tension,
-            self.labels["heat_vaporization"]: Lv * self.Lv,
-            self.labels["vapor_pressure"]: pv * self.P,
-            self.labels["density"]: rho * self.rho,
-            self.labels["specific_heat"]: Cl * self.Cl,
-            self.labels["thermal_conductivity"]: thermal_conductivity
-            * self.thermal_conductivity,
+            self.labels["viscosity"]: mu.to(self.mu).magnitude,
+            self.labels["surface_tension"]: surface_tension.to(
+                self.surface_tension
+            ).magnitude,
+            self.labels["heat_vaporization"]: Lv.to(self.Lv).magnitude,
+            self.labels["vapor_pressure"]: pv.to(self.P).magnitude,
+            self.labels["density"]: rho.to(self.rho).magnitude,
+            self.labels["specific_heat"]: Cl.to(self.Cl).magnitude,
+            self.labels["thermal_conductivity"]: thermal_conductivity.to(
+                self.thermal_conductivity
+            ).magnitude,
         }
 
 
@@ -295,7 +304,7 @@ def export_converge(
 
         # Handle maximum temperature warnings for mixtures
         if is_mixture:
-            T_max_allowed = min(fuel.Tc)
+            T_max_allowed = min(fuel.Tc).to("K").magnitude
             if np.any(T_array > T_max_allowed):
                 T_max_allowed = nearest_floor(T_array, T_max_allowed)
                 print("!" * 88)
@@ -317,73 +326,93 @@ def export_converge(
         """
         Calculate mixture properties for a range of temperatures.
 
-        :param T_array: Array of temperature values.
+        :param T_array: Array of temperature values (K magnitudes).
         :type T_array: np.ndarray
         :param fuel: Fuel object.
         :type fuel: fl.fuel
-        :return: Tuple of property arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
+        :return: Tuple of property Quantity arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
         :rtype: tuple
         """
-        # Initialize property arrays
-        mu = np.zeros_like(T_array)
-        surface_tension = np.zeros_like(T_array)
-        Lv = np.zeros_like(T_array)
-        pv = np.zeros_like(T_array)
-        rho = np.zeros_like(T_array)
-        Cl = np.zeros_like(T_array)
-        thermal_conductivity = np.zeros_like(T_array)
+        mu_vals = []
+        surface_tension_vals = []
+        Lv_vals = []
+        pv_vals = []
+        rho_vals = []
+        Cl_vals = []
+        thermal_conductivity_vals = []
 
-        for k, Temp in enumerate(T_array):
+        for Temp_K in T_array:
+            Temp = Q_(Temp_K, "K")
             Y_li = fuel.Y_0
             X_li = fuel.Y2X(Y_li)
 
             # Standard mixing rules for properties
-            rho[k] = fuel.mixture_density(Y_li, Temp)  # kg/m^3
-            mu[k] = fuel.mixture_dynamic_viscosity(Y_li, Temp)  # Pa*s
-            pv[k] = fuel.mixture_vapor_pressure(Y_li, Temp)  # Pa
-            surface_tension[k] = fuel.mixture_surface_tension(Y_li, Temp)  # N/m
-            thermal_conductivity[k] = fuel.mixture_thermal_conductivity(Y_li, Temp)
+            rho_vals.append(fuel.mixture_density(Y_li, Temp))
+            mu_vals.append(fuel.mixture_dynamic_viscosity(Y_li, Temp))
+            pv_vals.append(fuel.mixture_vapor_pressure(Y_li, Temp))
+            surface_tension_vals.append(fuel.mixture_surface_tension(Y_li, Temp))
+            thermal_conductivity_vals.append(
+                fuel.mixture_thermal_conductivity(Y_li, Temp)
+            )
 
             # Generic mixing rules for latent heat and specific heat
-            Lv[k] = fl.utility.mixing_rule(
-                fuel.latent_heat_vaporization(Temp), X_li
-            )  # J/kg
-            Cl[k] = fl.utility.mixing_rule(fuel.Cl(Temp), X_li)  # J/kg/K
+            Lv_vals.append(
+                fl.utility.mixing_rule(fuel.latent_heat_vaporization(Temp), X_li)
+            )
+            Cl_vals.append(fl.utility.mixing_rule(fuel.Cl(Temp), X_li))
 
-        return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
+        return (
+            _stack_quantities(mu_vals),
+            _stack_quantities(surface_tension_vals),
+            _stack_quantities(Lv_vals),
+            _stack_quantities(pv_vals),
+            _stack_quantities(rho_vals),
+            _stack_quantities(Cl_vals),
+            _stack_quantities(thermal_conductivity_vals),
+        )
 
     def calculate_component_properties(T_array, fuel, comp_idx):
         """
         Calculate individual component properties for a range of temperatures.
 
-        :param T_array: Array of temperature values.
+        :param T_array: Array of temperature values (K magnitudes).
         :type T_array: np.ndarray
         :param fuel: Fuel object.
         :type fuel: fl.fuel
         :param comp_idx: Index of the component.
         :type comp_idx: int
-        :return: Tuple of property arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
+        :return: Tuple of property Quantity arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
         :rtype: tuple
         """
-        # Initialize property arrays
-        mu = np.zeros_like(T_array)
-        surface_tension = np.zeros_like(T_array)
-        Lv = np.zeros_like(T_array)
-        pv = np.zeros_like(T_array)
-        rho = np.zeros_like(T_array)
-        Cl = np.zeros_like(T_array)
-        thermal_conductivity = np.zeros_like(T_array)
+        mu_vals = []
+        surface_tension_vals = []
+        Lv_vals = []
+        pv_vals = []
+        rho_vals = []
+        Cl_vals = []
+        thermal_conductivity_vals = []
 
-        for k, Temp in enumerate(T_array):
-            rho[k] = fuel.density(Temp, comp_idx=comp_idx)  # kg/m^3
-            mu[k] = fuel.viscosity_dynamic(Temp, comp_idx=comp_idx)  # Pa*s
-            pv[k] = fuel.psat(Temp, comp_idx=comp_idx)  # Pa
-            surface_tension[k] = fuel.surface_tension(Temp, comp_idx=comp_idx)  # N/m
-            thermal_conductivity[k] = fuel.thermal_conductivity(Temp, comp_idx=comp_idx)
-            Lv[k] = fuel.latent_heat_vaporization(Temp, comp_idx=comp_idx)  # J/kg
-            Cl[k] = fuel.Cl(Temp, comp_idx=comp_idx)  # J/kg/K
+        for Temp_K in T_array:
+            Temp = Q_(Temp_K, "K")
+            rho_vals.append(fuel.density(Temp, comp_idx=comp_idx))
+            mu_vals.append(fuel.viscosity_dynamic(Temp, comp_idx=comp_idx))
+            pv_vals.append(fuel.psat(Temp, comp_idx=comp_idx))
+            surface_tension_vals.append(fuel.surface_tension(Temp, comp_idx=comp_idx))
+            thermal_conductivity_vals.append(
+                fuel.thermal_conductivity(Temp, comp_idx=comp_idx)
+            )
+            Lv_vals.append(fuel.latent_heat_vaporization(Temp, comp_idx=comp_idx))
+            Cl_vals.append(fuel.Cl(Temp, comp_idx=comp_idx))
 
-        return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
+        return (
+            _stack_quantities(mu_vals),
+            _stack_quantities(surface_tension_vals),
+            _stack_quantities(Lv_vals),
+            _stack_quantities(pv_vals),
+            _stack_quantities(rho_vals),
+            _stack_quantities(Cl_vals),
+            _stack_quantities(thermal_conductivity_vals),
+        )
 
     def export_properties_to_csv(file_path, data_dict, overwrite=True):
         """
@@ -414,16 +443,16 @@ def export_converge(
         nT = int((temp_max - temp_min) / temp_step) + 1
         T = np.linspace(temp_min, temp_max, nT)
 
-        # Estimate freezing point and critical temp of mixture
-        T_freeze = fl.utility.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
-        T_crit = fl.utility.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0))
+        # Estimate freezing point and critical temp of mixture (K magnitudes)
+        T_freeze = fl.utility.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0)).to("K").magnitude
+        T_crit = fl.utility.mixing_rule(fuel.Tc, fuel.Y2X(fuel.Y_0)).to("K").magnitude
 
         print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
-        print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")
-        print(f"Max freezing temp max(Tm_i): {max(fuel.Tm):.2f} K")
+        print(f"Min freezing temp min(Tm_i): {min(fuel.Tm).to('K').magnitude:.2f} K")
+        print(f"Max freezing temp max(Tm_i): {max(fuel.Tm).to('K').magnitude:.2f} K")
         print(f"Estimated mixture critical temp: {T_crit:.2f} K")
-        print(f"Min critical temp min(Tc_i): {min(fuel.Tc):.2f} K")
-        print(f"Max critical temp max(Tc_i): {max(fuel.Tc):.2f} K")
+        print(f"Min critical temp min(Tc_i): {min(fuel.Tc).to('K').magnitude:.2f} K")
+        print(f"Max critical temp max(Tc_i): {max(fuel.Tc).to('K').magnitude:.2f} K")
 
         # Validate and adjust temperature range
         T_min_allowed, T_max_allowed, T = validate_temperature_range(
@@ -432,9 +461,9 @@ def export_converge(
 
     for comp_idx, compound in enumerate(components):
         if not export_mix:
-            # Get component-specific temperature limits
-            T_freeze = fuel.Tm[comp_idx]
-            T_crit = fuel.Tc[comp_idx]
+            # Get component-specific temperature limits (K magnitudes)
+            T_freeze = fuel.Tm[comp_idx].to("K").magnitude
+            T_crit = fuel.Tc[comp_idx].to("K").magnitude
             T_min_allowed = nearest_temp(T_freeze)
 
             # Create temperature array up to critical temperature
@@ -500,7 +529,7 @@ def export_converge(
             "Component": fuel.compounds,
             "Mass Fraction": fuel.Y_0,
             "Mole Fraction": fuel.Y2X(fuel.Y_0),
-            converter.labels["molecular_weight"]: fuel.MW * converter.mw,
+            converter.labels["molecular_weight"]: fuel.MW.to(converter.mw).magnitude,
         }
         export_properties_to_csv(composition_file, composition_data)
 

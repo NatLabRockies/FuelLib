@@ -13,9 +13,10 @@ FuelLib File Organization
 - **fuellib:** main package directory containing:
 
     - ``fuel.py``: core :class:`fuel` class for Group Contribution Method calculations
-    - ``constants.py``: physical constants (Boltzmann, Avogadro)
+    - ``constants.py``: physical constants (Boltzmann, Avogadro), as `pint <https://pint.readthedocs.io>`_ Quantities
     - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
     - ``utility.py``: utility functions for mixture properties and droplet calculations
+    - ``units.py``: shared ``pint`` unit registry (``ureg``) and ``Quantity`` constructor (``Q_``) used throughout FuelLib's public API
     - ``_data_locator.py``: internal module for locating and validating fuel data directories
     
     - **data**: directory containing fuel data and metadata    
@@ -78,3 +79,4 @@ Click on links below for the full auto-documentation of the API.
     fuellib.constants
     fuellib.convert
     fuellib.utility
+    fuellib.units
