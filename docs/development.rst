@@ -28,8 +28,9 @@ To use a specific conda environment:
 
 .. code-block:: bash
 
-   conda create --name fuellib-env python numpy pandas scipy matplotlib
-   conda activate fuellib-env
+   conda create --name fuellib-dev-env 
+   conda activate fuellib-dev-env
+   conda install -c conda-forge rust
    pip install -e '.[dev]'
 
 Optional: Pixi Environment
@@ -44,6 +45,11 @@ and its tasks instead of managing a virtual environment by hand:
    pixi run -e dev lint     # ruff check . --fix
    pixi run -e dev types    # ty check
    pixi run -e dev test     # pytest (with coverage)
+
+.. note::
+
+   Building ``grimp`` (a dependency of ``import-linter``) requires a Rust
+   toolchain. On macOS you may need to run ``brew install rust``.
 
 Pre-commit Hooks
 -----------------
