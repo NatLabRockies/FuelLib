@@ -41,12 +41,12 @@ prop_names = [
 
 # Property units
 prop_units = {
-    "Temperature": "C",
+    "Temperature": "Celsius",
     "Density": "g/cm^3",
     "Viscosity": "mm^2/s",
     "VaporPressure": "kPa",
     "SurfaceTension": "N/m",
-    "ThermalConductivity": "W/m/K",
+    "ThermalConductivity": "W/(m*K)",
 }
 
 
@@ -64,7 +64,7 @@ def main():
         df_combined = None
 
         for prop in prop_names:
-            T, data, pred = get_pred_and_data(fuel_name, prop)
+            T, data, pred = get_pred_and_data(fuel_name, prop)  # ty: ignore[invalid-argument-type]
 
             # Create a dataframe for this property
             df_prop = pd.DataFrame(

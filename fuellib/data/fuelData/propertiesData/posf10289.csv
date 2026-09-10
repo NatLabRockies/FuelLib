@@ -1,5 +1,5 @@
 Temperature,Density,VaporPressure,Viscosity,SurfaceTension,ThermalConductivity,HeatCapacity
-C,g/cm^3,kPa,mm^2/s,N/m,W/m/K,kJ/kg/K
+Celsius,g/cm^3,kPa,mm^2/s,N/m,W/(m*K),kJ/(kg*K)
 -40,,,14.1,,,
 -20,,,6.5,,,
 -10,,,,0.02842143,,1.809232472

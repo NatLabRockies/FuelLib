@@ -1,5 +1,5 @@
 Temperature,Density,Error_Density,Viscosity,Error_Viscosity,VaporPressure,Error_VaporPressure,SurfaceTension,Error_SurfaceTension,ThermalConductivity,Error_ThermalConductivity
-C,g/cm^3,g/cm^3,mm^2/s,mm^2/s,kPa,kPa,N/m,N/m,W/m/K,W/m/K
+Celsius,g/cm^3,g/cm^3,mm^2/s,mm^2/s,kPa,kPa,N/m,N/m,W/(m*K),W/(m*K)
 -40.0,0.8351574072380663,0.008709259761933708,6.460319977618209,2.7396800223817905,,,,,,
 -20.0,0.8215537134985513,0.008129619501448637,3.7213832449838535,0.7786167550161465,,,,,,
 -10.0,,,,,,,0.02794543468604107,8.2968313958931e-05,,
