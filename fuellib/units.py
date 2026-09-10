@@ -3,7 +3,6 @@
 from typing import Literal
 
 import astropy.units as u
-import astropy.units.typing as ut
 import numpy as np
 
 # astropy does not have some common unit strings; we need to define and register them

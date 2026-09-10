@@ -4,7 +4,6 @@ import os
 from collections.abc import Sequence
 from typing import Literal
 
-import astropy.units.typing as ut
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
@@ -19,7 +18,6 @@ from ._data_locator import (
     get_gcmtable_dir,
     get_metadata_decomp_name,
 )
-from .convert import K2C
 from .units import convert_temperature, ustrip
 from .utility import mixing_rule
 
