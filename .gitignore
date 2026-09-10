@@ -35,3 +35,6 @@ uv.lock
 
 # VS Code settings
 .vscode/
+
+# Scratch files
+tests/scratch.py

@@ -1,5 +1,5 @@
 Temperature,Density,VaporPressure,Viscosity
-C,g/cm^3,kPa,mm^2/s
+Celsius,g/cm^3,kPa,mm^2/s
 -50,,,
 -40,0.78008,,5.0983
 -30,0.77194,,3.7544

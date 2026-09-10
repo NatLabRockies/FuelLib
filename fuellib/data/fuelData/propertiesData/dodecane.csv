@@ -1,5 +1,5 @@
 ﻿Temperature,Density,Viscosity,VaporPressure,DynamicViscosity,Cp,SurfaceTension,ThermalConductivity
-C,g/cm^3,mm^2/s,kPa,Pa*s,J/mol/K,N/m,W/m/K
+Celsius,g/cm^3,mm^2/s,kPa,Pa*s,J/mol/K,N/m,W/(m*K)
 -9.55,0.77153,3.754358223,0.000626,0.0028966,359.85,0.0279,0.14393
 -3.15,,,,,,0.0274,0.14227
 0.45,0.76401,2.938704991,,0.0022452,364.29,,

@@ -13,11 +13,20 @@ used to parse and validate this file's entries against that format.
 - `keepachangelog` dependency for maintaining this `CHANGELOG.md` in the Keep a Changelog format.
 - Lefthook pre-commit suite (`lefthook.yaml`) running `fmt` → `lint` → `types` → `test` → `check-clean` on commit. The `import-linter` check is not yet wired into pre-commit since the layering contract (`fuellib.fuel` / `fuellib.gcm` / `fuellib.comp`) will fail broadly until the codebase is reorganized to match it; run it manually via `pixi run imports` in the meantime.
 - Coverage reporting via `pytest-cov`, with a temporary `fail_under = 20` threshold, to be raised as test coverage improves.
+- `astropy` (`>=8.0.1`) dependency for unit-aware physical property calculations.
+- New `fuellib/units.py` module built on `astropy.units`, defining additional unit strings not provided by astropy (`atm`, `dyne/cm^2`, `cgs`, `mks`, `Fahrenheit`, `dimensionless`) and helper functions `convert_temperature()` and `ustrip()`.
+- `-tu`/`--temp_unit` option (and `temp_unit` parameter on `export_converge()`) for `fl-export-converge`, allowing `temp_min`/`temp_max`/`temp_step` to be specified in `K`, `Celsius`, or `Fahrenheit`.
 
 ### Changed
 - Replaced Black with Ruff + ty: `ruff format`/`ruff check` now handle formatting and linting, and `ty check` handles static type checking; `fl-format` now shells out to `ruff format`.
 - Bumped `requires-python` to `>=3.12,<3.14` (from `>=3.8`); CI now runs on Python 3.12.
 - CI's `Formatting` job (previously `psf/black`) now runs `ruff format --check`, `ruff check`, and `ty check`.
+- **Breaking:** `fuellib.fuel` and `fuellib.utility.mixing_rule` now use `astropy.units.Quantity` for physical properties (temperatures, pressures, densities, viscosities, etc.) instead of plain floats/arrays with implicit unit conventions.
+- **Breaking:** Most `fuel` property methods (e.g. `density()`, `viscosity_kinematic()`, `viscosity_dynamic()`, `Cp()`, `Cl()`, `psat()`, `molar_liquid_vol()`, `mean_molecular_weight()`) now take `astropy.units.Quantity` temperature inputs and a keyword-only `unit` argument to select the returned unit, and `mixing_rule()`'s `pseudo_prop` argument is now keyword-only.
+- **Breaking:** Renamed the `units` parameter to `unit` in `fuel.psat_antoine_coeffs()` and `fuel.mixture_vapor_pressure_antoine_coeffs()`.
+- Removed the `UnitConverter` class from `fuellib/exporters/converge.py` and `fuellib/exporters/pele.py`; unit conversions are now handled with `astropy.units.Quantity.to()` via a shared mapping of CGS/MKS unit strings.
+- Property CSV files under `fuellib/data/fuelData/propertiesData/` now use astropy-parsable unit strings in their header row (e.g. `C` → `Celsius`, `W/m/K` → `W/(m*K)`).
+- Updated `tests/test_api.py`, `tests/test_accuracy.py`, `tests/get_pred_and_data.py`, and the baseline prediction CSVs/generator to exercise the unit-aware API end-to-end.
 
 ### Removed
 - Removed Black as a dev dependency.

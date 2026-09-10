@@ -1,6 +1,7 @@
 import inspect
 import unittest
 
+import astropy.units as u
 import numpy as np
 
 import fuellib as fl
@@ -201,8 +202,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
             "decane": fl.fuel("decane"),
             "posf10325": fl.fuel("posf10325"),
         }
-        cls.T = 320.0
-        cls.p = 101325.0
+        cls.T = u.Quantity(320.0, u.K)
+        cls.p = u.Quantity(101325.0, u.Pa)
 
     def _assert_finite_and_positive(self, value):
         arr = np.asarray(value)
@@ -325,8 +326,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Antoine coefficient fits (individual compounds)
                 A, B, C, D = fuel.psat_antoine_coeffs(
-                    Tvals=np.array([300.0, 340.0]),
-                    units="atm",
+                    Tvals=np.array([300.0, 340.0]) * u.K,
+                    unit="atm",
                     correlation="Lee-Kesler",
                 )
                 self.assertEqual(len(A), fuel.num_compounds)
@@ -343,8 +344,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 # Antoine coefficient fits (mixture)
                 A_mix, B_mix, C_mix, D_mix = fuel.mixture_vapor_pressure_antoine_coeffs(
                     Yi,
-                    Tvals=np.array([300.0, 340.0]),
-                    units="bar",
+                    Tvals=np.array([300.0, 340.0]) * u.K,
+                    unit="bar",
                     correlation="Lee-Kesler",
                 )
                 # A, B, D must be positive; C can be negative (it's a temperature offset)
