@@ -1,0 +1,92 @@
+﻿GCxGC_Bin,Formula,Reference_Compound,Family,Carbon_Count,YSI,YSI_err,Source,Source_Species
+Toluene,C7H8,toluene,alkyl_benzene,7,170.9,7.7,measured_name,toluene
+C2-Benzene,C8H10,ethyl benzene,alkyl_benzene,8,223.7,9.3,measured_name,ethylbenzene
+C3-Benzene,C9H12,propyl benzene,alkyl_benzene,9,235.7,9.9,measured_name,propylbenzene
+C4-Benzene,C10H14,butyl benzene,alkyl_benzene,10,245.1,9.9,measured_formula_kw_butyl,n-butylbenzene
+C5-Benzene,C11H16,pentyl benzene,alkyl_benzene,11,255.0,10.5,measured_formula_kw_pentyl,n-pentylbenzene
+C6-Benzene,C12H18,hexyl benzene,alkyl_benzene,12,246.7,9.9,measured_formula_kw_hexyl,n-hexylbenzene
+C7-Benzene,C13H20,heptyl benzene,alkyl_benzene,13,257.1,10.5,measured_formula_unique,n-heptylbenzene
+C8-Benzene,C14H22,octyl benzene,alkyl_benzene,14,257.1,10.5,measured_formula_unique,n-octylbenzene
+C9-Benzene,C15H24,nonyl benzene,alkyl_benzene,15,283.2,11.6,measured_formula_unique,n-nonylbenzene
+C10-Benzene,C16H26,decyl benzene,alkyl_benzene,16,283.2,11.6,measured_formula_unique,n-decylbenzene
+Diaromatic-C10,C10H8,naphthalene,di_arom,10,466.1,8.4,measured_name,naphthalene
+Diaromatic-C11,C11H10,1-methyl naphthalene,di_arom,11,649.1,24.7,measured_name,1-methylnaphthalene
+Diaromatic-C12,C12H12,1-ethyl naphthalene,di_arom,12,732.7,27.4,measured_name,1-ethylnaphthalene
+Diaromatic-C13,C13H14,1-propyl naphthalene,di_arom,13,882.5666666666667,23.428804683314215,extrapolated_di_arom,linear_fit_C10_C12
+Diaromatic-C14,C14H16,1-butyl naphthalene,di_arom,14,1015.8666666666669,23.428804683314215,extrapolated_di_arom,linear_fit_C10_C12
+Cycloaromatic-C09,C9H10,indane,cyclo_arom,9,439.5,16.6,measured_name,indane
+Cycloaromatic-C10,C10H12,tetralin,cyclo_arom,10,336.0,13.4,measured_name,tetralin
+Cycloaromatic-C11,C11H14,2-methyl tetralin,cyclo_arom,11,336.0,13.4,holdlargest_cyclo_arom,held_at_C10_tetralin
+Cycloaromatic-C12,C12H16,2-ethly tetralin,cyclo_arom,12,336.0,13.4,holdlargest_cyclo_arom,held_at_C10_tetralin
+Cycloaromatic-C13,C13H18,2-propyl tetralin,cyclo_arom,13,336.0,13.4,holdlargest_cyclo_arom,held_at_C10_tetralin
+Cycloaromatic-C14,C14H20,2-butyl tetralin,cyclo_arom,14,336.0,13.4,holdlargest_cyclo_arom,held_at_C10_tetralin
+Cycloaromatic-C15,C15H22,2-pentyl tetralin,cyclo_arom,15,336.0,13.4,holdlargest_cyclo_arom,held_at_C10_tetralin
+C07-Isoparaffin,C7H16,2-methyl hexane,iso_alkane,7,42.4,2.0,measured_name,2-methylhexane
+C08-Isoparaffin,C8H18,2-methyl heptane,iso_alkane,8,49.4,2.0,measured_name,2-methylheptane
+C09-Isoparaffin,C9H20,2-methyl octane,iso_alkane,9,60.2,2.0,measured_formula_kw_methyl,"2,3-dimethylheptane"
+C10-Isoparaffin,C10H22,2-methyl nonane,iso_alkane,10,57.2,2.0,measured_formula_unique,n-decane
+C11-Isoparaffin,C11H24,2-methyl decane,iso_alkane,11,64.7,2.0,measured_formula_unique,n-undecane
+C12-Isoparaffin,C12H26,2-methyl undecane,iso_alkane,12,99.3,2.9,measured_formula_kw_methyl,"2,2,4,6,6-pentamethylheptane"
+C13-Isoparaffin,C13H28,2-methyl dodecane,iso_alkane,13,94.94,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C14-Isoparaffin,C14H30,2-methyl tridecane,iso_alkane,14,104.29428571428573,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C15-Isoparaffin,C15H32,2-methyl tetradecane,iso_alkane,15,113.64857142857144,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C16-Isoparaffin,C16H34,2-methyl pentadecane,iso_alkane,16,123.00285714285715,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C17-Isoparaffin,C17H36,2-methyl hexadecane,iso_alkane,17,132.35714285714286,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C18-Isoparaffin,C18H38,2-methyl heptadecane,iso_alkane,18,141.71142857142857,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C19-Isoparaffin,C19H40,2-methyl octadecane,iso_alkane,19,151.0657142857143,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C20-Isoparaffin,C20H42,2-methyl nonadecane,iso_alkane,20,160.42000000000002,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C21-Isoparaffin,C21H44,2-methyl icosane,iso_alkane,21,169.77428571428572,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C22-Isoparaffin,C22H46,2-methyl henicosane,iso_alkane,22,179.12857142857146,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C23-Isoparaffin,C23H48,2-methyl docosane,iso_alkane,23,188.48285714285717,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+C24-Isoparaffin,C24H50,2-methyl tricosane,iso_alkane,24,197.83714285714288,8.526853938894348,extrapolated_iso_alkane,linear_fit_C7_C12
+n-C07,C7H16,n-heptane,n_alkane,7,36.0,2.2,measured_name,n-heptane
+n-C08,C8H18,n-octane,n_alkane,8,42.6,2.0,measured_name,n-octane
+n-C09,C9H20,n-nonane,n_alkane,9,50.1,2.0,measured_name,n-nonane
+n-C10,C10H22,n-decane,n_alkane,10,57.2,2.0,measured_name,n-decane
+n-C11,C11H24,n-undecane,n_alkane,11,64.7,2.0,measured_name,n-undecane
+n-C12,C12H26,n-dodecane,n_alkane,12,71.7,2.1,measured_name,n-dodecane
+n-C13,C13H28,n-tridecane,n_alkane,13,78.90666666666668,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C14,C14H30,n-tetradecane,n_alkane,14,86.10380952380955,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C15,C15H32,n-pentadecane,n_alkane,15,93.3009523809524,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C16,C16H34,n-hexadecane,n_alkane,16,100.49809523809526,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C17,C17H36,n-heptadecane,n_alkane,17,107.69523809523812,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C18,C18H38,n-octadecane,n_alkane,18,114.89238095238098,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C19,C19H40,n-nonadecane,n_alkane,19,122.08952380952384,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C20,C20H42,n-icosane,n_alkane,20,129.2866666666667,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C21,C21H44,n-henicosane,n_alkane,21,136.48380952380955,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C22,C22H46,n-docosane,n_alkane,22,143.68095238095242,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+n-C23,C23H48,n-tricosane,n_alkane,23,150.87809523809528,0.1950172967501738,extrapolated_n_alkane,linear_fit_C7_C12
+C07-Monocycloparaffin,C7C14,methyl cyclohexane,mono_cyclo,7,53.6,2.0,measured_name,methylcyclohexane
+C08-Monocycloparaffin,C8H16,ethyl cyclohexane,mono_cyclo,8,60.7,2.0,measured_name,ethylcyclohexane
+C09-Monocycloparaffin,C9H18,propyl cyclohexane,mono_cyclo,9,69.2,2.1,measured_name,propylcyclohexane
+C10-Monocycloparaffin,C10H20,butyl cyclohexane,mono_cyclo,10,76.8,2.2,measured_name,butylcyclohexane
+C11-Monocycloparaffin,C11H22,pentyl cyclohexane,mono_cyclo,11,83.45945945945942,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C12-Monocycloparaffin,C12H24,hexyl cyclohexane,mono_cyclo,12,90.3,2.6,measured_formula_unique,1-dodecene
+C13-Monocycloparaffin,C13H26,heptyl cyclohexane,mono_cyclo,13,98.28108108108104,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C14-Monocycloparaffin,C14H28,octyl cyclohexane,mono_cyclo,14,105.69189189189186,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C15-Monocycloparaffin,C15H30,nonyl cyclohexane,mono_cyclo,15,113.10270270270266,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C16-Monocycloparaffin,C16H32,decyl cyclohexane,mono_cyclo,16,120.51351351351347,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C17-Monocycloparaffin,C17H34,undecyl cyclohexane,mono_cyclo,17,127.92432432432429,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C18-Monocycloparaffin,C18H36,dodecyl cyclohexane,mono_cyclo,18,135.3351351351351,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C19-Monocycloparaffin,C19H38,tridecyl cyclohexane,mono_cyclo,19,142.74594594594592,0.5532215234913185,extrapolated_mono_cyclo,linear_fit_C7_C12
+C08-Dicycloparaffin,C8H14,Octahydropentalene,di_cyclo,8,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C09-Dicycloparaffin,C9H16,Hydrindane,di_cyclo,9,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C10-Dicycloparaffin,C10H18,Decalin,di_cyclo,10,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C11-Dicycloparaffin,C11H20,2-methyldecalin,di_cyclo,11,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C12-Dicycloparaffin,C12H22,2-ethyldecalin,di_cyclo,12,100.3,3.5,measured_formula_unique,bicyclohexyl
+C13-Dicycloparaffin,C13H24,2-propyldecalin,di_cyclo,13,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C14-Dicycloparaffin,C14H26,2-butyldecalin,di_cyclo,14,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C15-Dicycloparaffin,C15H28,2-pentyldecalin,di_cyclo,15,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C16-Dicycloparaffin,C16H30,2-hexyldecalin,di_cyclo,16,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C17-Dicycloparaffin,C17H32,2-heptyldecalin,di_cyclo,17,100.3,3.5,holdlargest_di_cyclo,held_at_C12_2-ethyldecalin
+C10-Tricycloparaffin,C10H16,C1CC2C(C1)C1CCCC21,tri_cyclo,10,98.86324324324322,0.34309342417641314,crossfill_tri_cyclo_from_mono_cyclo_x1.3,1.3x mono_cyclo linear fit over C7_C19
+C11-Tricycloparaffin,C11H18,C1CC2CC3CCCC3C2C1,tri_cyclo,11,108.49729729729725,0.34309342417641314,crossfill_tri_cyclo_from_mono_cyclo_x1.3,1.3x mono_cyclo linear fit over C7_C19
+C12-Tricycloparaffin,C12H20,C1CC2CC3CCCC3CC2C1,tri_cyclo,12,118.1313513513513,0.34309342417641314,crossfill_tri_cyclo_from_mono_cyclo_x1.3,1.3x mono_cyclo linear fit over C7_C19
+C13-Tricycloparaffin,C13H22,C1CCC2C(C1)CC1CCCCC12,tri_cyclo,13,127.76540540540536,0.34309342417641314,crossfill_tri_cyclo_from_mono_cyclo_x1.3,1.3x mono_cyclo linear fit over C7_C19
+C14-Tricycloparaffin,C13H22,C1CCC2CC3CCCCC3CC2C1,tri_cyclo,13,127.76540540540536,0.34309342417641314,crossfill_tri_cyclo_from_mono_cyclo_x1.3,1.3x mono_cyclo linear fit over C7_C19
+C10-Alkene,C10H20,1-decene,alkene,10,74.8,2.2,measured_name,1-decene
+C12-Alkene,C12H24,1-dodecene,alkene,12,90.3,2.6,measured_name,1-dodecene
+C14-Alkene,C14H28,1-tetradecene,alkene,14,90.3,2.6,holdlargest_alkene,held_at_C12_1-dodecene
+C16-Alkene,C16H32,1-hexadecene,alkene,16,90.3,2.6,holdlargest_alkene,held_at_C12_1-dodecene
+ATJ-C12-Isoparaffin,C12H26,"2,2,4,6,6-pentamethyl heptane",iso_alkane,12,99.3,2.9,archetype_copy_C12-Isoparaffin (no measured YSI for PMH),"2,2,4,6,6-pentamethylheptane"
+ATJ-C16-Isoparaffin,C16H34,"2,2,4,4,6,8,8-heptamethyl nonane",iso_alkane,16,123.00285714285715,8.526853938894348,archetype_copy_C16-Isoparaffin (no measured YSI for HMN),linear_fit_C7_C12

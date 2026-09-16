@@ -1,0 +1,92 @@
+GCxGC_Bin,Formula,Reference_Compound,Family,Carbon_Count,DCN,DCN_err,Source
+Toluene,C7H8,toluene,alkyl_benzene,7,9.0,3.0,literature_seed_VERIFY_vs_NREL_compendium
+C2-Benzene,C8H10,ethyl benzene,alkyl_benzene,8,10.894736842105281,6.0,family_fit_alkyl_benzene
+C3-Benzene,C9H12,propyl benzene,alkyl_benzene,9,14.157894736842126,6.0,family_fit_alkyl_benzene
+C4-Benzene,C10H14,butyl benzene,alkyl_benzene,10,14.0,3.0,literature_seed_VERIFY_vs_NREL_compendium
+C5-Benzene,C11H16,pentyl benzene,alkyl_benzene,11,20.68421052631578,6.0,family_fit_alkyl_benzene
+C6-Benzene,C12H18,hexyl benzene,alkyl_benzene,12,26.0,6.0,literature_seed_VERIFY_vs_NREL_compendium
+C7-Benzene,C13H20,heptyl benzene,alkyl_benzene,13,27.21052631578947,6.0,family_fit_alkyl_benzene
+C8-Benzene,C14H22,octyl benzene,alkyl_benzene,14,30.473684210526304,6.0,family_fit_alkyl_benzene
+C9-Benzene,C15H24,nonyl benzene,alkyl_benzene,15,33.73684210526314,6.0,family_fit_alkyl_benzene
+C10-Benzene,C16H26,decyl benzene,alkyl_benzene,16,37.00000000000001,6.0,family_fit_alkyl_benzene
+Diaromatic-C10,C10H8,naphthalene,di_arom,10,3.0,3.0,literature_seed_VERIFY_vs_NREL_compendium
+Diaromatic-C11,C11H10,1-methyl naphthalene,di_arom,11,3.0,3.0,literature_seed_VERIFY_vs_NREL_compendium
+Diaromatic-C12,C12H12,1-ethyl naphthalene,di_arom,12,3.0,6.0,holdlargest_di_arom
+Diaromatic-C13,C13H14,1-propyl naphthalene,di_arom,13,3.0,6.0,holdlargest_di_arom
+Diaromatic-C14,C14H16,1-butyl naphthalene,di_arom,14,3.0,6.0,holdlargest_di_arom
+Cycloaromatic-C09,C9H10,indane,cyclo_arom,9,11.0,6.0,holdlargest_cyclo_arom
+Cycloaromatic-C10,C10H12,tetralin,cyclo_arom,10,11.0,4.0,literature_seed_VERIFY_vs_NREL_compendium
+Cycloaromatic-C11,C11H14,2-methyl tetralin,cyclo_arom,11,11.0,6.0,holdlargest_cyclo_arom
+Cycloaromatic-C12,C12H16,2-ethly tetralin,cyclo_arom,12,11.0,6.0,holdlargest_cyclo_arom
+Cycloaromatic-C13,C13H18,2-propyl tetralin,cyclo_arom,13,11.0,6.0,holdlargest_cyclo_arom
+Cycloaromatic-C14,C14H20,2-butyl tetralin,cyclo_arom,14,11.0,6.0,holdlargest_cyclo_arom
+Cycloaromatic-C15,C15H22,2-pentyl tetralin,cyclo_arom,15,11.0,6.0,holdlargest_cyclo_arom
+C07-Isoparaffin,C7H16,2-methyl hexane,iso_alkane,7,26.515789473684187,10.0,offset_rule_jet_multibranched_CALIBRATED
+C08-Isoparaffin,C8H18,2-methyl heptane,iso_alkane,8,31.64736842105261,10.0,offset_rule_jet_multibranched_CALIBRATED
+C09-Isoparaffin,C9H20,2-methyl octane,iso_alkane,9,36.778947368421036,10.0,offset_rule_jet_multibranched_CALIBRATED
+C10-Isoparaffin,C10H22,2-methyl nonane,iso_alkane,10,41.910526315789454,10.0,offset_rule_jet_multibranched_CALIBRATED
+C11-Isoparaffin,C11H24,2-methyl decane,iso_alkane,11,47.04210526315788,10.0,offset_rule_jet_multibranched_CALIBRATED
+C12-Isoparaffin,C12H26,2-methyl undecane,iso_alkane,12,52.17368421052629,10.0,offset_rule_jet_multibranched_CALIBRATED
+C13-Isoparaffin,C13H28,2-methyl dodecane,iso_alkane,13,57.30526315789473,10.0,offset_rule_jet_multibranched_CALIBRATED
+C14-Isoparaffin,C14H30,2-methyl tridecane,iso_alkane,14,62.43684210526314,10.0,offset_rule_jet_multibranched_CALIBRATED
+C15-Isoparaffin,C15H32,2-methyl tetradecane,iso_alkane,15,67.56842105263155,10.0,offset_rule_jet_multibranched_CALIBRATED
+C16-Isoparaffin,C16H34,2-methyl pentadecane,iso_alkane,16,72.69999999999999,10.0,offset_rule_jet_multibranched_CALIBRATED
+C17-Isoparaffin,C17H36,2-methyl hexadecane,iso_alkane,17,77.8315789473684,10.0,offset_rule_jet_multibranched_CALIBRATED
+C18-Isoparaffin,C18H38,2-methyl heptadecane,iso_alkane,18,82.96315789473684,10.0,offset_rule_jet_multibranched_CALIBRATED
+C19-Isoparaffin,C19H40,2-methyl octadecane,iso_alkane,19,88.09473684210525,10.0,offset_rule_jet_multibranched_CALIBRATED
+C20-Isoparaffin,C20H42,2-methyl nonadecane,iso_alkane,20,93.22631578947366,10.0,offset_rule_jet_multibranched_CALIBRATED
+C21-Isoparaffin,C21H44,2-methyl icosane,iso_alkane,21,98.3578947368421,10.0,offset_rule_jet_multibranched_CALIBRATED
+C22-Isoparaffin,C22H46,2-methyl henicosane,iso_alkane,22,103.48947368421051,10.0,offset_rule_jet_multibranched_CALIBRATED
+C23-Isoparaffin,C23H48,2-methyl docosane,iso_alkane,23,105.0,10.0,offset_rule_jet_multibranched_CALIBRATED+capped_105
+C24-Isoparaffin,C24H50,2-methyl tricosane,iso_alkane,24,105.0,10.0,offset_rule_jet_multibranched_CALIBRATED+capped_105
+n-C07,C7H16,n-heptane,n_alkane,7,53.8,1.5,literature_seed_VERIFY_vs_NREL_compendium
+n-C08,C8H18,n-octane,n_alkane,8,56.64736842105261,4.0,family_fit_n_alkane
+n-C09,C9H20,n-nonane,n_alkane,9,61.778947368421036,4.0,family_fit_n_alkane
+n-C10,C10H22,n-decane,n_alkane,10,65.8,3.0,literature_seed_VERIFY_vs_NREL_compendium
+n-C11,C11H24,n-undecane,n_alkane,11,72.04210526315788,4.0,family_fit_n_alkane
+n-C12,C12H26,n-dodecane,n_alkane,12,73.7,2.0,literature_seed_VERIFY_vs_NREL_compendium
+n-C13,C13H28,n-tridecane,n_alkane,13,82.30526315789473,4.0,family_fit_n_alkane
+n-C14,C14H30,n-tetradecane,n_alkane,14,87.43684210526314,4.0,family_fit_n_alkane
+n-C15,C15H32,n-pentadecane,n_alkane,15,92.56842105263155,4.0,family_fit_n_alkane
+n-C16,C16H34,n-hexadecane,n_alkane,16,100.0,2.0,literature_seed_VERIFY_vs_NREL_compendium
+n-C17,C17H36,n-heptadecane,n_alkane,17,102.8315789473684,4.0,family_fit_n_alkane
+n-C18,C18H38,n-octadecane,n_alkane,18,105.0,4.0,family_fit_n_alkane+capped_105
+n-C19,C19H40,n-nonadecane,n_alkane,19,105.0,4.0,family_fit_n_alkane+capped_105
+n-C20,C20H42,n-icosane,n_alkane,20,105.0,4.0,family_fit_n_alkane+capped_105
+n-C21,C21H44,n-henicosane,n_alkane,21,105.0,4.0,family_fit_n_alkane+capped_105
+n-C22,C22H46,n-docosane,n_alkane,22,105.0,4.0,family_fit_n_alkane+capped_105
+n-C23,C23H48,n-tricosane,n_alkane,23,105.0,4.0,family_fit_n_alkane+capped_105
+C07-Monocycloparaffin,C7C14,methyl cyclohexane,mono_cyclo,7,21.0,3.0,literature_seed_VERIFY_vs_NREL_compendium
+C08-Monocycloparaffin,C8H16,ethyl cyclohexane,mono_cyclo,8,29.666666666666664,6.0,piecewise_fit_mono_cyclo
+C09-Monocycloparaffin,C9H18,propyl cyclohexane,mono_cyclo,9,38.33333333333333,6.0,piecewise_fit_mono_cyclo
+C10-Monocycloparaffin,C10H20,butyl cyclohexane,mono_cyclo,10,47.0,4.0,literature_seed_VERIFY_vs_NREL_compendium
+C11-Monocycloparaffin,C11H22,pentyl cyclohexane,mono_cyclo,11,52.131578947368425,6.0,piecewise_fit_mono_cyclo
+C12-Monocycloparaffin,C12H24,hexyl cyclohexane,mono_cyclo,12,57.26315789473684,6.0,piecewise_fit_mono_cyclo
+C13-Monocycloparaffin,C13H26,heptyl cyclohexane,mono_cyclo,13,62.39473684210527,6.0,piecewise_fit_mono_cyclo
+C14-Monocycloparaffin,C14H28,octyl cyclohexane,mono_cyclo,14,67.52631578947368,6.0,piecewise_fit_mono_cyclo
+C15-Monocycloparaffin,C15H30,nonyl cyclohexane,mono_cyclo,15,72.65789473684211,6.0,piecewise_fit_mono_cyclo
+C16-Monocycloparaffin,C16H32,decyl cyclohexane,mono_cyclo,16,77.78947368421053,6.0,piecewise_fit_mono_cyclo
+C17-Monocycloparaffin,C17H34,undecyl cyclohexane,mono_cyclo,17,82.92105263157896,6.0,piecewise_fit_mono_cyclo
+C18-Monocycloparaffin,C18H36,dodecyl cyclohexane,mono_cyclo,18,88.05263157894737,6.0,piecewise_fit_mono_cyclo
+C19-Monocycloparaffin,C19H38,tridecyl cyclohexane,mono_cyclo,19,93.18421052631581,6.0,piecewise_fit_mono_cyclo
+C08-Dicycloparaffin,C8H14,Octahydropentalene,di_cyclo,8,18.666666666666664,7.0,offset_rule_dicyclo_from_mono_minus_11
+C09-Dicycloparaffin,C9H16,Hydrindane,di_cyclo,9,27.33333333333333,7.0,offset_rule_dicyclo_from_mono_minus_11
+C10-Dicycloparaffin,C10H18,Decalin,di_cyclo,10,36.0,4.0,literature_seed_VERIFY_vs_NREL_compendium
+C11-Dicycloparaffin,C11H20,2-methyldecalin,di_cyclo,11,41.131578947368425,7.0,offset_rule_dicyclo_from_mono_minus_11
+C12-Dicycloparaffin,C12H22,2-ethyldecalin,di_cyclo,12,46.26315789473684,7.0,offset_rule_dicyclo_from_mono_minus_11
+C13-Dicycloparaffin,C13H24,2-propyldecalin,di_cyclo,13,51.39473684210527,7.0,offset_rule_dicyclo_from_mono_minus_11
+C14-Dicycloparaffin,C14H26,2-butyldecalin,di_cyclo,14,56.526315789473685,7.0,offset_rule_dicyclo_from_mono_minus_11
+C15-Dicycloparaffin,C15H28,2-pentyldecalin,di_cyclo,15,61.65789473684211,7.0,offset_rule_dicyclo_from_mono_minus_11
+C16-Dicycloparaffin,C16H30,2-hexyldecalin,di_cyclo,16,66.78947368421053,7.0,offset_rule_dicyclo_from_mono_minus_11
+C17-Dicycloparaffin,C17H32,2-heptyldecalin,di_cyclo,17,71.92105263157896,7.0,offset_rule_dicyclo_from_mono_minus_11
+C10-Tricycloparaffin,C10H16,C1CC2C(C1)C1CCCC21,tri_cyclo,10,21.0,5.0,literature_seed_JP10_analog_VERIFY
+C11-Tricycloparaffin,C11H18,C1CC2CC3CCCC3C2C1,tri_cyclo,11,26.131578947368425,8.0,offset_rule_tricyclo_from_mono_minus_26
+C12-Tricycloparaffin,C12H20,C1CC2CC3CCCC3CC2C1,tri_cyclo,12,31.263157894736842,8.0,offset_rule_tricyclo_from_mono_minus_26
+C13-Tricycloparaffin,C13H22,C1CCC2C(C1)CC1CCCCC12,tri_cyclo,13,36.39473684210527,8.0,offset_rule_tricyclo_from_mono_minus_26
+C14-Tricycloparaffin,C13H22,C1CCC2CC3CCCCC3CC2C1,tri_cyclo,13,36.39473684210527,8.0,offset_rule_tricyclo_from_mono_minus_26
+C10-Alkene,C10H20,1-decene,alkene,10,51.910526315789454,10.0,offset_rule_1alkene_from_n_alkane
+C12-Alkene,C12H24,1-dodecene,alkene,12,62.17368421052629,10.0,offset_rule_1alkene_from_n_alkane
+C14-Alkene,C14H28,1-tetradecene,alkene,14,72.43684210526314,10.0,offset_rule_1alkene_from_n_alkane
+C16-Alkene,C16H32,1-hexadecene,alkene,16,82.69999999999999,10.0,offset_rule_1alkene_from_n_alkane
+ATJ-C12-Isoparaffin,C12H26,"2,2,4,6,6-pentamethyl heptane",iso_alkane,12,17.5,2.5,literature_seed_VERIFY_vs_NREL_compendium
+ATJ-C16-Isoparaffin,C16H34,"2,2,4,4,6,8,8-heptamethyl nonane",iso_alkane,16,15.0,1.0,literature_seed_VERIFY_vs_NREL_compendium

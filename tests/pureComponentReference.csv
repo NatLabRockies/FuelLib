@@ -1,0 +1,90 @@
+RefCompound,GCxGC_Bin,Formula,LHV_MJkg,Cl_298_JkgK,FreezePoint_K,FlashPoint_K,YSI,Source
+toluene,Toluene,C7H8,40.6,1706.0,178.15,277.15,170.9,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+ethyl benzene,C2-Benzene,C8H10,41.2,1749.0,178.15,291.15,223.7,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+propyl benzene,C3-Benzene,C9H12,41.5,1770.0,173.65,302.15,235.7,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+butyl benzene,C4-Benzene,C10H14,41.8,1810.0,185.25,344.15,245.1,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+pentyl benzene,C5-Benzene,C11H16,,,,,255.0,Volume 2 (YSI only)
+hexyl benzene,C6-Benzene,C12H18,,,,,246.7,Volume 2 (YSI only)
+heptyl benzene,C7-Benzene,C13H20,,,,,257.1,Volume 2 (YSI only)
+octyl benzene,C8-Benzene,C14H22,,,,,257.1,Volume 2 (YSI only)
+nonyl benzene,C9-Benzene,C15H24,,,,,283.2,Volume 2 (YSI only)
+decyl benzene,C10-Benzene,C16H26,,,,,283.2,Volume 2 (YSI only)
+naphthalene,Diaromatic-C10,C10H8,40.0,,353.35,352.15,466.1,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+1-methyl naphthalene,Diaromatic-C11,C11H10,40.6,1610.0,242.65,355.15,649.1,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+1-ethyl naphthalene,Diaromatic-C12,C12H12,,,,,732.7,Volume 2 (YSI only)
+1-propyl naphthalene,Diaromatic-C13,C13H14,,,,,882.5666666666667,Volume 2 (YSI only)
+1-butyl naphthalene,Diaromatic-C14,C14H16,,,,,1015.8666666666668,Volume 2 (YSI only)
+indane,Cycloaromatic-C09,C9H10,41.6,1730.0,221.75,331.15,439.5,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+tetralin,Cycloaromatic-C10,C10H12,41.9,1652.0,237.35,354.15,336.0,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl tetralin,Cycloaromatic-C11,C11H14,,,,,336.0,Volume 2 (YSI only)
+2-ethly tetralin,Cycloaromatic-C12,C12H16,,,,,336.0,Volume 2 (YSI only)
+2-propyl tetralin,Cycloaromatic-C13,C13H18,,,,,336.0,Volume 2 (YSI only)
+2-butyl tetralin,Cycloaromatic-C14,C14H20,,,,,336.0,Volume 2 (YSI only)
+2-pentyl tetralin,Cycloaromatic-C15,C15H22,,,,,336.0,Volume 2 (YSI only)
+2-methyl hexane,C07-Isoparaffin,C7H16,44.7,2224.0,154.85,264.15,42.4,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl heptane,C08-Isoparaffin,C8H18,44.5,2223.0,163.95,277.15,49.4,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl octane,C09-Isoparaffin,C9H20,44.4,2220.0,192.85,292.15,60.2,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl nonane,C10-Isoparaffin,C10H22,44.3,2200.0,196.35,305.15,57.2,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl decane,C11-Isoparaffin,C11H24,44.2,2200.0,225.65,326.15,64.7,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl undecane,C12-Isoparaffin,C12H26,44.2,2210.0,228.95,340.15,99.3,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl dodecane,C13-Isoparaffin,C13H28,44.1,2210.0,253.35,358.15,94.94,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyl tridecane,C14-Isoparaffin,C14H30,,,,,104.29428571428572,Volume 2 (YSI only)
+2-methyl tetradecane,C15-Isoparaffin,C15H32,,,,,113.64857142857144,Volume 2 (YSI only)
+2-methyl pentadecane,C16-Isoparaffin,C16H34,,,,,123.00285714285717,Volume 2 (YSI only)
+2-methyl hexadecane,C17-Isoparaffin,C17H36,,,,,132.35714285714286,Volume 2 (YSI only)
+2-methyl heptadecane,C18-Isoparaffin,C18H38,,,,,141.71142857142857,Volume 2 (YSI only)
+2-methyl octadecane,C19-Isoparaffin,C19H40,,,,,151.0657142857143,Volume 2 (YSI only)
+2-methyl nonadecane,C20-Isoparaffin,C20H42,,,,,160.42000000000002,Volume 2 (YSI only)
+2-methyl icosane,C21-Isoparaffin,C21H44,,,,,169.77428571428572,Volume 2 (YSI only)
+2-methyl henicosane,C22-Isoparaffin,C22H46,,,,,179.12857142857146,Volume 2 (YSI only)
+2-methyl docosane,C23-Isoparaffin,C23H48,,,,,188.48285714285717,Volume 2 (YSI only)
+2-methyl tricosane,C24-Isoparaffin,C24H50,,,,,197.83714285714288,Volume 2 (YSI only)
+n-heptane,n-C07,C7H16,44.5,2224.0,182.55,269.15,36.0,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-octane,n-C08,C8H18,44.4,2229.0,216.35,286.15,42.6,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-nonane,n-C09,C9H20,44.3,2214.0,219.65,304.15,50.1,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-decane,n-C10,C10H22,44.2,2200.0,243.45,319.15,57.2,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-undecane,n-C11,C11H24,44.2,2206.0,247.55,338.15,64.7,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-dodecane,n-C12,C12H26,44.2,2213.0,263.55,347.15,71.7,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-tridecane,n-C13,C13H28,44.1,2210.0,267.75,352.15,78.90666666666668,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-tetradecane,n-C14,C14H30,44.1,2210.0,278.95,372.15,86.10380952380955,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-pentadecane,n-C15,C15H32,44.1,2210.0,283.05,388.15,93.3009523809524,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-hexadecane,n-C16,C16H34,44.0,2216.0,291.35,408.15,100.49809523809526,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+n-heptadecane,n-C17,C17H36,,,,,107.69523809523812,Volume 2 (YSI only)
+n-octadecane,n-C18,C18H38,,,,,114.89238095238098,Volume 2 (YSI only)
+n-nonadecane,n-C19,C19H40,,,,,122.08952380952384,Volume 2 (YSI only)
+n-icosane,n-C20,C20H42,,,,,129.2866666666667,Volume 2 (YSI only)
+n-henicosane,n-C21,C21H44,,,,,136.48380952380955,Volume 2 (YSI only)
+n-docosane,n-C22,C22H46,,,,,143.68095238095242,Volume 2 (YSI only)
+n-tricosane,n-C23,C23H48,,,,,150.87809523809528,Volume 2 (YSI only)
+methyl cyclohexane,C07-Monocycloparaffin,C7C14,43.8,1839.0,146.55,266.15,53.6,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+ethyl cyclohexane,C08-Monocycloparaffin,C8H16,43.9,1815.0,161.85,308.15,60.7,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+propyl cyclohexane,C09-Monocycloparaffin,C9H18,,,,,69.2,Volume 2 (YSI only)
+butyl cyclohexane,C10-Monocycloparaffin,C10H20,,,,,76.8,Volume 2 (YSI only)
+pentyl cyclohexane,C11-Monocycloparaffin,C11H22,,,,,83.45945945945942,Volume 2 (YSI only)
+hexyl cyclohexane,C12-Monocycloparaffin,C12H24,,,,,90.3,Volume 2 (YSI only)
+heptyl cyclohexane,C13-Monocycloparaffin,C13H26,,,,,98.28108108108104,Volume 2 (YSI only)
+octyl cyclohexane,C14-Monocycloparaffin,C14H28,,,,,105.69189189189186,Volume 2 (YSI only)
+nonyl cyclohexane,C15-Monocycloparaffin,C15H30,,,,,113.10270270270266,Volume 2 (YSI only)
+decyl cyclohexane,C16-Monocycloparaffin,C16H32,,,,,120.51351351351347,Volume 2 (YSI only)
+undecyl cyclohexane,C17-Monocycloparaffin,C17H34,,,,,127.92432432432427,Volume 2 (YSI only)
+dodecyl cyclohexane,C18-Monocycloparaffin,C18H36,,,,,135.3351351351351,Volume 2 (YSI only)
+tridecyl cyclohexane,C19-Monocycloparaffin,C19H38,,,,,142.74594594594592,Volume 2 (YSI only)
+Octahydropentalene,C08-Dicycloparaffin,C8H14,,,,,100.3,Volume 2 (YSI only)
+Hydrindane,C09-Dicycloparaffin,C9H16,,,,,100.3,Volume 2 (YSI only)
+Decalin,C10-Dicycloparaffin,C10H18,42.6,1668.0,230.15,331.15,100.3,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+2-methyldecalin,C11-Dicycloparaffin,C11H20,,,,,100.3,Volume 2 (YSI only)
+2-ethyldecalin,C12-Dicycloparaffin,C12H22,,,,,100.3,Volume 2 (YSI only)
+2-propyldecalin,C13-Dicycloparaffin,C13H24,,,,,100.3,Volume 2 (YSI only)
+2-butyldecalin,C14-Dicycloparaffin,C14H26,,,,,100.3,Volume 2 (YSI only)
+2-pentyldecalin,C15-Dicycloparaffin,C15H28,,,,,100.3,Volume 2 (YSI only)
+2-hexyldecalin,C16-Dicycloparaffin,C16H30,,,,,100.3,Volume 2 (YSI only)
+2-heptyldecalin,C17-Dicycloparaffin,C17H32,,,,,100.3,Volume 2 (YSI only)
+C1CC2C(C1)C1CCCC21,C10-Tricycloparaffin,C10H16,,,,,98.86324324324322,Volume 2 (YSI only)
+C1CC2CC3CCCC3C2C1,C11-Tricycloparaffin,C11H18,,,,,108.49729729729724,Volume 2 (YSI only)
+C1CC2CC3CCCC3CC2C1,C12-Tricycloparaffin,C12H20,,,,,118.1313513513513,Volume 2 (YSI only)
+C1CCC2C(C1)CC1CCCCC12,C13-Tricycloparaffin,C13H22,,,,,127.76540540540536,Volume 2 (YSI only)
+C1CCC2CC3CCCCC3CC2C1,C14-Tricycloparaffin,C13H22,,,,,127.76540540540536,Volume 2 (YSI only)
+1-decene,C10-Alkene,C10H20,44.2,2151.0,206.75,320.15,74.8,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+1-dodecene,C12-Alkene,C12H24,44.1,2160.0,237.95,353.15,90.3,"NIST WebBook (LHV,Cp,Tf,FP) + Volume 2 (YSI)"
+1-tetradecene,C14-Alkene,C14H28,,,,,90.3,Volume 2 (YSI only)
+1-hexadecene,C16-Alkene,C16H32,,,,,90.3,Volume 2 (YSI only)
