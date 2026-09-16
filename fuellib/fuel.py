@@ -1105,9 +1105,8 @@ class fuel:
 
         # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
         # unit independent. "mks" (meter-kilogram-second) and "cgs"
-        # (centimeter-gram-second) are unit *systems*, not units themselves. D is
-        # the Pa-to-target-unit conversion factor, applied only when evaluating
-        # psat(T) = D * 10**(A - B/(T + C)).
+        # D is the Pa-to-target-unit conversion factor, applied only when evaluating
+        # psat(T) = D * 10**(A - B/(T + C)) in Pele.
         D = 10 if units.lower() == "cgs" else 1  # Pa -> dyne/cm^2, else Pa (mks)
 
         Pvals = np.zeros_like(T)
