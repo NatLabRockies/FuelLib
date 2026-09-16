@@ -1,0 +1,10 @@
+Family,dSfus_A,dSfus_B,C_ref,Source_note
+n_alkane,77.0,11.8,7,anchored to NIST dHfus/Tm: C7 77 / C10 118 / C12 140 / C16 183 J/mol/K (odd-even alternation not modeled)
+iso_alkane,50.0,7.7,7,estimate: 65% of n-alkane (methyl branching lowers packing entropy); generic multi-branched jet archetype
+alkene,69.0,10.6,7,estimate: 90% of n-alkane (1-alkenes pack nearly like n-alkanes)
+mono_cyclo,46.0,9.0,7,anchored at methylcyclohexane (6.75 kJ/mol / 146.6 K = 46); chain growth ~ n-alkane-like per CH2
+di_cyclo,50.0,8.0,10,anchored near decalin (cis 41 / trans 59); alkyl growth estimated
+tri_cyclo,45.0,8.0,10,estimate: fused rigid cores; no reliable data
+alkyl_benzene,37.0,6.0,7,anchored at toluene (6.64 kJ/mol / 178.2 K = 37); chain growth estimated
+cyclo_arom,42.0,6.0,9,estimate near indane/tetralin
+di_arom,54.0,5.0,10,anchored at naphthalene (18.98 kJ/mol / 353.4 K = 54)

@@ -1,6 +1,7 @@
 """Fuel class for Group Contribution Method calculations."""
 
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -16,6 +17,97 @@ from ._data_locator import (
 )
 from .convert import K2C
 from .utility import mixing_rule
+
+# Standard-state gas-phase formation enthalpies at 298.15 K. Using gaseous
+# water gives the net (lower) heating value reported for aviation fuels.
+_HF_CO2_G_JMOL = -393.51e3
+_HF_H2O_G_JMOL = -241.83e3
+
+
+def _psat_lee_kesler(T, Tc, Pc, omega):
+    """Return Lee-Kesler saturation pressures in Pa."""
+    Tr = T / Tc
+    f0 = 5.92714 - (6.09648 / Tr) - 1.28862 * np.log(Tr) + 0.169347 * Tr**6
+    f1 = 15.2518 - (15.6875 / Tr) - 13.4721 * np.log(Tr) + 0.43577 * Tr**6
+    return Pc * np.exp(f0 + omega * f1)
+
+
+def _fp_alqaheem(Tb):
+    """Return Alqaheem-Riazi pure-component flash points in K."""
+    return 0.70 * Tb
+
+
+def _fp_alibakhshi(Tb, phi_sum):
+    """Return Alibakhshi pure-component flash points in K."""
+    return 12.14 + 0.73 * Tb + phi_sum
+
+
+def _fp_liaw_ideal_iter(Xi, Tf_i, Tc, Pc, omega, n_iter=10):
+    """Solve the ideal Liaw-Chiu mixture flash-point criterion."""
+    psat_ref = _psat_lee_kesler(Tf_i, Tc, Pc, omega)
+
+    def residual(T):
+        psat_T = _psat_lee_kesler(T, Tc, Pc, omega)
+        return np.sum(Xi * psat_T / psat_ref) - 1.0
+
+    T = np.sum(Xi * Tf_i)
+    dT = 1.0
+    for _ in range(n_iter):
+        value = residual(T)
+        derivative = (residual(T + dT) - value) / dT
+        step = np.clip(value / (derivative + 1e-30), -20.0, 20.0)
+        T -= step
+    return T
+
+
+def _boehm2022_iter(x_j, Tm_j, dHfus_j, dSfus_j, dCp_j, alpha=1.0, n_iter=8):
+    """Solve Boehm et al. (2022), equation 21, for each component."""
+    gas_constant = 8.31446
+    x_safe = np.clip(x_j, 1e-6, 1.0 - 1e-6)
+    dS_mix = (
+        -gas_constant
+        / x_safe
+        * ((1.0 - x_safe) * np.log(1.0 - x_safe) + x_safe * np.log(x_safe))
+    )
+    T = Tm_j * np.ones_like(x_safe)
+    for _ in range(n_iter):
+        T = np.maximum(T, 1.0)
+        numerator = dHfus_j + x_safe * dCp_j * (Tm_j - T)
+        denominator = dSfus_j + x_safe * dCp_j * np.log(T / Tm_j)
+        denominator += alpha * dS_mix
+        T = numerator / (denominator + 1e-30)
+    return np.where(T > 0, T, -np.inf)
+
+
+def _freeze_max_over_j(Xi, Tm_i, dHfus_i, dSfus_i, dCp_i, alpha=1.0):
+    """Return the first-crystal temperature from the component candidates."""
+    candidates = _boehm2022_iter(Xi, Tm_i, dHfus_i, dSfus_i, dCp_i, alpha=alpha)
+    return np.max(np.where(Xi > 1e-6, candidates, -np.inf))
+
+
+def _ysi_mix(Xi, ysi_i):
+    """Return a mole-fraction-weighted Unified YSI."""
+    return np.sum(Xi * ysi_i)
+
+
+def _dcn_mix(phi_i, dcn_i):
+    """Return a liquid-volume-fraction-weighted DCN."""
+    return np.sum(phi_i * dcn_i)
+
+
+def _cp_liq_rd(T, A, B, D, MW):
+    """Return Ruzicka-Domalski liquid heat capacities in J/kg/K."""
+    gas_constant = 8.31446
+    reduced_temperature = T / 100.0
+    cp_molar = gas_constant * (A + B * reduced_temperature + D * reduced_temperature**2)
+    return cp_molar / MW
+
+
+def _lhv_hess(n_C, n_H, Hf, MW):
+    """Return component lower heating values in MJ/kg from a Hess cycle."""
+    combustion_enthalpy = n_C * _HF_CO2_G_JMOL
+    combustion_enthalpy += (n_H / 2.0) * _HF_H2O_G_JMOL - Hf
+    return -combustion_enthalpy * 1e-6 / MW
 
 
 class fuel:
@@ -289,6 +381,13 @@ class fuel:
         df_table = pd.read_csv(self.gcmTableFile)
         df_table = df_table.drop(columns=["Units"])
 
+        self.group_names = [str(column) for column in df_table.columns[1:]]
+        self._non_hc_idx = [
+            index
+            for index, group_name in enumerate(self.group_names)
+            if re.search(r"O|N|S|F|I|Cl|Br", group_name)
+        ]
+
         def get_row(property_name):
             """
             Get property row from GCM table.
@@ -370,6 +469,236 @@ class fuel:
 
         # L_v,stp (latent heat of vaporization at 298 K)
         self.Lv_stp = self.Hv_stp / self.MW  # J/kg
+
+        # Additional group properties used by the ASTM correlations.
+        self.gcmExtendedFile = os.path.join(gcmtable_dir, "gcmExtendedTable.csv")
+        df_ext = pd.read_csv(self.gcmExtendedFile).drop(columns=["Units"])
+
+        def get_ext_row(property_name):
+            row = df_ext[df_ext["Property"] == property_name]
+            if row.empty:
+                raise ValueError(
+                    f"Property '{property_name}' not found in extended GCM table."
+                )
+            return row.iloc[:, 1:].to_numpy().flatten()
+
+        self.n_C = np.matmul(self.Nij, get_ext_row("n_C")).astype(float)
+        self.n_H = np.matmul(self.Nij, get_ext_row("n_H")).astype(float)
+
+        # Experimental anchors correct group-contribution boiling and melting
+        # points where the molecular symmetry omitted by GCM is important.
+        self.Tb_astm = self.Tb.copy()
+        self.Tm_astm = self.Tm.copy()
+        self.omega_astm = self.omega.copy()
+        self.Tb_source = ["gcm"] * self.num_compounds
+        self.Tm_source = ["gcm"] * self.num_compounds
+        self.omega_source = ["gcm"] * self.num_compounds
+
+        anchor_file = os.path.join(gcmtable_dir, "property_anchors.csv")
+        df_anchor = pd.read_csv(anchor_file)
+
+        def anchor_lookup(value_column, source_column):
+            by_bin = {}
+            by_formula = {}
+            family_by_formula = {}
+            for _, row in df_anchor.iterrows():
+                if pd.isna(row[value_column]):
+                    continue
+                value = (float(row[value_column]), str(row[source_column]))
+                by_bin[row["GCxGC_Bin"]] = value
+                formula = row["Formula"]
+                previous_family = family_by_formula.get(formula)
+                if previous_family is None or (
+                    previous_family != "n_alkane" and row["Family"] == "n_alkane"
+                ):
+                    by_formula[formula] = value
+                    family_by_formula[formula] = row["Family"]
+            return by_bin, by_formula
+
+        tb_by_bin, tb_by_formula = anchor_lookup("exp_Tb_K", "Tb_source")
+        tm_by_bin, tm_by_formula = anchor_lookup("exp_Tm_K", "Tm_source")
+        omega_by_bin, omega_by_formula = anchor_lookup("exp_omega", "omega_source")
+        known_anchor_bins = set(df_anchor["GCxGC_Bin"])
+
+        def compound_formula(index):
+            return f"C{int(self.n_C[index])}H{int(self.n_H[index])}"
+
+        for index, compound in enumerate(self.compounds):
+            known_bin = compound in known_anchor_bins
+            formula = compound_formula(index)
+            tb_hit = tb_by_bin.get(compound) or (
+                None if known_bin else tb_by_formula.get(formula)
+            )
+            tm_hit = tm_by_bin.get(compound) or (
+                None if known_bin else tm_by_formula.get(formula)
+            )
+            omega_hit = omega_by_bin.get(compound) or (
+                None if known_bin else omega_by_formula.get(formula)
+            )
+            if tb_hit is not None:
+                self.Tb_astm[index], self.Tb_source[index] = tb_hit
+            if tm_hit is not None:
+                self.Tm_astm[index], self.Tm_source[index] = tm_hit
+            if omega_hit is not None:
+                self.omega_astm[index], self.omega_source[index] = omega_hit
+
+        needs_omega_closure = np.array(
+            [
+                tb_source != "gcm" and omega_source == "gcm"
+                for tb_source, omega_source in zip(self.Tb_source, self.omega_source)
+            ]
+        )
+        if np.any(needs_omega_closure):
+            reduced_boiling_temperature = self.Tb_astm / self.Tc
+            f0 = (
+                5.92714
+                - 6.09648 / reduced_boiling_temperature
+                - 1.28862 * np.log(reduced_boiling_temperature)
+                + 0.169347 * reduced_boiling_temperature**6
+            )
+            f1 = (
+                15.2518
+                - 15.6875 / reduced_boiling_temperature
+                - 13.4721 * np.log(reduced_boiling_temperature)
+                + 0.43577 * reduced_boiling_temperature**6
+            )
+            omega_closure = (-np.log(self.Pc / 101325.0) - f0) / f1
+            valid_closure = (
+                (reduced_boiling_temperature < 0.90)
+                & (omega_closure > 0.0)
+                & (omega_closure < 1.2)
+            )
+            apply_closure = needs_omega_closure & valid_closure
+            self.omega_astm = np.where(apply_closure, omega_closure, self.omega_astm)
+            for index in np.where(apply_closure)[0]:
+                self.omega_source[index] = "kesler_lee_closure"
+
+        self.Cp_L_A = np.matmul(self.Nij, get_ext_row("rd_A")).astype(float)
+        self.Cp_L_B = np.matmul(self.Nij, get_ext_row("rd_B")).astype(float)
+        self.Cp_L_D = np.matmul(self.Nij, get_ext_row("rd_D")).astype(float)
+        self.alibakhshi_phi = np.matmul(self.Nij, get_ext_row("alibakhshi_phi")).astype(
+            float
+        )
+
+        fusion_file = os.path.join(gcmtable_dir, "fusion_families.csv")
+        fusion_table = pd.read_csv(fusion_file)
+        fusion_families = {
+            row["Family"]: (
+                float(row["dSfus_A"]),
+                float(row["dSfus_B"]),
+                float(row["C_ref"]),
+            )
+            for _, row in fusion_table.iterrows()
+        }
+        cp_liquid_298 = (
+            _cp_liq_rd(298.15, self.Cp_L_A, self.Cp_L_B, self.Cp_L_D, self.MW) * self.MW
+        )
+        self.dCp = -0.35 * cp_liquid_298
+
+        def priority_formula_map(table, columns):
+            values = {}
+            family_by_formula = {}
+            for _, row in table.iterrows():
+                formula = row["Formula"]
+                previous_family = family_by_formula.get(formula)
+                if previous_family is None or (
+                    previous_family != "n_alkane" and row["Family"] == "n_alkane"
+                ):
+                    values[formula] = tuple(row[column] for column in columns)
+                    family_by_formula[formula] = row["Family"]
+            return values
+
+        self.dasYsiFile = os.path.join(gcmtable_dir, "das_2018_ysi.csv")
+        ysi_table = pd.read_csv(self.dasYsiFile)
+        ysi_by_bin = dict(zip(ysi_table["GCxGC_Bin"], ysi_table["YSI"]))
+        ysi_source_by_bin = dict(zip(ysi_table["GCxGC_Bin"], ysi_table["Source"]))
+        ysi_error_by_bin = dict(zip(ysi_table["GCxGC_Bin"], ysi_table["YSI_err"]))
+        ysi_family_by_bin = dict(zip(ysi_table["GCxGC_Bin"], ysi_table["Family"]))
+        ysi_by_formula = priority_formula_map(ysi_table, ["YSI", "Source", "YSI_err"])
+        known_ysi_bins = set(ysi_table["GCxGC_Bin"])
+
+        self.ysi_pure = np.full(self.num_compounds, np.nan, dtype=float)
+        self.ysi_err = np.full(self.num_compounds, np.nan, dtype=float)
+        self.ysi_source = ["unknown"] * self.num_compounds
+        for index, compound in enumerate(self.compounds):
+            known_bin = compound in known_ysi_bins
+            if known_bin and not np.isnan(ysi_by_bin[compound]):
+                self.ysi_pure[index] = ysi_by_bin[compound]
+                self.ysi_err[index] = ysi_error_by_bin[compound]
+                self.ysi_source[index] = ysi_source_by_bin[compound]
+            elif not known_bin:
+                hit = ysi_by_formula.get(compound_formula(index))
+                if hit is not None and not np.isnan(hit[0]):
+                    self.ysi_pure[index] = hit[0]
+                    self.ysi_source[index] = f"formula_fallback:{hit[1]}"
+                    self.ysi_err[index] = hit[2]
+            if not np.isnan(self.ysi_pure[index]) and not str(
+                self.ysi_source[index]
+            ).startswith(("measured", "formula_fallback:measured")):
+                self.ysi_err[index] = max(
+                    2.0 * float(np.nan_to_num(self.ysi_err[index])),
+                    0.15 * abs(self.ysi_pure[index]),
+                )
+
+        self.ysi_filled = np.zeros(self.num_compounds, dtype=bool)
+        for index in np.where(np.isnan(self.ysi_pure))[0]:
+            family = ysi_family_by_bin.get(self.compounds[index])
+            family_values = [
+                self.ysi_pure[other]
+                for other in range(self.num_compounds)
+                if not np.isnan(self.ysi_pure[other])
+                and ysi_family_by_bin.get(self.compounds[other]) == family
+            ]
+            if family_values:
+                fill = float(np.mean(family_values))
+            else:
+                fill = float(np.nanmedian(ysi_table["YSI"]))
+            self.ysi_pure[index] = fill
+            self.ysi_err[index] = max(0.30 * abs(fill), 10.0)
+            self.ysi_source[index] = "family_mean_fill"
+            self.ysi_filled[index] = True
+
+        self.dcnFile = os.path.join(gcmtable_dir, "dcn.csv")
+        dcn_table = pd.read_csv(self.dcnFile)
+        dcn_by_bin = dict(zip(dcn_table["GCxGC_Bin"], dcn_table["DCN"]))
+        dcn_source_by_bin = dict(zip(dcn_table["GCxGC_Bin"], dcn_table["Source"]))
+        dcn_error_by_bin = dict(zip(dcn_table["GCxGC_Bin"], dcn_table["DCN_err"]))
+        family_by_bin = dict(zip(dcn_table["GCxGC_Bin"], dcn_table["Family"]))
+        dcn_by_formula = priority_formula_map(
+            dcn_table, ["DCN", "Source", "DCN_err", "Family"]
+        )
+        known_dcn_bins = set(dcn_table["GCxGC_Bin"])
+
+        self.dcn_pure = np.full(self.num_compounds, np.nan, dtype=float)
+        self.dcn_err = np.full(self.num_compounds, np.nan, dtype=float)
+        self.dcn_source = ["unknown"] * self.num_compounds
+        self.bin_family = ["unknown"] * self.num_compounds
+        for index, compound in enumerate(self.compounds):
+            known_bin = compound in known_dcn_bins
+            if known_bin and not np.isnan(dcn_by_bin[compound]):
+                self.dcn_pure[index] = dcn_by_bin[compound]
+                self.dcn_err[index] = dcn_error_by_bin[compound]
+                self.dcn_source[index] = dcn_source_by_bin[compound]
+                self.bin_family[index] = family_by_bin[compound]
+                continue
+            if known_bin:
+                continue
+            hit = dcn_by_formula.get(compound_formula(index))
+            if hit is not None and not np.isnan(hit[0]):
+                self.dcn_pure[index] = hit[0]
+                self.dcn_source[index] = f"formula_fallback:{hit[1]}"
+                self.dcn_err[index] = hit[2]
+                self.bin_family[index] = hit[3]
+
+        self.dSfus = np.full(self.num_compounds, 56.5)
+        for index, family in enumerate(self.bin_family):
+            if family in fusion_families:
+                coefficient, slope, reference_carbon = fusion_families[family]
+                self.dSfus[index] = max(
+                    coefficient + slope * (self.n_C[index] - reference_carbon),
+                    20.0,
+                )
+        self.dHfus = self.dSfus * self.Tm_astm
 
         # Lennard-Jones parameters for diffusion calculations (Tee et al. 1966)
         self.epsilonByKB = (0.7915 + 0.1693 * self.omega) * self.Tc  # K
@@ -574,21 +903,32 @@ class fuel:
 
     def Cl(self, T, comp_idx=None):
         """
-        Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
+        Compute liquid specific heat capacity at a given temperature.
+
+        Uses the Ruzicka-Domalski second-order group-additivity correlation
+        for the liquid phase. The coefficients are projected onto the
+        Constantinou-Gani group set in ``gcmExtendedTable.csv``. The model is
+        calibrated from the melting temperature to the normal boiling
+        temperature; extrapolation deteriorates near the critical point.
 
         :param T: Temperature in Kelvin.
         :type T: float
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
-        :return: Mass specific heat capacity in J/kg/K.
+        :return: Liquid specific heat capacity in J/kg/K.
         :rtype: np.ndarray
         """
         if comp_idx is None:
+            A = self.Cp_L_A
+            B = self.Cp_L_B
+            D = self.Cp_L_D
             MW = self.MW
         else:
+            A = self.Cp_L_A[comp_idx]
+            B = self.Cp_L_B[comp_idx]
+            D = self.Cp_L_D[comp_idx]
             MW = self.MW[comp_idx]
-        cp = self.Cp(T, comp_idx=comp_idx)
-        return cp / MW
+        return _cp_liq_rd(T, A, B, D, MW)
 
     def psat(self, T, comp_idx=None, correlation="Lee-Kesler"):
         """
@@ -776,6 +1116,257 @@ class fuel:
         if comp_idx is not None:
             Lvi = Lvi[0]
         return Lvi
+
+    def heat_of_combustion(self, Yi=None, basis="mass"):
+        """
+        Compute the net heat of combustion (lower heating value) of the fuel.
+
+        Uses a Hess cycle on the Constantinou-Gani ideal-gas enthalpy of
+        formation with hydrocarbon combustion stoichiometry. The reactant
+        enthalpy is shifted to the liquid phase using the enthalpy of
+        vaporization, and gaseous water gives the lower heating value reported
+        for aviation fuels by ASTM D4809 and D3338. Mixture values are linear
+        in mass fraction.
+
+        :param Yi: Mass fractions of the compounds. Defaults to ``self.Y_0``.
+        :type Yi: np.ndarray, optional
+        :param basis: ``"mass"`` returns MJ/kg; ``"mol"`` returns kJ/mol.
+        :type basis: str, optional
+        :return: Net heat of combustion of the mixture.
+        :rtype: float
+        :raises NotImplementedError: If the fuel is not hydrocarbon-only or
+            if ``basis`` is unknown.
+        """
+        if Yi is None:
+            Yi = self.Y_0
+        Yi = np.asarray(Yi, dtype=float)
+
+        non_hydrocarbon_groups = [
+            index for index in self._non_hc_idx if index < self.Nij.shape[1]
+        ]
+        if np.any(self.Nij[:, non_hydrocarbon_groups] != 0):
+            raise NotImplementedError(
+                "heat_of_combustion currently supports hydrocarbon-only fuels. "
+                "Detected non-zero heteroatom group occupancy in the "
+                f"decomposition of '{self.name}'."
+            )
+
+        formation_enthalpy_liquid = self.Hf - self.Hv_stp
+        component_lhv = _lhv_hess(
+            self.n_C, self.n_H, formation_enthalpy_liquid, self.MW
+        )
+        if basis.casefold() == "mass":
+            return float(np.sum(Yi * component_lhv))
+        if basis.casefold() == "mol":
+            Xi = self.Y2X(Yi)
+            component_lhv_kjmol = component_lhv * self.MW * 1e3
+            return float(np.sum(Xi * component_lhv_kjmol))
+        raise NotImplementedError(
+            f"heat_of_combustion basis '{basis}' not supported "
+            "(use 'mass' for MJ/kg or 'mol' for kJ/mol)."
+        )
+
+    def freeze_point(self, Yi=None, method="Boehm2022", alpha=1.0):
+        """
+        Compute the freeze point of the fuel using solid-liquid equilibrium.
+
+        The Boehm et al. (2022) equation 21 model is solved for every
+        component, and the highest candidate temperature marks the first
+        crystal on cooling. Per-component fusion entropies come from the
+        family correlations in ``fusion_families.csv``; unclassified
+        compounds use the Walden-rule value of 56.5 J/mol/K. The default
+        ``alpha=1`` gives the classical ideal-solution entropy term.
+
+        :param Yi: Mass fractions of the compounds. Defaults to ``self.Y_0``.
+        :type Yi: np.ndarray, optional
+        :param method: Freeze-point model. Only ``"Boehm2022"`` is supported.
+        :type method: str, optional
+        :param alpha: Scaling applied to the ideal mixing-entropy term.
+        :type alpha: float, optional
+        :return: Mixture freeze point in K.
+        :rtype: float
+        :raises NotImplementedError: If ``method`` is not ``"Boehm2022"``.
+        """
+        if Yi is None:
+            Yi = self.Y_0
+        if method.casefold() != "boehm2022":
+            raise NotImplementedError(
+                f"freeze_point method '{method}' not supported (use 'Boehm2022')."
+            )
+        Xi = self.Y2X(np.asarray(Yi, dtype=float))
+        return float(
+            _freeze_max_over_j(
+                Xi,
+                self.Tm_astm,
+                self.dHfus,
+                self.dSfus,
+                self.dCp,
+                alpha=alpha,
+            )
+        )
+
+    def flash_point(self, Yi=None, method="Alibakhshi", mixing="Liaw"):
+        """
+        Compute the flash point of the fuel mixture.
+
+        Pure-component values use either the Alibakhshi et al. (2015) group
+        contribution model or the Alqaheem-Riazi correlation. Mixtures use
+        the ideal Liaw-Chiu modified Le Chatelier criterion by default, with
+        a mole-fraction-linear rule available as a simpler alternative.
+
+        :param Yi: Mass fractions of the compounds. Defaults to ``self.Y_0``.
+        :type Yi: np.ndarray, optional
+        :param method: Pure-component model, ``"Alibakhshi"`` or
+            ``"Alqaheem"``.
+        :type method: str, optional
+        :param mixing: Mixture rule, ``"Liaw"`` or ``"linear"``.
+        :type mixing: str, optional
+        :return: Mixture flash point in K.
+        :rtype: float
+        :raises NotImplementedError: If ``method`` or ``mixing`` is unknown.
+        """
+        if Yi is None:
+            Yi = self.Y_0
+        if method.casefold() == "alibakhshi":
+            component_flash_points = _fp_alibakhshi(self.Tb_astm, self.alibakhshi_phi)
+        elif method.casefold() == "alqaheem":
+            component_flash_points = _fp_alqaheem(self.Tb_astm)
+        else:
+            raise NotImplementedError(
+                f"flash_point method '{method}' not supported "
+                "(use 'Alibakhshi' or 'Alqaheem')."
+            )
+
+        Xi = self.Y2X(np.asarray(Yi, dtype=float))
+        if mixing.casefold() == "linear":
+            return float(np.sum(Xi * component_flash_points))
+        if mixing.casefold() == "liaw":
+            return float(
+                _fp_liaw_ideal_iter(
+                    Xi,
+                    component_flash_points,
+                    self.Tc,
+                    self.Pc,
+                    self.omega_astm,
+                )
+            )
+        raise NotImplementedError(
+            f"flash_point mixing rule '{mixing}' not supported "
+            "(use 'Liaw' or 'linear')."
+        )
+
+    def ysi(self, Yi=None):
+        """
+        Compute the Unified Yield Sooting Index of the mixture.
+
+        Component values come from the McEnally-Pfefferle Yale YSI Database
+        Volume 2 and are mixed linearly by mole fraction. Missing tabulated
+        values are filled during construction from the fuel-level family mean;
+        this method warns when such a value contributes to the result.
+
+        :param Yi: Mass fractions of the compounds. Defaults to ``self.Y_0``.
+        :type Yi: np.ndarray, optional
+        :return: Mole-fraction-weighted mixture Unified YSI.
+        :rtype: float
+        """
+        if Yi is None:
+            Yi = self.Y_0
+        Xi = self.Y2X(np.asarray(Yi, dtype=float))
+        contributing = self.ysi_filled & (Xi > 1e-6)
+        if np.any(contributing):
+            import warnings
+
+            names = [self.compounds[index] for index in np.where(contributing)[0]]
+            warnings.warn(
+                f"YSI for '{self.name}' uses family-mean fills for {names} "
+                "(no tabulated value); see ysi_err and ysi_uncertainty().",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+        return float(_ysi_mix(Xi, self.ysi_pure))
+
+    def ysi_uncertainty(self, Yi=None):
+        """
+        Compute one-sigma uncertainty of the mixture YSI.
+
+        Independent component errors are propagated through the linear
+        mole-fraction blending rule. Extrapolated and filled component values
+        carry inflated uncertainties recorded in ``self.ysi_err``.
+
+        :param Yi: Mass fractions of the compounds. Defaults to ``self.Y_0``.
+        :type Yi: np.ndarray, optional
+        :return: One-sigma uncertainty of the mixture Unified YSI.
+        :rtype: float
+        """
+        if Yi is None:
+            Yi = self.Y_0
+        Xi = self.Y2X(np.asarray(Yi, dtype=float))
+        error = np.nan_to_num(self.ysi_err, nan=0.3 * np.nanmean(self.ysi_pure))
+        return float(np.sqrt(np.sum((Xi * error) ** 2)))
+
+    def dcn_uncertainty(self, Yi=None, T_ref=288.15):
+        """
+        Compute one-sigma uncertainty of the mixture Derived Cetane Number.
+
+        Independent component errors are propagated through the linear liquid
+        volume-fraction blending rule. This represents table uncertainty only;
+        uncertainty in the blending rule itself is not included.
+
+        :param Yi: Mass fractions of the compounds. Defaults to ``self.Y_0``.
+        :type Yi: np.ndarray, optional
+        :param T_ref: Reference temperature in K for volume fractions.
+        :type T_ref: float, optional
+        :return: One-sigma uncertainty of the mixture DCN.
+        :rtype: float
+        """
+        if Yi is None:
+            Yi = self.Y_0
+        Yi = np.asarray(Yi, dtype=float)
+        component_volume = Yi / self.density(T_ref)
+        total_volume = np.sum(component_volume)
+        if total_volume > 0:
+            volume_fraction = component_volume / total_volume
+        else:
+            volume_fraction = np.zeros_like(component_volume)
+        error = np.nan_to_num(self.dcn_err, nan=8.0)
+        return float(np.sqrt(np.sum((volume_fraction * error) ** 2)))
+
+    def dcn(self, Yi=None, T_ref=288.15):
+        """
+        Compute the Derived Cetane Number of the fuel mixture.
+
+        Component values in ``dcn.csv`` use the ASTM D6890 IQT scale and are
+        mixed linearly by liquid volume fraction. Volume fractions are derived
+        from mass fractions using component liquid densities at ``T_ref``.
+
+        :param Yi: Mass fractions of the compounds. Defaults to ``self.Y_0``.
+        :type Yi: np.ndarray, optional
+        :param T_ref: Reference temperature in K for liquid densities.
+        :type T_ref: float, optional
+        :return: Volume-fraction-weighted mixture DCN.
+        :rtype: float
+        :raises NotImplementedError: If a contributing compound has no DCN.
+        """
+        if Yi is None:
+            Yi = self.Y_0
+        Yi = np.asarray(Yi, dtype=float)
+        missing = np.isnan(self.dcn_pure)
+        contributing = missing & (Yi > 0.0)
+        if np.any(contributing):
+            names = [self.compounds[index] for index in np.where(contributing)[0]]
+            raise NotImplementedError(
+                "DCN is not tabulated for the following compounds in "
+                f"'{self.name}' (mass fraction > 0): {names}."
+            )
+
+        component_volume = Yi / self.density(T_ref)
+        total_volume = np.sum(component_volume)
+        if total_volume > 0:
+            volume_fraction = component_volume / total_volume
+        else:
+            volume_fraction = np.zeros_like(component_volume)
+        component_dcn = np.where(missing, 0.0, self.dcn_pure)
+        return float(_dcn_mix(volume_fraction, component_dcn))
 
     def diffusion_coeff(
         self,

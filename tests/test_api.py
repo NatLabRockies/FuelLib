@@ -150,8 +150,13 @@ class ApiContractTestCase(unittest.TestCase):
             "Cp": "(self, T, comp_idx=None)",
             "X2Y": "(self, Xi)",
             "Y2X": "(self, Yi)",
+            "dcn": "(self, Yi=None, T_ref=288.15)",
+            "dcn_uncertainty": "(self, Yi=None, T_ref=288.15)",
             "density": "(self, T, comp_idx=None)",
             "diffusion_coeff": "(self, p, T, sigma_gas=3.62e-10, epsilonByKB_gas=97.0, MW_gas=0.02897, correlation='Tee')",
+            "flash_point": "(self, Yi=None, method='Alibakhshi', mixing='Liaw')",
+            "freeze_point": "(self, Yi=None, method='Boehm2022', alpha=1.0)",
+            "heat_of_combustion": "(self, Yi=None, basis='mass')",
             "latent_heat_vaporization": "(self, T, comp_idx=None)",
             "mass2X": "(self, mass)",
             "mass2Y": "(self, mass)",
@@ -170,6 +175,8 @@ class ApiContractTestCase(unittest.TestCase):
             "thermal_conductivity": "(self, T, comp_idx=None)",
             "viscosity_dynamic": "(self, T, comp_idx=None)",
             "viscosity_kinematic": "(self, T, comp_idx=None)",
+            "ysi": "(self, Yi=None)",
+            "ysi_uncertainty": "(self, Yi=None)",
         }
 
         actual = _public_class_methods(fl.fuel)
@@ -409,6 +416,35 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                     ),
                 ]
                 for method_name, method_call in mixture_methods:
+                    self._assert_finite_and_positive(method_call())
+                    print(f"    ✓ {method_name}")
+
+                print("  ASTM Properties:")
+                astm_methods = [
+                    (
+                        "heat_of_combustion",
+                        lambda fuel=fuel, Yi=Yi: fuel.heat_of_combustion(Yi),
+                    ),
+                    (
+                        "freeze_point",
+                        lambda fuel=fuel, Yi=Yi: fuel.freeze_point(Yi),
+                    ),
+                    (
+                        "flash_point",
+                        lambda fuel=fuel, Yi=Yi: fuel.flash_point(Yi),
+                    ),
+                    ("ysi", lambda fuel=fuel, Yi=Yi: fuel.ysi(Yi)),
+                    (
+                        "ysi_uncertainty",
+                        lambda fuel=fuel, Yi=Yi: fuel.ysi_uncertainty(Yi),
+                    ),
+                    ("dcn", lambda fuel=fuel, Yi=Yi: fuel.dcn(Yi)),
+                    (
+                        "dcn_uncertainty",
+                        lambda fuel=fuel, Yi=Yi: fuel.dcn_uncertainty(Yi),
+                    ),
+                ]
+                for method_name, method_call in astm_methods:
                     self._assert_finite_and_positive(method_call())
                     print(f"    ✓ {method_name}")
 

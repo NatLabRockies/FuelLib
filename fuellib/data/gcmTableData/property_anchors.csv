@@ -1,0 +1,92 @@
+GCxGC_Bin,Formula,Reference_Compound,Family,Carbon_Count,exp_Tb_K,Tb_source,exp_Tm_K,Tm_source,exp_omega,omega_source
+Toluene,C7H8,toluene,alkyl_benzene,7,383.8,nist,178.2,nist,0.263,nist
+C2-Benzene,C8H10,ethyl benzene,alkyl_benzene,8,409.3,nist,178.2,nist,0.303,nist
+C3-Benzene,C9H12,propyl benzene,alkyl_benzene,9,432.4,nist,173.6,nist,0.344,nist
+C4-Benzene,C10H14,butyl benzene,alkyl_benzene,10,456.5,nist,185.3,nist,0.393,nist
+C5-Benzene,C11H16,pentyl benzene,alkyl_benzene,11,478.6,nist,,,,
+C6-Benzene,C12H18,hexyl benzene,alkyl_benzene,12,499.3,nist,,,,
+C7-Benzene,C13H20,heptyl benzene,alkyl_benzene,13,520.0,series,,,,
+C8-Benzene,C14H22,octyl benzene,alkyl_benzene,14,540.7,series,,,,
+C9-Benzene,C15H24,nonyl benzene,alkyl_benzene,15,561.4,series,,,,
+C10-Benzene,C16H26,decyl benzene,alkyl_benzene,16,582.0999999999999,series,,,,
+Diaromatic-C10,C10H8,naphthalene,di_arom,10,491.1,nist,353.4,nist,0.302,nist
+Diaromatic-C11,C11H10,1-methyl naphthalene,di_arom,11,517.8,nist,242.7,nist,0.348,nist
+Diaromatic-C12,C12H12,1-ethyl naphthalene,di_arom,12,544.4999999999999,series,,,,
+Diaromatic-C13,C13H14,1-propyl naphthalene,di_arom,13,571.1999999999998,series,,,,
+Diaromatic-C14,C14H16,1-butyl naphthalene,di_arom,14,597.8999999999997,series,,,,
+Cycloaromatic-C09,C9H10,indane,cyclo_arom,9,451.1,nist,221.7,nist,,
+Cycloaromatic-C10,C10H12,tetralin,cyclo_arom,10,480.8,nist,237.4,nist,0.335,nist
+Cycloaromatic-C11,C11H14,2-methyl tetralin,cyclo_arom,11,500.8,series,,,,
+Cycloaromatic-C12,C12H16,2-ethly tetralin,cyclo_arom,12,520.8,series,,,,
+Cycloaromatic-C13,C13H18,2-propyl tetralin,cyclo_arom,13,540.8,series,,,,
+Cycloaromatic-C14,C14H20,2-butyl tetralin,cyclo_arom,14,560.8,series,,,,
+Cycloaromatic-C15,C15H22,2-pentyl tetralin,cyclo_arom,15,580.8,series,,,,
+C07-Isoparaffin,C7H16,2-methyl hexane,iso_alkane,7,363.2,nist,154.9,nist,,
+C08-Isoparaffin,C8H18,2-methyl heptane,iso_alkane,8,390.8,nist,164.2,nist,,
+C09-Isoparaffin,C9H20,2-methyl octane,iso_alkane,9,416.4,nist,192.85,nist_pureComponentReference,,
+C10-Isoparaffin,C10H22,2-methyl nonane,iso_alkane,10,440.1,nist,196.35,nist_pureComponentReference,,
+C11-Isoparaffin,C11H24,2-methyl decane,iso_alkane,11,462.4,nist,225.65,nist_pureComponentReference,,
+C12-Isoparaffin,C12H26,2-methyl undecane,iso_alkane,12,483.2,nist,228.95,nist_pureComponentReference,,
+C13-Isoparaffin,C13H28,2-methyl dodecane,iso_alkane,13,504.0,series,253.35,nist_pureComponentReference,,
+C14-Isoparaffin,C14H30,2-methyl tridecane,iso_alkane,14,524.8,series,,,,
+C15-Isoparaffin,C15H32,2-methyl tetradecane,iso_alkane,15,545.6,series,,,,
+C16-Isoparaffin,C16H34,2-methyl pentadecane,iso_alkane,16,566.4000000000001,series,,,,
+C17-Isoparaffin,C17H36,2-methyl hexadecane,iso_alkane,17,587.2,series,,,,
+C18-Isoparaffin,C18H38,2-methyl heptadecane,iso_alkane,18,608.0,series,,,,
+C19-Isoparaffin,C19H40,2-methyl octadecane,iso_alkane,19,,,,,,
+C20-Isoparaffin,C20H42,2-methyl nonadecane,iso_alkane,20,,,,,,
+C21-Isoparaffin,C21H44,2-methyl icosane,iso_alkane,21,,,,,,
+C22-Isoparaffin,C22H46,2-methyl henicosane,iso_alkane,22,,,,,,
+C23-Isoparaffin,C23H48,2-methyl docosane,iso_alkane,23,,,,,,
+C24-Isoparaffin,C24H50,2-methyl tricosane,iso_alkane,24,,,,,,
+n-C07,C7H16,n-heptane,n_alkane,7,371.6,nist,182.6,nist,0.349,nist
+n-C08,C8H18,n-octane,n_alkane,8,398.8,nist,216.4,nist,0.398,nist
+n-C09,C9H20,n-nonane,n_alkane,9,424.0,nist,219.7,nist,0.445,nist
+n-C10,C10H22,n-decane,n_alkane,10,447.3,nist,243.5,nist,0.492,nist
+n-C11,C11H24,n-undecane,n_alkane,11,469.1,nist,247.6,nist,0.53,nist
+n-C12,C12H26,n-dodecane,n_alkane,12,489.5,nist,263.6,nist,0.576,nist
+n-C13,C13H28,n-tridecane,n_alkane,13,508.6,nist,267.8,nist,0.617,nist
+n-C14,C14H30,n-tetradecane,n_alkane,14,526.7,nist,279.0,nist,0.644,nist
+n-C15,C15H32,n-pentadecane,n_alkane,15,543.8,nist,283.1,nist,0.685,nist
+n-C16,C16H34,n-hexadecane,n_alkane,16,560.0,nist,291.3,nist,0.717,nist
+n-C17,C17H36,n-heptadecane,n_alkane,17,575.2,nist,295.1,nist,0.77,nist
+n-C18,C18H38,n-octadecane,n_alkane,18,589.5,nist,301.3,nist,0.811,nist
+n-C19,C19H40,n-nonadecane,n_alkane,19,602.9,nist,305.0,nist,0.852,nist
+n-C20,C20H42,n-icosane,n_alkane,20,616.9,nist,309.6,nist,0.907,nist
+n-C21,C21H44,n-henicosane,n_alkane,21,630.9,series,,,,
+n-C22,C22H46,n-docosane,n_alkane,22,,,,,,
+n-C23,C23H48,n-tricosane,n_alkane,23,,,,,,
+C07-Monocycloparaffin,C7C14,methyl cyclohexane,mono_cyclo,7,374.1,nist,146.6,nist,0.236,nist
+C08-Monocycloparaffin,C8H16,ethyl cyclohexane,mono_cyclo,8,404.9,nist,161.8,nist,,
+C09-Monocycloparaffin,C9H18,propyl cyclohexane,mono_cyclo,9,429.9,nist,178.3,nist,,
+C10-Monocycloparaffin,C10H20,butyl cyclohexane,mono_cyclo,10,454.1,nist,198.4,nist,,
+C11-Monocycloparaffin,C11H22,pentyl cyclohexane,mono_cyclo,11,478.30000000000007,series,,,,
+C12-Monocycloparaffin,C12H24,hexyl cyclohexane,mono_cyclo,12,502.5000000000001,series,,,,
+C13-Monocycloparaffin,C13H26,heptyl cyclohexane,mono_cyclo,13,526.7000000000002,series,,,,
+C14-Monocycloparaffin,C14H28,octyl cyclohexane,mono_cyclo,14,550.9000000000002,series,,,,
+C15-Monocycloparaffin,C15H30,nonyl cyclohexane,mono_cyclo,15,575.1000000000003,series,,,,
+C16-Monocycloparaffin,C16H32,decyl cyclohexane,mono_cyclo,16,599.3000000000003,series,,,,
+C17-Monocycloparaffin,C17H34,undecyl cyclohexane,mono_cyclo,17,623.5000000000003,series,,,,
+C18-Monocycloparaffin,C18H36,dodecyl cyclohexane,mono_cyclo,18,647.7000000000004,series,,,,
+C19-Monocycloparaffin,C19H38,tridecyl cyclohexane,mono_cyclo,19,671.9000000000004,series,,,,
+C08-Dicycloparaffin,C8H14,Octahydropentalene,di_cyclo,8,,,,,,
+C09-Dicycloparaffin,C9H16,Hydrindane,di_cyclo,9,,,,,,
+C10-Dicycloparaffin,C10H18,Decalin,di_cyclo,10,464.5,nist,230.2,nist,0.29,nist
+C11-Dicycloparaffin,C11H20,2-methyldecalin,di_cyclo,11,484.5,series,,,,
+C12-Dicycloparaffin,C12H22,2-ethyldecalin,di_cyclo,12,504.5,series,,,,
+C13-Dicycloparaffin,C13H24,2-propyldecalin,di_cyclo,13,524.5,series,,,,
+C14-Dicycloparaffin,C14H26,2-butyldecalin,di_cyclo,14,544.5,series,,,,
+C15-Dicycloparaffin,C15H28,2-pentyldecalin,di_cyclo,15,564.5,series,,,,
+C16-Dicycloparaffin,C16H30,2-hexyldecalin,di_cyclo,16,584.5,series,,,,
+C17-Dicycloparaffin,C17H32,2-heptyldecalin,di_cyclo,17,604.5,series,,,,
+C10-Tricycloparaffin,C10H16,C1CC2C(C1)C1CCCC21,tri_cyclo,10,,,,,,
+C11-Tricycloparaffin,C11H18,C1CC2CC3CCCC3C2C1,tri_cyclo,11,,,,,,
+C12-Tricycloparaffin,C12H20,C1CC2CC3CCCC3CC2C1,tri_cyclo,12,,,,,,
+C13-Tricycloparaffin,C13H22,C1CCC2C(C1)CC1CCCCC12,tri_cyclo,13,,,,,,
+C14-Tricycloparaffin,C13H22,C1CCC2CC3CCCCC3CC2C1,tri_cyclo,13,,,,,,
+C10-Alkene,C10H20,1-decene,alkene,10,443.7,nist,206.9,nist,0.491,nist
+C12-Alkene,C12H24,1-dodecene,alkene,12,486.5,nist,237.9,nist,0.558,nist
+C14-Alkene,C14H28,1-tetradecene,alkene,14,529.3,series,,,,
+C16-Alkene,C16H32,1-hexadecene,alkene,16,572.1,series,,,,
+ATJ-C12-Isoparaffin,C12H26,"2,2,4,6,6-pentamethyl heptane",iso_alkane,12,450.6,nist,,,,
+ATJ-C16-Isoparaffin,C16H34,"2,2,4,4,6,8,8-heptamethyl nonane",iso_alkane,16,519.7,nist,,,,
