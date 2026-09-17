@@ -1,92 +1,49 @@
-import argparse
-import json
-import os
-import subprocess
-import urllib.error
-import urllib.request
-from datetime import UTC, datetime
-
-import pandas as pd
-from scipy import stats as st
-
-import fuellib as fl
-
-# Default data directory - use fuellib's embedded data
-FUELDATA_DIR = fl.get_fueldata_dir()
-
 """
-Script that exports critical properties and initial mass fraction data
-for use in Pele simulations.
+Export Pele-formatted critical properties and initial mass fraction data.
 
-This script is designed to be run from the command line and will create
-a file named "sprayPropsGCM_<fuel_name>.inp" or "sprayPropsMP_<fuel_name>.inp"
-in the specified directory. The file contains properties for each compound in 
-the fuel, formatted for Pele.
+This script is designed to be run from the command line and creates a file named
+``sprayPropsGCM_<fuel_name>.csv`` or ``sprayPropsMP_<fuel_name>.csv`` in the specified
+output directory. The file contains properties for each compound in the fuel, formatted
+for use with Pele.
 
 Usage:
-    fl-export-pele -f <fuel_name>
+    `fl-export-pele -f <fuel_name>
 
-For detailed options, run:
-    fl-export-pele -h
+For detailed options, see:
+    `fl-export-pele -h`
 """
 
+import argparse
+import json
+import logging
+import os
+import subprocess
+import sys
+import warnings
+from datetime import UTC, datetime
+from typing import Literal
+from urllib import error, request
 
-class UnitConverter:
-    """Unit conversion factors for different unit systems used in Pele exports."""
+import numpy as np
+import pandas as pd
+import pint
+from scipy import stats
 
-    def __init__(self, units: str):
-        """
-        Initialize converter for specified unit system.
+import fuellib
+from fuellib import PintUnits as Units
+from fuellib.utility import mixing_rule
 
-        :param units: Unit system ('cgs' or 'mks').
-        :type units: str
-        """
-        self.units = units.lower()
-        self._validate_units()
-        self._set_conversion_factors()
-
-    def _validate_units(self):
-        """
-        Validate that the unit system is supported.
-
-        :raises ValueError: If unit system is not 'mks' or 'cgs'.
-        """
-        if self.units not in ["mks", "cgs"]:
-            raise ValueError(f"Units must be 'mks' or 'cgs', got '{self.units}'")
-
-    def _set_conversion_factors(self):
-        """
-        Set conversion factors based on unit system.
-        """
-        if self.units == "cgs":
-            # Convert from MKS to CGS
-            self.MW = 1e3  # kg/mol to g/mol
-            self.Cp = 1e4  # J/kg/K to erg/g/K
-            self.Vm = 1e6  # m^3/mol to cm^3/mol
-            self.Lv = 1e4  # J/kg to erg/g
-            self.P = 1e1  # Pa to dyne/cm^2
-        else:
-            # MKS units (no conversion)
-            self.MW = 1.0
-            self.Cp = 1.0
-            self.Vm = 1.0
-            self.Lv = 1.0
-            self.P = 1.0
+# Disable warnings from pandas about Pint units
+warnings.filterwarnings("ignore", message="The unit of the quantity is stripped*")
+# Disable warnings from numpy about invalid value in power
+warnings.filterwarnings("ignore", message="invalid value encountered in power")
 
 
-def get_git_info():
-    """
-    Get git commit hash and remote URL for FuelLib (with fallbacks).
-
-    The commit is read from the FuelLib git repo when available; otherwise the
-    installed package version is returned. The remote URL falls back to package
-    metadata when git is unavailable.
-
-    :return: Tuple containing git commit hash and remote URL.
-    :rtype: tuple[str, str]
-    """
+# Helper functions for finding repository host
+def _git_info():
+    """Get git commit hash and remote URL for FuelLib (with fallbacks)."""
     # Get the directory where FuelLib is installed
-    fuellib_dir = os.path.dirname(os.path.dirname(os.path.abspath(fl.__file__)))
+    fuellib_dir = os.path.dirname(os.path.dirname(os.path.abspath(fuellib.__file__)))
 
     try:
         git_commit = (
@@ -100,7 +57,7 @@ def get_git_info():
     except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
         # Fall back to package version
         try:
-            git_commit = fl.__version__
+            git_commit = fuellib.__version__
         except AttributeError:
             git_commit = "N/A"
 
@@ -121,17 +78,12 @@ def get_git_info():
 
 
 def _get_pypi_repo_url():
-    """
-    Get the repository URL from PyPI package metadata.
-
-    :return: Repository URL or PyPI package URL as fallback.
-    :rtype: str
-    """
+    """Get the repository URL from PyPI package metadata."""
     try:
-        version = fl.__version__
+        version = fuellib.__version__
         pypi_api_url = f"https://pypi.org/pypi/fuellib/{version}/json"
 
-        with urllib.request.urlopen(pypi_api_url, timeout=5) as response:
+        with request.urlopen(pypi_api_url, timeout=5) as response:
             data = json.loads(response.read().decode("utf-8"))
 
             # Try to get repository URL from project URLs
@@ -150,620 +102,463 @@ def _get_pypi_repo_url():
                 and data["info"]["home_page"]
             ):
                 return data["info"]["home_page"]
-    except (KeyError, TypeError, urllib.error.URLError):
+    except (KeyError, TypeError, error.URLError):
         pass
 
     # Final fallback: PyPI package URL
     try:
-        version = fl.__version__
+        version = fuellib.__version__
         return f"https://pypi.org/project/fuellib/{version}/"
     except AttributeError:
         return "https://pypi.org/project/fuellib/"
 
 
-def get_filename(fuel_name, liq_prop_model, export_mix, path):
-    """
-    Generate appropriate filename based on parameters.
-
-    :param fuel_name: Name of the fuel.
-    :type fuel_name: str
-    :param liq_prop_model: Liquid property model ('gcm' or 'mp').
-    :type liq_prop_model: str
-    :param export_mix: Whether exporting mixture properties.
-    :type export_mix: bool
-    :param path: Directory path for output file.
-    :type path: str
-    :return: Full path to output file.
-    :rtype: str
-    """
-    if liq_prop_model.lower() == "gcm":
-        if not export_mix:
-            return os.path.join(path, f"sprayPropsGCM_{fuel_name}.inp")
-        else:
-            return os.path.join(path, f"sprayPropsGCM_mixture_{fuel_name}.inp")
-    else:  # mp method
-        if not export_mix:
-            return os.path.join(path, f"sprayPropsMP_{fuel_name}.inp")
-        else:
-            return os.path.join(path, f"sprayPropsMP_mixture_{fuel_name}.inp")
+# Helper for generating filename
+def _filename(
+    fuel_name: str, liq_prop_model: Literal["gcm", "mp"], export_mix: bool, path: str
+) -> str:
+    """Generate a filename for the exported data based on fuel name, liquid property model, and export mix flag."""
+    prefix = f"sprayProps{liq_prop_model.upper()}"
+    if export_mix:
+        prefix += "_mixture"
+    return os.path.join(path, f"{prefix}_{fuel_name}.inp")
 
 
-def create_individual_compounds_dataframe(fuel, compound_names, converter):
-    """
-    Create DataFrame for individual compound properties.
+# ANSI codes
+BOLD = "\033[1m"  # ANSI code for bold text
+RED = "\033[91m"  # ANSI code for red text
+GREEN = "\033[92m"  # ANSI code for green text
+YELLOW = "\033[93m"  # ANSI code for yellow text
+BLUE = "\033[94m"  # ANSI code for blue text
+RESET = "\033[0m"  # ANSI code to reset text color
 
-    :param fuel: Fuel object containing compound properties.
-    :type fuel: FuelLib.Fuel
-    :param compound_names: List of compound names.
-    :type compound_names: list[str]
-    :param converter: Unit converter instance.
-    :type converter: UnitConverter
-    :return: DataFrame with compound properties.
-    :rtype: pd.DataFrame
-    """
-    # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
-    # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
-    # where theta = (T - 298.15) / 700
+# Get default data directory
+FUELDATA_DIR = fuellib.get_fueldata_dir()
+
+# Preferred unit labels
+UNITS_LABELS = {
+    "kelvin": "K",
+    "gram/centimeter/second": "Poise",
+    "gram/second**2": "dyne/cm",
+    "centimeter**2/second**2": "erg/g",
+    "gram/centimeter/second**2": "dyne/cm^2",
+    "gram/centimeter**3": "g/cm^3",
+    "centimeter**2/kelvin/second**2": "erg/g/K",
+    "centimeter*gram/kelvin/second**3": "erg/cm/s/K",
+    "gram/mole": "g/mol",
+    "kilogram/meter/second": "Pa*s",
+    "kilogram/second**2": "N/m",
+    "meter**2/second**2": "J/kg",
+    "kilogram/meter/second**2": "Pa",
+    "kilogram/meter**3": "kg/m^3",
+    "meter**2/kelvin/second**2": "J/kg/K",
+    "kilogram*meter/kelvin/second**3": "W/m/K",
+    "kilogram/mole": "kg/mol",
+    "centimeter**3/mole": "cm^3/mol",
+    "meter**3/mole": "m^3/mol",
+    "dimensionless": "-",
+}
+
+# Exported properties by liquid property model
+GCM_PROPS = [
+    "family",
+    "molar_weight",
+    "crit_temp",
+    "crit_press",
+    "crit_vol",
+    "boil_temp",
+    "omega",
+    "molar_vol",
+    "cp_a",
+    "cp_b",
+    "cp_c",
+    "cp",
+    "latent",
+]
+
+MP_PROPS = [
+    "molar_weight",
+    "crit_temp",
+    "boil_temp",
+    "latent",
+    "cp",
+    "rho",
+    "psat",
+]
+
+
+def _get_label(quantity: pint.Quantity):
+    unit = str(quantity.units).replace(" ", "")
+    return UNITS_LABELS.get(unit.lower(), unit)
+
+
+def _quantity_cells(quantity: pint.Quantity) -> list[pint.Quantity]:
+    """Split an array-valued pint Quantity into a list of scalar Quantities."""
+    return [
+        Units.Quantity(v, quantity.units) for v in np.atleast_1d(quantity.magnitude)
+    ]
+
+
+# Mandatory argument for fuel name
+parser = argparse.ArgumentParser(
+    description="Export Pele-formatted critical properties and initial mass fraction data."
+)
+parser.add_argument(
+    "-f",
+    "--fuel_name",
+    required=True,
+    metavar="NAME",
+    help="Name of the fuel (mandatory).",
+)
+parser.add_argument(
+    "-dir",
+    "--fuel_data_dir",
+    default=FUELDATA_DIR,
+    metavar="PATH",
+    help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
+)
+parser.add_argument(
+    "-decomp",
+    "--fuel_decomp_name",
+    default=None,
+    metavar="NAME",
+    help="Name of the decomposition file (optional). If not provided, defaults to fuel_name.",
+)
+parser.add_argument(
+    "-u",
+    "--units",
+    type=str,
+    choices=["mks", "cgs"],
+    default="mks",
+    metavar="{mks,cgs}",
+    help="Units for critical properties (optional, default: mks).",
+)
+parser.add_argument(
+    "-dep",
+    "--dep_fuel_names",
+    type=list[str],
+    nargs="+",  # Accepts one or more values
+    default=None,
+    metavar="NAME",
+    help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.compounds).",
+)
+parser.add_argument(
+    "-pp",
+    "--use_pp_keys",
+    type=lambda x: str(x).lower() in ["true", "1"],
+    default=True,
+    metavar="{true,false}",
+    help="Use PelePhysics keys for each compound (optional, default: true).",
+)
+parser.add_argument(
+    "-o",
+    "--export_dir",
+    default=os.getcwd(),
+    metavar="PATH",
+    help="Directory to export the properties (optional, default: current working directory).",
+)
+parser.add_argument(
+    "-m",
+    "--export_mix",
+    type=lambda x: str(x).lower() in ["true", "1"],
+    default=False,
+    metavar="{true,false}",
+    help="Export mixture properties of the fuel (optional, default: false).",
+)
+parser.add_argument(
+    "-mn",
+    "--export_mix_name",
+    default=None,
+    metavar="NAME",
+    help="Name the mixture if different than fuel_name (optional, default: fuel_name).",
+)
+parser.add_argument(
+    "-l",
+    "--liq_prop_model",
+    type=str,
+    choices=["gcm", "mp"],
+    default="gcm",
+    metavar="{gcm,mp}",
+    help="Model for liquid properties (optional, default: gcm).",
+)
+parser.add_argument(
+    "-psat",
+    "--psat_antoine",
+    type=lambda x: str(x).lower() in ["true", "1"],
+    default=True,
+    metavar="{true,false}",
+    help="Use Antoine coefficients for vapor pressure in MP model (optional, default: true).",
+)
+parser.add_argument(
+    "-v",
+    "--verbose",
+    action="store_true",
+    help="Enable verbose console output (optional, default: false).",
+)
+
+# Parse arguments
+args = parser.parse_args()
+fuel_name = args.fuel_name
+fuel_dir = args.fuel_data_dir
+fuel_decomp_name = args.fuel_decomp_name or fuellib.get_metadata_decomp_name(
+    fuel_name, fuel_dir
+)
+units = args.units
+dep_fuel_names = args.dep_fuel_names
+use_pp_keys = args.use_pp_keys
+export_dir = args.export_dir
+export_mix = args.export_mix
+export_mix_name = args.export_mix_name
+liq_prop_model = args.liq_prop_model
+psat_antoine = args.psat_antoine
+
+# Set up logging
+logger = logging.getLogger(__name__)
+# Log file handler
+file_handler = logging.FileHandler(os.path.join(export_dir, "fl-export-pele.log"))
+file_handler.setLevel(logging.INFO)
+# Console output handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO if args.verbose else logging.WARNING)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(message)s \n",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[file_handler, console_handler],
+)
+
+# Check for valid Fuel
+fuel = fuellib.Fuel(fuel_name, fuelDataDir=fuel_dir)
+if not len(fuel.compounds) == len(fuel.Y_0) == fuel.num_compounds:
+    msg = f"{fuel_name} does not have valid compounds or initial mole fractions."
+    logger.error(msg)
+    sys.exit(1)
+
+os.makedirs(export_dir, exist_ok=True)
+
+msg = (
+    f"{BOLD}{BLUE}"
+    f"Exporting critical properties for {fuel_name}:"
+    f"{RESET}"
+    f"\n  Decomposition name        : {fuel_decomp_name}"
+    f"\n  Units                     : {units}"
+    f"\n  Liquid property model     : {liq_prop_model}"
+    f"\n  Antoine coefficients      : {psat_antoine if liq_prop_model == 'mp' else 'N/A'}"
+    f"\n  Export mixture properties : {export_mix}"
+    f"\n  Export directory          : {export_dir}"
+    f"\n  Fuel data directory       : {fuel_dir}"
+)
+logger.info(msg)
+
+if use_pp_keys and fuel.pelephysics_keys is not None:
+    msg = (
+        f"{BOLD}{GREEN}"
+        "Using PelePhysics keys from GCxGC data. Please ensure consistency with PelePhysics mechanism."
+        f"{RESET}"
+    )
+    logger.info(msg)
+    compound_names = fuel.pelephysics_keys
+elif use_pp_keys and fuel.pelephysics_keys is None:
+    msg = (
+        f"{BOLD}{YELLOW}"
+        "PelePhysics keys not found in GCxGC data. Using compound names instead."
+        f"{RESET}"
+    )
+    logger.warning(msg)
+    compound_names = fuel.compounds
+elif not use_pp_keys and fuel.pelephysics_keys is not None:
+    msg = (
+        f"{BOLD}{YELLOW}"
+        "PelePhysics keys are available but not used. Using compound names instead."
+        f"{RESET}"
+    )
+    logger.info(msg)
+    compound_names = fuel.compounds
+
+for c in compound_names:
+    if " " in c:
+        msg = (
+            f"{BOLD}{RED}"
+            f"Compound '{c}' contains spaces, which PelePhysics does not accept."
+            "Use '-' instead of spaces in compound names."
+            f"{RESET}"
+        )
+        logger.warning(msg)
+        sys.exit(1)
+
+if not export_mix:
+    msg = f"{BOLD}Calculating GCM properties for individual compounds in {fuel.name}.{RESET}"
+    logger.info(msg)
+
+    if dep_fuel_names is None:
+        dep_fuel_names = list(compound_names)
+    elif len(dep_fuel_names) == 1:
+        dep_fuel_names = [dep_fuel_names[0]] * len(compound_names)
+    elif len(dep_fuel_names) != len(compound_names):
+        msg = (
+            f"{BOLD}{RED}"
+            "The number of dependent fuel names must be one or match the number of compounds."
+            f"{RESET}"
+        )
+        logger.error(msg)
+        sys.exit(1)
+
     Cp_A = fuel.Cp_stp / fuel.MW
     Cp_B = fuel.Cp_B / fuel.MW
     Cp_C = fuel.Cp_C / fuel.MW
 
-    return pd.DataFrame(
+    df = pd.DataFrame(
         {
             "Compound": compound_names,
-            "Family": fuel.fam,
+            "family": fuel.fam,
             "Y_0": fuel.Y_0,
-            "MW": fuel.MW * converter.MW,
-            "Tc": fuel.Tc,
-            "Pc": fuel.Pc * converter.P,
-            "Vc": fuel.Vc * converter.Vm,
-            "Tb": fuel.Tb,
-            "omega": fuel.omega,
-            "Vm_stp": fuel.Vm_stp * converter.Vm,
-            "Cp_A": Cp_A * converter.Cp,
-            "Cp_B": Cp_B * converter.Cp,
-            "Cp_C": Cp_C * converter.Cp,
-            "Cp_stp": Cp_A * converter.Cp,  # For PeleMP model
-            "Lv_stp": fuel.Lv_stp * converter.Lv,
+            "molar_weight": _quantity_cells(fuel.MW.to_base_units(units)),
+            "crit_temp": _quantity_cells(fuel.Tc.to_base_units(units)),
+            "crit_press": _quantity_cells(fuel.Pc.to_base_units(units)),
+            "crit_vol": _quantity_cells(fuel.Vc.to_base_units(units)),
+            "boil_temp": _quantity_cells(fuel.Tb.to_base_units(units)),
+            "omega": _quantity_cells(fuel.omega.to_base_units(units)),
+            "molar_vol": _quantity_cells(fuel.Vm_stp.to_base_units(units)),
+            "cp_a": _quantity_cells(Cp_A.to_base_units(units)),
+            "cp_b": _quantity_cells(Cp_B.to_base_units(units)),
+            "cp_c": _quantity_cells(Cp_C.to_base_units(units)),
+            "cp": _quantity_cells(Cp_A.to_base_units(units)),
+            "latent": _quantity_cells(fuel.Lv_stp.to_base_units(units)),
         }
     )
 
+else:
+    msg = f"{BOLD}Calculating mixture GCM properties for {fuel.name} at standard conditions.{RESET}"
+    logger.info(msg)
 
-def create_mixture_dataframe(fuel, export_mix_name, converter):
-    """
-    Create DataFrame for mixture properties.
-
-    :param fuel: Fuel object containing mixture properties.
-    :type fuel: FuelLib.Fuel
-    :param export_mix_name: Name for the exported mixture.
-    :type export_mix_name: str or None
-    :param converter: Unit converter instance.
-    :type converter: UnitConverter
-    :return: DataFrame with mixture properties.
-    :rtype: pd.DataFrame
-    """
-    if export_mix_name is None:
-        export_mix_name = fuel.name
+    export_mix_name = export_mix_name or fuel.name
     if "posf" in export_mix_name.lower():
         export_mix_name = export_mix_name.upper()
 
-    # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
-    # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
-    # where theta = (T - 298.15) / 700
-    X = fuel.Y2X(fuel.Y_0)
-    Cp_A = fl.utility.mixing_rule(fuel.Cp_stp / fuel.MW, X)
-    Cp_B = fl.utility.mixing_rule(fuel.Cp_B / fuel.MW, X)
-    Cp_C = fl.utility.mixing_rule(fuel.Cp_C / fuel.MW, X)
+    X_0 = fuel.Y2X(fuel.Y_0)
+    Cp_A = fuel.Cp_stp / fuel.MW
+    Cp_B = fuel.Cp_B / fuel.MW
+    Cp_C = fuel.Cp_C / fuel.MW
 
-    return pd.DataFrame(
+    def _mix(prop: pint.Quantity, X_0: np.ndarray, units: str) -> pint.Quantity:
+        """Mix a given property according to the mole fractions then format it to the specified units."""
+        val = mixing_rule(prop, X_0).to_base_units(units)
+        return val
+
+    df = pd.DataFrame(
         {
             "Compound": [export_mix_name],
-            "Family": [st.mode(fuel.fam).mode],
+            "family": [stats.mode(fuel.fam).mode],
             "Y_0": [1.0],
-            "MW": [fuel.mean_molecular_weight(fuel.Y_0) * converter.MW],
-            "Tc": [fl.utility.mixing_rule(fuel.Tc, X)],
-            "Pc": [fl.utility.mixing_rule(fuel.Pc, X) * converter.P],
-            "Vc": [fl.utility.mixing_rule(fuel.Vc, X) * converter.Vm],
-            "Tb": [fl.utility.mixing_rule(fuel.Tb, X)],
-            "omega": [fl.utility.mixing_rule(fuel.omega, X)],
-            "Vm_stp": [fl.utility.mixing_rule(fuel.Vm_stp, X) * converter.Vm],
-            "Cp_A": [Cp_A * converter.Cp],
-            "Cp_B": [Cp_B * converter.Cp],
-            "Cp_C": [Cp_C * converter.Cp],
-            "Cp_stp": [Cp_A * converter.Cp],  # For MP model: Cp_stp = Cp_A
-            "Lv_stp": [fl.utility.mixing_rule(fuel.Lv_stp, X) * converter.Lv],
+            "molar_weight": fuel.mean_molecular_weight(fuel.Y_0).to_base_units(units),
+            "crit_temp": [_mix(fuel.Tc, X_0, units)],
+            "crit_press": [_mix(fuel.Pc, X_0, units)],
+            "crit_vol": [_mix(fuel.Vc, X_0, units)],
+            "boil_temp": [_mix(fuel.Tb, X_0, units)],
+            "omega": [_mix(fuel.omega, X_0, units)],
+            "molar_vol": [_mix(fuel.Vm_stp, X_0, units)],
+            "cp_a": [_mix(Cp_A, X_0, units)],
+            "cp_b": [_mix(Cp_B, X_0, units)],
+            "cp_c": [_mix(Cp_C, X_0, units)],
+            "cp": [_mix(Cp_A, X_0, units)],
+            "latent": [_mix(fuel.Lv_stp, X_0, units)],
         }
     )
 
+    compound_names = df["Compound"].tolist()
+    dep_fuel_names = dep_fuel_names or compound_names
 
-def vec_to_str(vec):
-    """
-    Convert a list or numpy array to a string representation.
+if liq_prop_model == "gcm":
+    prop_names = GCM_PROPS
 
-    :param vec: List or numpy array to convert.
-    :type vec: list or pd.Series or pd.DataFrame
-    :return: String representation of the vector.
-    :rtype: str
-    """
+else:
+    prop_names = MP_PROPS
+    if not psat_antoine:
+        prop_names.remove("psat")
+    # Calculate density at 298.15 K
+    ref_T = Units.Quantity(298.15, "K")
+    rho = fuel.mixture_density(fuel.Y_0, ref_T) if export_mix else fuel.density(ref_T)
+    df["rho"] = rho.to_base_units(units) if export_mix else _quantity_cells(rho)
 
-    # If strings return string[0] string[1] ... string[n]
-    if isinstance(vec, list):
-        return " ".join(f"{v}" for v in vec)
-    # Else if numbers, format with spaces between no commas or []
-    elif isinstance(vec, (pd.Series, pd.DataFrame)):
-        return " ".join(f"{v}" for v in vec.values)
-
-
-def export_pele(
-    fuel,
-    path=None,
-    units="mks",
-    dep_fuel_names=None,
-    use_pp_keys=True,
-    export_mix=False,
-    export_mix_name=None,
-    liq_prop_model="gcm",
-    psat_antoine=True,
-):
-    """
-    Export fuel properties to input file for Pele simulations.
-
-    :param fuel: An instance of the fuel class.
-    :type fuel: fuel object
-
-    :param path: Directory to save the input file.
-    :type path: str, optional (default: current working directory)
-
-    :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
-    :type units: str, optional (default: "mks")
-
-    :param dep_fuel_names: List or single fuel that each compound deposits to.
-    :type dep_fuel_names: list of str, optional (default: None)
-
-    :param use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is False.
-    :type use_pp_keys: bool, optional
-
-    :param export_mix: Option to export mixture properties of the fuel (True or False).
-    :type export_mix: bool, optional (default: False)
-
-    :param export_mix_name: Name the mixture if different than fuel_name.
-    :type export_mix_name: str, optional (default: None)
-
-    :param liq_prop_model: Model for liquid properties. Options are "gcm" (default) or "mp".
-    :type liq_prop_model: str, optional (default: "gcm")
-
-    :param psat_antoine: Use Antoine coefficients for vapor pressure in MP model (True or False). Default is True.
-    :type psat_antoine: bool, optional
-
-    :return: None
-    :rtype: None
-
-    :raises ValueError: If input parameters are invalid
-    :raises TypeError: If fuel object is not a FuelLib fuel instance
-    """
-    if path is None:
-        path = os.getcwd()
-
-    # Input validation
-    if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
-        raise TypeError("fuel parameter must be a valid FuelLib fuel object")
-
-    if liq_prop_model.lower() not in ["gcm", "mp"]:
-        raise ValueError(
-            f"liq_prop_model must be 'gcm' or 'mp', got '{liq_prop_model}'"
-        )
-
-    # Initialize unit converter (also validates units)
-    converter = UnitConverter(units)
-
-    # Ensure output directory exists
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    # Generate output filename
-    file_name = get_filename(fuel.name, liq_prop_model, export_mix, path)
-
-    # Check if PelePhysics keys are available
-    if use_pp_keys:
-        if fuel.pelephysics_keys is not None:
-            print(
-                "\nPelePhysics keys found in GCxGC data, please ensure consistency with PelePhysics mechanism."
-            )
-            compound_names = fuel.pelephysics_keys
-        else:
-            print(
-                "\nWarning: PelePhysics keys not found in GCxGC data. Using compound names instead."
-            )
-            compound_names = fuel.compounds
-    else:
-        if fuel.pelephysics_keys is not None:
-            print(
-                "\nWarning: PelePhysics keys found in GCxGC data, but not used. Using compound names instead."
-            )
-        compound_names = fuel.compounds
-
-    # Check there are no spaces in compound_names
-    for compound in compound_names:
-        if " " in compound:
-            raise ValueError(
-                f"Pele cannot accept compounds with spaces. "
-                f"Compound '{compound}' contains spaces. Use a '-' instead."
-            )
-
-    # Unit conversion factors are now handled by the UnitConverter class
-
-    if not export_mix:
-        print(
-            f"\nCalculating GCM properties for individual compounds in {fuel.name}..."
-        )
-
-        # Validate and setup deposition fuel names
-        if dep_fuel_names is None:
-            dep_fuel_names = compound_names
-        elif len(dep_fuel_names) == 1:
-            # If a single deposition fuel name is provided, use it for all compounds
-            dep_fuel_names = [dep_fuel_names[0]] * len(compound_names)
-        elif len(dep_fuel_names) != len(compound_names):
-            raise ValueError(
-                "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
-            )
-
-        # Create DataFrame with all properties and unit conversions
-        df = create_individual_compounds_dataframe(fuel, compound_names, converter)
-
-    else:
-        print("\nCalculating mixture GCM properties at standard conditions...")
-
-        # Create DataFrame with mixture properties and unit conversions
-        df = create_mixture_dataframe(fuel, export_mix_name, converter)
-
-        # Get the actual compound name from the DataFrame (may be modified by create_mixture_dataframe)
-        compound_names = df["Compound"].tolist()
-
-        # Setup mixture parameters
-        if dep_fuel_names is None:
-            dep_fuel_names = compound_names
-
-    # Specific properties required for GCM method
-    if liq_prop_model.lower() == "gcm":
-        # Get the property names
-        prop_names = [
-            "Family",
-            "MW",
-            "Tc",
-            "Pc",
-            "Vc",
-            "Tb",
-            "omega",
-            "Vm_stp",
-            "Cp_A",
-            "Cp_B",
-            "Cp_C",
-            "Lv_stp",
-        ]
-
-    else:  # mp method
-        prop_names = ["MW", "Tc", "Tb", "Lv_stp", "Cp_stp", "rho"]
-        if psat_antoine:
-            prop_names.append("psat")
-
-        # Calculate density at 298.15 K
-        ref_T = 298.15
+    if psat_antoine:
         if export_mix:
-            rho = fuel.mixture_density(fuel.Y_0, ref_T)
+            psat_A, psat_B, psat_C, psat_D = fuel.mixture_vapor_pressure_antoine_coeffs(
+                fuel.Y_0, units=units
+            )
         else:
-            rho = fuel.density(ref_T)
-        df["rho"] = rho
+            psat_A, psat_B, psat_C, psat_D = fuel.psat_antoine_coeffs(units=units)
 
-        # Get Antoine coefficients
-        if psat_antoine:
-            if export_mix:
-                (
-                    psat_A,
-                    psat_B,
-                    psat_C,
-                    psat_D,
-                ) = fuel.mixture_vapor_pressure_antoine_coeffs(fuel.Y_0, units=units)
-                rho = fuel.mixture_density(fuel.Y_0, ref_T)
-            else:
-                psat_A, psat_B, psat_C, psat_D = fuel.psat_antoine_coeffs(units=units)
-                rho = fuel.density(ref_T)
-
-            df["psat_A"] = psat_A
-            df["psat_B"] = psat_B
-            df["psat_C"] = psat_C
-            df["psat_D"] = psat_D
-
-    # Dictionary of formatted names
-    formatted_names = {
-        "Family": ("family", ["", ""]),
-        "MW": ("molar_weight", ["kg/mol", "g/mol"]),
-        "Tc": ("crit_temp", ["K", "K"]),
-        "Pc": ("crit_press", ["Pa", "dyne/cm^2"]),
-        "Vc": ("crit_vol", ["m^3/mol", "cm^3/mol"]),
-        "Tb": ("boil_temp", ["K", "K"]),
-        "omega": ("acentric_factor", ["-", "-"]),
-        "Vm_stp": ("molar_vol", ["m^3/mol", "cm^3/mol"]),
-        "Cp_A": ("cp_a", ["J/kg/K", "erg/g/K"]),  # for GCM model
-        "Cp_B": ("cp_b", ["J/kg/K", "erg/g/K"]),  # for GCM model
-        "Cp_C": ("cp_c", ["J/kg/K", "erg/g/K"]),  # for GCM model
-        "Cp_stp": ("cp", ["J/kg/K", "erg/g/K"]),  # for PeleMP model
-        "Lv_stp": ("latent", ["J/kg", "erg/g"]),
-        "rho": ("rho", ["kg/m^3", "g/cm^3"]),
-        "psat": ("psat", ["Pa", "dyne/cm^2"]),
-    }
-
-    # Get header information
-    now = datetime.now(tz=UTC)
-    dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
-    git_commit, git_remote = get_git_info()
-
-    # Write the properties to the input file
-    print(f"Writing properties to {file_name}.")
-    if os.path.exists(file_name):
-        os.remove(file_name)
-    with open(file_name, "a") as f:
-        f.write(
-            f"# -----------------------------------------------------------------------------\n"
-            f"# Liquid fuel properties for {liq_prop_model.upper()} in Pele\n"
-            f"# Fuel: {fuel.name}\n"
-            f"# Number of compounds: {len(compound_names)}\n"
-            f"# Generated: {dt_string}\n"
-            f"# FuelLib remote URL: {git_remote}\n"
-            f"# Git commit: {git_commit}\n"
-            f"# Units: {units.upper()}\n"
-            f"# -----------------------------------------------------------------------------\n\n"
-        )
-        f.write(f"particles.fuel_species = {vec_to_str(df['Compound'].tolist())}\n")
-        f.write(f"particles.Y_0 = {vec_to_str(df['Y_0'].tolist())}\n")
-        f.write(f"particles.dep_fuel_species = {vec_to_str(dep_fuel_names)}\n")
-        if liq_prop_model.lower() == "mp":
-            f.write(f"particles.fuel_ref_temp = {ref_T} # K\n")
-
-        for comp_name in compound_names:
-            f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
-            for prop in prop_names:
-                if prop in formatted_names:
-                    prop_name, unit_txt = formatted_names[prop]
-                    if units.lower() == "cgs":
-                        unit_txt = unit_txt[1]
-                    else:
-                        unit_txt = unit_txt[0]
-                    # MP model: Write Cp_stp as 'cp' for each component
-                    if liq_prop_model.lower() == "mp" and prop == "Cp_stp":
-                        value = df.loc[df["Compound"] == comp_name, prop].values[0]
-                        f.write(
-                            f"particles.{comp_name}_cp = {value:.6f} # {unit_txt}\n"
-                        )
-                        continue
-                    # Write the property to the file
-                    if prop == "Family":
-                        value = df.loc[df["Compound"] == comp_name, prop].values[0]
-                        if value == 0:
-                            unit_txt = "saturated hydrocarbons"
-                        elif value == 1:
-                            unit_txt = "aromatics"
-                        elif value == 2:
-                            unit_txt = "cycloparaffins"
-                        else:
-                            unit_txt = "olefins"
-                        f.write(
-                            f"particles.{comp_name}_{prop_name} = {value} # {unit_txt}\n"
-                        )
-                    elif prop == "psat":
-                        A = df.loc[df["Compound"] == comp_name, "psat_A"].values[0]
-                        B = df.loc[df["Compound"] == comp_name, "psat_B"].values[0]
-                        C = df.loc[df["Compound"] == comp_name, "psat_C"].values[0]
-                        D = df.loc[df["Compound"] == comp_name, "psat_D"].values[0]
-                        psat_coeffs = [A, B, C, D]
-                        f.write(
-                            f"particles.{comp_name}_{prop_name} = {vec_to_str(psat_coeffs)} # {unit_txt}\n"
-                        )
-                    elif not (liq_prop_model.lower() == "mp" and prop == "Cp_stp"):
-                        value = df.loc[df["Compound"] == comp_name, prop].values[0]
-                        f.write(
-                            f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
-                        )
+        df["psat_A"] = psat_A
+        df["psat_B"] = psat_B
+        df["psat_C"] = psat_C
+        df["psat_D"] = psat_D
 
 
-def main():
-    """
-    Main function to execute the export process.
+# Get header information
+now = datetime.now(tz=UTC).strftime("%Y-%m-%d %H:%M:%S")
+git_commit, git_remote = _git_info()
 
-    :param --fuel_name: Name of the fuel (mandatory).
-    :type --fuel_name: str
+file_name = _filename(fuel.name, liq_prop_model, export_mix, export_dir)
+msg = f"{BOLD}Exporting properties to {file_name}.{RESET}"
+logger.info(msg)
+with open(file_name, "w") as f:
 
-    :param --fuel_data_dir: Directory where fuel data files are located. Default is FuelLib/fuelData.
-    :type --fuel_data_dir: str, optional
+    def _vec_to_str(vec: list | pd.Series | pd.DataFrame) -> str:
+        """Convert a list or array to a string."""
+        if isinstance(vec, list):
+            return " ".join(str(x) for x in vec)
+        return " ".join(str(x) for x in vec.values)
 
-    :param --fuel_decomp_name: Name of the decomposition file (optional). If not provided, defaults to fuel_name.
-    :type --fuel_decomp_name: str, optional
-
-    :param --units: Units for critical properties. Options are "mks" (default) or "cgs".
-    :type --units: str, optional
-
-    :param --dep_fuel_names: Space-separated list with len(fuel.compounds) or single fuel that all compounds deposit. Default is fuel.compounds.
-    :type --dep_fuel_names: str, optional
-
-    :param --use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is True.
-    :type --use_pp_keys: bool, optional
-
-    :param --export_dir: Directory to export the properties. Default is the current working directory.
-    :type --export_dir: str, optional
-
-    :param --export_mix: Option to export mixture properties of the fuel (True or False). Default is False.
-    :type --export_mix: bool, optional
-
-    :param --export_mix_name: Name the mixture if different than fuel_name. Default is fuel_name.
-    :type --export_mix_name: str, optional
-
-    :param --liq_prop_model: Model for liquid properties. Options are "gcm" (default) or "mp".
-    :type --liq_prop_model: str, optional
-
-    :param --psat_antoine: Use Antoine coefficients for vapor pressure in MP model (True or False). Default is True.
-    :type --psat_antoine: bool, optional
-
-    :raises FileNotFoundError: If required files for the specified fuel are not found.
-    """
-
-    # Set up argument parser
-    parser = argparse.ArgumentParser(
-        description="Export fuel properties for Pele simulations."
+    f.write(
+        f"# -----------------------------------------------------------------------------\n"
+        f"# Liquid fuel properties for {liq_prop_model.upper()} in Pele\n"
+        f"# Fuel: {fuel.name}\n"
+        f"# Number of compounds: {len(compound_names)}\n"
+        f"# Generated: {now}\n"
+        f"# FuelLib remote URL: {git_remote}\n"
+        f"# Git commit: {git_commit}\n"
+        f"# Units: {units.upper()}\n"
+        f"# -----------------------------------------------------------------------------\n\n"
     )
+    f.write(f"particles.fuel_species = {_vec_to_str(df['Compound'].tolist())}\n")
+    f.write(f"particles.Y_0 = {_vec_to_str(df['Y_0'].tolist())}\n")
+    f.write(f"particles.dep_fuel_species = {_vec_to_str(dep_fuel_names)}\n")
+    if liq_prop_model == "mp":
+        f.write(f"particles.fuel_ref_temp = {ref_T.to('K').magnitude} # K\n")
 
-    # Mandatory argument for fuel name
-    parser.add_argument(
-        "-f",
-        "--fuel_name",
-        required=True,
-        metavar="NAME",
-        help="Name of the fuel (mandatory).",
-    )
+    for comp in compound_names:
+        f.write(f"\n# Properties for {comp} in {units.upper()}\n")
+        for prop in prop_names:
+            if prop == "family":
+                _labels = [
+                    "saturated hydrocarbons",
+                    "aromatics",
+                    "cycloparaffins",
+                    "olefins",
+                ]
+                cell = df.loc[df["Compound"] == comp, prop].values[0]
+                f.write(f"particles.{comp}_{prop} = {cell} # {_labels[cell]}\n")
+                continue
 
-    # Optional argument for fuel data directory
-    parser.add_argument(
-        "-dir",
-        "--fuel_data_dir",
-        default=FUELDATA_DIR,
-        metavar="PATH",
-        help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
-    )
+            if prop == "psat":
+                A = df.loc[df["Compound"] == comp, "psat_A"].values[0]
+                B = df.loc[df["Compound"] == comp, "psat_B"].values[0]
+                C = df.loc[df["Compound"] == comp, "psat_C"].values[0]
+                D = df.loc[df["Compound"] == comp, "psat_D"].values[0]
+                psat_coeffs = [A, B, C, D]
 
-    # Optional argument for decomposition file name
-    parser.add_argument(
-        "-decomp",
-        "--fuel_decomp_name",
-        default=None,
-        metavar="NAME",
-        help="Name of the decomposition file (optional). If not provided, defaults to fuel_name.",
-    )
+                _Q = Units.Quantity(1, "Pa").to_base_units(units)
+                f.write(
+                    f"particles.{comp}_{prop} = {_vec_to_str(psat_coeffs)} # {_get_label(_Q)}\n"
+                )
+                continue
 
-    # Optional argument for units
-    # Default is 'mks', but can be set to 'cgs'
-    parser.add_argument(
-        "-u",
-        "--units",
-        default="mks",
-        metavar="{mks,cgs}",
-        help="Units for critical properties (optional, default: mks).",
-    )
+            cell = df.loc[df["Compound"] == comp, prop].values[0]
+            cell_units = _get_label(cell) if isinstance(cell, pint.Quantity) else ""
+            cell_val = cell.magnitude if isinstance(cell, pint.Quantity) else cell
 
-    # Optional argument for deposition fuel names
-    parser.add_argument(
-        "-dep",
-        "--dep_fuel_names",
-        nargs="+",  # Accepts one or more values
-        default=None,
-        metavar="NAME",
-        help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.compounds).",
-    )
+            f.write(f"particles.{comp}_{prop} = {cell_val:.6f} # {cell_units}\n")
 
-    # Optional argument for using PelePhysics key
-    parser.add_argument(
-        "-pp",
-        "--use_pp_keys",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=True,
-        metavar="{true,false}",
-        help="Use PelePhysics keys for each compound (optional, default: true).",
-    )
-
-    # Optional argument for export directory
-    parser.add_argument(
-        "-o",
-        "--export_dir",
-        default=os.getcwd(),
-        metavar="PATH",
-        help="Directory to export the properties (optional, default: current working directory).",
-    )
-
-    # Optional argument for exporting mixture properties
-    parser.add_argument(
-        "-m",
-        "--export_mix",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=False,
-        metavar="{true,false}",
-        help="Export mixture properties of the fuel (optional, default: false).",
-    )
-
-    # Optional argument for mixture name if different than fuel_name
-    parser.add_argument(
-        "-mn",
-        "--export_mix_name",
-        default=None,
-        metavar="NAME",
-        help="Name the mixture if different than fuel_name (optional, default: fuel_name).",
-    )
-
-    # Optional argument for liquid property model
-    parser.add_argument(
-        "-l",
-        "--liq_prop_model",
-        default="gcm",
-        metavar="{gcm,mp}",
-        help="Model for liquid properties (optional, default: gcm).",
-    )
-
-    # Optional argument for printing Antoine coefficients in MP model
-    parser.add_argument(
-        "-psat",
-        "--psat_antoine",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=True,
-        metavar="{true,false}",
-        help="Use Antoine coefficients for vapor pressure in MP model (optional, default: true).",
-    )
-
-    # Parse arguments
-    args = parser.parse_args()
-    fuel_name = args.fuel_name
-    fuel_decomp_name = args.fuel_decomp_name
-    fuel_data_dir = args.fuel_data_dir
-
-    # If decomposition name not provided, read from metadata (required)
-    if fuel_decomp_name is None:
-        fuel_decomp_name = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
-
-    units = args.units.lower()
-    dep_fuel_names = args.dep_fuel_names
-    use_pp_keys = args.use_pp_keys
-    export_dir = args.export_dir
-    export_mix = args.export_mix
-    export_mix_name = args.export_mix_name
-    liq_prop_model = args.liq_prop_model.lower()
-    psat_antoine = args.psat_antoine
-
-    # Print the parsed arguments
-    print("Preparing to export properties:")
-    print(f"    Fuel name: {fuel_name}")
-    print(f"    Decomposition name: {fuel_decomp_name}")
-    print(f"    Units: {units}")
-    print(f"    Liquid property model: {liq_prop_model}")
-    if liq_prop_model.lower() == "mp":
-        print(f"    Antoine coefficients: {psat_antoine}")
-    print(f"    Export mixture properties: {export_mix}")
-    print(f"    Export directory: {export_dir}")
-    print(f"    Fuel data directory: {fuel_data_dir}")
-
-    # Create the groupContribution object for the specified fuel
-    fuel = fl.fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
-
-    # Export properties for Pele
-    export_pele(
-        fuel,
-        path=export_dir,
-        units=units,
-        dep_fuel_names=dep_fuel_names,
-        use_pp_keys=use_pp_keys,
-        export_mix=export_mix,
-        export_mix_name=export_mix_name,
-        liq_prop_model=liq_prop_model,
-        psat_antoine=psat_antoine,
-    )
-
-    print("\nExport completed successfully!")
-
-
-if __name__ == "__main__":
-    main()
+msg = f"{BOLD}{GREEN}Properties exported to {file_name}.{RESET}"
+logger.info(msg)

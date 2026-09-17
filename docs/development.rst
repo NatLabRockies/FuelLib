@@ -85,6 +85,45 @@ environment:
 Run ``uv lock`` to regenerate ``uv.lock`` after changing dependencies in
 ``pyproject.toml``, keeping installs reproducible across machines.
 
+Working with Units (pint)
+--------------------------
+
+FuelLib's public API is unit-aware: physical quantities (e.g. ``Fuel.MW``,
+``Fuel.Tc``, ``Fuel.Pc``) are `pint <https://pint.readthedocs.io>`_
+``Quantity`` objects rather than bare ``float``/``np.ndarray`` values. When
+contributing new code that creates or consumes physical quantities:
+
+- Always build quantities using the shared registry, ``fuellib.units.PintUnits``
+  (e.g. ``PintUnits.Quantity(value, "K")``), instead of instantiating a new
+  ``pint.UnitRegistry()``. Quantities from different registries are not
+  compatible with one another.
+- Convert between units with ``.to("target_unit")``; access the raw numeric
+  value with ``.magnitude`` only at boundaries (e.g. plotting, exporting,
+  passing to non-pint-aware libraries).
+- Reuse the type aliases in ``fuellib/types.py`` (``FloatArray``,
+  ``PintScalar``, ``PintArray``) when annotating new functions.
+- Do not reintroduce bare-float return types for existing public
+  ``Fuel``/``utility`` APIs; this would reverse an intentional breaking
+  change (see ``CHANGELOG.md``).
+
+Type Checking (ty)
+-------------------
+
+This repository is statically type-checked with `ty <https://github.com/astral-sh/ty>`_
+(``pixi run -e dev types`` or ``ty check``), which is also part of the
+``lefthook`` pre-commit suite. To keep ``ty check`` passing:
+
+- All new/modified function and method signatures in ``fuellib/`` and
+  ``tests/`` must have type hints on every parameter and on the return value
+  (use ``-> None`` explicitly where nothing is returned).
+- Prefer the shared aliases in ``fuellib/types.py`` (``FloatArray``,
+  ``PintScalar``, ``PintArray``) and ``pint.Quantity`` for unit-aware values
+  instead of bare ``float``/``np.ndarray`` (see "Working with Units" above).
+- Use precise types over ``Any``; for a fixed set of string options use
+  ``typing.Literal`` (e.g. ``pseudo_prop: Literal["arithmetic", "geometric"]``).
+- Run ``ty check`` (or ``pixi run -e dev types``) locally before opening a PR
+  and resolve any reported errors rather than suppressing them.
+
 Updating the Changelog
 -----------------------
 
@@ -107,6 +146,13 @@ New contributions are always welcome! To contribute:
 
 6. Run tests to verify your changes. See `.github/workflows/ci.yml` for the most up-to-date list of tests run in CI
 7. Open a Pull Request (PR) from your fork to the main FuelLib repository
+
+.. note::
+
+   If you use an AI coding assistant (e.g. GitHub Copilot), repository-specific
+   context (package layout, CLI tools, pint unit conventions, dev workflow) is
+   maintained in ``.github/copilot-instructions.md`` and should be kept in sync
+   with this page when either changes.
 
 Building and Viewing Documentation Locally
 -------------------------------------------

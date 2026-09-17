@@ -55,6 +55,7 @@ There are several additional options that can be specified when running the ``fl
 - ``-t, --temp_min K``: Minimum temperature for property calculations. Default: ``0``.
 - ``-T, --temp_max K``: Maximum temperature for property calculations. Default: ``1000``.
 - ``-s, --temp_step K``: Step size for temperature. Default: ``10``.
+- ``-tu, --temp_units {K,kelvin,°C,celsius,°F,fahrenheit}``: Units that ``--temp_min``, ``--temp_max``, and ``--temp_step`` are provided in. Default: ``K``.
 - ``-o, --export_dir PATH``: Directory to export the file. Default: ``./exportData``.
 - ``-m, --export_mix {true,false}``: Export mixture properties only (no individual components). Default: ``false``.
 
@@ -69,6 +70,11 @@ Or with long options: ::
 
 This generates the file ``FuelLib/exportData/mixturePropsGCM_posf10325.csv`` with mixture 
 property predictions from 273 K to 550 K for use in a Converge simulation.
+
+``--temp_min``, ``--temp_max``, and ``--temp_step`` are assumed to be in Kelvin unless
+``-tu``/``--temp_units`` is set. For example, to export properties from 32 °F to 212 °F: ::
+
+    fl-export-converge -f posf10325 -m true -t 32 -T 212 -tu fahrenheit
 
 .. warning::
     Mixture properties for critical temperature, latent heat, and specific heat are provided by :ref:`conventional-mixing-rules` and need additional validation.

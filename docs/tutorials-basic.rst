@@ -80,18 +80,19 @@ binary mixture of heptane and decane. The initial weight percentage composition 
 heptane and 26.25% decane, and the group decomposition data is provided in the
 `groupDecompositionData <https://github.com/NatLabRockies/FuelLib/tree/main/fuelData/groupDecompositionData>`_ directory.
 The following tutorial is included in the `FuelLib/tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_
-as ``basic.py``. To begin, we will import the necessary modules and create a ``fuel`` object for the two component fuel "heptane-decane": 
+as ``basic.py``. To begin, we will import the necessary modules and create a ``Fuel`` object for the two component fuel "heptane-decane": 
 
 .. code-block:: python
 
     import fuellib as fl
 
     # Create a fuel object for the fuel "heptane-decane"
-    fuel = fl.fuel("heptane-decane")
+    fuel = fl.Fuel("heptane-decane")
 
-Upon initialization, the ``fuel`` object will read the initial weight 
+Upon initialization, the ``Fuel`` object will read the initial weight 
 percentage composition and group decomposition data from the specified files. The object stores
-vectors of the calculated fundamental properties at standard conditions for each component of the fuel as described in :ref:`eq-GCM-properties`. 
+vectors of the calculated fundamental properties at standard conditions for each component of the fuel as described in :ref:`eq-GCM-properties`.
+Most properties are returned as unit-aware `pint <https://pint.readthedocs.io>`_ ``Quantity`` values rather than bare numbers; see the :doc:`units` page for an introduction to working with them.
 For example, we can display the fuel name, the components in the fuel, the initial composition, and the critical temperature for each component: 
 
 .. code-block:: python
@@ -100,32 +101,35 @@ For example, we can display the fuel name, the components in the fuel, the initi
     print(f"Fuel name: {fuel.name}")
     print(f"Fuel components: {fuel.compounds}")
     print(f"Initial composition: {fuel.Y_0}")
-    print(f"Critical temperature: {fuel.Tc} K")
+    # Critical / correlated properties will print with units
+    print(f"Critical temperature: {fuel.Tc:.2f}")
 
 .. code-block:: none
 
     >> Fuel name: heptane-decane
     >> Fuel components: ['NC7H16', 'NC10H22']
     >> Initial composition: [0.7375 0.2625]
-    >> Critical temperature: [549.85598051 623.69051582] K
+    >> Critical temperature: [549.86 623.69] kelvin
 
 Next, we can calculate any of the component- or mixture-level properties using the 
-``fuel`` object. For example, we can calculate the saturated vapor pressure
-for each component and the mixture at a given temperature:
+``Fuel`` object. For example, we can calculate the saturated vapor pressure
+for each component and the mixture at a given temperature. Any temperature (or other
+quantity) that we construct ourselves must be built from the shared ``fl.PintUnits``
+registry:
 
 .. code-block:: python
 
     # Calculate the saturated vapor pressure at 320 K
-    T = 320 # K
+    T = fl.PintUnits.Quantity(320.0, "K")  # Assign units to the temperature value
     p_sat_i = fuel.psat(T)
-    p_sat_mix = fuel.mixture_vapor_pressure(T)
-    print(f"Saturated vapor pressure at {T} K: {p_sat_i} Pa")
-    print(f"Mixture saturated vapor pressure at {T} K: {p_sat_mix} Pa")
+    p_sat_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
+    print(f"Saturated vapor pressure at {T}: {p_sat_i:.2f}")
+    print(f"Mixture saturated vapor pressure at {T}: {p_sat_mix:.2f}")
 
 .. code-block:: none
 
-    >> Saturated vapor pressure at 320 K: [13735.84605413   673.28876023] Pa
-    >> Mixture saturated vapor pressure at 320 K: 11117.84926875165 Pa
+    >> Saturated vapor pressure at 320.0 kelvin: [13735.85   673.29] pascal
+    >> Mixture saturated vapor pressure at 320.0 kelvin: 11117.85 pascal
 
 The following links provide more information on the :ref:`eq-GCM-correlations` and
-the :ref:`eq-mixture-properties` that can be calculated using the ``groupContribution`` object.
+the :ref:`eq-mixture-properties` that can be calculated using the ``Fuel`` object.

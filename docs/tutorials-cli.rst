@@ -91,4 +91,4 @@ Tools for development and documentation maintenance:
 
     fl-build-docs       # Build Sphinx documentation
     fl-clean-docs       # Clean generated documentation
-    fl-format           # Format Python code with black
+    fl-format           # Format Python code with ruff

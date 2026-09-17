@@ -1,28 +1,37 @@
 """Utility functions for mixture calculations and droplet properties."""
 
+from typing import Literal
+
 import numpy as np
+import pint
+
+from .units import PintUnits
 
 
-def mixing_rule(var_n, X, pseudo_prop="arithmetic"):
+def mixing_rule(
+    var_n: pint.Quantity,
+    X: np.ndarray[tuple[int,], np.dtype[np.float64]],
+    pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
+) -> pint.Quantity:
     """
     Mixing rules for computing mixture properties.
 
     :param var_n: Individual compound properties.
-    :type var_n: np.ndarray
+    :type var_n: pint.Quantity
     :param X: Mole fractions of the compounds.
     :type X: np.ndarray
     :param pseudo_prop: Type of mean ("arithmetic" or "geometric").
     :type pseudo_prop: str, optional
     :return: Mixture property value.
-    :rtype: float
+    :rtype: pint.Quantity
     """
     num_comps = len(var_n)
-    var_mix = 0.0
+    var_mix = PintUnits.Quantity(0.0, var_n.units)
     for i in range(num_comps):
         for j in range(num_comps):
             if pseudo_prop.casefold() == "geometric":
                 # Use geometric mean definition for the pseudo property
-                var_ij = (var_n[i] * var_n[j]) ** (0.5)
+                var_ij = np.sqrt(var_n[i] * var_n[j])
             else:
                 # Use arithmetic definition for the pseudo property
                 var_ij = (var_n[i] + var_n[j]) / 2
