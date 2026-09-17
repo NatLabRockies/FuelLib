@@ -270,8 +270,8 @@ the mixture vapor pressure calculated from Raoult's law above.  Antoine's equati
 
    \log_{10}\Big(\frac{p_{v,i}}{D_i}\Big) = A_i - \frac{B_i}{C_i + T},
 
-where :math:`D_i` is a conversion factor for converting :math:`p_{v,i}` to units of bar (:math:`D_i = 10^5`) or dyne/cm :sup:`2` (:math:`D_i = 10^{-1}`) from Pa.
-This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option for estimating these coefficients for use in CFD
+where :math:`D_i` is a conversion factor for converting :math:`p_{v,i}` from Pa to cgs-based units dyne/cm :sup:`2` (:math:`D_i = 10`).
+This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option to estimate Antoine coefficients for use in CFD
 simulations with spray. See the `PelePhysics documentation <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
 for additional information. 
 
@@ -472,7 +472,7 @@ the mixture vapor pressure calculated from Raoult's law above.  Antoine's equati
 
    \log_{10}\Big(\frac{p_{v}}{D}\Big) = A - \frac{B}{C + T},
 
-where :math:`D` is a conversion factor for converting :math:`p_v` to units of bar (:math:`D = 10^5`) or dyne/cm :sup:`2` (:math:`D = 10^{-1}`) from Pa.
+where :math:`D` is a conversion factor for converting :math:`p_v` from Pa to cgs-based units dyne/cm :sup:`2` (:math:`D_i = 10`)..
 This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option for estimating these coefficients for use in CFD
 simulations with spray. See the `PelePhysics documentation <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
 for additional information. 
