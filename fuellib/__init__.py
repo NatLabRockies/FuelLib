@@ -23,9 +23,9 @@ from ._data_locator import *
 from .fuel import Fuel
 
 __all__ = [
+    "Fuel",
     "constants",
     "convert",
-    "Fuel",
     "get_data_dir",
     "get_fueldata_decomp_dir",
     "get_fueldata_dir",
