@@ -18,7 +18,7 @@ used to parse and validate this file's entries against that format.
 - Replaced Black with Ruff + ty: `ruff format`/`ruff check` now handle formatting and linting, and `ty check` handles static type checking; `fl-format` now shells out to `ruff format`.
 - Bumped `requires-python` to `>=3.12,<3.14` (from `>=3.8`); CI now runs on Python 3.12.
 - CI's `Formatting` job (previously `psf/black`) now runs `ruff format --check`, `ruff check`, and `ty check`.
-- **BREAKING**: `fuellib.fuel.fuel` -> `fuellib.fuel.Fuel` to conform with [PEP 8 naming conventions]("https://peps.python.org/pep-0008/#class-names") and prevent the `fuel` (module) vs. `fuel` (class) namespace clash.
+- **BREAKING**: `fuellib.fuel.fuel` -> `fuellib.fuel.Fuel` to conform with [PEP 8 naming conventions](https://peps.python.org/pep-0008/#class-names) and prevent the `fuel` (module) vs. `fuel` (class) namespace clash.
 
 ### Removed
 - Removed Black as a dev dependency.
