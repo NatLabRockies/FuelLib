@@ -172,7 +172,7 @@ class ApiContractTestCase(unittest.TestCase):
             "viscosity_kinematic": "(self, T, comp_idx=None)",
         }
 
-        actual = _public_class_methods(fl.fuel)
+        actual = _public_class_methods(fl.Fuel)
         self.assertEqual(
             set(actual.keys()),
             set(expected.keys()),
@@ -198,8 +198,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.fuels = {
-            "decane": fl.fuel("decane"),
-            "posf10325": fl.fuel("posf10325"),
+            "decane": fl.Fuel("decane"),
+            "posf10325": fl.Fuel("posf10325"),
         }
         cls.T = 320.0
         cls.p = 101325.0

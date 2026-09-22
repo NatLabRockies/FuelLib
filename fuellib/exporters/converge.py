@@ -646,7 +646,7 @@ def main():
     _ = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
 
     # Create the fuel object
-    fuel = fl.fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)
 
     # Export properties for Converge
     export_converge(

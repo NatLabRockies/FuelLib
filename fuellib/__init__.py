@@ -20,12 +20,12 @@ from . import constants, convert, utility
 
 # Import data locator functions
 from ._data_locator import *
-from .fuel import fuel
+from .fuel import Fuel
 
 __all__ = [
     "constants",
     "convert",
-    "fuel",
+    "Fuel",
     "get_data_dir",
     "get_fueldata_decomp_dir",
     "get_fueldata_dir",
