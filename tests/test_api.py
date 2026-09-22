@@ -48,7 +48,7 @@ class ApiContractTestCase(unittest.TestCase):
     def test_fuellib_module_api(self):
         print("\nFuelLib Module API:")
         expected_top_level = {
-            "fuel": "class",
+            "Fuel": "class",
             "constants": "module",
             "convert": "module",
             "utility": "module",
