@@ -91,7 +91,7 @@ class TestHCIdentification:
     def test_hc_identification(self, fuel_name):
         """Comprehensive test for HC identification: nC, nH, hc_type, and compound classification."""
         # Load fuel
-        fuel = fl.fuel(fuel_name)
+        fuel = fl.Fuel(fuel_name)
 
         print(f"\n{'=' * 60}")
         print(f"Fuel: {fuel_name}")

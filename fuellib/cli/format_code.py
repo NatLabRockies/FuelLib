@@ -1,4 +1,4 @@
-"""Format all Python source code using Ruff."""
+"""Format, lint, and type-check all Python source code, mirroring CI's Formatting job."""
 
 import os
 import subprocess
@@ -6,7 +6,7 @@ import sys
 
 
 def main():
-    """Run Ruff formatter on all Python files in the repository."""
+    """Run ruff format, ruff check --fix, and ty check on the repository."""
     # Get the directory of this script (fuellib/cli)
     cli_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -16,19 +16,26 @@ def main():
     # Get the project root (one level up from fuellib package)
     project_root = os.path.dirname(fuellib_dir)
 
-    try:
-        # Call Ruff directly with the project root
-        # Ruff will recursively find and format all .py files
-        result = subprocess.run(
-            [sys.executable, "-m", "ruff", "format", project_root],
-            check=True,
-        )
-        sys.exit(result.returncode)
-    except subprocess.CalledProcessError as e:
-        sys.exit(e.returncode)
-    except OSError as e:
-        print(f"Error running ruff formatter: {e}", file=sys.stderr)
-        sys.exit(1)
+    # Mirrors the CI "Formatting" job (ruff format --check, ruff check, ty check),
+    # but applies fixes locally instead of just checking.
+    commands = [
+        [sys.executable, "-m", "ruff", "format", project_root],
+        [sys.executable, "-m", "ruff", "check", project_root, "--fix"],
+        [sys.executable, "-m", "ty", "check", project_root],
+    ]
+
+    exit_code = 0
+    for command in commands:
+        try:
+            result = subprocess.run(command, check=False)
+        except OSError as e:
+            print(f"Error running {command[2]}: {e}", file=sys.stderr)
+            exit_code = 1
+            continue
+        if result.returncode != 0:
+            exit_code = result.returncode
+
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

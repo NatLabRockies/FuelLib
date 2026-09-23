@@ -91,7 +91,7 @@ Once your custom fuel directory is set up, you can use it like any built-in fuel
     import fuellib as fl
 
     # Load a custom fuel
-    fuel = fl.fuel("new-satf", fuelDataDir="/path/to/customFuels")
+    fuel = fl.Fuel("new-satf", fuelDataDir="/path/to/customFuels")
 
     # Calculate the saturated vapor pressure at 320 K
     T = 320  # K

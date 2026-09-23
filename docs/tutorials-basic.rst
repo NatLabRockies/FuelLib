@@ -87,7 +87,7 @@ as ``basic.py``. To begin, we will import the necessary modules and create a ``f
     import fuellib as fl
 
     # Create a fuel object for the fuel "heptane-decane"
-    fuel = fl.fuel("heptane-decane")
+    fuel = fl.Fuel("heptane-decane")
 
 Upon initialization, the ``fuel`` object will read the initial weight 
 percentage composition and group decomposition data from the specified files. The object stores

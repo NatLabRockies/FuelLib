@@ -80,7 +80,7 @@ ylab = {
 
 def getPredAndData(fuel_name, prop_name):
     # Get the fuel properties based on the GCM
-    fuel = fl.fuel(fuel_name)
+    fuel = fl.Fuel(fuel_name)
 
     data_file = f"{fuel_name}.csv"
     try:

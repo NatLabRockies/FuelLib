@@ -56,8 +56,8 @@ def getPredAndData(fuel_name, prop_name, blend):
     blend = np.array(blend) * 1e-2  # Convert to weight percent
 
     # Get the fuel properties based on the GCM
-    fuel = fl.fuel(fuel_name, "hefa")
-    jetA = fl.fuel(conv_fuel_name)
+    fuel = fl.Fuel(fuel_name, "hefa")
+    jetA = fl.Fuel(conv_fuel_name)
 
     data_file = "hefa-jet-a-blends.csv"
     data = pd.read_csv(

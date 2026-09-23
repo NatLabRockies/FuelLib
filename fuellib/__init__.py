@@ -4,7 +4,7 @@ FuelLib: Fuel Library for Group Contribution Method calculations.
 FuelLib utilizes the Group Contribution Method (GCM) as proposed by Constantinou
 and Gani (1994, 1995) to calculate thermodynamic and mixture properties of fuels.
 
-See :class:`fuel` for the main class and complete API documentation.
+See :class:`Fuel` for the main class and complete API documentation.
 """
 
 try:
@@ -20,12 +20,12 @@ from . import constants, convert, utility
 
 # Import data locator functions
 from ._data_locator import *
-from .fuel import fuel
+from .fuel import Fuel
 
 __all__ = [
+    "Fuel",
     "constants",
     "convert",
-    "fuel",
     "get_data_dir",
     "get_fueldata_decomp_dir",
     "get_fueldata_dir",

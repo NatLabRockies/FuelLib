@@ -1,7 +1,7 @@
 import fuellib as fl
 
 # Load an embedded fuel
-fuel = fl.fuel("posf10264")
+fuel = fl.Fuel("posf10264")
 
 print(f"Fuel: {fuel.name}")
 print(f"Fuel data directory: {fuel.fuelDataDir}")
@@ -20,7 +20,7 @@ print(f"Number of compounds: {fuel.num_compounds}")
 #       └── myFuel.csv
 #
 # Then load it with:
-custom_fuel = fl.fuel("hefa-S1", fuelDataDir="customFuels/fuelData")
+custom_fuel = fl.Fuel("hefa-S1", fuelDataDir="customFuels/fuelData")
 
 # After loading, the fuel object has the correct directory paths:
 custom_fuel.fuelDataDir

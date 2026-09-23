@@ -7,7 +7,7 @@ import fuellib as fl
 
 fuel_name = "posf10325"
 
-fuel = fl.fuel(fuel_name)
+fuel = fl.Fuel(fuel_name)
 
 # Create a DataFrame with the compounds and their families
 # Use the hydrocarbon type classification from group decompositions

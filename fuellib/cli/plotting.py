@@ -61,7 +61,7 @@ def plot_composition(
         os.makedirs(output_dir)
 
     # Load the fuel
-    fuel = fl.fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
 
     # Create DataFrame with compound data and carbon numbers from fuel object
     df = pd.DataFrame(
@@ -379,7 +379,7 @@ def plot_mixture_properties(
 
     def get_predictions_and_data(fuel_name, prop_name):
         """Get predicted and experimental data for a property."""
-        fuel = fl.fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
+        fuel = fl.Fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
 
         # Try to load experimental data
         props_dir = fuel.fuelDataPropsDir
