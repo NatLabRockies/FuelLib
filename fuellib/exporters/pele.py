@@ -742,7 +742,7 @@ def main():
 
     # Create the groupContribution object for the specified fuel
     fuel = fl.Fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
-    if dep_fuel_names is None:
+    if dep_fuel_names is None and not export_mix:
         if use_pp_keys and fuel.pelephysics_keys is not None:
             dep_fuel_names = list(fuel.pelephysics_keys)
         else:

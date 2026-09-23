@@ -727,7 +727,7 @@ class Fuel:
             Pvals = np.zeros_like(T_magnitude)
             for k in range(len(T)):
                 Pvals[k] = (
-                    self.psat(T[k], correlation=correlation)[i].to(units).magnitude
+                    self.psat(T[k], correlation=correlation)[i].to("Pa").magnitude
                 )
 
             logP = np.log10(Pvals)

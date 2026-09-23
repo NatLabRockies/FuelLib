@@ -71,7 +71,7 @@ def getPredAndData(fuel_name, prop_name, blend):
     # Separate properties and associated temperatures from data
     if prop_name == "Density":
         T = fl.Units.Quantity(15, "celsius").to("K")
-        prop_pred = fl.Units.Quantity(np.zeros_like(blend), prop_units)
+        prop_pred = fl.Units.Quantity(np.zeros_like(blend.magnitude), prop_units)
     elif prop_name == "Viscosity":
         T = fl.Units.Quantity(-20, "celsius").to("K")
         prop_pred = fl.Units.Quantity(np.zeros_like(blend), prop_units)
