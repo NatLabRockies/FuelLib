@@ -21,9 +21,11 @@ from . import constants, convert, utility
 # Import data locator functions
 from ._data_locator import *
 from .fuel import Fuel
+from .units import PintUnits
 
 __all__ = [
     "Fuel",
+    "PintUnits",
     "constants",
     "convert",
     "get_data_dir",
