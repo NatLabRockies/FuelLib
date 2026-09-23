@@ -10,6 +10,7 @@ import pandas as pd
 from scipy import stats as st
 
 import fuellib as fl
+
 from ..units import Units
 
 # Default data directory - use fuellib's embedded data
@@ -21,6 +22,7 @@ def _magnitude(value, unit=None):
     if hasattr(value, "to"):
         return value.to(unit).magnitude if unit is not None else value.magnitude
     return value
+
 
 """
 Script that exports critical properties and initial mass fraction data
@@ -60,6 +62,7 @@ class UnitConverter:
         """
         if self.units not in ["mks", "cgs"]:
             raise ValueError(f"Units must be 'mks' or 'cgs', got '{self.units}'")
+
 
 def get_git_info():
     """

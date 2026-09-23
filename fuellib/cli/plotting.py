@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 import fuellib as fl
+
 from ..units import Units
 
 
@@ -419,9 +420,7 @@ def plot_mixture_properties(
         # Generate predictions over temperature range
         # First check if experimental data exists - use its range if available
         num_prediction_points = (
-            25
-            if prop_name == "SurfaceTension" and fuel.num_compounds > 20
-            else 100
+            25 if prop_name == "SurfaceTension" and fuel.num_compounds > 20 else 100
         )
         if len(T_data) > 0:
             # Use data range if available
@@ -459,9 +458,7 @@ def plot_mixture_properties(
                 elif prop_name == "SurfaceTension":
                     pred[i] = fuel.mixture_surface_tension(Y_li, T).to(prop_units)
                 elif prop_name == "ThermalConductivity":
-                    pred[i] = fuel.mixture_thermal_conductivity(Y_li, T).to(
-                        prop_units
-                    )
+                    pred[i] = fuel.mixture_thermal_conductivity(Y_li, T).to(prop_units)
             except (ValueError, TypeError, RuntimeError):
                 pred.magnitude[i] = np.nan
 

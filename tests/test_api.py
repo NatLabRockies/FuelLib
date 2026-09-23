@@ -154,7 +154,7 @@ class ApiContractTestCase(unittest.TestCase):
             "X2Y": "(self, Xi)",
             "Y2X": "(self, Yi)",
             "density": "(self, T, comp_idx=None)",
-            "diffusion_coeff": "(self, p, T, sigma_gas=Quantity(3.62, \"angstrom\"), epsilonByKB_gas=Quantity(97.0, \"kelvin\"), MW_gas=Quantity(0.02897, \"kilogram / mole\"), correlation='Tee')",
+            "diffusion_coeff": '(self, p, T, sigma_gas=Quantity(3.62, "angstrom"), epsilonByKB_gas=Quantity(97.0, "kelvin"), MW_gas=Quantity(0.02897, "kilogram / mole"), correlation=\'Tee\')',
             "latent_heat_vaporization": "(self, T, comp_idx=None)",
             "mass2X": "(self, mass)",
             "mass2Y": "(self, mass)",

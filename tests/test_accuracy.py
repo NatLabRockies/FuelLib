@@ -79,9 +79,7 @@ class CompTestCase(unittest.TestCase):
                             "current data temperatures."
                         ),
                     )
-                    mape_base = (
-                        np.mean(np.abs(data - base_props) / np.abs(data)) * 100
-                    )
+                    mape_base = np.mean(np.abs(data - base_props) / np.abs(data)) * 100
                     mape = np.mean(np.abs(data - pred) / np.abs(data)) * 100
 
                     # Regression check: MAPE must not exceed Baseline.

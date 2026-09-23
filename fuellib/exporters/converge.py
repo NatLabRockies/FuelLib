@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 import fuellib as fl
+
 from ..units import Units
 
 # Default data directory - use fuellib's embedded data
@@ -131,9 +132,21 @@ def export_converge(
     if path is None:
         path = os.getcwd()
 
-    temp_min = Units.Quantity(temp_min, "K") if not hasattr(temp_min, "to") else temp_min.to("K")
-    temp_max = Units.Quantity(temp_max, "K") if not hasattr(temp_max, "to") else temp_max.to("K")
-    temp_step = Units.Quantity(temp_step, "K") if not hasattr(temp_step, "to") else temp_step.to("K")
+    temp_min = (
+        Units.Quantity(temp_min, "K")
+        if not hasattr(temp_min, "to")
+        else temp_min.to("K")
+    )
+    temp_max = (
+        Units.Quantity(temp_max, "K")
+        if not hasattr(temp_max, "to")
+        else temp_max.to("K")
+    )
+    temp_step = (
+        Units.Quantity(temp_step, "K")
+        if not hasattr(temp_step, "to")
+        else temp_step.to("K")
+    )
 
     # Input validation
     if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
@@ -374,9 +387,7 @@ def export_converge(
     if export_mix:
         # Vector of evenly spaced temperatures
         nT = int(((temp_max - temp_min) / temp_step).magnitude) + 1
-        T = Units.Quantity(
-            np.linspace(temp_min.magnitude, temp_max.magnitude, nT), "K"
-        )
+        T = Units.Quantity(np.linspace(temp_min.magnitude, temp_max.magnitude, nT), "K")
 
         # Estimate freezing point and critical temp of mixture
         T_freeze = fl.utility.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
@@ -418,9 +429,7 @@ def export_converge(
                 np.linspace(T_min_allowed.magnitude, T_nearest_floor.magnitude, nT),
                 "K",
             )
-            T = Units.Quantity(
-                np.append(T.magnitude, T_crit.to("K").magnitude), "K"
-            )
+            T = Units.Quantity(np.append(T.magnitude, T_crit.to("K").magnitude), "K")
             T_max_allowed = T_crit
         # Calculate GCM properties for a range of temperatures
         comp_text = "" if export_mix else f"for {compound}"

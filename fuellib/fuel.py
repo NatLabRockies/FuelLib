@@ -14,10 +14,10 @@ from ._data_locator import (
     get_gcmtable_dir,
     get_metadata_decomp_name,
 )
+from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
 from .types import PintArray
 from .units import Units
 from .utility import mixing_rule
-from .constants import T_stp, Sigma_gas, EpsilonByKB_gas, MW_gas
 
 
 class Fuel:
@@ -361,9 +361,7 @@ class Fuel:
         self.Hv_stp = Units.Quantity(_hv_stp, "kJ/mol").to("J/mol")
 
         # omega (accentric factor)
-        _omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (
-            1.0 / 0.5050
-        )
+        _omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (1.0 / 0.5050)
         self.omega = Units.Quantity(_omega, "")
 
         # V_m (molar liquid volume at 298 K)
@@ -390,7 +388,7 @@ class Fuel:
         _epsilon_by_kb = (0.7915 + 0.1693 * _lj_w) * _lj_tc
         self.epsilonByKB = Units.Quantity(_epsilon_by_kb, "K")
 
-        _sigma = (2.3551 - 0.0874 * _lj_w) * (_lj_tc / _lj_pc) ** (1.0 / 3)  
+        _sigma = (2.3551 - 0.0874 * _lj_w) * (_lj_tc / _lj_pc) ** (1.0 / 3)
         self.sigma = Units.Quantity(_sigma, "angstrom").to("m")
 
     # -------------------------------------------------------------------------
@@ -406,10 +404,10 @@ class Fuel:
         :rtype: pint.Quantity[float]
         """
         if np.sum(Yi) != 0:
-            Mbar =  1 / np.sum(Yi / self.MW)
+            Mbar = 1 / np.sum(Yi / self.MW)
         else:
             Mbar = Units.Quantity(0.0, "kg/mol")
-        
+
         return Mbar
 
     def mass2Y(self, mass):
@@ -697,7 +695,10 @@ class Fuel:
         elif len(Tvals) == 2:
             T_low = Tvals[0].magnitude
             T_high = Tvals[1].magnitude
-            T = Units.Quantity(np.linspace(T_low, T_high, 20),"K",)
+            T = Units.Quantity(
+                np.linspace(T_low, T_high, 20),
+                "K",
+            )
         elif len(Tvals) > 2:
             T = Tvals
         else:
@@ -721,13 +722,13 @@ class Fuel:
         for i in range(self.num_compounds):
             # Update T if not specified
             if Tvals is None:
-                T = Units.Quantity(
-                    np.linspace(273.15, self.Tb[i].magnitude, 20), "K"
-                )
+                T = Units.Quantity(np.linspace(273.15, self.Tb[i].magnitude, 20), "K")
             T_magnitude = T.to("K").magnitude
             Pvals = np.zeros_like(T_magnitude)
             for k in range(len(T)):
-                Pvals[k] = self.psat(T[k], correlation=correlation)[i].to(units).magnitude
+                Pvals[k] = (
+                    self.psat(T[k], correlation=correlation)[i].to(units).magnitude
+                )
 
             logP = np.log10(Pvals)
             popt, _ = curve_fit(antoine_eq, T_magnitude, logP, p0=[1, 1e3, -1])
@@ -762,9 +763,8 @@ class Fuel:
             if T > Tc[i]:
                 phi[i] = -((1 - (Tstp / Tc[i])) ** (2.0 / 7.0))
             else:
-                phi[i] = (
-                    (1 - (T / Tc[i])) ** (2.0 / 7.0)
-                    - (1 - (Tstp / Tc[i])) ** (2.0 / 7.0)
+                phi[i] = (1 - (T / Tc[i])) ** (2.0 / 7.0) - (1 - (Tstp / Tc[i])) ** (
+                    2.0 / 7.0
                 )
         z = 0.29056 - 0.08775 * omega
         Vmi = Vm_stp * z**phi
