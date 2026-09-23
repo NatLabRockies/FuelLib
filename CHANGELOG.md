@@ -8,6 +8,8 @@ used to parse and validate this file's entries against that format.
 ## [Unreleased]
 
 ### Added
+- Pint-backed unit support through the public `fuellib.Units` registry.
+- `PintScalar` and `PintArray` type aliases for unit-aware property values.
 - Pixi task automation (`fmt`, `lint`, `types`, `imports`, `test`, `pre-commit`, `docs-build`, `docs-clean`) so common dev workflows run via `pixi run <task>`.
 - New dev dependencies: `ruff`, `ty`, `pytest-cov`, `lefthook`, `import-linter`, and `uv` for a faster local pip/venv workflow.
 - `keepachangelog` dependency for maintaining this `CHANGELOG.md` in the Keep a Changelog format.
@@ -15,6 +17,10 @@ used to parse and validate this file's entries against that format.
 - Coverage reporting via `pytest-cov`, with a temporary `fail_under = 20` threshold, to be raised as test coverage improves.
 
 ### Changed
+- **BREAKING**: Fuel properties and temperature-dependent calculations now use Pint `Quantity` values. Supply dimensional inputs with units and use `.to(unit).magnitude` only when serializing or plotting.
+- Updated property plotting, exporters, tutorials, tests, and baseline data for the unit-aware API.
+- Converge exports now always use MKS units; the `-u`/`--units` option was removed.
+- The Converge `-m`/`--export-mix` and Pele `-m`, `-pp`, and `-psat` options are action flags that are enabled by their presence.
 - Replaced Black with Ruff + ty: `ruff format`/`ruff check` now handle formatting and linting, and `ty check` handles static type checking; `fl-format` now shells out to `ruff format`.
 - Bumped `requires-python` to `>=3.12,<3.14` (from `>=3.8`); CI now runs on Python 3.12.
 - CI's `Formatting` job (previously `psf/black`) now runs `ruff format --check`, `ruff check`, and `ty check`.
@@ -24,6 +30,7 @@ used to parse and validate this file's entries against that format.
 - Removed Black as a dev dependency.
 
 ### Fixed
+- Pele exports now default `particles.dep_fuel_species` to the emitted fuel-species names, including when `-pp` selects PelePhysics keys; `-dep` continues to override those names.
 - Addressed 40+ Ruff linting errors across the codebase:
   - B023: Fixed lambda variable binding in test loops by capturing loop variables with default parameters (15 fixes in `tests/test_api.py`).
   - SIM102: Combined nested `if` statements using `and` operator (7 fixes across `tests/test_hc_identification.py` and `tests/test_source_docstrings.py`).

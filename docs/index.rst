@@ -58,7 +58,7 @@ FuelLib requires:
 - matplotlib ≥3.0.0
 - rdkit ≥2022.3.1
 
-Development tools (Sphinx, Black, pytest) are available for developers installing from source; see the installation instructions in the `Contributing <development.html>`_ section.
+Development tools (Sphinx, Ruff, ty, pytest) are available for developers installing from source; see the installation instructions in the `Contributing <development.html>`_ section.
 
 .. toctree::
    :maxdepth: 4
@@ -66,6 +66,7 @@ Development tools (Sphinx, Black, pytest) are available for developers installin
    :caption: Contents:
 
    fuelprops
+   units
    tutorials
    sourcecode   
    development

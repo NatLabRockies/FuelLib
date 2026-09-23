@@ -5,9 +5,17 @@ import numpy as np
 import pandas as pd
 from get_pred_and_data import get_pred_and_data
 
+from fuellib.units import Units
+
 # Locate the tests baseline directory
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 TESTS_BASELINE_DIR = os.path.join(TESTS_DIR, "baselinePredictions")
+
+BOLD = "\033[1;1m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+BLUE = "\033[1;34m"
+STOP = "\033[0m"
 
 
 class CompTestCase(unittest.TestCase):
@@ -39,33 +47,39 @@ class CompTestCase(unittest.TestCase):
         total_checks = 0
         passed_checks = 0
 
-        print("\n\nAccuracy Regression Check via MAPE:")
+        print(f"\n\n{BLUE}Accuracy Regression Check via MAPE:{STOP}")
 
         for fuel_name in fuel_names:
             baseline_file = os.path.join(TESTS_BASELINE_DIR, f"{fuel_name}.csv")
-            df_base = pd.read_csv(baseline_file, skiprows=[1])
-            print(f"\n{fuel_name}:")
+            df_base = pd.read_csv(baseline_file)
+            print(f"\n{BOLD}{fuel_name}:{STOP}\n")
+            t_vals = df_base.Temperature.iloc[1:].to_numpy(dtype=float)
+            t_units = df_base.Temperature.iloc[0]
+            base_temps = Units.Quantity(t_vals, t_units).to("K")
 
             for prop in prop_names:
                 with self.subTest(fuel=fuel_name, prop=prop):
                     total_checks += 1
 
+                    base_props = Units.Quantity(
+                        df_base[prop].iloc[1:].to_numpy(dtype=float),
+                        df_base[prop].iloc[0],
+                    )
+                    valid_idxs = ~np.isnan(base_props)
+                    valid_temps = base_temps[valid_idxs]
+                    base_props = base_props[valid_idxs]
+
                     # Current model predictions and experimental reference data
                     T, data, pred = get_pred_and_data(fuel_name, prop)
 
-                    # Baseline: align stored baseline predictions to the same
-                    # temperature points, then compare against the same reference data.
-                    df_base_prop = df_base[["Temperature", prop]].dropna()
-                    baseline_t = df_base_prop["Temperature"].to_numpy(dtype=float)
                     self.assertTrue(
-                        np.array_equal(baseline_t, T),
+                        np.allclose(T, valid_temps),
                         msg=(
                             f"{fuel_name} / {prop}: baseline temperatures do not match "
                             "current data temperatures."
                         ),
                     )
-                    pred_base = df_base_prop[prop].to_numpy(dtype=float)
-                    mape_base = np.mean(np.abs(data - pred_base) / np.abs(data)) * 100
+                    mape_base = np.mean(np.abs(data - base_props) / np.abs(data)) * 100
                     mape = np.mean(np.abs(data - pred) / np.abs(data)) * 100
 
                     # Regression check: MAPE must not exceed Baseline.
@@ -76,24 +90,31 @@ class CompTestCase(unittest.TestCase):
                     if regression_ok:
                         passed_checks += 1
                         print(
-                            "  "
-                            f"✓ {prop:<{prop_width}}  "
-                            f"New={mape:8.4f}%  "
-                            f"Baseline={mape_base:8.4f}%"
+                            f"  {GREEN}"
+                            f"✓ {prop:<{prop_width}}"
+                            f"{STOP}"
+                            f"\n    Baseline   = {mape_base.magnitude:8.4f}%"
+                            f"\n    New        = {mape.magnitude:8.4f}%"
+                            f"\n    Difference = {mape.magnitude - mape_base.magnitude:8.4f}%"
+                            "\n"
                         )
                     else:
                         print(
-                            "  "
-                            f"✗ {prop:<{prop_width}}  "
-                            f"New={mape:8.4f}% exceeds "
-                            f"Baseline={mape_base:8.4f}%"
+                            f"  {RED}"
+                            f"✗ {prop:<{prop_width}}"
+                            f"{STOP}"
+                            f"\n    Baseline   = {mape_base.magnitude:8.4f}%"
+                            f"\n    New        = {mape.magnitude:8.4f}%"
+                            f"\n    Difference = {mape.magnitude - mape_base.magnitude:8.4f}%"
+                            "\n"
                         )
 
                     self.assertTrue(
                         regression_ok,
                         msg=(
                             f"{fuel_name} / {prop}: MAPE regressed from "
-                            f"{mape_base:.4f}% (baseline) to {mape:.4f}%."
+                            f"{mape_base.magnitude:.4f}% (baseline) to "
+                            f"{mape.magnitude:.4f}%."
                         ),
                     )
 

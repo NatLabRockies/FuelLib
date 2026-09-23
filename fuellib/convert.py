@@ -1,4 +1,4 @@
-"""Unit conversion functions."""
+"""Command Line Unit conversion functions."""
 
 from .constants import N_A, k_B
 
@@ -89,8 +89,8 @@ def epsilon_to_characteristic_temperature(epsilon_j_per_mol):
     :return: Characteristic temperature (epsilon/k_B) in Kelvin.
     :rtype: float
     """
-    epsilon_per_molecule = epsilon_j_per_mol / N_A
-    lj_welldepth_K = epsilon_per_molecule / k_B
+    epsilon_per_molecule = epsilon_j_per_mol / N_A.magnitude
+    lj_welldepth_K = epsilon_per_molecule / k_B.magnitude
     return lj_welldepth_K
 
 

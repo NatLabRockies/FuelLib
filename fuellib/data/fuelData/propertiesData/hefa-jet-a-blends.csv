@@ -1,5 +1,5 @@
 HEFA_concentration,Viscosity_TALL,Viscosity_CAME,Viscosity_MFAT,Density_TALL,Density_CAME,Density_MFAT
-wt percentage,mm2/s at -20 C,mm2/s at -20 C,mm2/s at -20 C,g/cm3 at 15 C,g/cm3 at 15 C,g/cm3 at 15 C
+wt percent,mm^2/s,mm^2/s,mm^2/s,g/cm^3,g/cm^3,g/cm^3
 0,3.781578947,3.781578947,3.781578947,0.8057,0.8057,0.8057
 10,3.889473684,3.884210526,3.947368421,0.8009,0.8012,0.8007
 20,3.963157895,3.989473684,4.097368421,0.7961,0.7966,0.7966

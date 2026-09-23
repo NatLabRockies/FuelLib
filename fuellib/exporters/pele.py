@@ -11,8 +11,18 @@ from scipy import stats as st
 
 import fuellib as fl
 
+from ..units import Units
+
 # Default data directory - use fuellib's embedded data
 FUELDATA_DIR = fl.get_fueldata_dir()
+
+
+def _magnitude(value, unit=None):
+    """Return a Quantity magnitude, optionally converted to ``unit``."""
+    if hasattr(value, "to"):
+        return value.to(unit).magnitude if unit is not None else value.magnitude
+    return value
+
 
 """
 Script that exports critical properties and initial mass fraction data
@@ -32,7 +42,7 @@ For detailed options, run:
 
 
 class UnitConverter:
-    """Unit conversion factors for different unit systems used in Pele exports."""
+    """Validate the unit system selected for a Pele export."""
 
     def __init__(self, units: str):
         """
@@ -43,7 +53,6 @@ class UnitConverter:
         """
         self.units = units.lower()
         self._validate_units()
-        self._set_conversion_factors()
 
     def _validate_units(self):
         """
@@ -53,25 +62,6 @@ class UnitConverter:
         """
         if self.units not in ["mks", "cgs"]:
             raise ValueError(f"Units must be 'mks' or 'cgs', got '{self.units}'")
-
-    def _set_conversion_factors(self):
-        """
-        Set conversion factors based on unit system.
-        """
-        if self.units == "cgs":
-            # Convert from MKS to CGS
-            self.MW = 1e3  # kg/mol to g/mol
-            self.Cp = 1e4  # J/kg/K to erg/g/K
-            self.Vm = 1e6  # m^3/mol to cm^3/mol
-            self.Lv = 1e4  # J/kg to erg/g
-            self.P = 1e1  # Pa to dyne/cm^2
-        else:
-            # MKS units (no conversion)
-            self.MW = 1.0
-            self.Cp = 1.0
-            self.Vm = 1.0
-            self.Lv = 1.0
-            self.P = 1.0
 
 
 def get_git_info():
@@ -213,18 +203,18 @@ def create_individual_compounds_dataframe(fuel, compound_names, converter):
             "Compound": compound_names,
             "Family": fuel.fam,
             "Y_0": fuel.Y_0,
-            "MW": fuel.MW * converter.MW,
-            "Tc": fuel.Tc,
-            "Pc": fuel.Pc * converter.P,
-            "Vc": fuel.Vc * converter.Vm,
-            "Tb": fuel.Tb,
-            "omega": fuel.omega,
-            "Vm_stp": fuel.Vm_stp * converter.Vm,
-            "Cp_A": Cp_A * converter.Cp,
-            "Cp_B": Cp_B * converter.Cp,
-            "Cp_C": Cp_C * converter.Cp,
-            "Cp_stp": Cp_A * converter.Cp,  # For PeleMP model
-            "Lv_stp": fuel.Lv_stp * converter.Lv,
+            "MW": list(fuel.MW),
+            "Tc": list(fuel.Tc),
+            "Pc": list(fuel.Pc),
+            "Vc": list(fuel.Vc),
+            "Tb": list(fuel.Tb),
+            "omega": list(fuel.omega),
+            "Vm_stp": list(fuel.Vm_stp),
+            "Cp_A": list(Cp_A),
+            "Cp_B": list(Cp_B),
+            "Cp_C": list(Cp_C),
+            "Cp_stp": list(Cp_A),  # For PeleMP model
+            "Lv_stp": list(fuel.Lv_stp),
         }
     )
 
@@ -260,18 +250,18 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
             "Compound": [export_mix_name],
             "Family": [st.mode(fuel.fam).mode],
             "Y_0": [1.0],
-            "MW": [fuel.mean_molecular_weight(fuel.Y_0) * converter.MW],
+            "MW": [fuel.mean_molecular_weight(fuel.Y_0)],
             "Tc": [fl.utility.mixing_rule(fuel.Tc, X)],
-            "Pc": [fl.utility.mixing_rule(fuel.Pc, X) * converter.P],
-            "Vc": [fl.utility.mixing_rule(fuel.Vc, X) * converter.Vm],
+            "Pc": [fl.utility.mixing_rule(fuel.Pc, X)],
+            "Vc": [fl.utility.mixing_rule(fuel.Vc, X)],
             "Tb": [fl.utility.mixing_rule(fuel.Tb, X)],
             "omega": [fl.utility.mixing_rule(fuel.omega, X)],
-            "Vm_stp": [fl.utility.mixing_rule(fuel.Vm_stp, X) * converter.Vm],
-            "Cp_A": [Cp_A * converter.Cp],
-            "Cp_B": [Cp_B * converter.Cp],
-            "Cp_C": [Cp_C * converter.Cp],
-            "Cp_stp": [Cp_A * converter.Cp],  # For MP model: Cp_stp = Cp_A
-            "Lv_stp": [fl.utility.mixing_rule(fuel.Lv_stp, X) * converter.Lv],
+            "Vm_stp": [fl.utility.mixing_rule(fuel.Vm_stp, X)],
+            "Cp_A": [Cp_A],
+            "Cp_B": [Cp_B],
+            "Cp_C": [Cp_C],
+            "Cp_stp": [Cp_A],  # For MP model: Cp_stp = Cp_A
+            "Lv_stp": [fl.utility.mixing_rule(fuel.Lv_stp, X)],
         }
     )
 
@@ -317,8 +307,8 @@ def export_pele(
     :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
     :type units: str, optional (default: "mks")
 
-    :param dep_fuel_names: List or single fuel that each compound deposits to.
-    :type dep_fuel_names: list of str, optional (default: None)
+    :param dep_fuel_names: List or single gas-phase species that each fuel species deposits to.
+    :type dep_fuel_names: list of str, optional (default: fuel species names)
 
     :param use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is False.
     :type use_pp_keys: bool, optional
@@ -397,13 +387,11 @@ def export_pele(
             f"\nCalculating GCM properties for individual compounds in {fuel.name}..."
         )
 
-        # Validate and setup deposition fuel names
-        if dep_fuel_names is None:
-            dep_fuel_names = compound_names
-        elif len(dep_fuel_names) == 1:
+        # Validate deposition fuel names
+        if dep_fuel_names is not None and len(dep_fuel_names) == 1:
             # If a single deposition fuel name is provided, use it for all compounds
             dep_fuel_names = [dep_fuel_names[0]] * len(compound_names)
-        elif len(dep_fuel_names) != len(compound_names):
+        elif dep_fuel_names is not None and len(dep_fuel_names) != len(compound_names):
             raise ValueError(
                 "Length of dep_fuel_names must be one or match the number of compounds in the fuel."
             )
@@ -420,9 +408,9 @@ def export_pele(
         # Get the actual compound name from the DataFrame (may be modified by create_mixture_dataframe)
         compound_names = df["Compound"].tolist()
 
-        # Setup mixture parameters
-        if dep_fuel_names is None:
-            dep_fuel_names = compound_names
+    # By default, each fuel species deposits to the same named gas-phase species.
+    if dep_fuel_names is None:
+        dep_fuel_names = compound_names
 
     # Specific properties required for GCM method
     if liq_prop_model.lower() == "gcm":
@@ -448,12 +436,12 @@ def export_pele(
             prop_names.append("psat")
 
         # Calculate density at 298.15 K
-        ref_T = 298.15
+        ref_T = Units.Quantity(298.15, "K")
         if export_mix:
             rho = fuel.mixture_density(fuel.Y_0, ref_T)
         else:
             rho = fuel.density(ref_T)
-        df["rho"] = rho
+        df["rho"] = [rho] if export_mix else list(rho)
 
         # Get Antoine coefficients
         if psat_antoine:
@@ -502,6 +490,8 @@ def export_pele(
     print(f"Writing properties to {file_name}.")
     if os.path.exists(file_name):
         os.remove(file_name)
+    if dep_fuel_names is None:
+        dep_fuel_names = df["Compound"].tolist()
     with open(file_name, "a") as f:
         f.write(
             f"# -----------------------------------------------------------------------------\n"
@@ -518,7 +508,7 @@ def export_pele(
         f.write(f"particles.Y_0 = {vec_to_str(df['Y_0'].tolist())}\n")
         f.write(f"particles.dep_fuel_species = {vec_to_str(dep_fuel_names)}\n")
         if liq_prop_model.lower() == "mp":
-            f.write(f"particles.fuel_ref_temp = {ref_T} # K\n")
+            f.write(f"particles.fuel_ref_temp = {ref_T.magnitude} # K\n")
 
         for comp_name in compound_names:
             f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
@@ -532,6 +522,7 @@ def export_pele(
                     # MP model: Write Cp_stp as 'cp' for each component
                     if liq_prop_model.lower() == "mp" and prop == "Cp_stp":
                         value = df.loc[df["Compound"] == comp_name, prop].values[0]
+                        value = _magnitude(value, unit_txt)
                         f.write(
                             f"particles.{comp_name}_cp = {value:.6f} # {unit_txt}\n"
                         )
@@ -561,6 +552,9 @@ def export_pele(
                         )
                     elif not (liq_prop_model.lower() == "mp" and prop == "Cp_stp"):
                         value = df.loc[df["Compound"] == comp_name, prop].values[0]
+                        value = _magnitude(
+                            value, unit_txt if unit_txt not in {"", "-"} else None
+                        )
                         f.write(
                             f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
                         )
@@ -585,13 +579,13 @@ def main():
     :param --dep_fuel_names: Space-separated list with len(fuel.compounds) or single fuel that all compounds deposit. Default is fuel.compounds.
     :type --dep_fuel_names: str, optional
 
-    :param --use_pp_keys: Use the PelePhysics key for each compound (True or False). Default is True.
+    :param --use-pp-keys: Use the PelePhysics key for each compound.
     :type --use_pp_keys: bool, optional
 
     :param --export_dir: Directory to export the properties. Default is the current working directory.
     :type --export_dir: str, optional
 
-    :param --export_mix: Option to export mixture properties of the fuel (True or False). Default is False.
+    :param --export-mix: Export mixture properties of the fuel.
     :type --export_mix: bool, optional
 
     :param --export_mix_name: Name the mixture if different than fuel_name. Default is fuel_name.
@@ -600,7 +594,7 @@ def main():
     :param --liq_prop_model: Model for liquid properties. Options are "gcm" (default) or "mp".
     :type --liq_prop_model: str, optional
 
-    :param --psat_antoine: Use Antoine coefficients for vapor pressure in MP model (True or False). Default is True.
+    :param --psat-antoine: Use Antoine coefficients for vapor pressure in the MP model.
     :type --psat_antoine: bool, optional
 
     :raises FileNotFoundError: If required files for the specified fuel are not found.
@@ -661,11 +655,11 @@ def main():
     # Optional argument for using PelePhysics key
     parser.add_argument(
         "-pp",
+        "--use-pp-keys",
         "--use_pp_keys",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=True,
-        metavar="{true,false}",
-        help="Use PelePhysics keys for each compound (optional, default: true).",
+        dest="use_pp_keys",
+        action="store_true",
+        help="Use PelePhysics keys for each compound.",
     )
 
     # Optional argument for export directory
@@ -680,11 +674,11 @@ def main():
     # Optional argument for exporting mixture properties
     parser.add_argument(
         "-m",
+        "--export-mix",
         "--export_mix",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=False,
-        metavar="{true,false}",
-        help="Export mixture properties of the fuel (optional, default: false).",
+        dest="export_mix",
+        action="store_true",
+        help="Export mixture properties of the fuel.",
     )
 
     # Optional argument for mixture name if different than fuel_name
@@ -708,11 +702,11 @@ def main():
     # Optional argument for printing Antoine coefficients in MP model
     parser.add_argument(
         "-psat",
+        "--psat-antoine",
         "--psat_antoine",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=True,
-        metavar="{true,false}",
-        help="Use Antoine coefficients for vapor pressure in MP model (optional, default: true).",
+        dest="psat_antoine",
+        action="store_true",
+        help="Use Antoine coefficients for vapor pressure in the MP model.",
     )
 
     # Parse arguments
@@ -748,6 +742,11 @@ def main():
 
     # Create the groupContribution object for the specified fuel
     fuel = fl.Fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
+    if dep_fuel_names is None and not export_mix:
+        if use_pp_keys and fuel.pelephysics_keys is not None:
+            dep_fuel_names = list(fuel.pelephysics_keys)
+        else:
+            dep_fuel_names = list(fuel.compounds)
 
     # Export properties for Pele
     export_pele(

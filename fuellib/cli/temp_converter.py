@@ -1,4 +1,4 @@
-"""Command-line tools to convert temperatures."""
+"""Command-line tools to convert temperatures (non-pint quantities)."""
 
 import argparse
 

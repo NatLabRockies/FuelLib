@@ -41,7 +41,7 @@ prop_names = [
 
 # Property units
 prop_units = {
-    "Temperature": "C",
+    "Temperature": "celsius",
     "Density": "g/cm^3",
     "Viscosity": "mm^2/s",
     "VaporPressure": "kPa",
