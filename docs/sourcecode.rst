@@ -54,9 +54,7 @@ FuelLib File Organization
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 
     - ``basic.py``: example script that demonstrates basic usage of FuelLib
-    - ``compositionPlots.py``: example script that generates composition plots for a given fuel
     - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
-    - ``mixtureProperties.py``: validation script that calculates properties of single component fuels and mixture properties of multicomponent fuels.
 
 Public API
 ----------

@@ -74,7 +74,7 @@ pixi install -e dev
 See the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page for more detailed setup instructions and contribution guidelines.
 
 ## Library Usage
-This repository includes multiple tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, [`tutorials/basic.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/basic.py), which is documented at [natlabrockies.github.io/FuelLib/tutorials-basic.html](https://natlabrockies.github.io/FuelLib/tutorials-basic.html). The script [`tutorials/mixtureProperties.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/mixtureProperties.py) calculates a given mixture's density, viscosity and vapor pressure from GC x GC data.  The results are plotted against data from NIST and [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).
+This repository includes tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, [`tutorials/basic.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/basic.py), which is documented at [natlabrockies.github.io/FuelLib/tutorials-basic.html](https://natlabrockies.github.io/FuelLib/tutorials-basic.html).
 
 ### Command-Line Tools
 After installing FuelLib using one of the methods above, you have access to several command-line tools for plotting, unit conversion, and exporting fuel data. A comprehensive list is provided in the documentation at [https://natlabrockies.github.io/FuelLib/tutorials-cli.html](https://natlabrockies.github.io/FuelLib/tutorials-cli.html).
