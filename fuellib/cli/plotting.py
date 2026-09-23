@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 import fuellib as fl
+from ..units import Units
 
 
 def plot_composition(
@@ -276,11 +277,11 @@ def plot_mixture_properties(
 
     # Default temperature ranges (in °C) for different properties
     default_ranges_by_property = {
-        "Density": [-40, 40],
-        "Viscosity": [-40, 100],
-        "VaporPressure": [0, 125],
-        "SurfaceTension": [-10, 40],
-        "ThermalConductivity": [0, 60],
+        "Density": Units.Quantity([-40, 40], "celsius"),
+        "Viscosity": Units.Quantity([-40, 100], "celsius"),
+        "VaporPressure": Units.Quantity([0, 125], "celsius"),
+        "SurfaceTension": Units.Quantity([-10, 40], "celsius"),
+        "ThermalConductivity": Units.Quantity([0, 60], "celsius"),
     }
 
     # Deprecated: fuel-specific ranges (kept for reference, now using property-based)
@@ -296,13 +297,12 @@ def plot_mixture_properties(
         "heptane": [-50, 100],
     }
 
-    # Y-axis labels
-    ylab = {
-        "Density": r"Density [g/cm$^3$]",
-        "Viscosity": r"Viscosity [mm$^2$/s]",
-        "VaporPressure": r"Vapor Pressure [kPa]",
-        "SurfaceTension": r"Surface Tension [N/m]",
-        "ThermalConductivity": r"Thermal Conductivity [W/m/K]",
+    default_units_by_property = {
+        "Density": "g/cm^3",
+        "Viscosity": "mm^2/s",
+        "VaporPressure": "kPa",
+        "SurfaceTension": "N/m",
+        "ThermalConductivity": "W/(m*K)",
     }
 
     # Line specs for different fuels (marker styles)
@@ -374,8 +374,13 @@ def plot_mixture_properties(
     def get_temp_range(prop_name):
         """Get default temperature range for a property."""
         return default_ranges_by_property.get(
-            prop_name, [0, 100]
-        )  # Fallback to [0, 100]
+            prop_name, Units.Quantity([0, 100], "celsius")
+        )
+
+    def get_property_label(prop_name, prop_units):
+        """Create a label using the unit specified by the data source."""
+        label = "Vapor Pressure" if prop_name == "VaporPressure" else prop_name
+        return rf"{label} [$\mathrm{{{prop_units}}}$]"
 
     def get_predictions_and_data(fuel_name, prop_name):
         """Get predicted and experimental data for a property."""
@@ -384,8 +389,9 @@ def plot_mixture_properties(
         # Try to load experimental data
         props_dir = fuel.fuelDataPropsDir
 
-        T_data = pd.Series(dtype=float)
-        prop_data = pd.Series(dtype=float)
+        T_data = Units.Quantity([], "celsius")
+        prop_units = default_units_by_property.get(prop_name, "dimensionless")
+        prop_data = Units.Quantity([], prop_units)
 
         if props_dir and os.path.exists(props_dir):
             # Check if metadata specifies a different props_data filename
@@ -395,49 +401,77 @@ def plot_mixture_properties(
             data_file = os.path.join(props_dir, f"{data_filename}.csv")
             if os.path.exists(data_file):
                 try:
+                    data_units = pd.read_csv(data_file, nrows=1)
                     data = pd.read_csv(data_file, skiprows=[1])
                     if prop_name in data.columns:
                         mask = data[prop_name].notna()
-                        T_data = data.loc[mask, "Temperature"]
-                        prop_data = data.loc[mask, prop_name]
+                        temp_units = data_units.at[0, "Temperature"]
+                        prop_units = data_units.at[0, prop_name]
+                        T_data = Units.Quantity(
+                            data.loc[mask, "Temperature"].to_numpy(), temp_units
+                        )
+                        prop_data = Units.Quantity(
+                            data.loc[mask, prop_name].to_numpy(), prop_units
+                        )
                 except (OSError, KeyError, ValueError):
                     pass
 
         # Generate predictions over temperature range
         # First check if experimental data exists - use its range if available
+        num_prediction_points = (
+            25
+            if prop_name == "SurfaceTension" and fuel.num_compounds > 20
+            else 100
+        )
         if len(T_data) > 0:
             # Use data range if available
-            T_pred = fl.convert.C2K(np.linspace(T_data.min(), T_data.max(), 100))
+            T_pred = Units.Quantity(
+                np.linspace(
+                    T_data.magnitude.min(),
+                    T_data.magnitude.max(),
+                    num_prediction_points,
+                ),
+                T_data.units,
+            ).to("K")
         else:
             # Use property-specific default range
-            temp_min, temp_max = get_temp_range(prop_name)
-            T_pred = fl.convert.C2K(np.linspace(temp_min, temp_max, 100))
+            temp_range = get_temp_range(prop_name)
+            T_pred = Units.Quantity(
+                np.linspace(
+                    temp_range.magnitude[0],
+                    temp_range.magnitude[1],
+                    num_prediction_points,
+                ),
+                temp_range.units,
+            ).to("K")
 
-        pred = np.zeros_like(T_pred)
+        pred = Units.Quantity(np.zeros_like(T_pred.magnitude), prop_units)
         Y_li = fuel.Y_0
 
         for i, T in enumerate(T_pred):
             try:
                 if prop_name == "Density":
-                    pred[i] = (
-                        fuel.mixture_density(Y_li, T) * 1.0e-03
-                    )  # Convert to g/cm^3
+                    pred[i] = fuel.mixture_density(Y_li, T).to(prop_units)
                 elif prop_name == "VaporPressure":
-                    pred[i] = (
-                        fuel.mixture_vapor_pressure(Y_li, T) * 1.0e-03
-                    )  # Convert to kPa
+                    pred[i] = fuel.mixture_vapor_pressure(Y_li, T).to(prop_units)
                 elif prop_name == "Viscosity":
-                    pred[i] = (
-                        fuel.mixture_kinematic_viscosity(Y_li, T) * 1.0e6
-                    )  # Convert to mm^2/s
+                    pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T).to(prop_units)
                 elif prop_name == "SurfaceTension":
-                    pred[i] = fuel.mixture_surface_tension(Y_li, T)
+                    pred[i] = fuel.mixture_surface_tension(Y_li, T).to(prop_units)
                 elif prop_name == "ThermalConductivity":
-                    pred[i] = fuel.mixture_thermal_conductivity(Y_li, T)
+                    pred[i] = fuel.mixture_thermal_conductivity(Y_li, T).to(
+                        prop_units
+                    )
             except (ValueError, TypeError, RuntimeError):
-                pred[i] = np.nan
+                pred.magnitude[i] = np.nan
 
-        return T_data, prop_data, T_pred, pred
+        return (
+            T_data.to("celsius").magnitude,
+            prop_data.magnitude,
+            T_pred.to("celsius").magnitude,
+            pred.magnitude,
+            prop_units,
+        )
 
     # Create figure with subplots
     n_props = len(property_names)
@@ -451,14 +485,14 @@ def plot_mixture_properties(
     # Plot properties for each fuel
     for i, prop_name in enumerate(property_names):
         for fuel_idx, fuel_name in enumerate(fuel_names):
-            T_data, prop_data, T_pred, pred = get_predictions_and_data(
+            T_data, prop_data, T_pred, pred, prop_units = get_predictions_and_data(
                 fuel_name, prop_name
             )
             line_color, marker_style = get_line_spec(fuel_name, fuel_index=fuel_idx)
 
             # Plot predictions
             ax[i].plot(
-                fl.convert.K2C(T_pred),
+                T_pred,
                 pred,
                 "-",
                 color=line_color,
@@ -483,7 +517,7 @@ def plot_mixture_properties(
 
         # Format subplot
         ax[i].set_xlabel("T [°C]", fontsize=18)
-        ax[i].set_ylabel(ylab.get(prop_name, prop_name), fontsize=18)
+        ax[i].set_ylabel(get_property_label(prop_name, prop_units), fontsize=18)
         ax[i].tick_params(labelsize=18)
         ax[i].grid(alpha=0.3)
 

@@ -8,26 +8,31 @@ def mixing_rule(var_n, X, pseudo_prop="arithmetic"):
     Mixing rules for computing mixture properties.
 
     :param var_n: Individual compound properties.
-    :type var_n: np.ndarray
+    :type var_n: np.ndarray or pint.Quantity[np.ndarray]
     :param X: Mole fractions of the compounds.
     :type X: np.ndarray
     :param pseudo_prop: Type of mean ("arithmetic" or "geometric").
     :type pseudo_prop: str, optional
     :return: Mixture property value.
-    :rtype: float
+    :rtype: float or pint.Quantity[float]
     """
-    num_comps = len(var_n)
+    units = getattr(var_n, "units", None)
+    values = var_n.magnitude if units is not None else np.asarray(var_n)
+    mole_fractions = np.asarray(X)
+
+    num_comps = len(values)
     var_mix = 0.0
     for i in range(num_comps):
         for j in range(num_comps):
             if pseudo_prop.casefold() == "geometric":
                 # Use geometric mean definition for the pseudo property
-                var_ij = (var_n[i] * var_n[j]) ** (0.5)
+                var_ij = (values[i] * values[j]) ** 0.5
             else:
                 # Use arithmetic definition for the pseudo property
-                var_ij = (var_n[i] + var_n[j]) / 2
-            var_mix += X[i] * X[j] * var_ij
-    return var_mix
+                var_ij = (values[i] + values[j]) / 2
+            var_mix += mole_fractions[i] * mole_fractions[j] * var_ij
+
+    return var_mix * units if units is not None else var_mix
 
 
 def droplet_volume(r):
