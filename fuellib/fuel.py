@@ -790,17 +790,15 @@ class Fuel:
             Tb = self.Tb.to("K")
             Lv_stp = self.Lv_stp.to("J/kg")
         else:
-            Tc = np.array([self.Tc[comp_idx].to("K")])
-            Tb = np.array([self.Tb[comp_idx].to("K")])
-            Lv_stp = PintUnits.Quantity(
-                np.array([self.Lv_stp[comp_idx].to("J/kg").magnitude]), "J/kg"
-            )
+            Tc = self.Tc[comp_idx : comp_idx + 1].to("K")
+            Tb = self.Tb[comp_idx : comp_idx + 1].to("K")
+            Lv_stp = self.Lv_stp[comp_idx : comp_idx + 1].to("J/kg")
 
         # Reduced temperatures
         Tr = T / Tc
         Trb = Tb / Tc
 
-        Lvi = PintUnits.Quantity(np.zeros_like(Tc), "J/kg")
+        Lvi = PintUnits.Quantity(np.zeros_like(Tc.magnitude), "J/kg")
         for i in range(len(Tc)):
             if T > Tc[i]:
                 Lvi[i] = 0.0
@@ -842,11 +840,11 @@ class Fuel:
         :rtype: pint.Quantity[np.ndarray]
         """
 
-        p = p.to("Pa")
+        p = p.to("bar")
         T = T.to("K")
         sigma_gas = sigma_gas.to("angstrom")
         epsilonByKB_gas = epsilonByKB_gas.to("K")
-        MW_gas = MW_gas.to("kg/mol")
+        MW_gas = MW_gas.to("g/mol")
 
         # Method of Tee for calculating liquid sigma and epsilon
         if correlation.casefold() == "Tee".casefold():
@@ -890,7 +888,7 @@ class Fuel:
         MW_i = self.MW.to("g/mol").magnitude
         M_AB_i = 2 * (MW_i * MW_gas) / (MW_i + MW_gas)  # g/mol, see Poling (11-3.1)
 
-        # Convert pressure from Pa to bar
+        # Pressure is already in bar.
         p = p.magnitude
 
         # Binary diffusion coefficients, Poling (11-4.1)
@@ -1133,7 +1131,6 @@ class Fuel:
         # Define or get temperature nodes for fit
         if Tvals is None:
             print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
-            # Initialize as zeros for now, calculated for each compound later
             X = self.Y2X(Yi)
             Tb = mixing_rule(self.Tb, X)
             T = PintUnits.Quantity(
@@ -1141,8 +1138,7 @@ class Fuel:
             )
         elif len(Tvals) == 2:
             T = PintUnits.Quantity(
-                np.linspace(Tvals[0].magnitude, Tvals[1].magnitude, 20),
-                "K",
+                np.linspace(Tvals[0].magnitude, Tvals[1].magnitude, 20), "K"
             )
         elif len(Tvals) > 2:
             T = Tvals

@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 
 import fuellib as fl
+from fuellib.units import PintUnits
 
 
 def _normalize_signature(sig):
@@ -132,14 +133,16 @@ class ApiContractTestCase(unittest.TestCase):
         constants_vals = {
             "k_B": "Boltzmann constant",
             "N_A": "Avogadro number",
+            "T_stp": "standard temperature",
         }
         for name in constants_vals:
             self.assertTrue(
                 hasattr(fl.constants, name), msg=f"fuellib.constants missing: {name}"
             )
             val = getattr(fl.constants, name)
-            self.assertIsInstance(
-                val, (int, float), msg=f"fuellib.constants.{name} should be numeric"
+            self.assertTrue(
+                hasattr(val, "magnitude") and hasattr(val, "units"),
+                msg=f"fuellib.constants.{name} should be a Pint Quantity",
             )
             print(f"  ✓ {name}")
 
@@ -151,7 +154,7 @@ class ApiContractTestCase(unittest.TestCase):
             "X2Y": "(self, Xi)",
             "Y2X": "(self, Yi)",
             "density": "(self, T, comp_idx=None)",
-            "diffusion_coeff": "(self, p, T, sigma_gas=3.62e-10, epsilonByKB_gas=97.0, MW_gas=0.02897, correlation='Tee')",
+            "diffusion_coeff": "(self, p, T, sigma_gas=Quantity(3.62, \"angstrom\"), epsilonByKB_gas=Quantity(97.0, \"kelvin\"), MW_gas=Quantity(0.02897, \"kilogram / mole\"), correlation='Tee')",
             "latent_heat_vaporization": "(self, T, comp_idx=None)",
             "mass2X": "(self, mass)",
             "mass2Y": "(self, mass)",
@@ -201,11 +204,11 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
             "decane": fl.Fuel("decane"),
             "posf10325": fl.Fuel("posf10325"),
         }
-        cls.T = 320.0
-        cls.p = 101325.0
+        cls.T = PintUnits.Quantity(320.0, "K")
+        cls.p = PintUnits.Quantity(101325.0, "Pa")
 
     def _assert_finite_and_positive(self, value):
-        arr = np.asarray(value)
+        arr = np.asarray(value.magnitude if hasattr(value, "magnitude") else value)
         self.assertTrue(np.all(np.isfinite(arr)))
         self.assertTrue(np.all(arr > 0.0))
 
@@ -261,7 +264,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 self.assertTrue(np.allclose(Yi, Yi_back, rtol=1e-10, atol=1e-12))
                 print("    ✓ Y2X/X2Y roundtrip")
 
-                mass = Yi * 1.0e-6
+                mass = PintUnits.Quantity(Yi * 1.0e-6, "kg")
                 self.assertTrue(
                     np.allclose(fuel.mass2Y(mass), Yi, rtol=1e-10, atol=1e-12)
                 )
@@ -325,8 +328,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Antoine coefficient fits (individual compounds)
                 A, B, C, D = fuel.psat_antoine_coeffs(
-                    Tvals=np.array([300.0, 340.0]),
-                    units="atm",
+                    Tvals=PintUnits.Quantity(np.array([300.0, 340.0]), "K"),
+                    units="mks",
                     correlation="Lee-Kesler",
                 )
                 self.assertEqual(len(A), fuel.num_compounds)
@@ -343,8 +346,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 # Antoine coefficient fits (mixture)
                 A_mix, B_mix, C_mix, D_mix = fuel.mixture_vapor_pressure_antoine_coeffs(
                     Yi,
-                    Tvals=np.array([300.0, 340.0]),
-                    units="bar",
+                    Tvals=PintUnits.Quantity(np.array([300.0, 340.0]), "K"),
+                    units="cgs",
                     correlation="Lee-Kesler",
                 )
                 # A, B, D must be positive; C can be negative (it's a temperature offset)
