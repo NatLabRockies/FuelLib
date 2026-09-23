@@ -18,7 +18,7 @@ from .convert import K2C
 from .utility import mixing_rule
 
 
-class fuel:
+class Fuel:
     """
     Class for handling group contribution calculations of thermodynamic and mixture properties.
 
@@ -1161,4 +1161,4 @@ class fuel:
         return np.sum(Yi * tc ** (-2)) ** (-0.5)
 
 
-__all__ = ["fuel"]
+__all__ = ["Fuel"]

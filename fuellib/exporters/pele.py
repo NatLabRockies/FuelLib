@@ -747,7 +747,7 @@ def main():
     print(f"    Fuel data directory: {fuel_data_dir}")
 
     # Create the groupContribution object for the specified fuel
-    fuel = fl.fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
 
     # Export properties for Pele
     export_pele(

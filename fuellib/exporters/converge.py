@@ -145,7 +145,7 @@ def export_converge(
     Export mixture fuel properties to csv files for Converge simulations.
 
     :param fuel: Fuel object containing properties to export.
-    :type fuel: fl.fuel
+    :type fuel: fl.Fuel
 
     :param path: Directory to save the input file.
     :type path: str, optional (default: current working directory)
@@ -320,7 +320,7 @@ def export_converge(
         :param T_array: Array of temperature values.
         :type T_array: np.ndarray
         :param fuel: Fuel object.
-        :type fuel: fl.fuel
+        :type fuel: fl.Fuel
         :return: Tuple of property arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
         :rtype: tuple
         """
@@ -359,7 +359,7 @@ def export_converge(
         :param T_array: Array of temperature values.
         :type T_array: np.ndarray
         :param fuel: Fuel object.
-        :type fuel: fl.fuel
+        :type fuel: fl.Fuel
         :param comp_idx: Index of the component.
         :type comp_idx: int
         :return: Tuple of property arrays (mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity).
@@ -646,7 +646,7 @@ def main():
     _ = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
 
     # Create the fuel object
-    fuel = fl.fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)
 
     # Export properties for Converge
     export_converge(

@@ -12,7 +12,7 @@ FuelLib File Organization
 - **gcmTableData:** directory that contains the pre-tabulated group contributions
 - **fuellib:** main package directory containing:
 
-    - ``fuel.py``: core :class:`fuel` class for Group Contribution Method calculations
+    - ``fuel.py``: core :class:`~fuellib.fuel.Fuel` class for Group Contribution Method calculations
     - ``constants.py``: physical constants (Boltzmann, Avogadro)
     - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
     - ``utility.py``: utility functions for mixture properties and droplet calculations

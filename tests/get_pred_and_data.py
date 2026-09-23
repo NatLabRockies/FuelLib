@@ -11,7 +11,7 @@ FUELDATA_PROPS_DIR = get_fueldata_props_dir()
 
 def get_pred_and_data(fuel_name, prop_name):
     # Get the fuel properties based on the GCM
-    fuel = fl.fuel(fuel_name)
+    fuel = fl.Fuel(fuel_name)
 
     data_file = f"{fuel_name}.csv"
     data = pd.read_csv(os.path.join(FUELDATA_PROPS_DIR, data_file), skiprows=[1])
