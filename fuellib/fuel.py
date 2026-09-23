@@ -574,7 +574,7 @@ class Fuel:
         """
 
         T = T.to("K")
-        theta = (T - T_stp) / Units.Quantity(700, "K")
+        theta = (T - Units.Quantity(298, "K")) / Units.Quantity(700, "K")
         if comp_idx is None:
             Cp_stp = self.Cp_stp
             Cp_B = self.Cp_B

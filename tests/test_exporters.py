@@ -45,11 +45,39 @@ def test_pele_individual_component():
         run_export_command(["fl-export-pele", "-f", "posf10264"], output_dir=tmpdir)
 
 
+def test_pele_default_deposition_species():
+    """Test that deposition species default to the emitted fuel species."""
+    for options, expected_species in [
+        ([], "n-C07 n-C10"),
+        (["-pp"], "NC7H16 NC10H22"),
+    ]:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            run_export_command(
+                ["fl-export-pele", "-f", "heptane-decane", *options],
+                output_dir=tmpdir,
+            )
+            output_file = os.path.join(tmpdir, "sprayPropsGCM_heptane-decane.inp")
+            with open(output_file) as output:
+                lines = output.readlines()
+
+            fuel_species = next(
+                line for line in lines if line.startswith("particles.fuel_species =")
+            )
+            dep_fuel_species = next(
+                line
+                for line in lines
+                if line.startswith("particles.dep_fuel_species =")
+            )
+
+            assert fuel_species.rstrip().endswith(expected_species)
+            assert dep_fuel_species.rstrip().endswith(expected_species)
+
+
 def test_pele_mixture_gcm():
     """Test fl-export-pele mixture export with GCM model."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-m", "true"], output_dir=tmpdir
+            ["fl-export-pele", "-f", "posf10264", "-m"], output_dir=tmpdir
         )
 
 
@@ -57,7 +85,7 @@ def test_pele_mixture_mp():
     """Test fl-export-pele mixture export with MP model."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-m", "true", "-l", "mp"],
+            ["fl-export-pele", "-f", "posf10264", "-m", "-l", "mp", "-psat"],
             output_dir=tmpdir,
         )
 
@@ -66,7 +94,7 @@ def test_pele_mixture_cgs():
     """Test fl-export-pele mixture export with CGS units."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-m", "true", "-u", "cgs"],
+            ["fl-export-pele", "-f", "posf10264", "-m", "-u", "cgs"],
             output_dir=tmpdir,
         )
 
@@ -95,7 +123,6 @@ def test_converge_mixture():
                 "-f",
                 "posf10264",
                 "-m",
-                "true",
                 "-t",
                 "280",
                 "-T",
@@ -145,7 +172,6 @@ def test_converge_custom_fuel_data_dir():
                 "-dir",
                 custom_fueldata,
                 "-m",
-                "true",
                 "-t",
                 "280",
                 "-T",

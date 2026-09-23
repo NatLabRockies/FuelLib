@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 import fuellib as fl
+from ..units import Units
 
 # Default data directory - use fuellib's embedded data
 FUELDATA_DIR = fl.get_fueldata_dir()
@@ -26,76 +27,34 @@ For detailed options, run:
 
 
 class UnitConverter:
-    """Unit conversion factors and labels for different unit systems."""
+    """MKS column labels for Converge property files."""
 
-    def __init__(self, units: str):
+    def __init__(self):
         """
-        Initialize converter for specified unit system.
-
-        :param units: Unit system ('cgs' or 'mks').
-        :type units: str
+        Initialize MKS labels.
         """
-        self.units = units.lower()
-        self._set_conversion_factors()
         self._set_labels()
-
-    def _set_conversion_factors(self):
-        """Set conversion factors based on unit system."""
-        if self.units == "cgs":
-            # Convert from MKS to CGS
-            self.mw = 1e3  # kg/mol to g/mol
-            self.mu = 1e2  # Pa*s to Poise
-            self.surface_tension = 1e7  # N/m to dyne/cm
-            self.Lv = 1e4  # J/kg to erg/g
-            self.P = 1e1  # Pa to dyne/cm^2
-            self.rho = 1e3  # kg/m^3 to g/cm^3
-            self.Cl = 1e4  # J/kg/K to erg/g/K
-            self.thermal_conductivity = 1e5  # W/m/K to erg/cm/s/K
-        else:
-            # MKS units (no conversion)
-            self.mw = 1
-            self.mu = 1
-            self.surface_tension = 1
-            self.Lv = 1
-            self.P = 1
-            self.rho = 1
-            self.Cl = 1
-            self.thermal_conductivity = 1
 
     def _set_labels(self):
         """Set unit labels for DataFrame columns."""
-        if self.units == "cgs":
-            self.labels = {
-                "temperature": "Temperature (K)",
-                "critical_temp": "Critical Temperature (K)",
-                "viscosity": "Viscosity (Poise)",
-                "surface_tension": "Surface Tension (dyne/cm)",
-                "heat_vaporization": "Heat of Vaporization (erg/g)",
-                "vapor_pressure": "Vapor Pressure (dyne/cm^2)",
-                "density": "Density (g/cm^3)",
-                "specific_heat": "Specific Heat (erg/g/K)",
-                "thermal_conductivity": "Thermal Conductivity (erg/cm/s/K)",
-                "molecular_weight": "Molecular Weight (g/mol)",
-            }
-        else:
-            self.labels = {
-                "temperature": "Temperature (K)",
-                "critical_temp": "Critical Temperature (K)",
-                "viscosity": "Viscosity (Pa*s)",
-                "surface_tension": "Surface Tension (N/m)",
-                "heat_vaporization": "Heat of Vaporization (J/kg)",
-                "vapor_pressure": "Vapor Pressure (Pa)",
-                "density": "Density (kg/m^3)",
-                "specific_heat": "Specific Heat (J/kg/K)",
-                "thermal_conductivity": "Thermal Conductivity (W/m/K)",
-                "molecular_weight": "Molecular Weight (kg/mol)",
-            }
+        self.labels = {
+            "temperature": "Temperature (K)",
+            "critical_temp": "Critical Temperature (K)",
+            "viscosity": "Viscosity (Pa*s)",
+            "surface_tension": "Surface Tension (N/m)",
+            "heat_vaporization": "Heat of Vaporization (J/kg)",
+            "vapor_pressure": "Vapor Pressure (Pa)",
+            "density": "Density (kg/m^3)",
+            "specific_heat": "Specific Heat (J/kg/K)",
+            "thermal_conductivity": "Thermal Conductivity (W/m/K)",
+            "molecular_weight": "Molecular Weight (kg/mol)",
+        }
 
     def create_data_dict(
         self, T, T_crit, mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
     ):
         """
-        Create a data dictionary with converted units and appropriate labels.
+        Create an MKS data dictionary for CSV output.
 
         :param T: Temperature array.
         :type T: np.ndarray
@@ -119,23 +78,24 @@ class UnitConverter:
         :rtype: dict
         """
         return {
-            self.labels["temperature"]: T,
-            self.labels["critical_temp"]: T_crit + np.zeros_like(T),
-            self.labels["viscosity"]: mu * self.mu,
-            self.labels["surface_tension"]: surface_tension * self.surface_tension,
-            self.labels["heat_vaporization"]: Lv * self.Lv,
-            self.labels["vapor_pressure"]: pv * self.P,
-            self.labels["density"]: rho * self.rho,
-            self.labels["specific_heat"]: Cl * self.Cl,
-            self.labels["thermal_conductivity"]: thermal_conductivity
-            * self.thermal_conductivity,
+            self.labels["temperature"]: T.to("K").magnitude,
+            self.labels["critical_temp"]: T_crit.to("K").magnitude
+            + np.zeros_like(T.magnitude),
+            self.labels["viscosity"]: mu.to("Pa*s").magnitude,
+            self.labels["surface_tension"]: surface_tension.to("N/m").magnitude,
+            self.labels["heat_vaporization"]: Lv.to("J/kg").magnitude,
+            self.labels["vapor_pressure"]: pv.to("Pa").magnitude,
+            self.labels["density"]: rho.to("kg/m^3").magnitude,
+            self.labels["specific_heat"]: Cl.to("J/(kg*K)").magnitude,
+            self.labels["thermal_conductivity"]: thermal_conductivity.to(
+                "W/(m*K)"
+            ).magnitude,
         }
 
 
 def export_converge(
     fuel,
     path=None,
-    units="mks",
     temp_min=0,
     temp_max=1000,
     temp_step=10,
@@ -149,9 +109,6 @@ def export_converge(
 
     :param path: Directory to save the input file.
     :type path: str, optional (default: current working directory)
-
-    :param units: Units for the properties ("mks" for SI, "cgs" for CGS).
-    :type units: str, optional (default: "mks")
 
     :param temp_min: Minimum temperature (K) for the property calculations.
     :type temp_min: float, optional (default: 0)
@@ -174,14 +131,15 @@ def export_converge(
     if path is None:
         path = os.getcwd()
 
+    temp_min = Units.Quantity(temp_min, "K") if not hasattr(temp_min, "to") else temp_min.to("K")
+    temp_max = Units.Quantity(temp_max, "K") if not hasattr(temp_max, "to") else temp_max.to("K")
+    temp_step = Units.Quantity(temp_step, "K") if not hasattr(temp_step, "to") else temp_step.to("K")
+
     # Input validation
     if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
         raise TypeError("fuel parameter must be a valid FuelLib fuel object")
 
-    if units.lower() not in ["mks", "cgs"]:
-        raise ValueError(f"Units must be 'mks' or 'cgs', got '{units}'")
-
-    if temp_min < 0:
+    if temp_min.magnitude < 0:
         raise ValueError(f"temp_min must be non-negative, got {temp_min}")
 
     if temp_max <= temp_min:
@@ -189,7 +147,7 @@ def export_converge(
             f"temp_max ({temp_max}) must be greater than temp_min ({temp_min})"
         )
 
-    if temp_step <= 0:
+    if temp_step.magnitude <= 0:
         raise ValueError(f"temp_step must be positive, got {temp_step}")
 
     # Ensure output directory exists
@@ -206,7 +164,7 @@ def export_converge(
         components = fuel.compounds
 
     # Initialize unit converter
-    converter = UnitConverter(units)
+    converter = UnitConverter()
 
     def nearest_temp(x, base=temp_step):
         """
@@ -219,7 +177,7 @@ def export_converge(
         :return: Rounded temperature.
         :rtype: float
         """
-        return base * round(x / base)
+        return base * round((x / base).magnitude)
 
     def nearest_floor(array, value):
         """
@@ -325,13 +283,15 @@ def export_converge(
         :rtype: tuple
         """
         # Initialize property arrays
-        mu = np.zeros_like(T_array)
-        surface_tension = np.zeros_like(T_array)
-        Lv = np.zeros_like(T_array)
-        pv = np.zeros_like(T_array)
-        rho = np.zeros_like(T_array)
-        Cl = np.zeros_like(T_array)
-        thermal_conductivity = np.zeros_like(T_array)
+        mu = Units.Quantity(np.zeros_like(T_array.magnitude), "Pa*s")
+        surface_tension = Units.Quantity(np.zeros_like(T_array.magnitude), "N/m")
+        Lv = Units.Quantity(np.zeros_like(T_array.magnitude), "J/kg")
+        pv = Units.Quantity(np.zeros_like(T_array.magnitude), "Pa")
+        rho = Units.Quantity(np.zeros_like(T_array.magnitude), "kg/m^3")
+        Cl = Units.Quantity(np.zeros_like(T_array.magnitude), "J/(kg*K)")
+        thermal_conductivity = Units.Quantity(
+            np.zeros_like(T_array.magnitude), "W/(m*K)"
+        )
 
         for k, Temp in enumerate(T_array):
             Y_li = fuel.Y_0
@@ -366,13 +326,15 @@ def export_converge(
         :rtype: tuple
         """
         # Initialize property arrays
-        mu = np.zeros_like(T_array)
-        surface_tension = np.zeros_like(T_array)
-        Lv = np.zeros_like(T_array)
-        pv = np.zeros_like(T_array)
-        rho = np.zeros_like(T_array)
-        Cl = np.zeros_like(T_array)
-        thermal_conductivity = np.zeros_like(T_array)
+        mu = Units.Quantity(np.zeros_like(T_array.magnitude), "Pa*s")
+        surface_tension = Units.Quantity(np.zeros_like(T_array.magnitude), "N/m")
+        Lv = Units.Quantity(np.zeros_like(T_array.magnitude), "J/kg")
+        pv = Units.Quantity(np.zeros_like(T_array.magnitude), "Pa")
+        rho = Units.Quantity(np.zeros_like(T_array.magnitude), "kg/m^3")
+        Cl = Units.Quantity(np.zeros_like(T_array.magnitude), "J/(kg*K)")
+        thermal_conductivity = Units.Quantity(
+            np.zeros_like(T_array.magnitude), "W/(m*K)"
+        )
 
         for k, Temp in enumerate(T_array):
             rho[k] = fuel.density(Temp, comp_idx=comp_idx)  # kg/m^3
@@ -411,8 +373,10 @@ def export_converge(
 
     if export_mix:
         # Vector of evenly spaced temperatures
-        nT = int((temp_max - temp_min) / temp_step) + 1
-        T = np.linspace(temp_min, temp_max, nT)
+        nT = int(((temp_max - temp_min) / temp_step).magnitude) + 1
+        T = Units.Quantity(
+            np.linspace(temp_min.magnitude, temp_max.magnitude, nT), "K"
+        )
 
         # Estimate freezing point and critical temp of mixture
         T_freeze = fl.utility.mixing_rule(fuel.Tm, fuel.Y2X(fuel.Y_0))
@@ -438,17 +402,25 @@ def export_converge(
             T_min_allowed = nearest_temp(T_freeze)
 
             # Create temperature array up to critical temperature
-            maxtemps = np.array(
-                [
-                    nearest_temp(T_crit) - temp_step,
-                    nearest_temp(T_crit),
-                    nearest_temp(T_crit) + temp_step,
-                ]
+            maxtemps = Units.Quantity(
+                np.array(
+                    [
+                        (nearest_temp(T_crit) - temp_step).magnitude,
+                        nearest_temp(T_crit).magnitude,
+                        (nearest_temp(T_crit) + temp_step).magnitude,
+                    ]
+                ),
+                "K",
             )
             T_nearest_floor = nearest_floor(maxtemps, T_crit)
-            nT = int((T_nearest_floor - T_min_allowed) / temp_step) + 1
-            T = np.linspace(T_min_allowed, T_nearest_floor, nT)
-            T = np.append(T, T_crit)
+            nT = int(((T_nearest_floor - T_min_allowed) / temp_step).magnitude) + 1
+            T = Units.Quantity(
+                np.linspace(T_min_allowed.magnitude, T_nearest_floor.magnitude, nT),
+                "K",
+            )
+            T = Units.Quantity(
+                np.append(T.magnitude, T_crit.to("K").magnitude), "K"
+            )
             T_max_allowed = T_crit
         # Calculate GCM properties for a range of temperatures
         comp_text = "" if export_mix else f"for {compound}"
@@ -500,7 +472,7 @@ def export_converge(
             "Component": fuel.compounds,
             "Mass Fraction": fuel.Y_0,
             "Mole Fraction": fuel.Y2X(fuel.Y_0),
-            converter.labels["molecular_weight"]: fuel.MW * converter.mw,
+            converter.labels["molecular_weight"]: fuel.MW.to("kg/mol").magnitude,
         }
         export_properties_to_csv(composition_file, composition_data)
 
@@ -515,9 +487,6 @@ def main():
     :param --fuel_data_dir: Directory where fuel data files are located.
     :type --fuel_data_dir: str, optional (default: FuelLib/fuelData)
 
-    :param --units: Units for critical properties. Options are mks or cgs.
-    :type --units: str, optional (default: mks)
-
     :param --temp_min: Minimum temperature (K) for the property calculations.
     :type --temp_min: float, optional (default: 0 K)
 
@@ -530,8 +499,8 @@ def main():
     :param --export_dir: Directory to export the properties.
     :type --export_dir: str, optional (default: current working directory)
 
-    :param --export_mix: Whether to export individual component or mixture properties.
-    :type --export_mix: bool, optional (default: False)
+    :param --export-mix: Export mixture properties instead of component properties.
+    :type --export-mix: bool, optional (default: False)
 
     :raises FileNotFoundError: If required files for the specified fuel are not found.
     """
@@ -557,16 +526,6 @@ def main():
         default=FUELDATA_DIR,
         metavar="PATH",
         help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
-    )
-
-    # Optional argument for units
-    # Default is 'mks', but can be set to 'cgs'
-    parser.add_argument(
-        "-u",
-        "--units",
-        default="mks",
-        metavar="{mks,cgs}",
-        help="Units for critical properties (optional, default: mks).",
     )
 
     # Optional argument for minimum temperature
@@ -611,18 +570,17 @@ def main():
     # Optional argument for exporting mixture properties
     parser.add_argument(
         "-m",
+        "--export-mix",
         "--export_mix",
-        type=lambda x: str(x).lower() in ["true", "1"],
-        default=False,
-        metavar="{true,false}",
-        help="Export mixture properties of the fuel (optional, default: false).",
+        dest="export_mix",
+        action="store_true",
+        help="Export mixture properties instead of component properties.",
     )
 
     # Parse arguments
     args = parser.parse_args()
     fuel_name = args.fuel_name
     fuel_data_dir = args.fuel_data_dir
-    units = args.units.lower()
     temp_min = args.temp_min
     temp_max = args.temp_max
     temp_step = args.temp_step
@@ -634,7 +592,7 @@ def main():
     print(f"    Fuel name: {fuel_name}")
     if export_mix:
         print("    Exporting mixture properties: True")
-    print(f"    Units: {units}")
+    print("    Units: mks")
     print(f"    Minimum temperature: {temp_min} K")
     print(f"    Maximum temperature: {temp_max} K")
     print(f"    Temperature step size: {temp_step} K")
@@ -652,7 +610,6 @@ def main():
     export_converge(
         fuel,
         path=export_dir,
-        units=units,
         temp_min=temp_min,
         temp_max=temp_max,
         temp_step=temp_step,

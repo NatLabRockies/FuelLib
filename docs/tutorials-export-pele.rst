@@ -123,13 +123,13 @@ There are many additional options that can be specified when running the ``fl-ex
 - ``-decomp, --fuel_decomp_name NAME``: Name of the decomposition file (optional). If not provided, defaults to fuel name.
 - ``-dir, --fuel_data_dir PATH``: Directory containing the fuel data files. Default: ``FuelLib/fuelData``.
 - ``-u, --units {mks,cgs}``: Units for the properties. Default: ``mks`` (use ``cgs`` for PeleC).
-- ``-dep, --dep_fuel_names NAME [NAME ...]``: Gas-phase species that liquid fuel deposits to. Default: fuel compound names.
-- ``-pp, --use_pp_keys {true,false}``: Use PelePhysics keys for each compound. Default: ``true``.
+- ``-dep, --dep_fuel_names NAME [NAME ...]``: Gas-phase species that liquid fuel deposits to. Default: the emitted fuel species names.
+- ``-pp, --use-pp-keys``: Use PelePhysics keys for each compound.
 - ``-o, --export_dir PATH``: Directory to export the file. Default: ``./exportData``.
-- ``-m, --export_mix {true,false}``: Export fuel as a single mixture species. Default: ``false``.
-- ``-mn, --export_mix_name NAME``: Name of the mixture species if ``-m`` is set to true. Default: fuel name.
+- ``-m, --export-mix``: Export fuel as a single mixture species.
+- ``-mn, --export_mix_name NAME``: Name of the mixture species if ``-m`` is set. Default: fuel name.
 - ``-l, --liq_prop_model {gcm,mp}``: Liquid property model to use. Default: ``gcm``.
-- ``-psat, --psat_antoine {true,false}``: Use Antoine coefficients for vapor pressure in MP model. Default: ``true``.
+- ``-psat, --psat-antoine``: Use Antoine coefficients for vapor pressure in the MP model.
 
 Liquid Species Deposit to Single Gas-Phase Species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -163,11 +163,11 @@ Export Liquid Fuel as Single Mixture Species
 
 To export mixture properties of a multicomponent fuel as a single component, run: ::
 
-    fl-export-pele -f heptane-decane -m true
+    fl-export-pele -f heptane-decane -m
 
 Or with long options: ::
 
-    fl-export-pele --fuel_name heptane-decane --export_mix true
+    fl-export-pele --fuel_name heptane-decane --export-mix
 
 This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_mixture_heptane-decane.inp``: ::
 
@@ -242,10 +242,10 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsMP_hepta
     particles.NC10H22_rho = 726.195341 # kg/m^3
     particles.NC10H22_psat = 4.380101435197679 1702.1569216938776 -60.0774808903445 100000.0 # Pa
 
-Users can choose to not use Antoine coefficients for vapor pressure in the MP model by specifying ``--psat_antoine False`` when running the export command: ::
+To include Antoine coefficients for vapor pressure in the MP model, specify ``--psat-antoine``: ::
     
-    fl-export-pele --fuel_name heptane-decane --liq_prop_model mp --psat_antoine False
+    fl-export-pele --fuel_name heptane-decane --liq_prop_model mp --psat-antoine
 
-This generates a similar input file as above, but without the Antoine coefficients for vapor pressure.
+This generates the MP input file with Antoine coefficients for vapor pressure.
 
 .. footbibliography::

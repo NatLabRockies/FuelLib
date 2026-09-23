@@ -56,15 +56,15 @@ There are several additional options that can be specified when running the ``fl
 - ``-T, --temp_max K``: Maximum temperature for property calculations. Default: ``1000``.
 - ``-s, --temp_step K``: Step size for temperature. Default: ``10``.
 - ``-o, --export_dir PATH``: Directory to export the file. Default: ``./exportData``.
-- ``-m, --export_mix {true,false}``: Export mixture properties only (no individual components). Default: ``false``.
+- ``-m, --export-mix``: Export mixture properties only (no individual components).
 
 For example, run the following command to export mixture properties from 273 K to 550 K with 5 K steps: ::
     
-    fl-export-converge -f posf10325 -m true -t 273 -T 550 -s 5
+    fl-export-converge -f posf10325 -m -t 273 -T 550 -s 5
 
 Or with long options: ::
     
-    fl-export-converge --fuel_name posf10325 --export_mix true --temp_min 273 --temp_max 550 --temp_step 5
+    fl-export-converge --fuel_name posf10325 --export-mix --temp_min 273 --temp_max 550 --temp_step 5
 
 
 This generates the file ``FuelLib/exportData/mixturePropsGCM_posf10325.csv`` with mixture 
