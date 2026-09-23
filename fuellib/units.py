@@ -2,6 +2,6 @@
 
 import pint
 
-PintUnits = pint.UnitRegistry()
+Units = pint.UnitRegistry()
 
-__all__ = ["PintUnits"]
+__all__ = ["Units"]

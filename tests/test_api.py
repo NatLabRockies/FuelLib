@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 
 import fuellib as fl
-from fuellib.units import PintUnits
+from fuellib.units import Units
 
 
 def _normalize_signature(sig):
@@ -204,8 +204,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
             "decane": fl.Fuel("decane"),
             "posf10325": fl.Fuel("posf10325"),
         }
-        cls.T = PintUnits.Quantity(320.0, "K")
-        cls.p = PintUnits.Quantity(101325.0, "Pa")
+        cls.T = Units.Quantity(320.0, "K")
+        cls.p = Units.Quantity(101325.0, "Pa")
 
     def _assert_finite_and_positive(self, value):
         arr = np.asarray(value.magnitude if hasattr(value, "magnitude") else value)
@@ -264,7 +264,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 self.assertTrue(np.allclose(Yi, Yi_back, rtol=1e-10, atol=1e-12))
                 print("    ✓ Y2X/X2Y roundtrip")
 
-                mass = PintUnits.Quantity(Yi * 1.0e-6, "kg")
+                mass = Units.Quantity(Yi * 1.0e-6, "kg")
                 self.assertTrue(
                     np.allclose(fuel.mass2Y(mass), Yi, rtol=1e-10, atol=1e-12)
                 )
@@ -328,7 +328,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Antoine coefficient fits (individual compounds)
                 A, B, C, D = fuel.psat_antoine_coeffs(
-                    Tvals=PintUnits.Quantity(np.array([300.0, 340.0]), "K"),
+                    Tvals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="mks",
                     correlation="Lee-Kesler",
                 )
@@ -346,7 +346,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 # Antoine coefficient fits (mixture)
                 A_mix, B_mix, C_mix, D_mix = fuel.mixture_vapor_pressure_antoine_coeffs(
                     Yi,
-                    Tvals=PintUnits.Quantity(np.array([300.0, 340.0]), "K"),
+                    Tvals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="cgs",
                     correlation="Lee-Kesler",
                 )

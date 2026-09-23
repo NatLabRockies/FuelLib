@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from get_pred_and_data import get_pred_and_data
 
-from fuellib.units import PintUnits
+from fuellib.units import Units
 
 # Locate the tests baseline directory
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -55,13 +55,13 @@ class CompTestCase(unittest.TestCase):
             print(f"\n{BOLD}{fuel_name}:{STOP}\n")
             t_vals = df_base.Temperature.iloc[1:].to_numpy(dtype=float)
             t_units = df_base.Temperature.iloc[0]
-            base_temps = PintUnits.Quantity(t_vals, t_units).to("K")
+            base_temps = Units.Quantity(t_vals, t_units).to("K")
 
             for prop in prop_names:
                 with self.subTest(fuel=fuel_name, prop=prop):
                     total_checks += 1
 
-                    base_props = PintUnits.Quantity(
+                    base_props = Units.Quantity(
                         df_base[prop].iloc[1:].to_numpy(dtype=float),
                         df_base[prop].iloc[0],
                     )

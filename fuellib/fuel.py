@@ -15,7 +15,7 @@ from ._data_locator import (
     get_metadata_decomp_name,
 )
 from .types import PintArray
-from .units import PintUnits
+from .units import Units
 from .utility import mixing_rule
 from .constants import T_stp, Sigma_gas, EpsilonByKB_gas, MW_gas
 
@@ -326,59 +326,59 @@ class Fuel:
         # Molecular weights
 
         _mw = np.matmul(self.Nij, _mwk)
-        self.MW = PintUnits.Quantity(_mw, "g/mol").to("kg/mol")
+        self.MW = Units.Quantity(_mw, "g/mol").to("kg/mol")
 
         # T_c (critical temperature)
         _tc = 181.128 * np.log(np.matmul(self.Nij, _Tck))
-        self.Tc = PintUnits.Quantity(_tc, "K")
+        self.Tc = Units.Quantity(_tc, "K")
 
         # p_c (critical pressure)
         _pc = 1.3705 + (np.matmul(self.Nij, _Pck) + 0.10022) ** (-2)
-        self.Pc = PintUnits.Quantity(_pc, "bar").to("Pa")
+        self.Pc = Units.Quantity(_pc, "bar").to("Pa")
 
         # V_c (critical volume)
         _vc = -0.00435 + np.matmul(self.Nij, _Vck)
-        self.Vc = PintUnits.Quantity(_vc, "m^3/kmol").to("m^3/mol")
+        self.Vc = Units.Quantity(_vc, "m^3/kmol").to("m^3/mol")
 
         # T_b (boiling temperature)
         _tb = 204.359 * np.log(np.matmul(self.Nij, _Tbk))
-        self.Tb = PintUnits.Quantity(_tb, "K")
+        self.Tb = Units.Quantity(_tb, "K")
 
         # T_m (melting temperature)
         _tm = 102.425 * np.log(np.matmul(self.Nij, _Tmk))
-        self.Tm = PintUnits.Quantity(_tm, "K")
+        self.Tm = Units.Quantity(_tm, "K")
 
         # H_f (enthalpy of formation)
         _hf = 10.835 + np.matmul(self.Nij, _hfk)
-        self.Hf = PintUnits.Quantity(_hf, "kJ/mol").to("J/mol")
+        self.Hf = Units.Quantity(_hf, "kJ/mol").to("J/mol")
 
         # G_f (Gibbs free energy)
         _gf = -14.828 + np.matmul(self.Nij, _gfk)
-        self.Gf = PintUnits.Quantity(_gf, "kJ/mol").to("J/mol")
+        self.Gf = Units.Quantity(_gf, "kJ/mol").to("J/mol")
 
         # H_v,stp (enthalpy of vaporization at 298 K)
         _hv_stp = 6.829 + np.matmul(self.Nij, _hvk)
-        self.Hv_stp = PintUnits.Quantity(_hv_stp, "kJ/mol").to("J/mol")
+        self.Hv_stp = Units.Quantity(_hv_stp, "kJ/mol").to("J/mol")
 
         # omega (accentric factor)
         _omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (
             1.0 / 0.5050
         )
-        self.omega = PintUnits.Quantity(_omega, "")
+        self.omega = Units.Quantity(_omega, "")
 
         # V_m (molar liquid volume at 298 K)
         _vm_stp = 0.01211 + np.matmul(self.Nij, _Vmk)
-        self.Vm_stp = PintUnits.Quantity(_vm_stp, "m^3/kmol").to("m^3/mol")
+        self.Vm_stp = Units.Quantity(_vm_stp, "m^3/kmol").to("m^3/mol")
 
         # C_p,stp (molar specific heat at 298 K)
         _cp_stp = np.matmul(self.Nij, _cpak) - 19.7779
-        self.Cp_stp = PintUnits.Quantity(_cp_stp, "J/(mol*K)")
+        self.Cp_stp = Units.Quantity(_cp_stp, "J/(mol*K)")
 
         # Temperature corrections for C_p
         _cp_b = np.matmul(self.Nij, _cpbk)
-        self.Cp_B = PintUnits.Quantity(_cp_b, "J/(mol*K)")
+        self.Cp_B = Units.Quantity(_cp_b, "J/(mol*K)")
         _cp_c = np.matmul(self.Nij, _cpck)
-        self.Cp_C = PintUnits.Quantity(_cp_c, "J/(mol*K)")
+        self.Cp_C = Units.Quantity(_cp_c, "J/(mol*K)")
 
         # L_v,stp (latent heat of vaporization at 298 K)
         self.Lv_stp = (self.Hv_stp / self.MW).to("J/kg")
@@ -388,10 +388,10 @@ class Fuel:
         _lj_tc = self.Tc.to("K").magnitude
         _lj_pc = self.Pc.to("atm").magnitude
         _epsilon_by_kb = (0.7915 + 0.1693 * _lj_w) * _lj_tc
-        self.epsilonByKB = PintUnits.Quantity(_epsilon_by_kb, "K")
+        self.epsilonByKB = Units.Quantity(_epsilon_by_kb, "K")
 
         _sigma = (2.3551 - 0.0874 * _lj_w) * (_lj_tc / _lj_pc) ** (1.0 / 3)  
-        self.sigma = PintUnits.Quantity(_sigma, "angstrom").to("m")
+        self.sigma = Units.Quantity(_sigma, "angstrom").to("m")
 
     # -------------------------------------------------------------------------
     # Member functions
@@ -408,7 +408,7 @@ class Fuel:
         if np.sum(Yi) != 0:
             Mbar =  1 / np.sum(Yi / self.MW)
         else:
-            Mbar = PintUnits.Quantity(0.0, "kg/mol")
+            Mbar = Units.Quantity(0.0, "kg/mol")
         
         return Mbar
 
@@ -538,7 +538,7 @@ class Fuel:
 
         # RHS of Dutt's equation (4.23) in Viscosity of Liquids
         rhs = -3.0171 + (442.78 + 1.6452 * Tb) / (T + 239 - 0.19 * Tb)
-        nu_i = PintUnits.Quantity(np.exp(rhs), "mm^2/s").to("m^2/s")
+        nu_i = Units.Quantity(np.exp(rhs), "mm^2/s").to("m^2/s")
 
         return nu_i
 
@@ -574,7 +574,7 @@ class Fuel:
         """
 
         T = T.to("K")
-        theta = (T - T_stp) / PintUnits.Quantity(700, "K")
+        theta = (T - T_stp) / Units.Quantity(700, "K")
         if comp_idx is None:
             Cp_stp = self.Cp_stp
             Cp_B = self.Cp_B
@@ -693,11 +693,11 @@ class Fuel:
         if Tvals is None:
             print("Tvals not specified, using [273.15, Tb_i] for each compound.")
             # Initialize as zeros for now, calculated for each compound later
-            T = PintUnits.Quantity(np.zeros(20), "K")
+            T = Units.Quantity(np.zeros(20), "K")
         elif len(Tvals) == 2:
             T_low = Tvals[0].magnitude
             T_high = Tvals[1].magnitude
-            T = PintUnits.Quantity(np.linspace(T_low, T_high, 20),"K",)
+            T = Units.Quantity(np.linspace(T_low, T_high, 20),"K",)
         elif len(Tvals) > 2:
             T = Tvals
         else:
@@ -712,7 +712,7 @@ class Fuel:
         # unit independent. "mks" (meter-kilogram-second) and "cgs"
         # D is the Pa-to-target-unit conversion factor, applied only when evaluating
         # psat(T) = D * 10**(A - B/(T + C)) in Pele.
-        D = PintUnits.Quantity(1, "Pa").to(units)
+        D = Units.Quantity(1, "Pa").to(units)
 
         # Fit Antoine coefficients for each compound
         A = np.zeros(self.num_compounds)
@@ -721,7 +721,7 @@ class Fuel:
         for i in range(self.num_compounds):
             # Update T if not specified
             if Tvals is None:
-                T = PintUnits.Quantity(
+                T = Units.Quantity(
                     np.linspace(273.15, self.Tb[i].magnitude, 20), "K"
                 )
             T_magnitude = T.to("K").magnitude
@@ -747,7 +747,7 @@ class Fuel:
         :rtype: pint.Quantity[np.ndarray]
         """
 
-        Tstp = PintUnits.Quantity(298, "K")
+        Tstp = Units.Quantity(298, "K")
         T = T.to("K")
         if comp_idx is None:
             Tc = self.Tc.to("K")
@@ -798,7 +798,7 @@ class Fuel:
         Tr = T / Tc
         Trb = Tb / Tc
 
-        Lvi = PintUnits.Quantity(np.zeros_like(Tc.magnitude), "J/kg")
+        Lvi = Units.Quantity(np.zeros_like(Tc.magnitude), "J/kg")
         for i in range(len(Tc)):
             if T > Tc[i]:
                 Lvi.magnitude[i] = 0.0
@@ -898,7 +898,7 @@ class Fuel:
             * (T**1.5)
             / (p * M_AB_i**0.5 * sigmaAB_i**2 * omegaD_i)
         )  # cm^2/s
-        return PintUnits.Quantity(D_AB_i, "cm^2/s").to("m^2/s")
+        return Units.Quantity(D_AB_i, "cm^2/s").to("m^2/s")
 
     def surface_tension(self, T, comp_idx=None, correlation="Brock-Bird"):
         """
@@ -942,7 +942,7 @@ class Fuel:
 
         st = Pc ** (2.0 / 3.0) * Tc ** (1.0 / 3.0) * Q * (1 - Tr) ** (11.0 / 9.0)
 
-        st = PintUnits.Quantity(st, "dyn/cm").to("N/m")
+        st = Units.Quantity(st, "dyn/cm").to("N/m")
         if comp_idx is not None:
             st = st[0]
 
@@ -1000,7 +1000,7 @@ class Fuel:
 
         if comp_idx is not None:
             tc = tc[0]
-        return PintUnits.Quantity(tc, "W/(m*K)")
+        return Units.Quantity(tc, "W/(m*K)")
 
     # --- Mixture functions ---
     def mixture_density(self, Yi, T):
@@ -1051,7 +1051,7 @@ class Fuel:
             # Default: Kendall-Monroe mixing correlation
             nu = np.sum(Xi * (nu_i ** (1.0 / 3.0))) ** 3.0
 
-        return PintUnits.Quantity(nu, "m^2/s")
+        return Units.Quantity(nu, "m^2/s")
 
     def mixture_dynamic_viscosity(self, Yi, T, correlation="Kendall-Monroe"):
         """
@@ -1133,11 +1133,11 @@ class Fuel:
             print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
             X = self.Y2X(Yi)
             Tb = mixing_rule(self.Tb, X)
-            T = PintUnits.Quantity(
+            T = Units.Quantity(
                 np.linspace(273.15, np.min(Tb.to("K").magnitude), 20), "K"
             )
         elif len(Tvals) == 2:
-            T = PintUnits.Quantity(
+            T = Units.Quantity(
                 np.linspace(Tvals[0].magnitude, Tvals[1].magnitude, 20), "K"
             )
         elif len(Tvals) > 2:
@@ -1167,7 +1167,7 @@ class Fuel:
         # unit independent. "mks" (meter-kilogram-second) and "cgs"
         # D is the Pa-to-target-unit conversion factor, applied only when evaluating
         # psat(T) = D * 10**(A - B/(T + C)) in Pele.
-        D = PintUnits.Quantity(1, "Pa").to(units)
+        D = Units.Quantity(1, "Pa").to(units)
 
         T_magnitude = T.to("K").magnitude
         Pvals = np.zeros_like(T_magnitude)
@@ -1226,7 +1226,7 @@ class Fuel:
         """
         T = T.to("K")
         tc = self.thermal_conductivity(T).to("W/(m*K)").magnitude
-        return PintUnits.Quantity(np.sum(Yi * tc ** (-2)) ** (-0.5), "W/(m*K)")
+        return Units.Quantity(np.sum(Yi * tc ** (-2)) ** (-0.5), "W/(m*K)")
 
 
 __all__ = ["Fuel"]

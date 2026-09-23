@@ -5,7 +5,7 @@ import pandas as pd
 
 import fuellib as fl
 from fuellib._data_locator import get_fueldata_props_dir
-from fuellib.units import PintUnits
+from fuellib.units import Units
 
 FUELDATA_PROPS_DIR = get_fueldata_props_dir()
 
@@ -19,16 +19,16 @@ def get_pred_and_data(fuel_name, prop_name):
 
     t_vals = data.Temperature.iloc[1:].to_numpy(dtype=float)
     t_units = data.Temperature.iloc[0]
-    data_temps = PintUnits.Quantity(t_vals, t_units).to("K")
+    data_temps = Units.Quantity(t_vals, t_units).to("K")
 
     data_vals = data[prop_name].iloc[1:].to_numpy(dtype=float)
     data_units = data[prop_name].iloc[0]
-    data_props = PintUnits.Quantity(data_vals, data_units)
+    data_props = Units.Quantity(data_vals, data_units)
 
     valid_idxs = ~np.isnan(data_props)
     data_temps = data_temps[valid_idxs]
     data_props = data_props[valid_idxs]
-    pred_props = PintUnits.Quantity(np.zeros_like(data_props.magnitude), data_units)
+    pred_props = Units.Quantity(np.zeros_like(data_props.magnitude), data_units)
 
     for i, t in enumerate(data_temps):
         if prop_name == "Density":
