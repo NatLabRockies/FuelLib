@@ -2,13 +2,14 @@ import inspect
 import unittest
 
 import numpy as np
+import pint
 
 import fuellib as fl
 from fuellib.units import Units
 
 
 def _normalize_signature(sig):
-    """Normalize path-like defaults so signatures are stable across machines."""
+    """Normalize non-portable and Pint defaults for stable signature comparisons."""
 
     parts = []
     for name, param in sig.parameters.items():
@@ -20,6 +21,10 @@ def _normalize_signature(sig):
             and param.default.endswith("exportData")
         ):
             text = "path='<EXPORTDATA_PATH>'"
+        elif isinstance(param.default, pint.Quantity):
+            text = (
+                f'{name}=Quantity({param.default.magnitude!r}, "{param.default.units}")'
+            )
         parts.append(text)
     return f"({', '.join(parts)})"
 
