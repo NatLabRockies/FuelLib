@@ -15,6 +15,8 @@ from ._data_locator import (
     get_metadata_decomp_name,
 )
 from .convert import K2C
+from .types import FloatArray, PintArray, PintScalar
+from .units import PintUnits
 from .utility import mixing_rule
 
 
@@ -305,68 +307,69 @@ class Fuel:
             return row.iloc[:, 1:].to_numpy().flatten()
 
         # Table data for functional groups (num_compounds,)
-        Tck = get_row("tck")  # critical temperature (1)
-        Pck = get_row("pck")  # critical pressure (bar)
-        Vck = get_row("vck")  # critical volume (m^3/kmol)
-        Tbk = get_row("tbk")  # boiling temperature (1)
-        Tmk = get_row("tmk")  # melting point temperature (1)
-        hfk = get_row("hfk")  # enthalpy of formation, (kJ/mol)
-        gfk = get_row("gfk")  # Gibbs energy (kJ/mol)
-        hvk = get_row("hvk")  # latent heat of vaporization (kJ/mol)
-        wk = get_row("wk")  # accentric factor (1)
-        Vmk = get_row("vmk")  # liquid molar volume fraction (m^3/kmol)
-        cpak = get_row("CpAk")  # specific heat values (J/mol/K)
-        cpbk = get_row("CpBk")  # specific heat values (J/mol/K)
-        cpck = get_row("CpCk")  # specific heat values (J/mol/K)
-        mwk = get_row("MW")  # molecular weights (g/mol)
+        _Tck = get_row("tck")  # critical temperature (1)
+        _Pck = get_row("pck")  # critical pressure (bar)
+        _Vck = get_row("vck")  # critical volume (m^3/kmol)
+        _Tbk = get_row("tbk")  # boiling temperature (1)
+        _Tmk = get_row("tmk")  # melting point temperature (1)
+        _hfk = get_row("hfk")  # enthalpy of formation, (kJ/mol)
+        _gfk = get_row("gfk")  # Gibbs energy (kJ/mol)
+        _hvk = get_row("hvk")  # latent heat of vaporization (kJ/mol)
+        _wk = get_row("wk")  # accentric factor (1)
+        _Vmk = get_row("vmk")  # liquid molar volume fraction (m^3/kmol)
+        _cpak = get_row("CpAk")  # specific heat values (J/mol/K)
+        _cpbk = get_row("CpBk")  # specific heat values (J/mol/K)
+        _cpck = get_row("CpCk")  # specific heat values (J/mol/K)
+        _mwk = get_row("MW")  # molecular weights (g/mol)
 
         # --- Compute critical properties at standard temp (num_compounds,)
         # Molecular weights
-        self.MW = np.matmul(self.Nij, mwk)  # g/mol
+
+        self.MW = np.matmul(self.Nij, _mwk)  # g/mol
         self.MW *= 1e-3  # Convert to kg/mol
 
         # T_c (critical temperature)
-        self.Tc = 181.128 * np.log(np.matmul(self.Nij, Tck))  # K
+        self.Tc = 181.128 * np.log(np.matmul(self.Nij, _Tck))  # K
 
         # p_c (critical pressure)
-        self.Pc = 1.3705 + (np.matmul(self.Nij, Pck) + 0.10022) ** (-2)  # bar
+        self.Pc = 1.3705 + (np.matmul(self.Nij, _Pck) + 0.10022) ** (-2)  # bar
         self.Pc *= 1e5  # Convert to Pa from bar
 
         # V_c (critical volume)
-        self.Vc = -0.00435 + (np.matmul(self.Nij, Vck))  # m^3/kmol
+        self.Vc = -0.00435 + (np.matmul(self.Nij, _Vck))  # m^3/kmol
         self.Vc *= 1e-3  # Convert to m^3/mol
 
         # T_b (boiling temperature)
-        self.Tb = 204.359 * np.log(np.matmul(self.Nij, Tbk))  # K
+        self.Tb = 204.359 * np.log(np.matmul(self.Nij, _Tbk))  # K
 
         # T_m (melting temperature)
-        self.Tm = 102.425 * np.log(np.matmul(self.Nij, Tmk))  # K
+        self.Tm = 102.425 * np.log(np.matmul(self.Nij, _Tmk))  # K
 
         # H_f (enthalpy of formation)
-        self.Hf = 10.835 + np.matmul(self.Nij, hfk)  # kJ/mol
+        self.Hf = 10.835 + np.matmul(self.Nij, _hfk)  # kJ/mol
         self.Hf *= 1e3  # Convert to J/mol
 
         # G_f (Gibbs free energy)
-        self.Gf = -14.828 + np.matmul(self.Nij, gfk)  # kJ/mol
+        self.Gf = -14.828 + np.matmul(self.Nij, _gfk)  # kJ/mol
         self.Gf *= 1e3  # Convert to J/mol
 
         # H_v,stp (enthalpy of vaporization at 298 K)
-        self.Hv_stp = 6.829 + (np.matmul(self.Nij, hvk))  # kJ/mol
+        self.Hv_stp = 6.829 + (np.matmul(self.Nij, _hvk))  # kJ/mol
         self.Hv_stp *= 1e3  # Convert to J/mol
 
         # omega (accentric factor)
-        self.omega = 0.4085 * np.log(np.matmul(self.Nij, wk) + 1.1507) ** (1.0 / 0.5050)
+        self.omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (1.0 / 0.5050)
 
         # V_m (molar liquid volume at 298 K)
-        self.Vm_stp = 0.01211 + np.matmul(self.Nij, Vmk)  # m^3/kmol
+        self.Vm_stp = 0.01211 + np.matmul(self.Nij, _Vmk)  # m^3/kmol
         self.Vm_stp *= 1e-3  # Convert to m^3/mol
 
         # C_p,stp (molar specific heat at 298 K)
-        self.Cp_stp = np.matmul(self.Nij, cpak) - 19.7779  # J/mol/K
+        self.Cp_stp = np.matmul(self.Nij, _cpak) - 19.7779  # J/mol/K
 
         # Temperature corrections for C_p
-        self.Cp_B = np.matmul(self.Nij, cpbk)
-        self.Cp_C = np.matmul(self.Nij, cpck)
+        self.Cp_B = np.matmul(self.Nij, _cpbk)
+        self.Cp_C = np.matmul(self.Nij, _cpck)
 
         # L_v,stp (latent heat of vaporization at 298 K)
         self.Lv_stp = self.Hv_stp / self.MW  # J/kg
