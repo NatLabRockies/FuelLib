@@ -85,6 +85,27 @@ environment:
 Run ``uv lock`` to regenerate ``uv.lock`` after changing dependencies in
 ``pyproject.toml``, keeping installs reproducible across machines.
 
+Working with Units (pint)
+--------------------------
+
+FuelLib's public API is unit-aware: physical quantities (e.g. ``Fuel.MW``,
+``Fuel.Tc``, ``Fuel.Pc``) are `pint <https://pint.readthedocs.io>`_
+``Quantity`` objects rather than bare ``float``/``np.ndarray`` values. When
+contributing new code that creates or consumes physical quantities:
+
+- Always build quantities using the shared registry, ``fuellib.units.Units``
+  (e.g. ``Units.Quantity(value, "K")``), instead of instantiating a new
+  ``pint.UnitRegistry()``. Quantities from different registries are not
+  compatible with one another.
+- Convert between units with ``.to("target_unit")``; access the raw numeric
+  value with ``.magnitude`` only at boundaries (e.g. plotting, exporting,
+  passing to non-pint-aware libraries).
+- Reuse the type aliases in ``fuellib/types.py`` (``FloatArray``,
+  ``PintScalar``, ``PintArray``) when annotating new functions.
+- Do not reintroduce bare-float return types for existing public
+  ``Fuel``/``utility`` APIs; this would reverse an intentional breaking
+  change (see ``CHANGELOG.md``).
+
 Updating the Changelog
 -----------------------
 
