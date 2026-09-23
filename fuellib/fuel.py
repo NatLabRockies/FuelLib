@@ -655,7 +655,7 @@ class Fuel:
 
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).
         :type Tvals: np.ndarray, optional
-        :param units: Units for pressure in fit ("mks", "cgs", "bar", "atm")
+        :param units: Units for pressure in fit ("mks", "cgs")
         :type units: str, optional
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :type correlation: str, optional
@@ -680,14 +680,11 @@ class Fuel:
             """Antoine equation for vapor pressure."""
             return A - B / (T + C)
 
-        # Determine conversion factor for pressure in MKS, CGS, bar, or atm
-        D = 1  # default is Pa
-        if units.lower() == "bar":
-            D = 1e5
-        elif units.lower() == "atm":
-            D = 1.01325e5
-        elif units.lower() == "cgs":
-            D = 1 / 10  # dyne/cm^2
+        # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
+        # unit independent. "mks" (meter-kilogram-second) and "cgs"
+        # D is the Pa-to-target-unit conversion factor, applied only when evaluating
+        # psat(T) = D * 10**(A - B/(T + C)) in Pele.
+        D = 10 if units.lower() == "cgs" else 1  # Pa -> dyne/cm^2, else Pa (mks)
 
         # Fit Antoine coefficients for each compound
         A = np.zeros(self.num_compounds)
@@ -699,7 +696,7 @@ class Fuel:
                 T = np.linspace(273.15, self.Tb[i], 20)
             Pvals = np.zeros_like(T)
             for k in range(len(T)):
-                Pvals[k] = 1 / D * self.psat(T[k], correlation=correlation)[i]
+                Pvals[k] = self.psat(T[k], correlation=correlation)[i]
 
             logP = np.log10(Pvals)
             popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])
@@ -1066,7 +1063,7 @@ class Fuel:
         :type Yi: np.ndarray
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
         :type Tvals: np.ndarray, optional
-        :param units: Units for pressure in fit ("mks", "cgs", "bar", "atm")
+        :param units: Units for pressure in fit ("mks", "cgs")
         :type units: str, optional
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :type correlation: str, optional
@@ -1106,20 +1103,15 @@ class Fuel:
             """
             return A - B / (T + C)
 
-        # Determine conversion factor for pressure in MKS, CGS, bar, or atm
-        D = 1  # default is Pa
-        if units.lower() == "bar":
-            D = 1e5
-        elif units.lower() == "atm":
-            D = 1.01325e5
-        elif units.lower() == "cgs":
-            D = 1 / 10  # dyne/cm^2
+        # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
+        # unit independent. "mks" (meter-kilogram-second) and "cgs"
+        # D is the Pa-to-target-unit conversion factor, applied only when evaluating
+        # psat(T) = D * 10**(A - B/(T + C)) in Pele.
+        D = 10 if units.lower() == "cgs" else 1  # Pa -> dyne/cm^2, else Pa (mks)
 
         Pvals = np.zeros_like(T)
         for k in range(len(T)):
-            Pvals[k] = (
-                self.mixture_vapor_pressure(Yi, T[k], correlation=correlation) / D
-            )
+            Pvals[k] = self.mixture_vapor_pressure(Yi, T[k], correlation=correlation)
 
         logP = np.log10(Pvals)
         popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])  # initial guess
