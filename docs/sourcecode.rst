@@ -47,7 +47,7 @@ FuelLib File Organization
     - ``test_accuracy.py``: unit test used in CI for verifying new model predictions preserve accuracy
     - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
-    - ``test_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
+    - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
     - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
 
