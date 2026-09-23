@@ -801,7 +801,7 @@ class Fuel:
         Lvi = PintUnits.Quantity(np.zeros_like(Tc.magnitude), "J/kg")
         for i in range(len(Tc)):
             if T > Tc[i]:
-                Lvi[i] = 0.0
+                Lvi.magnitude[i] = 0.0
             else:
                 Lvi[i] = Lv_stp[i] * (((1.0 - Tr[i]) / (1.0 - Trb[i])) ** 0.38)
 
