@@ -14,10 +14,10 @@ from ._data_locator import (
     get_gcmtable_dir,
     get_metadata_decomp_name,
 )
-from .convert import K2C
-from .types import FloatArray, PintArray, PintScalar
+from .types import PintArray
 from .units import PintUnits
 from .utility import mixing_rule
+from .constants import T_stp, Sigma_gas, EpsilonByKB_gas, MW_gas
 
 
 class Fuel:
@@ -67,49 +67,49 @@ class Fuel:
     num_groups: int
 
     #: Molecular weights in kg/mol. Shape: (num_compounds,)
-    MW: np.ndarray
+    MW: PintArray
 
     #: Critical temperatures in K. Shape: (num_compounds,)
-    Tc: np.ndarray
+    Tc: PintArray
 
     #: Critical pressures in Pa. Shape: (num_compounds,)
-    Pc: np.ndarray
+    Pc: PintArray
 
     #: Critical volumes in m³/mol. Shape: (num_compounds,)
-    Vc: np.ndarray
+    Vc: PintArray
 
     #: Boiling temperatures in K. Shape: (num_compounds,)
-    Tb: np.ndarray
+    Tb: PintArray
 
     #: Melting temperatures in K. Shape: (num_compounds,)
-    Tm: np.ndarray
+    Tm: PintArray
 
     #: Enthalpy of formation in J/mol. Shape: (num_compounds,)
-    Hf: np.ndarray
+    Hf: PintArray
 
     #: Gibbs free energy in J/mol. Shape: (num_compounds,)
-    Gf: np.ndarray
+    Gf: PintArray
 
     #: Enthalpy of vaporization at 298 K in J/mol. Shape: (num_compounds,)
-    Hv_stp: np.ndarray
+    Hv_stp: PintArray
 
     #: Latent heat of vaporization at 298 K in J/kg. Shape: (num_compounds,)
-    Lv_stp: np.ndarray
+    Lv_stp: PintArray
 
     #: Molar specific heat at 298 K in J/mol/K. Shape: (num_compounds,)
-    Cp_stp: np.ndarray
+    Cp_stp: PintArray
 
     #: Molar liquid volume at 298 K in m³/mol. Shape: (num_compounds,)
-    Vm_stp: np.ndarray
+    Vm_stp: PintArray
 
     #: Acentric factors. Shape: (num_compounds,)
-    omega: np.ndarray
+    omega: PintArray
 
     #: Lennard-Jones collision diameters in m. Shape: (num_compounds,)
-    sigma: np.ndarray
+    sigma: PintArray
 
     #: Lennard-Jones well depths in K. Shape: (num_compounds,)
-    epsilonByKB: np.ndarray
+    epsilonByKB: PintArray
 
     #: Hydrocarbon types ("n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene")
     hc_type: np.ndarray
@@ -325,62 +325,73 @@ class Fuel:
         # --- Compute critical properties at standard temp (num_compounds,)
         # Molecular weights
 
-        self.MW = np.matmul(self.Nij, _mwk)  # g/mol
-        self.MW *= 1e-3  # Convert to kg/mol
+        _mw = np.matmul(self.Nij, _mwk)
+        self.MW = PintUnits.Quantity(_mw, "g/mol").to("kg/mol")
 
         # T_c (critical temperature)
-        self.Tc = 181.128 * np.log(np.matmul(self.Nij, _Tck))  # K
+        _tc = 181.128 * np.log(np.matmul(self.Nij, _Tck))
+        self.Tc = PintUnits.Quantity(_tc, "K")
 
         # p_c (critical pressure)
-        self.Pc = 1.3705 + (np.matmul(self.Nij, _Pck) + 0.10022) ** (-2)  # bar
-        self.Pc *= 1e5  # Convert to Pa from bar
+        _pc = 1.3705 + (np.matmul(self.Nij, _Pck) + 0.10022) ** (-2)
+        self.Pc = PintUnits.Quantity(_pc, "bar").to("Pa")
 
         # V_c (critical volume)
-        self.Vc = -0.00435 + (np.matmul(self.Nij, _Vck))  # m^3/kmol
-        self.Vc *= 1e-3  # Convert to m^3/mol
+        _vc = -0.00435 + np.matmul(self.Nij, _Vck)
+        self.Vc = PintUnits.Quantity(_vc, "m^3/kmol").to("m^3/mol")
 
         # T_b (boiling temperature)
-        self.Tb = 204.359 * np.log(np.matmul(self.Nij, _Tbk))  # K
+        _tb = 204.359 * np.log(np.matmul(self.Nij, _Tbk))
+        self.Tb = PintUnits.Quantity(_tb, "K")
 
         # T_m (melting temperature)
-        self.Tm = 102.425 * np.log(np.matmul(self.Nij, _Tmk))  # K
+        _tm = 102.425 * np.log(np.matmul(self.Nij, _Tmk))
+        self.Tm = PintUnits.Quantity(_tm, "K")
 
         # H_f (enthalpy of formation)
-        self.Hf = 10.835 + np.matmul(self.Nij, _hfk)  # kJ/mol
-        self.Hf *= 1e3  # Convert to J/mol
+        _hf = 10.835 + np.matmul(self.Nij, _hfk)
+        self.Hf = PintUnits.Quantity(_hf, "kJ/mol").to("J/mol")
 
         # G_f (Gibbs free energy)
-        self.Gf = -14.828 + np.matmul(self.Nij, _gfk)  # kJ/mol
-        self.Gf *= 1e3  # Convert to J/mol
+        _gf = -14.828 + np.matmul(self.Nij, _gfk)
+        self.Gf = PintUnits.Quantity(_gf, "kJ/mol").to("J/mol")
 
         # H_v,stp (enthalpy of vaporization at 298 K)
-        self.Hv_stp = 6.829 + (np.matmul(self.Nij, _hvk))  # kJ/mol
-        self.Hv_stp *= 1e3  # Convert to J/mol
+        _hv_stp = 6.829 + np.matmul(self.Nij, _hvk)
+        self.Hv_stp = PintUnits.Quantity(_hv_stp, "kJ/mol").to("J/mol")
 
         # omega (accentric factor)
-        self.omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (1.0 / 0.5050)
+        _omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (
+            1.0 / 0.5050
+        )
+        self.omega = PintUnits.Quantity(_omega, "")
 
         # V_m (molar liquid volume at 298 K)
-        self.Vm_stp = 0.01211 + np.matmul(self.Nij, _Vmk)  # m^3/kmol
-        self.Vm_stp *= 1e-3  # Convert to m^3/mol
+        _vm_stp = 0.01211 + np.matmul(self.Nij, _Vmk)
+        self.Vm_stp = PintUnits.Quantity(_vm_stp, "m^3/kmol").to("m^3/mol")
 
         # C_p,stp (molar specific heat at 298 K)
-        self.Cp_stp = np.matmul(self.Nij, _cpak) - 19.7779  # J/mol/K
+        _cp_stp = np.matmul(self.Nij, _cpak) - 19.7779
+        self.Cp_stp = PintUnits.Quantity(_cp_stp, "J/(mol*K)")
 
         # Temperature corrections for C_p
-        self.Cp_B = np.matmul(self.Nij, _cpbk)
-        self.Cp_C = np.matmul(self.Nij, _cpck)
+        _cp_b = np.matmul(self.Nij, _cpbk)
+        self.Cp_B = PintUnits.Quantity(_cp_b, "J/(mol*K)")
+        _cp_c = np.matmul(self.Nij, _cpck)
+        self.Cp_C = PintUnits.Quantity(_cp_c, "J/(mol*K)")
 
         # L_v,stp (latent heat of vaporization at 298 K)
-        self.Lv_stp = self.Hv_stp / self.MW  # J/kg
+        self.Lv_stp = (self.Hv_stp / self.MW).to("J/kg")
 
         # Lennard-Jones parameters for diffusion calculations (Tee et al. 1966)
-        self.epsilonByKB = (0.7915 + 0.1693 * self.omega) * self.Tc  # K
-        Pc_atm = self.Pc / 101325  # atm
-        self.sigma = (2.3551 - 0.0874 * self.omega) * (self.Tc / Pc_atm) ** (
-            1.0 / 3
-        )  # Angstroms
-        self.sigma *= 1e-10  # Convert from Angstroms to m
+        _lj_w = self.omega.magnitude
+        _lj_tc = self.Tc.to("K").magnitude
+        _lj_pc = self.Pc.to("atm").magnitude
+        _epsilon_by_kb = (0.7915 + 0.1693 * _lj_w) * _lj_tc
+        self.epsilonByKB = PintUnits.Quantity(_epsilon_by_kb, "K")
+
+        _sigma = (2.3551 - 0.0874 * _lj_w) * (_lj_tc / _lj_pc) ** (1.0 / 3)  
+        self.sigma = PintUnits.Quantity(_sigma, "angstrom").to("m")
 
     # -------------------------------------------------------------------------
     # Member functions
@@ -392,13 +403,13 @@ class Fuel:
         :param Yi: Mass fractions of each compound.
         :type Yi: np.ndarray
         :return: Mean molecular weight of the mixture in kg/mol.
-        :rtype: float
+        :rtype: pint.Quantity[float]
         """
         if np.sum(Yi) != 0:
-            Mbar = 1 / np.sum(Yi / self.MW)  # mean molar weight of the mixture
+            Mbar =  1 / np.sum(Yi / self.MW)
         else:
-            Mbar = 0.0
-
+            Mbar = PintUnits.Quantity(0.0, "kg/mol")
+        
         return Mbar
 
     def mass2Y(self, mass):
@@ -406,16 +417,17 @@ class Fuel:
         Calculate the mass fractions from the mass of each component.
 
         :param mass: Mass of each compound.
-        :type mass: np.ndarray
+        :type mass: pint.Quantity[np.ndarray]
         :return: Mass fractions of the compounds (shape: num_compounds,).
         :rtype: np.ndarray
         """
         # Normalize to get group mole fractions
+        mass = mass.to("kg")
         total_mass = np.sum(mass)
         if total_mass != 0:
-            Yi = mass / total_mass
+            Yi = (mass / total_mass).magnitude
         else:
-            Yi = np.zeros_like(self.MW)
+            Yi = np.zeros_like(self.MW.magnitude)
 
         return Yi
 
@@ -424,19 +436,21 @@ class Fuel:
         Calculate the mole fractions from the mass of each component.
 
         :param mass: Mass of each compound.
-        :type mass: np.ndarray
+        :type mass: pint.Quantity[np.ndarray]
         :return: Mass fractions of the compounds (shape: num_compounds,).
         :rtype: np.ndarray
         """
+        mass = mass.to("kg")
+
         # Calculate the number of moles for each compound
         num_mole = mass / self.MW
 
         # Normalize to get group mole fractions
         total_moles = np.sum(num_mole)
         if total_moles != 0:
-            Xi = num_mole / total_moles
+            Xi = (num_mole / total_moles).magnitude
         else:
-            Xi = np.zeros_like(self.MW)
+            Xi = np.zeros_like(self.MW.magnitude)
 
         return Xi
 
@@ -455,9 +469,9 @@ class Fuel:
         # Normalize to get group mass fractions
         total_mass = np.sum(mass)
         if total_mass != 0:
-            Yi = mass / total_mass
+            Yi = (mass / total_mass).magnitude
         else:
-            Yi = np.zeros_like(self.MW)
+            Yi = np.zeros_like(self.MW.magnitude)
 
         return Yi
 
@@ -472,9 +486,9 @@ class Fuel:
         """
         Mbar = self.mean_molecular_weight(Yi)
         if np.sum(Yi) != 0:
-            Xi = Mbar * Yi / self.MW
+            Xi = (Mbar * Yi / self.MW).magnitude
         else:
-            Xi = np.zeros_like(self.MW)
+            Xi = np.zeros_like(self.MW.magnitude)
 
         return Xi
 
@@ -483,20 +497,21 @@ class Fuel:
         Calculate the density of each component at temperature T.
 
         :param T: Temperature of the mixture in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Density of each compound in kg/m^3.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
+        T = T.to("K")
         if comp_idx is None:
-            MW = self.MW  # kg/mol
-            Vm = self.molar_liquid_vol(T)  # m^3/mol
+            MW = self.MW
+            Vm = self.molar_liquid_vol(T)
         else:
-            MW = self.MW[comp_idx]  # kg/mol
-            Vm = self.molar_liquid_vol(T, comp_idx=comp_idx)  # m^3/mol
+            MW = self.MW[comp_idx]
+            Vm = self.molar_liquid_vol(T, comp_idx=comp_idx)
 
-        rho = MW / Vm  # kg/m^3
+        rho = (MW / Vm).to("kg/m^3")
         return rho
 
     def viscosity_kinematic(self, T, comp_idx=None):
@@ -507,26 +522,23 @@ class Fuel:
         :meta private: The equation predicts viscosity in mm^2/s and is converted to SI units.
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Viscosity of each component in m^2/s.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
 
         # Convert temperature to Celsius
-        T_cels = K2C(T)
+        T = T.to("celsius").magnitude
         if comp_idx is None:
-            Tb_cels = K2C(self.Tb)
+            Tb = self.Tb.to("celsius").magnitude
         else:
-            Tb_cels = K2C(self.Tb[comp_idx])
+            Tb = self.Tb[comp_idx].to("celsius").magnitude
 
         # RHS of Dutt's equation (4.23) in Viscosity of Liquids
-        rhs = -3.0171 + (442.78 + 1.6452 * Tb_cels) / (T_cels + 239 - 0.19 * Tb_cels)
-        nu_i = np.exp(rhs)  # Viscosity in mm^2/s
-
-        # Convert to SI (m^2/s)
-        nu_i = nu_i * 1e-6
+        rhs = -3.0171 + (442.78 + 1.6452 * Tb) / (T + 239 - 0.19 * Tb)
+        nu_i = PintUnits.Quantity(np.exp(rhs), "mm^2/s").to("m^2/s")
 
         return nu_i
 
@@ -537,16 +549,16 @@ class Fuel:
         :meta private: Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Dynamic viscosity in Pa*s.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
 
-        nu_i = self.viscosity_kinematic(T, comp_idx=comp_idx)  # m^2/s
-        rho_i = self.density(T, comp_idx=comp_idx)  # kg/m^3
-        mu_i = nu_i * rho_i  # Pa*s
+        nu_i = self.viscosity_kinematic(T, comp_idx=comp_idx)
+        rho_i = self.density(T, comp_idx=comp_idx)
+        mu_i = (nu_i * rho_i).to("Pa*s")
         return mu_i
 
     def Cp(self, T, comp_idx=None):
@@ -554,14 +566,15 @@ class Fuel:
         Compute molar specific heat capacity at a given temperature.
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Molar specific heat capacity in J/mol/K.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
 
-        theta = (T - 298) / 700
+        T = T.to("K")
+        theta = (T - T_stp) / PintUnits.Quantity(700, "K")
         if comp_idx is None:
             Cp_stp = self.Cp_stp
             Cp_B = self.Cp_B
@@ -573,25 +586,26 @@ class Fuel:
 
         cp = Cp_stp + Cp_B * theta + Cp_C * theta**2
 
-        return cp
+        return cp.to("J/(mol*K)")
 
     def Cl(self, T, comp_idx=None):
         """
         Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Mass specific heat capacity in J/kg/K.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
+        T = T.to("K")
         if comp_idx is None:
             MW = self.MW
         else:
             MW = self.MW[comp_idx]
         cp = self.Cp(T, comp_idx=comp_idx)
-        return cp / MW
+        return (cp / MW).to("J/(kg*K)")
 
     def psat(self, T, comp_idx=None, correlation="Lee-Kesler"):
         """
@@ -600,15 +614,15 @@ class Fuel:
         :meta private: Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :type correlation: str, optional
         :return: Saturated vapor pressure in Pa.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
-
+        T = T.to("K")
         if comp_idx is None:
             Tr = T / self.Tc
             Pc = self.Pc
@@ -649,15 +663,14 @@ class Fuel:
             f1 = 15.2518 - (15.6875 / Tr) - 13.4721 * np.log(Tr) + 0.43577 * (Tr**6)
             rhs = np.exp(f0 + omega * f1)
 
-        psat = Pc * rhs
-        return psat
+        return (Pc * rhs).to("Pa")
 
     def psat_antoine_coeffs(self, Tvals=None, units="mks", correlation="Lee-Kesler"):
         """
         Estimate Antoine coefficients for vapor pressure of an individual compound.
 
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).
-        :type Tvals: np.ndarray, optional
+        :type Tvals: pint.Quantity[np.ndarray], optional
         :param units: Units for pressure in fit ("mks", "cgs")
         :type units: str, optional
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
@@ -666,13 +679,25 @@ class Fuel:
         :rtype: 4 np.ndarrays
         """
 
+        if units == "cgs":
+            units = "dyne/cm^2"
+        elif units == "mks":
+            units = "Pa"
+        else:
+            raise ValueError("units must be either 'mks' or 'cgs'.")
+
+        if Tvals is not None:
+            Tvals = Tvals.to("K")
+
         # Define or get temperature nodes for fit
         if Tvals is None:
             print("Tvals not specified, using [273.15, Tb_i] for each compound.")
             # Initialize as zeros for now, calculated for each compound later
-            T = np.zeros(20)
+            T = PintUnits.Quantity(np.zeros(20), "K")
         elif len(Tvals) == 2:
-            T = np.linspace(Tvals[0], Tvals[1], 20)
+            T_low = Tvals[0].magnitude
+            T_high = Tvals[1].magnitude
+            T = PintUnits.Quantity(np.linspace(T_low, T_high, 20),"K",)
         elif len(Tvals) > 2:
             T = Tvals
         else:
@@ -687,7 +712,7 @@ class Fuel:
         # unit independent. "mks" (meter-kilogram-second) and "cgs"
         # D is the Pa-to-target-unit conversion factor, applied only when evaluating
         # psat(T) = D * 10**(A - B/(T + C)) in Pele.
-        D = 10 if units.lower() == "cgs" else 1  # Pa -> dyne/cm^2, else Pa (mks)
+        D = PintUnits.Quantity(1, "Pa").to(units)
 
         # Fit Antoine coefficients for each compound
         A = np.zeros(self.num_compounds)
@@ -696,15 +721,18 @@ class Fuel:
         for i in range(self.num_compounds):
             # Update T if not specified
             if Tvals is None:
-                T = np.linspace(273.15, self.Tb[i], 20)
-            Pvals = np.zeros_like(T)
+                T = PintUnits.Quantity(
+                    np.linspace(273.15, self.Tb[i].magnitude, 20), "K"
+                )
+            T_magnitude = T.to("K").magnitude
+            Pvals = np.zeros_like(T_magnitude)
             for k in range(len(T)):
-                Pvals[k] = self.psat(T[k], correlation=correlation)[i]
+                Pvals[k] = self.psat(T[k], correlation=correlation)[i].to(units).magnitude
 
             logP = np.log10(Pvals)
-            popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])
+            popt, _ = curve_fit(antoine_eq, T_magnitude, logP, p0=[1, 1e3, -1])
             A[i], B[i], C[i] = popt
-        D = D + np.zeros(self.num_compounds)  # make D an array
+        D = D.magnitude + np.zeros(self.num_compounds)  # make D an array
         return A, B, C, D
 
     def molar_liquid_vol(self, T, comp_idx=None):
@@ -712,32 +740,34 @@ class Fuel:
         Compute molar liquid volume with temperature correction.
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Molar liquid volume in m^3/mol.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
 
-        Tstp = 298.0
+        Tstp = PintUnits.Quantity(298, "K")
+        T = T.to("K")
         if comp_idx is None:
-            Tc = self.Tc
+            Tc = self.Tc.to("K")
             omega = self.omega
             Vm_stp = self.Vm_stp
         else:
-            Tc = np.array([self.Tc[comp_idx]])
-            omega = np.array([self.omega[comp_idx]])
-            Vm_stp = np.array([self.Vm_stp[comp_idx]])
-        phi = np.zeros_like(Tc)
+            Tc = self.Tc[comp_idx : comp_idx + 1]
+            omega = self.omega[comp_idx : comp_idx + 1]
+            Vm_stp = self.Vm_stp[comp_idx : comp_idx + 1]
+        phi = np.zeros_like(Tc.magnitude)
         for i in range(len(Tc)):
             if T > Tc[i]:
                 phi[i] = -((1 - (Tstp / Tc[i])) ** (2.0 / 7.0))
             else:
-                phi[i] = ((1 - (T / Tc[i])) ** (2.0 / 7.0)) - (
-                    (1 - (Tstp / Tc[i])) ** (2.0 / 7.0)
+                phi[i] = (
+                    (1 - (T / Tc[i])) ** (2.0 / 7.0)
+                    - (1 - (Tstp / Tc[i])) ** (2.0 / 7.0)
                 )
         z = 0.29056 - 0.08775 * omega
-        Vmi = Vm_stp * np.power(z, phi)
+        Vmi = Vm_stp * z**phi
         if comp_idx is not None:
             Vmi = Vmi[0]
         return Vmi
@@ -747,26 +777,30 @@ class Fuel:
         Calculate latent heat of vaporization adjusted for temperature.
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Latent heat of vaporization in J/kg.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
+        T = T.to("K")
+
         if comp_idx is None:
-            Tc = self.Tc
-            Tb = self.Tb
-            Lv_stp = self.Lv_stp
+            Tc = self.Tc.to("K")
+            Tb = self.Tb.to("K")
+            Lv_stp = self.Lv_stp.to("J/kg")
         else:
-            Tc = np.array([self.Tc[comp_idx]])
-            Tb = np.array([self.Tb[comp_idx]])
-            Lv_stp = np.array([self.Lv_stp[comp_idx]])
+            Tc = np.array([self.Tc[comp_idx].to("K")])
+            Tb = np.array([self.Tb[comp_idx].to("K")])
+            Lv_stp = PintUnits.Quantity(
+                np.array([self.Lv_stp[comp_idx].to("J/kg").magnitude]), "J/kg"
+            )
 
         # Reduced temperatures
         Tr = T / Tc
         Trb = Tb / Tc
 
-        Lvi = np.zeros_like(Tc)
+        Lvi = PintUnits.Quantity(np.zeros_like(Tc), "J/kg")
         for i in range(len(Tc)):
             if T > Tc[i]:
                 Lvi[i] = 0.0
@@ -781,9 +815,9 @@ class Fuel:
         self,
         p,
         T,
-        sigma_gas=3.62e-10,
-        epsilonByKB_gas=97.0,
-        MW_gas=28.97e-3,
+        sigma_gas=Sigma_gas,
+        epsilonByKB_gas=EpsilonByKB_gas,
+        MW_gas=MW_gas,
         correlation="Tee",
     ):
         """
@@ -793,41 +827,48 @@ class Fuel:
         :meta private: Ambient gas defaults to air parameters.
 
         :param p: Pressure in Pa.
-        :type p: float
+        :type p: pint.Quantity[float]
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param sigma_gas: Collision diameter in m.
-        :type sigma_gas: float, optional
+        :type sigma_gas: pint.Quantity[float], optional
         :param epsilonByKB_gas: Well depth over Boltzmann constant, in K.
-        :type epsilonByKB_gas: float, optional
+        :type epsilonByKB_gas: pint.Quantity[float], optional
         :param MW_gas: Mean molecular weight of ambient gas in kg/mol.
-        :type MW_gas: float, optional
+        :type MW_gas: pint.Quantity[float], optional
         :param correlation: Method to calculate sigma and epsilon ("Tee" or "Wilke").
         :type correlation: str, optional
         :return: Diffusion coefficient.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
+
+        p = p.to("Pa")
+        T = T.to("K")
+        sigma_gas = sigma_gas.to("angstrom")
+        epsilonByKB_gas = epsilonByKB_gas.to("K")
+        MW_gas = MW_gas.to("kg/mol")
 
         # Method of Tee for calculating liquid sigma and epsilon
         if correlation.casefold() == "Tee".casefold():
-            sigma_i = self.sigma * 1e10  # convert from m to Angstroms
-            epsilonByKB_i = self.epsilonByKB  # K
+            sigma_i = self.sigma.to("angstrom").magnitude
+            epsilonByKB_i = self.epsilonByKB.to("K").magnitude
         else:
             # Method of Wilke & Lee calculating liquid sigma and epsilon
-            Vmb_i = np.zeros_like(self.Tb)
+            Vmb_i = np.zeros_like(self.Tb.magnitude)
             for n in range(self.num_compounds):
-                Vmb_i[n] = self.molar_liquid_vol(self.Tb[n])[n] * 1e6  # cm^3/mol
+                Vmb_i[n] = self.molar_liquid_vol(self.Tb[n])[n].to("cm^3/mol").magnitude
             sigma_i = 1.18 * Vmb_i ** (1 / 3)  # Angstroms, Poling (11-4.2)
-            epsilonByKB_i = 1.15 * self.Tb  # K , Poling (11-4.3)
+            epsilonByKB_i = 1.15 * self.Tb.to("K").magnitude  # K, Poling (11-4.3)
 
         # Compute binary sigma and epsilon
-        sigma_gas = sigma_gas * 1e10  # convert from m to Angstroms
+        sigma_gas = sigma_gas.magnitude
         sigmaAB_i = (sigma_gas + sigma_i) / 2  # Angstroms, Poling (11-3.5)
         epsilonAB_byKB_i = (
-            epsilonByKB_gas * epsilonByKB_i
+            epsilonByKB_gas.magnitude * epsilonByKB_i
         ) ** 0.5  # K, Poling (11-3.4)
 
         # Dimensionless collision integral for diffusion: Poling (11-3.6)
+        T = T.magnitude
         Tstar_i = T / epsilonAB_byKB_i  # [1]
         A = 1.06036
         B = 0.15610
@@ -845,12 +886,12 @@ class Fuel:
         )
 
         # Convert molecular weights from kg/mol to g/mol then calculate M_AB
-        MW_gas = MW_gas * 1e3
-        MW_i = self.MW * 1e3
+        MW_gas = MW_gas.magnitude
+        MW_i = self.MW.to("g/mol").magnitude
         M_AB_i = 2 * (MW_i * MW_gas) / (MW_i + MW_gas)  # g/mol, see Poling (11-3.1)
 
         # Convert pressure from Pa to bar
-        p = p * 1e-5  # bar
+        p = p.magnitude
 
         # Binary diffusion coefficients, Poling (11-4.1)
         D_AB_i = (
@@ -859,9 +900,7 @@ class Fuel:
             * (T**1.5)
             / (p * M_AB_i**0.5 * sigmaAB_i**2 * omegaD_i)
         )  # cm^2/s
-        D_AB_i = D_AB_i * 1e-4  # Convert to m^2/s
-
-        return D_AB_i
+        return PintUnits.Quantity(D_AB_i, "cm^2/s").to("m^2/s")
 
     def surface_tension(self, T, comp_idx=None, correlation="Brock-Bird"):
         """
@@ -870,25 +909,26 @@ class Fuel:
         :meta private: Uses Brock-Bird (default) or Pitzer correlations (Poling 12-3.5, 12-3.7).
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :param correlation: Correlation method ("Brock-Bird" or "Pitzer").
         :type correlation: str, optional
         :return: Surface tension in N/m.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
+        T = T.to("K")
         if comp_idx is None:
-            Tc = self.Tc
-            Pc = self.Pc
-            Tb = self.Tb
-            omega = self.omega
+            Tc = self.Tc.to("K").magnitude
+            Pc = self.Pc.to("Pa").magnitude
+            Tb = self.Tb.to("K").magnitude
+            omega = self.omega.magnitude
         else:
-            Tc = np.array([self.Tc[comp_idx]])
-            Pc = np.array([self.Pc[comp_idx]])
-            Tb = np.array([self.Tb[comp_idx]])
-            omega = np.array([self.omega[comp_idx]])
-        Tr = T / Tc
+            Tc = np.array([self.Tc[comp_idx].to("K").magnitude])
+            Pc = np.array([self.Pc[comp_idx].to("Pa").magnitude])
+            Tb = np.array([self.Tb[comp_idx].to("K").magnitude])
+            omega = np.array([self.omega[comp_idx].magnitude])
+        Tr = T.magnitude / Tc
         Pc = Pc * 1e-5  # convert from Pa to bar
 
         if correlation.casefold() == "Brock-Bird".casefold():
@@ -904,7 +944,7 @@ class Fuel:
 
         st = Pc ** (2.0 / 3.0) * Tc ** (1.0 / 3.0) * Q * (1 - Tr) ** (11.0 / 9.0)
 
-        st = st * 1e-3  # Convert from dyn/cm to N/m
+        st = PintUnits.Quantity(st, "dyn/cm").to("N/m")
         if comp_idx is not None:
             st = st[0]
 
@@ -917,21 +957,22 @@ class Fuel:
         :meta private: Uses Latini et al. method (Poling equation 10-9.1).
 
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
         :return: Thermal conductivity in W/m/K.
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
+        T = T.to("K")
         if comp_idx is None:
-            MW = self.MW
-            Tc = self.Tc
-            Tb = self.Tb
+            MW = self.MW.to("kg/mol").magnitude
+            Tc = self.Tc.to("K").magnitude
+            Tb = self.Tb.to("K").magnitude
             fam = self.fam
         else:
-            MW = np.array([self.MW[comp_idx]])
-            Tc = np.array([self.Tc[comp_idx]])
-            Tb = np.array([self.Tb[comp_idx]])
+            MW = np.array([self.MW[comp_idx].to("kg/mol").magnitude])
+            Tc = np.array([self.Tc[comp_idx].to("K").magnitude])
+            Tb = np.array([self.Tb[comp_idx].to("K").magnitude])
             fam = np.array([self.fam[comp_idx]])
 
         Astar = 0.00350 + np.zeros_like(Tc)
@@ -939,7 +980,7 @@ class Fuel:
         beta = 0.5 + np.zeros_like(Tc)
         gamma = 0.167
         MW_beta = MW * 1e3  # convert from kg/mol to g/mol
-        Tr = T / Tc
+        Tr = T.magnitude / Tc
 
         for i in range(len(Tc)):
             if fam[i] == 1:
@@ -961,7 +1002,7 @@ class Fuel:
 
         if comp_idx is not None:
             tc = tc[0]
-        return tc
+        return PintUnits.Quantity(tc, "W/(m*K)")
 
     # --- Mixture functions ---
     def mixture_density(self, Yi, T):
@@ -971,17 +1012,18 @@ class Fuel:
         :param Yi: Mass fractions of each compound.
         :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :return: Mixture density in kg/m^3.
-        :rtype: float
+        :rtype: pint.Quantity[float]
         """
-        MW = self.MW  # Molecular weights of each component (kg/mol)
-        Vmi = self.molar_liquid_vol(T)  # Molar volume of each component (m^3/mol)
+        T = T.to("K")
+        MW = self.MW.to("kg/mol")
+        Vmi = self.molar_liquid_vol(T).to("m^3/mol")
 
         # Calculate density (kg/m^3)
         rho = Yi @ (MW / Vmi)
 
-        return rho
+        return rho.to("kg/m^3")
 
     def mixture_kinematic_viscosity(self, Yi, T, correlation="Kendall-Monroe"):
         """
@@ -992,13 +1034,14 @@ class Fuel:
         :param Yi: Mass fractions of each compound.
         :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
         :type correlation: str, optional
         :return: Mixture kinematic viscosity in m^2/s.
-        :rtype: float
+        :rtype: pint.Quantity[float]
         """
-        nu_i = self.viscosity_kinematic(T)  # Viscosities of individual components
+        T = T.to("K")
+        nu_i = self.viscosity_kinematic(T).to("m^2/s").magnitude
 
         # Calculate mole fractions for each species
         Xi = self.Y2X(Yi)
@@ -1008,9 +1051,9 @@ class Fuel:
             nu = np.exp(np.sum(Xi * np.log(nu_i)))
         else:
             # Default: Kendall-Monroe mixing correlation
-            nu = np.sum(Xi * (nu_i ** (1.0 / 3.0))) ** (3.0)
+            nu = np.sum(Xi * (nu_i ** (1.0 / 3.0))) ** 3.0
 
-        return nu
+        return PintUnits.Quantity(nu, "m^2/s")
 
     def mixture_dynamic_viscosity(self, Yi, T, correlation="Kendall-Monroe"):
         """
@@ -1019,17 +1062,18 @@ class Fuel:
         :param Yi: Mass fractions of each compound.
         :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
         :type correlation: str, optional
         :return: Mixture dynamic viscosity in Pa*s.
-        :rtype: float
+        :rtype: pint.Quantity[float]
         """
 
+        T = T.to("K")
         nu = self.mixture_kinematic_viscosity(Yi, T, correlation=correlation)
         rho = self.mixture_density(Yi, T)
 
-        return rho * nu
+        return (rho * nu).to("Pa*s")
 
     def mixture_vapor_pressure(self, Yi, T, correlation="Lee-Kesler"):
         """
@@ -1038,23 +1082,25 @@ class Fuel:
         :param Yi: Mass fractions of each compound in the mixture.
         :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :type correlation: str, optional
         :return: Mixture vapor pressure in Pa.
-        :rtype: float
+        :rtype: pint.Quantity[float]
         """
+
+        T = T.to("K")
 
         # Mole fraction for each compound
         Xi = self.Y2X(Yi)
 
         # Saturated vapor pressure for each compound (Pa)
-        p_sati = self.psat(T, correlation=correlation)
+        p_sati = self.psat(T, correlation=correlation).to("Pa")
 
         # Mixture vapor pressure via Raoult's law
         p_v = p_sati @ Xi
 
-        return p_v
+        return p_v.to("Pa")
 
     def mixture_vapor_pressure_antoine_coeffs(
         self, Yi, Tvals=None, units="mks", correlation="Lee-Kesler"
@@ -1065,14 +1111,24 @@ class Fuel:
         :param Yi: Mass fractions of each compound in the mixture.
         :type Yi: np.ndarray
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
-        :type Tvals: np.ndarray, optional
+        :type Tvals: pint.Quantity[np.ndarray], optional
         :param units: Units for pressure in fit ("mks", "cgs")
         :type units: str, optional
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :type correlation: str, optional
         :return: Coefficients A, B, C, D
-        :rtype: float
+        :rtype: tuple[float, float, float, float]
         """
+
+        if units == "cgs":
+            units = "dyne/cm^2"
+        elif units == "mks":
+            units = "Pa"
+        else:
+            raise ValueError("units must be either 'mks' or 'cgs'.")
+
+        if Tvals is not None:
+            Tvals = Tvals.to("K")
 
         # Define or get temperature nodes for fit
         if Tvals is None:
@@ -1080,9 +1136,14 @@ class Fuel:
             # Initialize as zeros for now, calculated for each compound later
             X = self.Y2X(Yi)
             Tb = mixing_rule(self.Tb, X)
-            T = np.linspace(273.15, np.min(Tb), 20)
+            T = PintUnits.Quantity(
+                np.linspace(273.15, np.min(Tb.to("K").magnitude), 20), "K"
+            )
         elif len(Tvals) == 2:
-            T = np.linspace(Tvals[0], Tvals[1], 20)
+            T = PintUnits.Quantity(
+                np.linspace(Tvals[0].magnitude, Tvals[1].magnitude, 20),
+                "K",
+            )
         elif len(Tvals) > 2:
             T = Tvals
         else:
@@ -1110,17 +1171,22 @@ class Fuel:
         # unit independent. "mks" (meter-kilogram-second) and "cgs"
         # D is the Pa-to-target-unit conversion factor, applied only when evaluating
         # psat(T) = D * 10**(A - B/(T + C)) in Pele.
-        D = 10 if units.lower() == "cgs" else 1  # Pa -> dyne/cm^2, else Pa (mks)
+        D = PintUnits.Quantity(1, "Pa").to(units)
 
-        Pvals = np.zeros_like(T)
+        T_magnitude = T.to("K").magnitude
+        Pvals = np.zeros_like(T_magnitude)
         for k in range(len(T)):
-            Pvals[k] = self.mixture_vapor_pressure(Yi, T[k], correlation=correlation)
+            Pvals[k] = (
+                self.mixture_vapor_pressure(Yi, T[k], correlation=correlation)
+                .to(units)
+                .magnitude
+            )
 
         logP = np.log10(Pvals)
-        popt, _ = curve_fit(antoine_eq, T, logP, p0=[1, 1e3, -1])  # initial guess
+        popt, _ = curve_fit(antoine_eq, T_magnitude, logP, p0=[1, 1e3, -1])
         A, B, C = popt
 
-        return A, B, C, D
+        return A, B, C, D.magnitude
 
     def mixture_surface_tension(self, Yi, T, correlation="Brock-Bird"):
         """
@@ -1131,12 +1197,14 @@ class Fuel:
         :param Yi: Mass fractions of each compound in the mixture.
         :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :param correlation: Correlation method ("Pitzer" or "Brock-Bird").
         :type correlation: str, optional
         :return: Mixture surface tension in N/m.
-        :rtype: float
+        :rtype: pint.Quantity[float]
         """
+
+        T = T.to("K")
 
         # Mole fraction for each compound
         Xi = self.Y2X(Yi)
@@ -1147,7 +1215,7 @@ class Fuel:
         # Mixture surface tension via arithmetic mean, Poling (12-5.2)
         st = mixing_rule(sti, Xi, "arithmetic")
 
-        return st
+        return st.to("N/m")
 
     def mixture_thermal_conductivity(self, Yi, T):
         """
@@ -1156,12 +1224,13 @@ class Fuel:
         :param Yi: Mass fractions of each compound in the mixture.
         :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
-        :type T: float
+        :type T: pint.Quantity[float]
         :return: Thermal conductivity in W/m/K.
-        :rtype: float
+        :rtype: pint.Quantity[float]
         """
-        tc = self.thermal_conductivity(T)
-        return np.sum(Yi * tc ** (-2)) ** (-0.5)
+        T = T.to("K")
+        tc = self.thermal_conductivity(T).to("W/(m*K)").magnitude
+        return PintUnits.Quantity(np.sum(Yi * tc ** (-2)) ** (-0.5), "W/(m*K)")
 
 
 __all__ = ["Fuel"]
