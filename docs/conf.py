@@ -41,6 +41,8 @@ extensions = [
     "sphinxcontrib.bibtex",
 ]
 
+# sphinx_autodoc_typehints
+
 autodoc_default_options = {
     "members": True,
     "undoc-members": False,

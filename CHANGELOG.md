@@ -56,13 +56,12 @@ used to parse and validate this file's entries against that format.
 - `utils/` module exporting `types` and `Units` to organize FuelLib utilities.
 - `ruff.toml` to thoroughly define `ruff` behavior.
 - `Units` class wrapping quantity-providing dependencies, such as `pint` or `unxt`, based on their availability.
-- `sphinx-autodoc-typehints` to eliminate redundancy between function signatures and docstrings.
+- `sphinx-autodoc-typehints` to eliminate redundancy between function signatures and docstrings (not yet implemented).
 
 ### Changed
 - Moved `Units` to the `types` module to facilitate future optional dependencies.
 
 ### Removed
-- `:type Parameter: Description` entries from docstrings in the `fuel` and `convert` modules in favor of `sphinx-autodoc-typehints` auto-parsing function signatures.
 - `test_source_docstrings` in favor of more rigorous linter/formatter checks to be enforced in a follow-up PR.
 
 ### Fixed
