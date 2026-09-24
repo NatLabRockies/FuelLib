@@ -625,6 +625,7 @@ class Fuel:
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int or None
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str
         :return: Saturated vapor pressure in Pa.
         :rtype: pint.Quantity[float]
         """
@@ -755,8 +756,11 @@ class Fuel:
         Compute molar liquid volume with temperature correction.
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Molar liquid volume in m^3/mol.
+        :rtype: pint.Quantity[float]
         """
         Tstp = Units.Quantity(298, "K")
         T = T.to("K")

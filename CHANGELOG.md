@@ -33,9 +33,6 @@ used to parse and validate this file's entries against that format.
 ### Changed
 - Moved `Units` to the `types` module to facilitate future optional dependencies.
 
-### Removed
-- `test_source_docstrings` in favor of more rigorous linter/formatter checks to be enforced in a follow-up PR.
-
 ### Fixed
 - `test_api.py` now takes a flexible approach to ensuring the user interface remains consistent across versions without enforcing overly strict rules.
 
