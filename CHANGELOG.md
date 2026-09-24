@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
-## [UNRELEASED]
+## [Unreleased]
 
 ### Added
 - Feature 1
@@ -19,6 +19,26 @@ used to parse and validate this file's entries against that format.
 - Change 1
 - Change 2...
 
+
+## [3.0.4] - 2026-09-24
+
+### Added
+- Function string type hints to definitions in the `fuel` and `convert` modules.
+  - `@overload` decorators on `convert` functions to ensure the proper types are tracked.
+- `utils/` module exporting `types` and `Units` to organize FuelLib utilities.
+- `ruff.toml` to thoroughly define `ruff` behavior.
+- `Units` class wrapping quantity-providing dependencies, such as `pint` or `unxt`, based on their availability.
+- `sphinx-autodoc-typehints` to eliminate redundancy between function signatures and docstrings.
+
+### Changed
+- Moved `Units` to the `types` module to facilitate future optional dependencies.
+
+### Removed
+- `:type Parameter: Description` entries from docstrings in the `fuel` and `convert` modules in favor of `sphinx-autodoc-typehints` auto-parsing function signatures.
+- `test_source_docstrings` in favor of more rigorous linter/formatter checks to be enforced in a follow-up PR.
+
+### Fixed
+- `test_api.py` now takes a flexible approach to ensuring the user interface remains consistent across versions without enforcing overly strict rules.
 
 ## [3.0.3] - 2026-09-23
 
