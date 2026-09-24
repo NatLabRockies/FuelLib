@@ -85,7 +85,7 @@ def get_git_info():
             .strip()
             .decode("utf-8")
         )
-    except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
+    except OSError, subprocess.CalledProcessError, UnicodeDecodeError:
         # Fall back to package version
         try:
             git_commit = fl.__version__
@@ -102,7 +102,7 @@ def get_git_info():
             .strip()
             .decode("utf-8")
         )
-    except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
+    except OSError, subprocess.CalledProcessError, UnicodeDecodeError:
         # Try to get repository URL from PyPI metadata
         git_remote = _get_pypi_repo_url()
 
@@ -138,7 +138,7 @@ def _get_pypi_repo_url():
                 and data["info"]["home_page"]
             ):
                 return data["info"]["home_page"]
-    except (KeyError, TypeError, urllib.error.URLError):
+    except KeyError, TypeError, urllib.error.URLError:
         pass
 
     # Final fallback: PyPI package URL

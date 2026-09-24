@@ -409,7 +409,7 @@ def plot_mixture_properties(
                         prop_data = Units.Quantity(
                             data.loc[mask, prop_name].to_numpy(), prop_units
                         )
-                except (OSError, KeyError, ValueError):
+                except OSError, KeyError, ValueError:
                     pass
 
         # Generate predictions over temperature range
@@ -454,7 +454,7 @@ def plot_mixture_properties(
                     pred[i] = fuel.mixture_surface_tension(Y_li, T).to(prop_units)
                 elif prop_name == "ThermalConductivity":
                     pred[i] = fuel.mixture_thermal_conductivity(Y_li, T).to(prop_units)
-            except (ValueError, TypeError, RuntimeError):
+            except ValueError, TypeError, RuntimeError:
                 pred.magnitude[i] = np.nan
 
         return (
