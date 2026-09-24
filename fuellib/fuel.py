@@ -415,7 +415,9 @@ class Fuel:
         Calculate the mass fractions from the mass of each component.
 
         :param mass: Mass of each compound.
+        :type mass: pint.Quantity[float]
         :return: Mass fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
         """
         # Normalize to get group mole fractions
         mass = mass.to("kg")
@@ -432,7 +434,9 @@ class Fuel:
         Calculate the mole fractions from the mass of each component.
 
         :param mass: Mass of each compound.
-        :return: Mass fractions of the compounds (shape: num_compounds,).
+        :type mass: pint.Quantity[float]
+        :return: Mole fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
         """
         mass = mass.to("kg")
 
@@ -453,7 +457,9 @@ class Fuel:
         Calculate the mass fractions from the mole fractions of each component.
 
         :param Xi: Mole fractions of each compound.
+        :type Xi: np.ndarray
         :return: Mass fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
         """
         # Calculate the mass for each compound
         mass: types.Quantity1D = self.MW * Xi
@@ -473,7 +479,9 @@ class Fuel:
         Calculate the mole fractions from the mass fractions of each component.
 
         :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
         :return: Mole fractions of the compounds (shape: num_compounds,).
+        :rtype: np.ndarray
         """
         Mbar = self.mean_molecular_weight(Yi)
         if np.sum(Yi) != 0:
@@ -490,8 +498,11 @@ class Fuel:
         Calculate the density of each component at temperature T.
 
         :param T: Temperature of the mixture in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Density of each compound in kg/m^3.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         if comp_idx is None:
@@ -514,8 +525,11 @@ class Fuel:
         :meta private: The equation predicts viscosity in mm^2/s and is converted to SI units.
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Viscosity of each component in m^2/s.
+        :rtype: pint.Quantity[float]
         """
         # Convert temperature to Celsius
         T: float = T.to("celsius").magnitude
@@ -539,8 +553,11 @@ class Fuel:
         :meta private: Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Dynamic viscosity in Pa*s.
+        :rtype: pint.Quantity[float]
         """
         nu_i = self.viscosity_kinematic(T, comp_idx=comp_idx)
         rho_i = self.density(T, comp_idx=comp_idx)
@@ -552,8 +569,11 @@ class Fuel:
         Compute molar specific heat capacity at a given temperature.
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Molar specific heat capacity in J/mol/K.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         theta = (T - Units.Quantity(298, "K")) / Units.Quantity(700, "K")
@@ -575,8 +595,11 @@ class Fuel:
         Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Mass specific heat capacity in J/kg/K.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         if comp_idx is None:
@@ -598,9 +621,12 @@ class Fuel:
         :meta private: Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
         :return: Saturated vapor pressure in Pa.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         if comp_idx is None:
@@ -655,9 +681,13 @@ class Fuel:
         Estimate Antoine coefficients for vapor pressure of an individual compound.
 
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).
+        :type Tvals: pint.Quantity[float] or None
         :param units: Units for pressure in fit ("mks", "cgs")
+        :type units: str
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str
         :return: Coefficients A, B, C, D for each compound
+        :rtype: 4 np.ndarrays
         """
         if units == "cgs":
             units = "dyne/cm^2"
@@ -759,8 +789,11 @@ class Fuel:
         Calculate latent heat of vaporization adjusted for temperature.
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Latent heat of vaporization in J/kg.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
 
@@ -804,12 +837,19 @@ class Fuel:
         :meta private: Ambient gas defaults to air parameters.
 
         :param p: Pressure in Pa.
+        :type p: pint.Quantity[float]
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param sigma_gas: Collision diameter in m.
+        :type sigma_gas: pint.Quantity[float]
         :param epsilonByKB_gas: Well depth over Boltzmann constant, in K.
+        :type epsilonByKB_gas: pint.Quantity[float]
         :param MW_gas: Mean molecular weight of ambient gas in kg/mol.
+        :type MW_gas: pint.Quantity[float]
         :param correlation: Method to calculate sigma and epsilon ("Tee" or "Wilke").
+        :type correlation: str
         :return: Diffusion coefficient.
+        :rtype: pint.Quantity[float]
         """
         p = p.to("bar")
         T = T.to("K")
@@ -883,9 +923,13 @@ class Fuel:
         :meta private: Uses Brock-Bird (default) or Pitzer correlations (Poling 12-3.5, 12-3.7).
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :param correlation: Correlation method ("Brock-Bird" or "Pitzer").
+        :type correlation: str
         :return: Surface tension in N/m.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         if comp_idx is None:
@@ -931,8 +975,11 @@ class Fuel:
         :meta private: Uses Latini et al. method (Poling equation 10-9.1).
 
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param comp_idx: Index of compound to calculate property for.
+        :type comp_idx: int or None
         :return: Thermal conductivity in W/m/K.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         if comp_idx is None:
@@ -983,8 +1030,11 @@ class Fuel:
         Calculate mixture density at a given temperature.
 
         :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :return: Mixture density in kg/m^3.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         MW = self.MW.to("kg/mol")
@@ -1007,9 +1057,13 @@ class Fuel:
         :meta private: Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
 
         :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+        :type correlation: str
         :return: Mixture kinematic viscosity in m^2/s.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         nu_i = self.viscosity_kinematic(T).to("m^2/s").magnitude
@@ -1036,9 +1090,13 @@ class Fuel:
         Calculate dynamic viscosity of the mixture.
 
         :param Yi: Mass fractions of each compound.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+        :type correlation: str
         :return: Mixture dynamic viscosity in Pa*s.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         nu = self.mixture_kinematic_viscosity(Yi, T, correlation=correlation)
@@ -1056,9 +1114,13 @@ class Fuel:
         Calculate vapor pressure of the mixture.
 
         :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str
         :return: Mixture vapor pressure in Pa.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
 
@@ -1084,10 +1146,15 @@ class Fuel:
         Estimate Antoine coefficients for vapor pressure of the mixture.
 
         :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
+        :type Tvals: pint.Quantity1D or None
         :param units: Units for pressure in fit ("mks", "cgs")
+        :type units: str
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+        :type correlation: str
         :return: Coefficients A, B, C, D
+        :rtype: tuple[float, float, float, float]
         """
         if units == "cgs":
             units = "dyne/cm^2"
@@ -1124,10 +1191,15 @@ class Fuel:
             Antoine equation for vapor pressure.
 
             :param T: Temperature.
+            :type T: float
             :param A: Antoine coefficient A.
+            :type A: float
             :param B: Antoine coefficient B.
+            :type B: float
             :param C: Antoine coefficient C.
+            :type C: float
             :return: log10(pressure).
+            :rtype: float
             """
             return A - B / (T + C)
 
@@ -1165,9 +1237,13 @@ class Fuel:
         :meta private: Uses arithmetic pseudo-property method recommended by Hugill and van Welsenes (1986).
 
         :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :param correlation: Correlation method ("Pitzer" or "Brock-Bird").
+        :type correlation: str
         :return: Mixture surface tension in N/m.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
 
@@ -1191,8 +1267,11 @@ class Fuel:
         Calculate thermal conductivity of the mixture.
 
         :param Yi: Mass fractions of each compound in the mixture.
+        :type Yi: np.ndarray
         :param T: Temperature in Kelvin.
+        :type T: pint.Quantity[float]
         :return: Thermal conductivity in W/m/K.
+        :rtype: pint.Quantity[float]
         """
         T = T.to("K")
         tc = self.thermal_conductivity(T).to("W/(m*K)").magnitude
