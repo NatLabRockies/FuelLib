@@ -5,7 +5,71 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
-## [Unreleased]
+## [Unreleased] - 2026-09-XX
+
+### Added
+- `gcm` module providing an extensible framework for Group Contribution Method (GCM)
+  property predictions, decoupling property formulas from `Fuel`.
+  - `core.PropertyProtocol`: runtime-checkable protocol defining the
+    `(fuel: Fuel) -> types.Quantity1D` signature required of any GCM property function.
+  - `core.GCM`: a named collection of property functions with `register_property()`,
+    `list_property_fns()`, `get_property()` (case-insensitive, raises `ValueError`
+    listing available properties on a miss), `predict()`, and `predict_all()`.
+  - `core.GCMRegistry`: class-level registry of `GCM` instances, with `register()`,
+    `list_methods()`, and case-insensitive `get_gcm()`.
+  - `gcm.gani` implementing the Constantinou-Gani (and extended) method: loads
+    group-contribution coefficients from `gcm.gani.csv` and registers 18 property
+    functions (`Tc`, `Pc`, `Vc`, `Tb`, `Tm`, `Hf`, `Gf`, `Hv_stp`, `omega`, `Vm_stp`,
+    `Cp_stp`, `Cp_B`, `Cp_C`, `rd_A`, `rd_B`, `rd_D`, `alibakhshi_phi`, `MW`) against
+    a `gani` `GCMRegistry` entry, replacing formulas previously duplicated inline in
+    `fuel.__init__`.
+- `fuel.gani_decomp()` builds a fuel's group-decomposition matrix for the Gani method
+  by reading the group decomposition file and validating that all of `fuel.compounds`
+  are present (raising `ValueError` listing any missing compounds).
+- Cached `fuel.gcm_properties` property that pre-computes predictions from every
+  registered GCM method (via `GCMRegistry`) for a `Fuel` instance.
+- `fuel.get_property(method, property_name)` for case-insensitive lookup of a GCM
+  prediction from `fuel.gcm_properties`, raising `KeyError` if either the method or
+  property is unregistered.
+- `tests/test_gcm.py` covering the `gcm` module (`core.GCM`, `core.GCMRegistry`, and
+  all `gcm.gani` property functions), including registration, error handling, and
+  decomposition-matrix column resorting/partial-group-coverage behavior in
+  `gani._get_decomp` (columns are reindexed to the canonical group order and any
+  group missing from a fuel's decomposition is zero-filled instead of erroring).
+- `docs/gcm.rst` documenting the `gcm` abstraction: `core.PropertyProtocol`,
+  `core.GCM`, and `core.GCMRegistry`; how the `gani` method is registered on top
+  of them; how to register new properties/methods; and the new
+  `fuel.gani_decomp()`, `fuel.gcm_properties`, and `fuel.get_property()` members.
+  Duplicates the GCM property table/equations from `fuelprops.rst` for
+  convenience. Linked into the docs toctree (`index.rst`) and API listing
+  (`sourcecode.rst`).
+
+### Fixed
+- `ruff` now selects `E501` so the existing `line-length = 88` setting is actually
+  enforced (previously configured but not checked).
+- Reduced line lengths to 88 in pre-existing violations, including reflowed
+  docstrings in `fuel.py`.
+
+### Changed
+- Renamed compound identifiers (not the `Compound` column header) in `decane.csv`,
+  `dodecane.csv`, `hefa.csv`, `heptane.csv`, and `heptane-decane.csv` to match the
+  respective gcxgc names (e.g. `NC10H22` -> `n-C10`) and dropped redundant
+  annotations (e.g. `C07-Isoparaffin (lower put as same)` -> `C07-Isoparaffin`).
+- `fuel.num_compounds` evaluates the length of `fuel.compounds`.
+- `fuel.compounds`/`fuel.num_compounds` are now derived from `df_gcxgc["Compound"]`
+  before `Nij` is read, rather than from the decomposition file's shape.
+
+### Removed
+- Unnecessary assignment of integers in `fuel.__init__` for indexing NumPy arrays when
+  determining families and hydrocarbon types (e.g. `aromatics`, `branching`, `cyclos`,
+  `olefins` and their `num_*` counterparts), in favor of inline slice bounds.
+- Check for number of columns (`num_groups`/minimum first-order group count) in gani
+  decomposition in `fuel.__init__` made unnecessary by new methods.
+- Redundant computation of gani properties in `fuel.__init__` (previously computed
+  twice — once for validation, once for storage — now computed once via the `gcm`
+  abstraction).
+
+## [3.0.5] - 2026-09-XX
 
 ### Added
 - `TypeAlias` to type aliases in `types` module.
