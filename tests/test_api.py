@@ -77,7 +77,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 self.assertTrue(np.allclose(Yi, Yi_back, rtol=1e-10, atol=1e-12))
                 print("    ✓ Y2X/X2Y roundtrip")
 
-                mass = Units.Quantity(Yi * 1.0e-6, "kg")
+                mass = Units.Quantity(Yi.magnitude * 1.0e-6, "kg")
                 self.assertTrue(
                     np.allclose(fuel.mass2Y(mass), Yi, rtol=1e-10, atol=1e-12)
                 )

@@ -55,7 +55,7 @@ class Fuel:
     formulas: np.ndarray | None
 
     #: Mass fractions of each compound. Shape: (num_compounds,)
-    Y_0: types.Array1D
+    Y_0: types.Quantity1D
 
     #: Functional group decomposition matrix. Shape: (num_compounds, num_groups)
     Nij: types.Array2D
@@ -271,6 +271,7 @@ class Fuel:
 
         self.Y_0 = df_gcxgc["Weight %"].to_numpy().flatten().astype(float)
         self.Y_0 /= np.sum(self.Y_0)
+        self.Y_0: types.Quantity1D = Units.Quantity(self.Y_0, "dimensionless")
 
         # Make sure mixture data is consistent:
         if self.num_groups < self.N_g1:
@@ -393,50 +394,50 @@ class Fuel:
     # -------------------------------------------------------------------------
     # Member functions
     # -------------------------------------------------------------------------
-    def mean_molecular_weight(self, Yi: types.Array1D) -> types.Quantity0D:
+    def mean_molecular_weight(self, Yi: types.Quantity1D) -> types.Quantity0D:
         """
         Calculate the mean molecular weight of the mixture.
 
         :param Yi: Mass fractions of each compound.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :return: Mean molecular weight of the mixture in kg/mol.
         :rtype: pint.Quantity[float]
         """
         MW = self.MW.to("kg/mol")
         if np.sum(Yi) != 0:
-            Mbar = Units.Quantity(1 / np.sum(Yi / MW), "kg/mol")
+            Mbar = 1 / np.sum(Yi / MW)
         else:
             Mbar = Units.Quantity(0.0, "kg/mol")
 
         return Mbar
 
-    def mass2Y(self, mass: types.Quantity1D) -> types.Array1D:
+    def mass2Y(self, mass: types.Quantity1D) -> types.Quantity1D:
         """
         Calculate the mass fractions from the mass of each component.
 
         :param mass: Mass of each compound.
-        :type mass: pint.Quantity[float]
+        :type mass: pint.Quantity[np.ndarray]
         :return: Mass fractions of the compounds (shape: num_compounds,).
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
         # Normalize to get group mole fractions
         mass = mass.to("kg")
-        total_mass = np.sum(mass)
+        total_mass = mass.magnitude.sum()
         if total_mass != 0:
             Yi = (mass / total_mass).magnitude
         else:
             Yi = np.zeros_like(self.MW.magnitude)
 
-        return Yi
+        return Units.Quantity(Yi, "dimensionless")
 
-    def mass2X(self, mass: types.Quantity1D) -> types.Array1D:
+    def mass2X(self, mass: types.Quantity1D) -> types.Quantity1D:
         """
         Calculate the mole fractions from the mass of each component.
 
         :param mass: Mass of each compound.
-        :type mass: pint.Quantity[float]
+        :type mass: pint.Quantity[np.ndarray]
         :return: Mole fractions of the compounds (shape: num_compounds,).
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
         mass = mass.to("kg")
 
@@ -450,38 +451,37 @@ class Fuel:
         else:
             Xi = np.zeros_like(self.MW.magnitude)
 
-        return Xi
+        return Units.Quantity(Xi, "dimensionless")
 
-    def X2Y(self, Xi: types.Array1D) -> types.Array1D:
+    def X2Y(self, Xi: types.Quantity1D) -> types.Quantity1D:
         """
         Calculate the mass fractions from the mole fractions of each component.
 
         :param Xi: Mole fractions of each compound.
-        :type Xi: np.ndarray
+        :type Xi: pint.Quantity[np.ndarray]
         :return: Mass fractions of the compounds (shape: num_compounds,).
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
         # Calculate the mass for each compound
-        mass: types.Quantity1D = self.MW * Xi
-
+        mass = self.MW * Xi
         # Normalize to get group mass fractions
-        total_mass: types.Quantity0D = np.sum(mass)
+        total_mass = np.sum(mass)
         Yi: types.Array1D = (
             (mass / total_mass).magnitude
             if total_mass != 0
             else np.zeros_like(self.MW.magnitude)
         )
 
-        return Yi
+        return Units.Quantity(Yi, "dimensionless")
 
-    def Y2X(self, Yi: types.Array1D) -> types.Array1D:
+    def Y2X(self, Yi: types.Quantity1D) -> types.Quantity1D:
         """
         Calculate the mole fractions from the mass fractions of each component.
 
         :param Yi: Mass fractions of each compound.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :return: Mole fractions of the compounds (shape: num_compounds,).
-        :rtype: np.ndarray
+        :rtype: pint.Quantity[np.ndarray]
         """
         Mbar = self.mean_molecular_weight(Yi)
         if np.sum(Yi) != 0:
@@ -489,7 +489,7 @@ class Fuel:
         else:
             Xi = np.zeros_like(self.MW.magnitude)
 
-        return Xi
+        return Units.Quantity(Xi, "dimensionless")
 
     def density(
         self, T: types.Quantity0D, comp_idx: int | None = None
@@ -1028,13 +1028,13 @@ class Fuel:
 
     # --- Mixture functions ---
     def mixture_density(
-        self, Yi: types.Array1D, T: types.Quantity0D
+        self, Yi: types.Quantity1D, T: types.Quantity0D
     ) -> types.Quantity1D:
         """
         Calculate mixture density at a given temperature.
 
         :param Yi: Mass fractions of each compound.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :param T: Temperature in Kelvin.
         :type T: pint.Quantity[float]
         :return: Mixture density in kg/m^3.
@@ -1045,13 +1045,13 @@ class Fuel:
         Vmi = self.molar_liquid_vol(T).to("m^3/mol")
 
         # Calculate density (kg/m^3)
-        rho = Units.Quantity(Yi @ (MW / Vmi), "kg/m^3")
+        rho = (Yi @ (MW / Vmi)).to("kg/m^3")
 
-        return rho.to("kg/m^3")
+        return rho
 
     def mixture_kinematic_viscosity(
         self,
-        Yi: types.Array1D,
+        Yi: types.Quantity1D,
         T: types.Quantity0D,
         correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
@@ -1061,7 +1061,7 @@ class Fuel:
         :meta private: Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
 
         :param Yi: Mass fractions of each compound.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :param T: Temperature in Kelvin.
         :type T: pint.Quantity[float]
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
@@ -1073,7 +1073,7 @@ class Fuel:
         nu_i = self.viscosity_kinematic(T).to("m^2/s").magnitude
 
         # Calculate mole fractions for each species
-        Xi = self.Y2X(Yi)
+        Xi = self.Y2X(Yi).magnitude
 
         if correlation.casefold() == "Arrhenius".casefold():
             # Arrhenius mixing correlation
@@ -1086,7 +1086,7 @@ class Fuel:
 
     def mixture_dynamic_viscosity(
         self,
-        Yi: types.Array1D,
+        Yi: types.Quantity1D,
         T: types.Quantity0D,
         correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
@@ -1094,7 +1094,7 @@ class Fuel:
         Calculate dynamic viscosity of the mixture.
 
         :param Yi: Mass fractions of each compound.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :param T: Temperature in Kelvin.
         :type T: pint.Quantity[float]
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
@@ -1110,7 +1110,7 @@ class Fuel:
 
     def mixture_vapor_pressure(
         self,
-        Yi: types.Array1D,
+        Yi: types.Quantity1D,
         T: types.Quantity0D,
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> types.Quantity0D:
@@ -1118,7 +1118,7 @@ class Fuel:
         Calculate vapor pressure of the mixture.
 
         :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :param T: Temperature in Kelvin.
         :type T: pint.Quantity[float]
         :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
@@ -1141,7 +1141,7 @@ class Fuel:
 
     def mixture_vapor_pressure_antoine_coeffs(
         self,
-        Yi: types.Array1D,
+        Yi: types.Quantity1D,
         Tvals: types.Quantity1D | None = None,
         units: Literal["mks", "cgs", "dyne/cm^2", "Pa"] = "mks",
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
@@ -1150,7 +1150,7 @@ class Fuel:
         Estimate Antoine coefficients for vapor pressure of the mixture.
 
         :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
         :type Tvals: pint.Quantity1D or None
         :param units: Units for pressure in fit ("mks", "cgs")
@@ -1173,7 +1173,7 @@ class Fuel:
         # Define or get temperature nodes for fit
         if Tvals is None:
             print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
-            X = self.Y2X(Yi)
+            X = self.Y2X(Yi).magnitude
             Tb = mixing_rule(self.Tb, X)
             T = Units.Quantity(
                 np.linspace(273.15, np.min(Tb.to("K").magnitude), 20), "K"
@@ -1231,7 +1231,7 @@ class Fuel:
 
     def mixture_surface_tension(
         self,
-        Yi: types.Array1D,
+        Yi: types.Quantity1D,
         T: types.Quantity0D,
         correlation: Literal["Pitzer", "Brock-Bird"] = "Brock-Bird",
     ) -> types.Quantity0D:
@@ -1241,7 +1241,7 @@ class Fuel:
         :meta private: Uses arithmetic pseudo-property method recommended by Hugill and van Welsenes (1986).
 
         :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :param T: Temperature in Kelvin.
         :type T: pint.Quantity[float]
         :param correlation: Correlation method ("Pitzer" or "Brock-Bird").
@@ -1252,7 +1252,7 @@ class Fuel:
         T = T.to("K")
 
         # Mole fraction for each compound
-        Xi = self.Y2X(Yi)
+        Xi = self.Y2X(Yi).magnitude
 
         # Surface tension for each compound (N/m)
         sti = self.surface_tension(T, correlation=correlation)
@@ -1264,14 +1264,14 @@ class Fuel:
 
     def mixture_thermal_conductivity(
         self,
-        Yi: types.Array1D,
+        Yi: types.Quantity1D,
         T: types.Quantity0D,
     ) -> types.Quantity0D:
         """
         Calculate thermal conductivity of the mixture.
 
         :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: np.ndarray
+        :type Yi: pint.Quantity[np.ndarray]
         :param T: Temperature in Kelvin.
         :type T: pint.Quantity[float]
         :return: Thermal conductivity in W/m/K.
@@ -1279,7 +1279,7 @@ class Fuel:
         """
         T = T.to("K")
         tc = self.thermal_conductivity(T).to("W/(m*K)").magnitude
-        return Units.Quantity(np.sum(Yi * tc ** (-2)) ** (-0.5), "W/(m*K)")
+        return Units.Quantity(np.sum(Yi.magnitude * tc ** (-2)) ** (-0.5), "W/(m*K)")
 
 
 __all__ = ["Fuel"]
