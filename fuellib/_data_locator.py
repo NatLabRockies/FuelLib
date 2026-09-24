@@ -235,7 +235,7 @@ def get_metadata_props_data(fuel_name, fuel_data_dir=None):
     try:
         with open(metadata_file, "r") as f:
             data = yaml.safe_load(f)
-    except OSError, yaml.YAMLError:
+    except (OSError, yaml.YAMLError):
         return None
 
     if not data or "fuels" not in data or fuel_name not in data["fuels"]:
