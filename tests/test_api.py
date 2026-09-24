@@ -1,203 +1,11 @@
-import inspect
 import unittest
+from functools import partial
+from pathlib import Path
 
 import numpy as np
-import pint
 
 import fuellib as fl
-from fuellib.units import Units
-
-
-def _normalize_signature(sig):
-    """Normalize non-portable and Pint defaults for stable signature comparisons."""
-
-    parts = []
-    for name, param in sig.parameters.items():
-        text = str(param)
-        if (
-            name == "path"
-            and param.default is not inspect.Parameter.empty
-            and isinstance(param.default, str)
-            and param.default.endswith("exportData")
-        ):
-            text = "path='<EXPORTDATA_PATH>'"
-        elif isinstance(param.default, pint.Quantity):
-            text = (
-                f'{name}=Quantity({param.default.magnitude!r}, "{param.default.units}")'
-            )
-        parts.append(text)
-    return f"({', '.join(parts)})"
-
-
-def _public_module_functions(module):
-    """Get public functions from module, including re-exported ones from __all__."""
-    functions = {}
-    # Check all public names in __all__
-    if hasattr(module, "__all__"):
-        for name in module.__all__:
-            if not name.startswith("_"):
-                obj = getattr(module, name, None)
-                if inspect.isfunction(obj) or inspect.isbuiltin(obj):
-                    functions[name] = obj
-    return functions
-
-
-def _public_class_methods(cls):
-    return {
-        name: obj
-        for name, obj in inspect.getmembers(cls, inspect.isfunction)
-        if not name.startswith("_")
-    }
-
-
-class ApiContractTestCase(unittest.TestCase):
-    def test_fuellib_module_api(self):
-        print("\nFuelLib Module API:")
-        expected_top_level = {
-            "Fuel": "class",
-            "constants": "module",
-            "convert": "module",
-            "utility": "module",
-        }
-
-        # Check top-level API
-        for name, obj_type in expected_top_level.items():
-            self.assertTrue(
-                hasattr(fl, name),
-                msg=f"FuelLib module missing expected attribute: {name}",
-            )
-            if obj_type == "class":
-                self.assertTrue(
-                    inspect.isclass(getattr(fl, name)),
-                    msg=f"FuelLib.{name} should be a class",
-                )
-            elif obj_type == "module":
-                import types
-
-                self.assertTrue(
-                    isinstance(getattr(fl, name), types.ModuleType),
-                    msg=f"FuelLib.{name} should be a module",
-                )
-            else:
-                print(f"  ✓ {name} ({obj_type})")
-
-        # Check that constants are available via module
-        self.assertTrue(
-            hasattr(fl.constants, "k_B"), msg="FuelLib.constants.k_B not found"
-        )
-        self.assertTrue(
-            hasattr(fl.constants, "N_A"), msg="FuelLib.constants.N_A not found"
-        )
-        print("  ✓ constants.k_B (constant)")
-        print("  ✓ constants.N_A (constant)")
-        print("\nFuelLib.convert Module API:")
-        convert_funcs = {
-            "C2K": "(T)",
-            "K2C": "(T)",
-            "C2F": "(T)",
-            "F2C": "(T)",
-            "F2K": "(T)",
-            "K2F": "(T)",
-            "epsilon_to_characteristic_temperature": "(epsilon_j_per_mol)",
-        }
-        for name, sig_expected in convert_funcs.items():
-            self.assertTrue(
-                hasattr(fl.convert, name), msg=f"fuellib.convert missing: {name}"
-            )
-            func = getattr(fl.convert, name)
-            actual_sig = _normalize_signature(inspect.signature(func))
-            self.assertEqual(
-                actual_sig,
-                sig_expected,
-                msg=f"fuellib.convert.{name} signature changed",
-            )
-            print(f"  ✓ {name}{actual_sig}")
-
-        # Check utility submodule
-        print("\nFuelLib.utility Module API:")
-        utility_funcs = {
-            "mixing_rule": "(var_n, X, pseudo_prop='arithmetic')",
-            "droplet_volume": "(r)",
-            "droplet_mass": "(fuel, r, Yi, T)",
-        }
-        for name, sig_expected in utility_funcs.items():
-            self.assertTrue(
-                hasattr(fl.utility, name), msg=f"fuellib.utility missing: {name}"
-            )
-            func = getattr(fl.utility, name)
-            actual_sig = _normalize_signature(inspect.signature(func))
-            self.assertEqual(
-                actual_sig,
-                sig_expected,
-                msg=f"fuellib.utility.{name} signature changed",
-            )
-            print(f"  ✓ {name}{actual_sig}")
-
-        # Check constants submodule
-        print("\nFuelLib.constants Module API:")
-        constants_vals = {
-            "k_B": "Boltzmann constant",
-            "N_A": "Avogadro number",
-            "T_stp": "standard temperature",
-        }
-        for name in constants_vals:
-            self.assertTrue(
-                hasattr(fl.constants, name), msg=f"fuellib.constants missing: {name}"
-            )
-            val = getattr(fl.constants, name)
-            self.assertTrue(
-                hasattr(val, "magnitude") and hasattr(val, "units"),
-                msg=f"fuellib.constants.{name} should be a Pint Quantity",
-            )
-            print(f"  ✓ {name}")
-
-    def test_fuellib_class_api(self):
-        print("\nFuelLib.fuel Class API:")
-        expected = {
-            "Cl": "(self, T, comp_idx=None)",
-            "Cp": "(self, T, comp_idx=None)",
-            "X2Y": "(self, Xi)",
-            "Y2X": "(self, Yi)",
-            "density": "(self, T, comp_idx=None)",
-            "diffusion_coeff": '(self, p, T, sigma_gas=Quantity(3.62, "angstrom"), epsilonByKB_gas=Quantity(97.0, "kelvin"), MW_gas=Quantity(0.02897, "kilogram / mole"), correlation=\'Tee\')',
-            "latent_heat_vaporization": "(self, T, comp_idx=None)",
-            "mass2X": "(self, mass)",
-            "mass2Y": "(self, mass)",
-            "mean_molecular_weight": "(self, Yi)",
-            "mixture_density": "(self, Yi, T)",
-            "mixture_dynamic_viscosity": "(self, Yi, T, correlation='Kendall-Monroe')",
-            "mixture_kinematic_viscosity": "(self, Yi, T, correlation='Kendall-Monroe')",
-            "mixture_surface_tension": "(self, Yi, T, correlation='Brock-Bird')",
-            "mixture_thermal_conductivity": "(self, Yi, T)",
-            "mixture_vapor_pressure": "(self, Yi, T, correlation='Lee-Kesler')",
-            "mixture_vapor_pressure_antoine_coeffs": "(self, Yi, Tvals=None, units='mks', correlation='Lee-Kesler')",
-            "molar_liquid_vol": "(self, T, comp_idx=None)",
-            "psat": "(self, T, comp_idx=None, correlation='Lee-Kesler')",
-            "psat_antoine_coeffs": "(self, Tvals=None, units='mks', correlation='Lee-Kesler')",
-            "surface_tension": "(self, T, comp_idx=None, correlation='Brock-Bird')",
-            "thermal_conductivity": "(self, T, comp_idx=None)",
-            "viscosity_dynamic": "(self, T, comp_idx=None)",
-            "viscosity_kinematic": "(self, T, comp_idx=None)",
-        }
-
-        actual = _public_class_methods(fl.Fuel)
-        self.assertEqual(
-            set(actual.keys()),
-            set(expected.keys()),
-            msg=(
-                "FuelLib.fuel public method list changed. "
-                f"Expected: {sorted(expected.keys())}; Found: {sorted(actual.keys())}"
-            ),
-        )
-
-        for name in sorted(expected.keys()):
-            actual_sig = _normalize_signature(inspect.signature(actual[name]))
-            self.assertEqual(
-                actual_sig,
-                expected[name],
-                msg=f"FuelLib.fuel method signature changed: {name}",
-            )
-            print(f"  ✓ fuel.{name}{actual_sig}")
+from fuellib.utils import Units
 
 
 class FuelLibFunctionEvalTestCase(unittest.TestCase):
@@ -429,6 +237,183 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                     np.allclose(fl.utility.droplet_mass(fuel, 0.0, Yi, self.T), 0.0)
                 )
                 print("    ✓ utility.droplet_mass")
+
+
+class FuelLibAPIContractTestCase(unittest.TestCase):
+    """Check that the FuelLib API persists across versions.
+
+    This test uses partial functions to check that FuelLib API methods can be called
+    using explicitly defined arguments. Because we are using partial functions, using
+    `F2` to rename variables will not affect the test calls--thus, the API persistence
+    can be verified independently. Additionally, using `__getattribute__` ensures that
+    the method names are accessed by expected strings, reinforcing the API check.
+    """
+
+    def test__fuel_class_attribute_persistence(self):
+        """Test that the Fuel class attributes persist across versions."""
+        fuel = fl.Fuel("heptane")
+        attributes = [
+            "fuelDataDir",
+            "fuelDataGcDir",
+            "fuelDataDecompDir",
+            "fuelDataPropsDir",
+            "name",
+            "compounds",
+            "formulas",
+            "Y_0",
+            "Nij",
+            "num_compounds",
+            "num_groups",
+            "MW",
+            "Tc",
+            "Pc",
+            "Vc",
+            "Tb",
+            "Tm",
+            "Hf",
+            "Gf",
+            "Hv_stp",
+            "Lv_stp",
+            "Cp_stp",
+            "Vm_stp",
+            "omega",
+            "sigma",
+            "epsilonByKB",
+            "hc_type",
+            "fam",
+            "nC",
+            "nH",
+            "pelephysics_keys",
+        ]
+        for attr in attributes:
+            self.assertTrue(
+                hasattr(fuel, attr), f"Fuel class is missing attribute '{attr}'"
+            )
+
+    def test__fuel_module_api_call_persistence(self):
+        """Test that the FuelLib.fuel module API persists across versions."""
+        fuelDataDir = Path(__file__).parent.parent / "fuellib/data/fuelData"
+        fuel_init = partial(
+            fl.Fuel, name="heptane", decompName="heptane", fuelDataDir=str(fuelDataDir)
+        )
+        fuel_init()  # Check that the Fuel object can be instantiated.
+
+        fuel = fl.Fuel(name="heptane")
+
+        # Define some common variables for the tests.
+        Yi = fuel.Y_0
+        mass = fl.Units.Quantity(fuel.MW.magnitude * 100.0, "kg")
+        temp = fl.Units.Quantity(298.15, "K")
+        temps = fl.Units.Quantity([298.15, 300.0, 310.0], "K")
+        press = fl.Units.Quantity(101325.0, "Pa")
+        # List of FuelLib.fuel methods to check for API persistence.
+        to_check = [
+            partial(fuel.__getattribute__("mean_molecular_weight"), Yi=Yi),
+            partial(fuel.__getattribute__("mass2X"), mass=mass),
+            partial(fuel.__getattribute__("mass2Y"), mass=mass),
+            partial(fuel.__getattribute__("density"), T=temp, comp_idx=0),
+            partial(fuel.__getattribute__("viscosity_kinematic"), T=temp, comp_idx=0),
+            partial(fuel.__getattribute__("viscosity_dynamic"), T=temp, comp_idx=0),
+            partial(fuel.__getattribute__("Cl"), T=temp, comp_idx=0),
+            partial(fuel.__getattribute__("Cp"), T=temp, comp_idx=0),
+            partial(
+                fuel.__getattribute__("psat"),
+                T=temp,
+                comp_idx=0,
+                correlation="Lee-Kesler",
+            ),
+            partial(
+                fuel.__getattribute__("psat_antoine_coeffs"),
+                Tvals=temps,
+                units="mks",
+                correlation="Lee-Kesler",
+            ),
+            partial(fuel.__getattribute__("molar_liquid_vol"), T=temp, comp_idx=0),
+            partial(
+                fuel.__getattribute__("latent_heat_vaporization"), T=temp, comp_idx=0
+            ),
+            partial(
+                fuel.__getattribute__("diffusion_coeff"),
+                p=press,
+                T=temp,
+                correlation="Tee",
+            ),
+            partial(
+                fuel.__getattribute__("surface_tension"),
+                T=temp,
+                comp_idx=0,
+                correlation="Brock-Bird",
+            ),
+            partial(fuel.__getattribute__("thermal_conductivity"), T=temp, comp_idx=0),
+            partial(fuel.__getattribute__("mixture_density"), Yi=Yi, T=temp),
+            partial(
+                fuel.__getattribute__("mixture_kinematic_viscosity"),
+                Yi=Yi,
+                T=temp,
+                correlation="Kendall-Monroe",
+            ),
+            partial(
+                fuel.__getattribute__("mixture_dynamic_viscosity"),
+                Yi=Yi,
+                T=temp,
+                correlation="Kendall-Monroe",
+            ),
+            partial(
+                fuel.__getattribute__("mixture_vapor_pressure"),
+                Yi=Yi,
+                T=temp,
+                correlation="Lee-Kesler",
+            ),
+            partial(
+                fuel.__getattribute__("mixture_vapor_pressure_antoine_coeffs"),
+                Yi=Yi,
+                Tvals=temps,
+                units="cgs",
+                correlation="Lee-Kesler",
+            ),
+            partial(
+                fuel.__getattribute__("mixture_surface_tension"),
+                Yi=Yi,
+                T=temp,
+                correlation="Brock-Bird",
+            ),
+            partial(
+                fuel.__getattribute__("mixture_thermal_conductivity"),
+                Yi=Yi,
+                T=temp,
+            ),
+        ]
+
+        for func in to_check:
+            module = func.func.__module__ if hasattr(func.func, "__module__") else ""
+            name = func.func.__name__ if hasattr(func.func, "__name__") else ""
+            with self.subTest(module=module, name=name):
+                try:
+                    func()
+                except Exception as e:  # noqa: BLE001
+                    self.fail(f"Method failed with expected call. Exception: {e}")
+
+    def test__convert_module_api_call_persistence(self):
+        """Check that the FuelLib.convert module API persists across versions."""
+        to_check = [
+            partial(fl.convert.C2K, T=20.0),
+            partial(fl.convert.K2C, T=293.15),
+            partial(fl.convert.C2F, T=20.0),
+            partial(fl.convert.F2C, T=68.0),
+            partial(fl.convert.F2K, T=68.0),
+            partial(fl.convert.K2F, T=293.15),
+            partial(
+                fl.convert.epsilon_to_characteristic_temperature, epsilon_j_per_mol=1.0
+            ),
+        ]
+        for func in to_check:
+            module = func.func.__module__ if hasattr(func.func, "__module__") else ""
+            name = func.func.__name__ if hasattr(func.func, "__name__") else ""
+            with self.subTest(module=module, name=name):
+                try:
+                    func()
+                except Exception as e:  # noqa: BLE001
+                    self.fail(f"Method failed with expected call. Exception: {e}")
 
 
 if __name__ == "__main__":

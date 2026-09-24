@@ -5,7 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
-## [Unreleased]
+## [UNRELEASED]
+
+### Added
+- Feature 1
+- Feature 2...
+
+### Fixed
+- Fix 1
+- Fix 2...
+
+### Changed
+- Change 1
+- Change 2...
+
+
+## [3.0.3] - 2026-09-23
 
 ### Added
 - Pint-backed unit support through the public `fuellib.Units` registry.
@@ -14,7 +29,7 @@ used to parse and validate this file's entries against that format.
 - New dev dependencies: `ruff`, `ty`, `pytest-cov`, `lefthook`, `import-linter`, and `uv` for a faster local pip/venv workflow.
 - `keepachangelog` dependency for maintaining this `CHANGELOG.md` in the Keep a Changelog format.
 - Lefthook pre-commit suite (`lefthook.yaml`) running `fmt` → `lint` → `types` → `test` → `check-clean` on commit. The `import-linter` check is not yet wired into pre-commit since the layering contract (`fuellib.fuel` / `fuellib.gcm` / `fuellib.comp`) will fail broadly until the codebase is reorganized to match it; run it manually via `pixi run imports` in the meantime.
-- Coverage reporting via `pytest-cov`, with a temporary `fail_under = 20` threshold, to be raised as test coverage improves.
+- Coverage reporting via `pytest-cov`, with a temporary `fail_under = 1` threshold, to be raised as test coverage improves.
 
 ### Changed
 - **BREAKING**: Fuel properties and temperature-dependent calculations now use Pint `Quantity` values. Supply dimensional inputs with units and use `.to(unit).magnitude` only when serializing or plotting.

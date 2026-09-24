@@ -1,7 +1,8 @@
 import os
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 import fuellib as fl
 
@@ -76,7 +77,7 @@ def getPredAndData(fuel_name, prop_name, blend):
         T = fl.Units.Quantity(-20, "celsius").to("K")
         prop_pred = fl.Units.Quantity(np.zeros_like(blend), prop_units)
 
-    for i in range(0, len(prop_pred)):
+    for i in range(len(prop_pred)):
         # Initial liquid mass fractions
         Y_li = blend[i] * fuel.Y_0 + (1 - blend[i]) * jetA.Y_0
 

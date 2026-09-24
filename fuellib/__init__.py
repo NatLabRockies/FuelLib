@@ -21,7 +21,7 @@ from . import constants, convert, utility
 # Import data locator functions
 from ._data_locator import *
 from .fuel import Fuel
-from .units import Units
+from .utils import Units
 
 __all__ = [
     "Fuel",
