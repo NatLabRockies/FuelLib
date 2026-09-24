@@ -1,6 +1,7 @@
 """Fuel class for Group Contribution Method calculations."""
 
 from __future__ import annotations
+from functools import cached_property
 import os
 from typing import Literal
 
@@ -17,12 +18,13 @@ from ._data_locator import (
     get_metadata_decomp_name,
 )
 from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
+from .gcm import GCMRegistry
 from .utility import mixing_rule
 from .utils import Units, types
 
 
 class Fuel:
-    """Class for handling group contribution calculations of thermodynamic and mixture properties."""
+    """Class for handling calculations of thermodynamic and mixture properties."""
 
     def __init__(
         self, name: str, decompName: str | None = None, fuelDataDir: str | None = None
@@ -31,8 +33,10 @@ class Fuel:
 
         Args:
             name: Name of the mixture as it appears in its gcData file.
-            decompName: Name of the groupDecomposition file if different from name. Defaults to None.
-            fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
+            decompName: Name of the groupDecomposition file if different from name.
+                Defaults to None.
+            fuelDataDir: Directory where the fuel data is stored. If None, uses built-in
+                embedded data.
 
         Raises:
             ValueError: If a GCM property cannot be found.
@@ -86,14 +90,15 @@ class Fuel:
         self.gcmTableFile: str = os.path.join(gcmtable_dir, "gcmTable.csv")
         """File containing the GCM table data."""
 
-        # Read functional group data for mixture (num_compounds,num_groups)
-        df_Nij = pd.read_csv(self.groupDecompFile)
-        self.Nij: types.Array2D = df_Nij.iloc[:, 1:].to_numpy()
-        """Array containing the group decomposition data for each compound."""
-        self.num_compounds: int = self.Nij.shape[0]
+        # Read GCxGC/compound data
+        df_gcxgc = pd.read_csv(self.gcxgcFile)
+
+        self.compounds: list[str] = [
+            compound.strip() for compound in df_gcxgc["Compound"].to_list()
+        ]
+        """List of compound names."""
+        self.num_compounds: int = len(self.compounds)
         """Number of compounds in the fuel mixture."""
-        self.num_groups: int = self.Nij.shape[1]
-        """Number of functional groups considered in the decomposition."""
 
         self.fam: types.Array1D = np.zeros(self.num_compounds, dtype=int)
         """Hydrocarbon family codes for thermal conductivity.
@@ -121,30 +126,26 @@ class Fuel:
         * "aromatic"
         """
 
-        aromatics = 10  # starting index for aromatic groups
-        num_aromatics = 5
-        branching = 78  # starting index for branching groups (Group j (CH3)2CH through C(CH3)2C(CH3)2)
-        num_branching = 5  # groups 78-82 inclusive
-        cyclos = 83  # starting index for membered ring groups (3-7 membered rings)
-        num_cyclos = 5
-        olefins = 4  # starting index for double bound groups
-        num_olefins = 6
+        # Read functional group data for mixture (num_compounds,num_groups)
+        df_Nij = pd.read_csv(self.groupDecompFile)
+        self.Nij: types.Array2D = df_Nij.iloc[:, 1:].to_numpy()
+        """Array containing the group decomposition data for each compound."""
 
         for i in range(self.num_compounds):
             # Check if aromatic: does it contain AC's?
-            if sum(self.Nij[i, aromatics : aromatics + num_aromatics]) > 0:
+            if sum(self.Nij[i, 10:15]) > 0:
                 self.fam[i] = 1
                 self.hc_type[i] = "aromatic"
             # Check if cycloparaffin: does it contain rings?
-            elif sum(self.Nij[i, cyclos : cyclos + num_cyclos]) > 0:
+            elif sum(self.Nij[i, 83:88]) > 0:
                 self.fam[i] = 2
                 self.hc_type[i] = "cyclo-alkane"
             # Check if olefin: does it contain double bonds?
-            elif sum(self.Nij[i, olefins : olefins + num_olefins]) > 0:
+            elif sum(self.Nij[i, 4:10]) > 0:
                 self.fam[i] = 3
                 self.hc_type[i] = "alkene"
             # Check for branching groups (CH, C quaternary carbons)
-            elif sum(self.Nij[i, branching : branching + num_branching]) > 0:
+            elif sum(self.Nij[i, 78:83]) > 0:
                 self.hc_type[i] = "iso-alkane"
             else:
                 # Only CH3 and CH2 -> n-alkane (linear)
@@ -156,7 +157,7 @@ class Fuel:
         # Aromatic: ACH=1C,1H; AC=1C,0H; ACCH3=2C,3H; ACCH2=2C,2H; ACCH=2C,1H
         alkyl_carbons = np.array([1, 1, 1, 1])  # groups 0-3
         alkyl_hydrogens = np.array([3, 2, 1, 0])
-        # Olefinic: group 4 appears to represent 2 carbons with 3 hydrogens in UNIFAC-based system
+        # Olefinic: group 4 appears to represent 2 carbons with 3 hydrogens in UNIFAC
         olefinic_carbons = np.array([2, 1, 1, 0, 0, 0])  # groups 4-9
         olefinic_hydrogens = np.array([3, 1, 0, 0, 0, 0])
         aromatic_carbons = np.array([1, 1, 2, 2, 2])  # groups 10-14
@@ -176,14 +177,6 @@ class Fuel:
             # Aromatic contribution (groups 10-14)
             self.nC[i] += np.dot(self.Nij[i, 10:15], aromatic_carbons)
             self.nH[i] += np.dot(self.Nij[i, 10:15], aromatic_hydrogens)
-
-        # Read GCxGC/compound data
-        df_gcxgc = pd.read_csv(self.gcxgcFile)
-
-        self.compounds: list[str] = [
-            compound.strip() for compound in df_gcxgc["Compound"].to_list()
-        ]
-        """List of compound names."""
 
         # Load molecular formulas if available
         if "Formula" in df_gcxgc.columns:
@@ -209,14 +202,6 @@ class Fuel:
         self.Y_0: types.Quantity1D = Units.Quantity(_Y_0, "dimensionless")
 
         # Make sure mixture data is consistent:
-        _N_g1 = 78
-        _N_g2 = 43
-        if self.num_groups < _N_g1:
-            raise ValueError(
-                f"Insufficient mixture description:\n"
-                f"The number of columns in {self.groupDecompFile} is less than "
-                f"the required number of first-order groups (N_g1 = {_N_g1})."
-            )
         if self.Y_0.shape[0] != self.num_compounds:
             raise ValueError(
                 f"Insufficient mixture description:\n"
@@ -224,115 +209,39 @@ class Fuel:
                 f"equal the number of compounds in {self.gcxgcFile}."
             )
 
-        # Read and store GCM table properties
-        df_table = pd.read_csv(self.gcmTableFile)
-        df_table = df_table.drop(columns=["Units"])
-
-        def _get_row(property_name: str) -> types.Array1D:
-            """Get property row from GCM table.
-
-            Args:
-                property_name: Name of the property to retrieve.
-
-            Returns:
-                Property values for all functional groups.
-
-            Raises:
-                ValueError: If property not found in GCM table.
-            """
-            row = df_table[df_table["Property"] == property_name]
-            if row.empty:
-                raise ValueError(f"Property '{property_name}' not found in GCM table.")
-            return row.iloc[:, 1:].to_numpy().flatten()
-
-        # Table data for functional groups (num_compounds,)
-        _Tck = _get_row("tck")  # critical temperature (1)
-        _Pck = _get_row("pck")  # critical pressure (bar)
-        _Vck = _get_row("vck")  # critical volume (m^3/kmol)
-        _Tbk = _get_row("tbk")  # boiling temperature (1)
-        _Tmk = _get_row("tmk")  # melting point temperature (1)
-        _hfk = _get_row("hfk")  # enthalpy of formation, (kJ/mol)
-        _gfk = _get_row("gfk")  # Gibbs energy (kJ/mol)
-        _hvk = _get_row("hvk")  # latent heat of vaporization (kJ/mol)
-        _wk = _get_row("wk")  # accentric factor (1)
-        _Vmk = _get_row("vmk")  # liquid molar volume fraction (m^3/kmol)
-        _cpak = _get_row("CpAk")  # specific heat values (J/mol/K)
-        _cpbk = _get_row("CpBk")  # specific heat values (J/mol/K)
-        _cpck = _get_row("CpCk")  # specific heat values (J/mol/K)
-        _mwk = _get_row("MW")  # molecular weights (g/mol)
-
         # --- Compute critical properties at standard temp (num_compounds,)
-        # Molecular weights
-
-        _mw = np.matmul(self.Nij, _mwk)
-        self.MW: types.Quantity1D = Units.Quantity(_mw, "g/mol").to("kg/mol")
+        self.MW: types.Quantity1D = self.get_property("gani", "MW").to("kg/mol")
         """Molecular weights in kg/mol."""
-
-        # T_c (critical temperature)
-        _tc = 181.128 * np.log(np.matmul(self.Nij, _Tck))
-        self.Tc: types.Quantity1D = Units.Quantity(_tc, "K")
+        self.Tc: types.Quantity1D = self.get_property("gani", "Tc").to("K")
         """Critical temperature in K."""
-
-        # p_c (critical pressure)
-        _pc = 1.3705 + (np.matmul(self.Nij, _Pck) + 0.10022) ** (-2)
-        self.Pc: types.Quantity1D = Units.Quantity(_pc, "bar").to("Pa")
+        self.Pc: types.Quantity1D = self.get_property("gani", "Pc").to("Pa")
         """Critical pressure in Pa."""
-
-        # V_c (critical volume)
-        _vc = -0.00435 + np.matmul(self.Nij, _Vck)
-        self.Vc: types.Quantity1D = Units.Quantity(_vc, "m^3/kmol").to("m^3/mol")
+        self.Vc: types.Quantity1D = self.get_property("gani", "Vc").to("m^3/mol")
         """Critical volume in m^3/mol."""
-
-        # T_b (boiling temperature)
-        _tb = 204.359 * np.log(np.matmul(self.Nij, _Tbk))
-        self.Tb: types.Quantity1D = Units.Quantity(_tb, "K")
+        self.Tb: types.Quantity1D = self.get_property("gani", "Tb").to("K")
         """Boiling temperature in K."""
-
-        # T_m (melting temperature)
-        _tm = 102.425 * np.log(np.matmul(self.Nij, _Tmk))
-        self.Tm: types.Quantity1D = Units.Quantity(_tm, "K")
+        self.Tm: types.Quantity1D = self.get_property("gani", "Tm").to("K")
         """Melting temperature in K."""
-
-        # H_f (enthalpy of formation)
-        _hf = 10.835 + np.matmul(self.Nij, _hfk)
-        self.Hf: types.Quantity1D = Units.Quantity(_hf, "kJ/mol").to("J/mol")
+        self.Hf: types.Quantity1D = self.get_property("gani", "Hf").to("J/mol")
         """Enthalpy of formation in J/mol."""
-
-        # G_f (Gibbs free energy)
-        _gf = -14.828 + np.matmul(self.Nij, _gfk)
-        self.Gf: types.Quantity1D = Units.Quantity(_gf, "kJ/mol").to("J/mol")
+        self.Gf: types.Quantity1D = self.get_property("gani", "Gf").to("J/mol")
         """Gibbs free energy in J/mol."""
-
-        # H_v,stp (enthalpy of vaporization at 298 K)
-        _hv_stp = 6.829 + np.matmul(self.Nij, _hvk)
-        self.Hv_stp: types.Quantity1D = Units.Quantity(_hv_stp, "kJ/mol").to("J/mol")
+        self.Hv_stp: types.Quantity1D = self.get_property("gani", "Hv_stp").to("J/mol")
         """Enthalpy of vaporization at 298 K in J/mol."""
-
-        # omega (accentric factor)
-        _omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (1.0 / 0.5050)
-        self.omega: types.Quantity1D = Units.Quantity(_omega, "")
+        self.omega: types.Quantity1D = self.get_property("gani", "omega")
         """Accentric factor (dimensionless)."""
-
-        # V_m (molar liquid volume at 298 K)
-        _vm_stp = 0.01211 + np.matmul(self.Nij, _Vmk)
-        self.Vm_stp: types.Quantity1D = Units.Quantity(_vm_stp, "m^3/kmol").to(
+        self.Vm_stp: types.Quantity1D = self.get_property("gani", "Vm_stp").to(
             "m^3/mol"
         )
         """Molar liquid volume at 298 K in m^3/mol."""
-
-        # C_p,stp (molar specific heat at 298 K)
-        _cp_stp = np.matmul(self.Nij, _cpak) - 19.7779
-        self.Cp_stp: types.Quantity1D = Units.Quantity(_cp_stp, "J/(mol*K)")
+        self.Cp_stp: types.Quantity1D = self.get_property("gani", "Cp_stp").to(
+            "J/(mol*K)"
+        )
         """Molar specific heat at 298 K in J/(mol*K)."""
-
-        # Temperature corrections for C_p
-        _cp_b = np.matmul(self.Nij, _cpbk)
-        self.Cp_B: types.Quantity1D = Units.Quantity(_cp_b, "J/(mol*K)")
+        self.Cp_B: types.Quantity1D = self.get_property("gani", "Cp_B").to("J/(mol*K)")
         """Temperature-corrected specific heat (B) in J/(mol*K)."""
-        _cp_c = np.matmul(self.Nij, _cpck)
-        self.Cp_C: types.Quantity1D = Units.Quantity(_cp_c, "J/(mol*K)")
+        self.Cp_C: types.Quantity1D = self.get_property("gani", "Cp_C").to("J/(mol*K)")
         """Temperature-corrected specific heat (C) in J/(mol*K)."""
-
         # L_v,stp (latent heat of vaporization at 298 K)
         self.Lv_stp: types.Quantity1D = (self.Hv_stp / self.MW).to("J/kg")
         """Latent heat of vaporization at 298 K in J/kg."""
@@ -348,6 +257,69 @@ class Fuel:
         _sigma = (2.3551 - 0.0874 * _lj_w) * (_lj_tc / _lj_pc) ** (1.0 / 3)
         self.sigma: types.Quantity1D = Units.Quantity(_sigma, "angstrom").to("m")
         """Lennard-Jones collision diameter in m."""
+
+    # -------------------------------------------------------------------------
+    # Parsing functions
+    # -------------------------------------------------------------------------
+    def gani_decomp(self) -> pd.DataFrame:
+        """Parse the Gani decomposition matrix into a DataFrame.
+
+        Returns:
+            A pandas DataFrame representing the Gani decomposition matrix.
+                Shape: (num_compounds, num_groups)
+
+        Raises:
+            ValueError: If any compounds in the fuel mixture are missing from the Gani
+                decomposition file.
+        """
+        df = pd.read_csv(self.groupDecompFile, header=0, index_col=0)
+        missing = set(self.compounds) - set(df.index)
+        if missing:
+            msg = (
+                f"Gani decomposition file ({self.groupDecompFile}) is missing compounds"
+                f" present in the fuel mixture: {sorted(missing)}."
+            )
+            raise ValueError(msg)
+        return df.loc[self.compounds]
+
+    @cached_property
+    def gcm_properties(self) -> dict[str, dict[str, types.Quantity1D]]:
+        """Pre-computed GCM properties for the compounds.
+
+        Returns:
+            A dictionary containing the pre-computed GCM properties for the compounds.
+            The keys are the GCM method names, and the values are dictionaries mapping
+            property names to 1D numpy arrays of the property values for each compound.
+        """
+        props: dict[str, dict[str, types.Quantity1D]] = {}
+        for gcm in GCMRegistry.methods:
+            props.update(gcm.predict_all(self))
+        return props
+
+    def get_property(self, method: str, property_name: str) -> types.Quantity1D:
+        """Get a specific property prediction from the GCM for each compound.
+
+        Args:
+            method: The GCM method to use.
+            property_name: The name of the property to retrieve.
+
+        Returns:
+            Quantity vector of the requested predictions for each compound.
+
+        Raises:
+            KeyError: If the GCM method or property is not found.
+        """
+        method = method.lower()
+        if method not in self.gcm_properties:
+            msg = f"Method '{method}' not found in computed GCM properties."
+            raise KeyError(msg)
+
+        property_name = property_name.lower()
+        if property_name not in self.gcm_properties[method]:
+            msg = f"Property '{property_name}' not found in computed GCM properties."
+            raise KeyError(msg)
+
+        return self.gcm_properties[method][property_name]
 
     # -------------------------------------------------------------------------
     # Member functions
@@ -632,7 +604,8 @@ class Fuel:
         """Estimate Antoine coefficients for vapor pressure of an individual compound.
 
         Args:
-            Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).
+            Tvals: Temperature range or nodes for Antoine fit in Kelvin.
+                Defaults to [273.15, Tb_i].
             units: Units for pressure in fit ("mks", "cgs").
             correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
 
@@ -1097,9 +1070,10 @@ class Fuel:
 
         Args:
             Yi: Mass fractions of each compound in the mixture.
-            Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
-            units: Units for pressure in fit ("mks", "cgs").
-            correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+            Tvals: Temperature range or nodes for Antoine fit in Kelvin.
+                Defaults to [273.15, min(Tb_mix)].
+            units: Units for pressure in fit.
+            correlation: Correlation method.
 
         Returns:
             Coefficients A, B, C, D.
