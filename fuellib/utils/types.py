@@ -13,7 +13,9 @@ import pint
 
 # NumPy
 _ = np.array([1])  # Check that NumPy is available
+#: One-dimensional NumPy array.
 Array1D: TypeAlias = np.ndarray[tuple[int,]]
+#: Two-dimensional NumPy array.
 Array2D: TypeAlias = np.ndarray[tuple[int, int]]
 
 # Pint
@@ -22,8 +24,11 @@ ureg = pint.UnitRegistry()
 ## hinting. This will be important when we begin to implement optional dependencies, as
 ## it allows us to define types that can adapt to the available numerical library.
 PintQuantityT = TypeVar("PintQuantityT", bound=pint.Quantity)
+#: Unit-aware scalar quantity.
 Quantity0D: TypeAlias = pint.Quantity[float]
+#: Unit-aware quantity with a one-dimensional array magnitude.
 Quantity1D: TypeAlias = pint.Quantity[Array1D]
+#: Unit-aware quantity with a two-dimensional array magnitude.
 Quantity2D: TypeAlias = pint.Quantity[Array2D]
 
 UnxtQuantityT = TypeVar(

@@ -1,4 +1,4 @@
-"""Utility functions for FuelLib."""
+"""Type aliases and unit handling for FuelLib."""
 
 from . import types
 from .types import Units
