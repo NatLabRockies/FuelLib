@@ -1,5 +1,4 @@
-"""
-Data locator module for FuelLib.
+"""Data locator module for FuelLib.
 
 This module provides functions to locate data directories and files embedded
 within the fuellib package using importlib.resources.
@@ -29,8 +28,7 @@ __all__ = [
 
 
 def _validate_fuel_data_dir(fuel_data_dir):
-    """
-    Validate that a custom fuel data directory has required subdirectories.
+    """Validate that a custom fuel data directory has required subdirectories.
 
     :param fuel_data_dir: Path to fuel data directory.
     :type fuel_data_dir: str
@@ -56,8 +54,7 @@ def _validate_fuel_data_dir(fuel_data_dir):
 
 
 def _get_props_dir_for_fueldata(fuel_data_dir):
-    """
-    Get the properties directory for a fuel data directory, or None if it doesn't exist.
+    """Get the properties directory for a fuel data directory, or None if it doesn't exist.
 
     :param fuel_data_dir: Path to fuel data directory.
     :type fuel_data_dir: str
@@ -69,8 +66,7 @@ def _get_props_dir_for_fueldata(fuel_data_dir):
 
 
 def get_data_dir():
-    """
-    Get the path to FuelLib's data directory.
+    """Get the path to FuelLib's data directory.
 
     :return: Absolute path to the data directory.
     :rtype: str
@@ -81,8 +77,7 @@ def get_data_dir():
 
 
 def get_gcmtable_dir():
-    """
-    Get the path to the GCM table data directory.
+    """Get the path to the GCM table data directory.
 
     :return: Absolute path to gcmTableData directory.
     :rtype: str
@@ -91,8 +86,7 @@ def get_gcmtable_dir():
 
 
 def get_fueldata_dir():
-    """
-    Get the path to FuelLib's fuel data directory.
+    """Get the path to FuelLib's fuel data directory.
 
     :return: Absolute path to embedded fuelData directory.
     :rtype: str
@@ -101,8 +95,7 @@ def get_fueldata_dir():
 
 
 def get_fueldata_gc_dir():
-    """
-    Get the path to FuelLib's GC data subdirectory.
+    """Get the path to FuelLib's GC data subdirectory.
 
     :return: Absolute path to embedded fuelData/gcData directory.
     :rtype: str
@@ -111,8 +104,7 @@ def get_fueldata_gc_dir():
 
 
 def get_fueldata_decomp_dir():
-    """
-    Get the path to FuelLib's group decomposition data subdirectory.
+    """Get the path to FuelLib's group decomposition data subdirectory.
 
     :return: Absolute path to embedded fuelData/groupDecompositionData directory.
     :rtype: str
@@ -121,8 +113,7 @@ def get_fueldata_decomp_dir():
 
 
 def get_fueldata_props_dir():
-    """
-    Get the path to FuelLib's properties data subdirectory, or None if not found.
+    """Get the path to FuelLib's properties data subdirectory, or None if not found.
 
     This directory is optional.
 
@@ -133,8 +124,7 @@ def get_fueldata_props_dir():
 
 
 def get_metadata_decomp_name(fuel_name, fuel_data_dir=None):
-    """
-    Load decomposition name mapping from fuel_metadata.yaml.
+    """Load decomposition name mapping from fuel_metadata.yaml.
 
     :param fuel_name: Name of the fuel to look up.
     :type fuel_name: str
@@ -215,8 +205,7 @@ def get_metadata_decomp_name(fuel_name, fuel_data_dir=None):
 
 
 def get_metadata_props_data(fuel_name, fuel_data_dir=None):
-    """
-    Load properties data name mapping from fuel_metadata.yaml.
+    """Load properties data name mapping from fuel_metadata.yaml.
 
     Returns None if props_data is not specified in metadata (it's optional).
 

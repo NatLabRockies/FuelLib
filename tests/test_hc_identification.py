@@ -12,9 +12,9 @@ import fuellib as fl
 def get_available_fuels():
     """Discover available fuels from fuelData/gcData directory."""
     gcdata_dir = fl.get_fueldata_gc_dir()
-    fuels = sorted(
-        [f.name.replace("_init.csv", "") for f in Path(gcdata_dir).glob("*_init.csv")]
-    )
+    fuels = sorted([
+        f.name.replace("_init.csv", "") for f in Path(gcdata_dir).glob("*_init.csv")
+    ])
     return fuels
 
 

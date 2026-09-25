@@ -1,6 +1,7 @@
 """Type definitions for FuelLib."""
 
-from typing import ClassVar, TypeVar
+from __future__ import annotations
+from typing import ClassVar, TypeVar, TypeAlias
 
 import numpy as np
 import pint
@@ -12,8 +13,8 @@ import pint
 
 # NumPy
 _ = np.array([1])  # Check that NumPy is available
-Array1D = np.ndarray[tuple[int,], np.dtype[np.float64]]
-Array2D = np.ndarray[tuple[int, int], np.dtype[np.float64]]
+Array1D: TypeAlias = np.ndarray[tuple[int,]]
+Array2D: TypeAlias = np.ndarray[tuple[int, int]]
 
 # Pint
 ureg = pint.UnitRegistry()
@@ -21,9 +22,9 @@ ureg = pint.UnitRegistry()
 ## hinting. This will be important when we begin to implement optional dependencies, as
 ## it allows us to define types that can adapt to the available numerical library.
 PintQuantityT = TypeVar("PintQuantityT", bound=pint.Quantity)
-Quantity0D = pint.Quantity[float]
-Quantity1D = pint.Quantity[Array1D]
-Quantity2D = pint.Quantity[Array2D]
+Quantity0D: TypeAlias = pint.Quantity[float]
+Quantity1D: TypeAlias = pint.Quantity[Array1D]
+Quantity2D: TypeAlias = pint.Quantity[Array2D]
 
 UnxtQuantityT = TypeVar(
     "UnxtQuantityT", bound=object

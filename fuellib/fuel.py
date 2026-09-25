@@ -1,5 +1,6 @@
 """Fuel class for Group Contribution Method calculations."""
 
+from __future__ import annotations
 import os
 from typing import Literal
 
@@ -21,140 +22,39 @@ from .utils import Units, types
 
 
 class Fuel:
-    """
-    Class for handling group contribution calculations of thermodynamic and mixture properties.
-
-    :param name: Name of the mixture as it appears in its gcData file.
-    :type name: str
-    :param decompName: Name of the groupDecomposition file if different from name. Defaults to None.
-    :type decompName: str, optional
-    :param fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
-    :type fuelDataDir: str, optional
-    """
-
-    # Type annotations for documented attributes
-    #: Root directory for fuel data (custom or embedded)
-    fuelDataDir: str
-
-    #: Directory containing GCxGC compositional data files
-    fuelDataGcDir: str
-
-    #: Directory containing functional group decomposition files
-    fuelDataDecompDir: str
-
-    #: Directory containing experimental property data (may be None)
-    fuelDataPropsDir: str | None
-
-    #: Name of the fuel/mixture
-    name: str
-
-    #: List of compound names in the mixture
-    compounds: list
-
-    #: Molecular formulas for each compound
-    formulas: np.ndarray | None
-
-    #: Mass fractions of each compound. Shape: (num_compounds,)
-    Y_0: types.Quantity1D
-
-    #: Functional group decomposition matrix. Shape: (num_compounds, num_groups)
-    Nij: types.Array2D
-
-    #: Number of compounds in the mixture
-    num_compounds: int
-
-    #: Number of functional groups in the decomposition
-    num_groups: int
-
-    #: Molecular weights in kg/mol. Shape: (num_compounds,)
-    MW: types.Quantity1D
-
-    #: Critical temperatures in K. Shape: (num_compounds,)
-    Tc: types.Quantity1D
-
-    #: Critical pressures in Pa. Shape: (num_compounds,)
-    Pc: types.Quantity1D
-
-    #: Critical volumes in m³/mol. Shape: (num_compounds,)
-    Vc: types.Quantity1D
-
-    #: Boiling temperatures in K. Shape: (num_compounds,)
-    Tb: types.Quantity1D
-
-    #: Melting temperatures in K. Shape: (num_compounds,)
-    Tm: types.Quantity1D
-
-    #: Enthalpy of formation in J/mol. Shape: (num_compounds,)
-    Hf: types.Quantity1D
-
-    #: Gibbs free energy in J/mol. Shape: (num_compounds,)
-    Gf: types.Quantity1D
-
-    #: Enthalpy of vaporization at 298 K in J/mol. Shape: (num_compounds,)
-    Hv_stp: types.Quantity1D
-
-    #: Latent heat of vaporization at 298 K in J/kg. Shape: (num_compounds,)
-    Lv_stp: types.Quantity1D
-
-    #: Molar specific heat at 298 K in J/mol/K. Shape: (num_compounds,)
-    Cp_stp: types.Quantity1D
-
-    #: Molar liquid volume at 298 K in m³/mol. Shape: (num_compounds,)
-    Vm_stp: types.Quantity1D
-
-    #: Acentric factors. Shape: (num_compounds,)
-    omega: types.Quantity1D
-
-    #: Lennard-Jones collision diameters in m. Shape: (num_compounds,)
-    sigma: types.Quantity1D
-
-    #: Lennard-Jones well depths in K. Shape: (num_compounds,)
-    epsilonByKB: types.Quantity1D
-
-    #: Hydrocarbon types ("n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene")
-    hc_type: types.Array1D
-
-    #: Family codes for thermal conductivity (0: saturated, 1: aromatic, 2: cycloparaffin, 3: olefin)
-    fam: types.Array1D
-
-    #: Carbon numbers. Shape: (num_compounds,)
-    nC: types.Array1D
-
-    #: Hydrogen numbers. Shape: (num_compounds,)
-    nH: types.Array1D
-
-    #: PelePhysics keys for each compound (if available)
-    pelephysics_keys: types.Array1D | None
-
-    # Number of first and second order groups from Constantinou and Gani
-    N_g1 = 78
-    N_g2 = 43
+    """Class for handling group contribution calculations of thermodynamic and mixture properties."""
 
     def __init__(
         self, name: str, decompName: str | None = None, fuelDataDir: str | None = None
     ) -> None:
-        """
-        Initialize the fuel object and calculate GCM properties.
+        """Initialize Fuel object and pre-compute GCM properties.
 
-        :param name: Name of the mixture as it appears in its gcData file.
-        :type name: str
-        :param decompName: Name of the groupDecomposition file if different from name.
-        :type decompName: str, optional
-        :param fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
-        :type fuelDataDir: str, optional
+        Args:
+            name: Name of the mixture as it appears in its gcData file.
+            decompName: Name of the groupDecomposition file if different from name. Defaults to None.
+            fuelDataDir: Directory where the fuel data is stored. If None, uses built-in embedded data.
+
+        Raises:
+            ValueError: If a GCM property cannot be found.
         """
-        self.name = name
+        self.name: str = name
+        """Name of the fuel/mixture."""
         if decompName is None:
             # Try to get decomposition name from metadata
-            decompName = get_metadata_decomp_name(name, fuelDataDir)
+            decompName: str = get_metadata_decomp_name(name, fuelDataDir)
+            """Name of the group decomposition file."""
 
         # Determine and set data directories for this fuel instance
         if fuelDataDir is None:
             # Use built-in embedded data
-            self.fuelDataDir = get_fueldata_dir()
-            self.fuelDataGcDir = get_fueldata_gc_dir()
-            self.fuelDataDecompDir = get_fueldata_decomp_dir()
-            self.fuelDataPropsDir = get_fueldata_props_dir()
+            self.fuelDataDir: str = get_fueldata_dir()
+            """Directory containing the fuel data."""
+            self.fuelDataGcDir: str = get_fueldata_gc_dir()
+            """Directory containing the gas chromatography data."""
+            self.fuelDataDecompDir: str = get_fueldata_decomp_dir()
+            """Directory containing the group decomposition data."""
+            self.fuelDataPropsDir: str = get_fueldata_props_dir()
+            """Directory containing the fuel properties data."""
         else:
             # Validate and use custom fuel directory
             from ._data_locator import (
@@ -163,34 +63,63 @@ class Fuel:
             )
 
             _validate_fuel_data_dir(fuelDataDir)
-            self.fuelDataDir = fuelDataDir
-            self.fuelDataGcDir = os.path.join(fuelDataDir, "gcData")
-            self.fuelDataDecompDir = os.path.join(fuelDataDir, "groupDecompositionData")
-            self.fuelDataPropsDir = _get_props_dir_for_fueldata(fuelDataDir)
+            self.fuelDataDir: str = fuelDataDir
+            """Directory containing the fuel data."""
+            self.fuelDataGcDir: str = os.path.join(fuelDataDir, "gcData")
+            """Directory containing the gas chromatography data."""
+            self.fuelDataDecompDir: str = os.path.join(
+                fuelDataDir, "groupDecompositionData"
+            )
+            """Directory containing the group decomposition data."""
+            self.fuelDataPropsDir: str = _get_props_dir_for_fueldata(fuelDataDir)
+            """Directory containing the fuel properties data."""
 
         # Get GCM table directory (always from built-in data)
         gcmtable_dir = get_gcmtable_dir()
 
-        self.groupDecompFile = os.path.join(self.fuelDataDecompDir, f"{decompName}.csv")
-        self.gcxgcFile = os.path.join(self.fuelDataGcDir, f"{name}_init.csv")
-        self.gcmTableFile = os.path.join(gcmtable_dir, "gcmTable.csv")
+        self.groupDecompFile: str = os.path.join(
+            self.fuelDataDecompDir, f"{decompName}.csv"
+        )
+        """File containing the group decomposition data for this fuel."""
+        self.gcxgcFile: str = os.path.join(self.fuelDataGcDir, f"{name}_init.csv")
+        """File containing the GCxGC compositional data for this fuel."""
+        self.gcmTableFile: str = os.path.join(gcmtable_dir, "gcmTable.csv")
+        """File containing the GCM table data."""
 
         # Read functional group data for mixture (num_compounds,num_groups)
         df_Nij = pd.read_csv(self.groupDecompFile)
-        self.Nij = df_Nij.iloc[:, 1:].to_numpy()
-        self.num_compounds = self.Nij.shape[0]
-        self.num_groups = self.Nij.shape[1]
+        self.Nij: types.Array2D = df_Nij.iloc[:, 1:].to_numpy()
+        """Array containing the group decomposition data for each compound."""
+        self.num_compounds: int = self.Nij.shape[0]
+        """Number of compounds in the fuel mixture."""
+        self.num_groups: int = self.Nij.shape[1]
+        """Number of functional groups considered in the decomposition."""
 
-        # Classify hydrocarbon by family (used in thermal conductivity)
-        # 0: saturated hydrocarbons
-        # 1: aromatics
-        # 2: cycloparaffins
-        # 3: olefins
-        self.fam = np.zeros(self.num_compounds, dtype=int)
+        self.fam: types.Array1D = np.zeros(self.num_compounds, dtype=int)
+        """Hydrocarbon family codes for thermal conductivity.
+
+        ==== ==================
+        Code Hydrocarbon Family
+        ==== ==================
+        0    saturated
+        1    aromatics
+        2    cycloparaffins
+        3    olefins
+        ==== ==================
+
+        """
 
         # Classify hydrocarbon by type (n-alkane, iso-alkane, cyclo-alkane, aromatic)
         # Based on group decompositions from Constantinou-Gani method
-        self.hc_type = np.array([""] * self.num_compounds, dtype=object)
+        self.hc_type: types.Array1D = np.array([""] * self.num_compounds, dtype=object)
+        """Hydrocarbon types for each compound:
+
+        * "n-alkane"
+        * "iso-alkane"
+        * "alkene"
+        * "cyclo-alkane"
+        * "aromatic"
+        """
 
         aromatics = 10  # starting index for aromatic groups
         num_aromatics = 5
@@ -233,8 +162,10 @@ class Fuel:
         aromatic_carbons = np.array([1, 1, 2, 2, 2])  # groups 10-14
         aromatic_hydrogens = np.array([1, 0, 3, 2, 1])
 
-        self.nC = np.zeros(self.num_compounds, dtype=float)
-        self.nH = np.zeros(self.num_compounds, dtype=float)
+        self.nC: types.Array1D = np.zeros(self.num_compounds, dtype=float)
+        """Number of carbon atoms in each compound."""
+        self.nH: types.Array1D = np.zeros(self.num_compounds, dtype=float)
+        """Number of hydrogen atoms in each compound."""
         for i in range(self.num_compounds):
             # Alkyl contribution (groups 0-3)
             self.nC[i] = np.dot(self.Nij[i, 0:4], alkyl_carbons)
@@ -249,36 +180,44 @@ class Fuel:
         # Read GCxGC/compound data
         df_gcxgc = pd.read_csv(self.gcxgcFile)
 
-        self.compounds = [
+        self.compounds: list[str] = [
             compound.strip() for compound in df_gcxgc["Compound"].to_list()
         ]
+        """List of compound names."""
 
         # Load molecular formulas if available
         if "Formula" in df_gcxgc.columns:
-            self.formulas = np.array([
+            self.formulas: types.Array1D | None = np.array([
                 formula.strip() if pd.notna(formula) else None
                 for formula in df_gcxgc["Formula"].to_list()
             ])
+            """Molecular formulas of the fuel components, if available."""
         else:
             self.formulas = None
 
         if "PelePhysics Key" in df_gcxgc.columns:
-            self.pelephysics_keys = np.array([
+            self.pelephysics_keys: types.Array1D | None = np.array([
                 key.strip() for key in df_gcxgc["PelePhysics Key"].to_list()
             ])
+            """PelePhysics keys for the fuel components, if available."""
         else:
             self.pelephysics_keys = None
 
-        self.Y_0 = df_gcxgc["Weight %"].to_numpy().flatten().astype(float)
+        self.Y_0: types.Array1D = (
+            df_gcxgc["Weight %"].to_numpy().flatten().astype(float)
+        )
+        """Initial mass fractions of the fuel components."""
         self.Y_0 /= np.sum(self.Y_0)
         self.Y_0: types.Quantity1D = Units.Quantity(self.Y_0, "dimensionless")
 
         # Make sure mixture data is consistent:
-        if self.num_groups < self.N_g1:
+        _N_g1 = 78
+        _N_g2 = 43
+        if self.num_groups < _N_g1:
             raise ValueError(
                 f"Insufficient mixture description:\n"
                 f"The number of columns in {self.groupDecompFile} is less than "
-                f"the required number of first-order groups (N_g1 = {self.N_g1})."
+                f"the required number of first-order groups (N_g1 = {_N_g1})."
             )
         if self.Y_0.shape[0] != self.num_compounds:
             raise ValueError(
@@ -291,15 +230,17 @@ class Fuel:
         df_table = pd.read_csv(self.gcmTableFile)
         df_table = df_table.drop(columns=["Units"])
 
-        def get_row(property_name):
-            """
-            Get property row from GCM table.
+        def _get_row(property_name: str) -> types.Array1D:
+            """Get property row from GCM table.
 
-            :param property_name: Name of the property to retrieve.
-            :type property_name: str
-            :return: Property values for all functional groups.
-            :rtype: np.ndarray
-            :raises ValueError: If property not found in GCM table.
+            Args:
+                property_name: Name of the property to retrieve.
+
+            Returns:
+                Property values for all functional groups.
+
+            Raises:
+                ValueError: If property not found in GCM table.
             """
             row = df_table[df_table["Property"] == property_name]
             if row.empty:
@@ -307,101 +248,120 @@ class Fuel:
             return row.iloc[:, 1:].to_numpy().flatten()
 
         # Table data for functional groups (num_compounds,)
-        _Tck = get_row("tck")  # critical temperature (1)
-        _Pck = get_row("pck")  # critical pressure (bar)
-        _Vck = get_row("vck")  # critical volume (m^3/kmol)
-        _Tbk = get_row("tbk")  # boiling temperature (1)
-        _Tmk = get_row("tmk")  # melting point temperature (1)
-        _hfk = get_row("hfk")  # enthalpy of formation, (kJ/mol)
-        _gfk = get_row("gfk")  # Gibbs energy (kJ/mol)
-        _hvk = get_row("hvk")  # latent heat of vaporization (kJ/mol)
-        _wk = get_row("wk")  # accentric factor (1)
-        _Vmk = get_row("vmk")  # liquid molar volume fraction (m^3/kmol)
-        _cpak = get_row("CpAk")  # specific heat values (J/mol/K)
-        _cpbk = get_row("CpBk")  # specific heat values (J/mol/K)
-        _cpck = get_row("CpCk")  # specific heat values (J/mol/K)
-        _mwk = get_row("MW")  # molecular weights (g/mol)
+        _Tck = _get_row("tck")  # critical temperature (1)
+        _Pck = _get_row("pck")  # critical pressure (bar)
+        _Vck = _get_row("vck")  # critical volume (m^3/kmol)
+        _Tbk = _get_row("tbk")  # boiling temperature (1)
+        _Tmk = _get_row("tmk")  # melting point temperature (1)
+        _hfk = _get_row("hfk")  # enthalpy of formation, (kJ/mol)
+        _gfk = _get_row("gfk")  # Gibbs energy (kJ/mol)
+        _hvk = _get_row("hvk")  # latent heat of vaporization (kJ/mol)
+        _wk = _get_row("wk")  # accentric factor (1)
+        _Vmk = _get_row("vmk")  # liquid molar volume fraction (m^3/kmol)
+        _cpak = _get_row("CpAk")  # specific heat values (J/mol/K)
+        _cpbk = _get_row("CpBk")  # specific heat values (J/mol/K)
+        _cpck = _get_row("CpCk")  # specific heat values (J/mol/K)
+        _mwk = _get_row("MW")  # molecular weights (g/mol)
 
         # --- Compute critical properties at standard temp (num_compounds,)
         # Molecular weights
 
         _mw = np.matmul(self.Nij, _mwk)
-        self.MW = Units.Quantity(_mw, "g/mol").to("kg/mol")
+        self.MW: types.Quantity1D = Units.Quantity(_mw, "g/mol").to("kg/mol")
+        """Molecular weights in kg/mol."""
 
         # T_c (critical temperature)
         _tc = 181.128 * np.log(np.matmul(self.Nij, _Tck))
-        self.Tc = Units.Quantity(_tc, "K")
+        self.Tc: types.Quantity1D = Units.Quantity(_tc, "K")
+        """Critical temperature in K."""
 
         # p_c (critical pressure)
         _pc = 1.3705 + (np.matmul(self.Nij, _Pck) + 0.10022) ** (-2)
-        self.Pc = Units.Quantity(_pc, "bar").to("Pa")
+        self.Pc: types.Quantity1D = Units.Quantity(_pc, "bar").to("Pa")
+        """Critical pressure in Pa."""
 
         # V_c (critical volume)
         _vc = -0.00435 + np.matmul(self.Nij, _Vck)
-        self.Vc = Units.Quantity(_vc, "m^3/kmol").to("m^3/mol")
+        self.Vc: types.Quantity1D = Units.Quantity(_vc, "m^3/kmol").to("m^3/mol")
+        """Critical volume in m^3/mol."""
 
         # T_b (boiling temperature)
         _tb = 204.359 * np.log(np.matmul(self.Nij, _Tbk))
-        self.Tb = Units.Quantity(_tb, "K")
+        self.Tb: types.Quantity1D = Units.Quantity(_tb, "K")
+        """Boiling temperature in K."""
 
         # T_m (melting temperature)
         _tm = 102.425 * np.log(np.matmul(self.Nij, _Tmk))
-        self.Tm = Units.Quantity(_tm, "K")
+        self.Tm: types.Quantity1D = Units.Quantity(_tm, "K")
+        """Melting temperature in K."""
 
         # H_f (enthalpy of formation)
         _hf = 10.835 + np.matmul(self.Nij, _hfk)
-        self.Hf = Units.Quantity(_hf, "kJ/mol").to("J/mol")
+        self.Hf: types.Quantity1D = Units.Quantity(_hf, "kJ/mol").to("J/mol")
+        """Enthalpy of formation in J/mol."""
 
         # G_f (Gibbs free energy)
         _gf = -14.828 + np.matmul(self.Nij, _gfk)
-        self.Gf = Units.Quantity(_gf, "kJ/mol").to("J/mol")
+        self.Gf: types.Quantity1D = Units.Quantity(_gf, "kJ/mol").to("J/mol")
+        """Gibbs free energy in J/mol."""
 
         # H_v,stp (enthalpy of vaporization at 298 K)
         _hv_stp = 6.829 + np.matmul(self.Nij, _hvk)
-        self.Hv_stp = Units.Quantity(_hv_stp, "kJ/mol").to("J/mol")
+        self.Hv_stp: types.Quantity1D = Units.Quantity(_hv_stp, "kJ/mol").to("J/mol")
+        """Enthalpy of vaporization at 298 K in J/mol."""
 
         # omega (accentric factor)
         _omega = 0.4085 * np.log(np.matmul(self.Nij, _wk) + 1.1507) ** (1.0 / 0.5050)
-        self.omega = Units.Quantity(_omega, "")
+        self.omega: types.Quantity1D = Units.Quantity(_omega, "")
+        """Accentric factor (dimensionless)."""
 
         # V_m (molar liquid volume at 298 K)
         _vm_stp = 0.01211 + np.matmul(self.Nij, _Vmk)
-        self.Vm_stp = Units.Quantity(_vm_stp, "m^3/kmol").to("m^3/mol")
+        self.Vm_stp: types.Quantity1D = Units.Quantity(_vm_stp, "m^3/kmol").to(
+            "m^3/mol"
+        )
+        """Molar liquid volume at 298 K in m^3/mol."""
 
         # C_p,stp (molar specific heat at 298 K)
         _cp_stp = np.matmul(self.Nij, _cpak) - 19.7779
-        self.Cp_stp = Units.Quantity(_cp_stp, "J/(mol*K)")
+        self.Cp_stp: types.Quantity1D = Units.Quantity(_cp_stp, "J/(mol*K)")
+        """Molar specific heat at 298 K in J/(mol*K)."""
 
         # Temperature corrections for C_p
         _cp_b = np.matmul(self.Nij, _cpbk)
-        self.Cp_B = Units.Quantity(_cp_b, "J/(mol*K)")
+        self.Cp_B: types.Quantity1D = Units.Quantity(_cp_b, "J/(mol*K)")
+        """Temperature-corrected specific heat (B) in J/(mol*K)."""
         _cp_c = np.matmul(self.Nij, _cpck)
-        self.Cp_C = Units.Quantity(_cp_c, "J/(mol*K)")
+        self.Cp_C: types.Quantity1D = Units.Quantity(_cp_c, "J/(mol*K)")
+        """Temperature-corrected specific heat (C) in J/(mol*K)."""
 
         # L_v,stp (latent heat of vaporization at 298 K)
-        self.Lv_stp = (self.Hv_stp / self.MW).to("J/kg")
+        self.Lv_stp: types.Quantity1D = (self.Hv_stp / self.MW).to("J/kg")
+        """Latent heat of vaporization at 298 K in J/kg."""
 
         # Lennard-Jones parameters for diffusion calculations (Tee et al. 1966)
         _lj_w = self.omega.magnitude
         _lj_tc = self.Tc.to("K").magnitude
         _lj_pc = self.Pc.to("atm").magnitude
         _epsilon_by_kb = (0.7915 + 0.1693 * _lj_w) * _lj_tc
-        self.epsilonByKB = Units.Quantity(_epsilon_by_kb, "K")
+        self.epsilonByKB: types.Quantity1D = Units.Quantity(_epsilon_by_kb, "K")
+        """Lennard-Jones well depth over Boltzmann constant in K."""
 
         _sigma = (2.3551 - 0.0874 * _lj_w) * (_lj_tc / _lj_pc) ** (1.0 / 3)
-        self.sigma = Units.Quantity(_sigma, "angstrom").to("m")
+        self.sigma: types.Quantity1D = Units.Quantity(_sigma, "angstrom").to("m")
+        """Lennard-Jones collision diameter in m."""
 
     # -------------------------------------------------------------------------
     # Member functions
     # -------------------------------------------------------------------------
     def mean_molecular_weight(self, Yi: types.Quantity1D) -> types.Quantity0D:
-        """
-        Calculate the mean molecular weight of the mixture.
+        """Calculate the mean molecular weight of the mixture.
 
-        :param Yi: Mass fractions of each compound.
-        :type Yi: pint.Quantity[np.ndarray]
-        :return: Mean molecular weight of the mixture in kg/mol.
-        :rtype: pint.Quantity[float]
+        Args:
+            Yi: Mass fractions of each compound.
+
+        Returns:
+            Mean molecular weight of the mixture in kg/mol.
         """
         MW = self.MW.to("kg/mol")
         if np.sum(Yi) != 0:
@@ -412,13 +372,13 @@ class Fuel:
         return Mbar
 
     def mass2Y(self, mass: types.Quantity1D) -> types.Quantity1D:
-        """
-        Calculate the mass fractions from the mass of each component.
+        """Calculate the mass fractions from the mass of each component.
 
-        :param mass: Mass of each compound.
-        :type mass: pint.Quantity[np.ndarray]
-        :return: Mass fractions of the compounds (shape: num_compounds,).
-        :rtype: pint.Quantity[np.ndarray]
+        Args:
+            mass: Mass of each compound.
+
+        Returns:
+            Mass fractions of the compounds (shape: num_compounds,).
         """
         # Normalize to get group mole fractions
         mass = mass.to("kg")
@@ -431,13 +391,13 @@ class Fuel:
         return Units.Quantity(Yi, "dimensionless")
 
     def mass2X(self, mass: types.Quantity1D) -> types.Quantity1D:
-        """
-        Calculate the mole fractions from the mass of each component.
+        """Calculate the mole fractions from the mass of each component.
 
-        :param mass: Mass of each compound.
-        :type mass: pint.Quantity[np.ndarray]
-        :return: Mole fractions of the compounds (shape: num_compounds,).
-        :rtype: pint.Quantity[np.ndarray]
+        Args:
+            mass: Mass of each compound.
+
+        Returns:
+            Mole fractions of the compounds (shape: num_compounds,).
         """
         mass = mass.to("kg")
 
@@ -454,13 +414,13 @@ class Fuel:
         return Units.Quantity(Xi, "dimensionless")
 
     def X2Y(self, Xi: types.Quantity1D) -> types.Quantity1D:
-        """
-        Calculate the mass fractions from the mole fractions of each component.
+        """Calculate the mass fractions from the mole fractions of each component.
 
-        :param Xi: Mole fractions of each compound.
-        :type Xi: pint.Quantity[np.ndarray]
-        :return: Mass fractions of the compounds (shape: num_compounds,).
-        :rtype: pint.Quantity[np.ndarray]
+        Args:
+            Xi: Mole fractions of each compound.
+
+        Returns:
+            Mass fractions of the compounds (shape: num_compounds,).
         """
         # Calculate the mass for each compound
         mass = self.MW * Xi
@@ -475,13 +435,13 @@ class Fuel:
         return Units.Quantity(Yi, "dimensionless")
 
     def Y2X(self, Yi: types.Quantity1D) -> types.Quantity1D:
-        """
-        Calculate the mole fractions from the mass fractions of each component.
+        """Calculate the mole fractions from the mass fractions of each component.
 
-        :param Yi: Mass fractions of each compound.
-        :type Yi: pint.Quantity[np.ndarray]
-        :return: Mole fractions of the compounds (shape: num_compounds,).
-        :rtype: pint.Quantity[np.ndarray]
+        Args:
+            Yi: Mass fractions of each compound.
+
+        Returns:
+            Mole fractions of the compounds (shape: num_compounds,).
         """
         Mbar = self.mean_molecular_weight(Yi)
         if np.sum(Yi) != 0:
@@ -494,15 +454,14 @@ class Fuel:
     def density(
         self, T: types.Quantity0D, comp_idx: int | None = None
     ) -> types.Quantity1D:
-        """
-        Calculate the density of each component at temperature T.
+        """Calculate the density of each component at temperature T.
 
-        :param T: Temperature of the mixture in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Density of each compound in kg/m^3.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature of the mixture in Kelvin.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Density of each compound in kg/m^3.
         """
         T = T.to("K")
         if comp_idx is None:
@@ -518,18 +477,17 @@ class Fuel:
     def viscosity_kinematic(
         self, T: types.Quantity0D, comp_idx: int | None = None
     ) -> types.Quantity1D:
-        """
-        Calculate the viscosity using Dutt's equation.
+        """Calculate the viscosity using Dutt's equation.
 
-        :meta private: This uses Dutt's equation (4.23) from "Viscosity of Liquids".
-        :meta private: The equation predicts viscosity in mm^2/s and is converted to SI units.
+        Uses Dutt's equation (4.23) from "Viscosity of Liquids". The equation
+        predicts viscosity in mm^2/s and is converted to SI units.
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Viscosity of each component in m^2/s.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Viscosity of each component in m^2/s.
         """
         # Convert temperature to Celsius
         T: float = T.to("celsius").magnitude
@@ -547,17 +505,16 @@ class Fuel:
     def viscosity_dynamic(
         self, T: types.Quantity0D, comp_idx: int | None = None
     ) -> types.Quantity1D:
-        """
-        Calculate liquid dynamic viscosity based on droplet temperature and density.
+        """Calculate liquid dynamic viscosity based on droplet temperature and density.
 
-        :meta private: Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
+        Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Dynamic viscosity in Pa*s.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Dynamic viscosity in Pa*s.
         """
         nu_i = self.viscosity_kinematic(T, comp_idx=comp_idx)
         rho_i = self.density(T, comp_idx=comp_idx)
@@ -565,15 +522,14 @@ class Fuel:
         return mu_i
 
     def Cp(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
-        """
-        Compute molar specific heat capacity at a given temperature.
+        """Compute molar specific heat capacity at a given temperature.
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Molar specific heat capacity in J/mol/K.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Molar specific heat capacity in J/mol/K.
         """
         T = T.to("K")
         theta = (T - Units.Quantity(298, "K")) / Units.Quantity(700, "K")
@@ -591,15 +547,14 @@ class Fuel:
         return cp.to("J/(mol*K)")
 
     def Cl(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
-        """
-        Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
+        """Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Mass specific heat capacity in J/kg/K.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Mass specific heat capacity in J/kg/K.
         """
         T = T.to("K")
         if comp_idx is None:
@@ -615,19 +570,17 @@ class Fuel:
         comp_idx: int | None = None,
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> types.Quantity1D:
-        """
-        Compute saturated vapor pressure.
+        """Compute saturated vapor pressure.
 
-        :meta private: Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
+        Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
-        :type correlation: str
-        :return: Saturated vapor pressure in Pa.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+            correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+
+        Returns:
+            Saturated vapor pressure in Pa.
         """
         T = T.to("K")
         if comp_idx is None:
@@ -678,17 +631,18 @@ class Fuel:
         units: Literal["mks", "cgs", "dyne/cm^2", "Pa"] = "mks",
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> tuple[types.Array1D, types.Array1D, types.Array1D, types.Array1D]:
-        """
-        Estimate Antoine coefficients for vapor pressure of an individual compound.
+        """Estimate Antoine coefficients for vapor pressure of an individual compound.
 
-        :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).
-        :type Tvals: pint.Quantity[float] or None
-        :param units: Units for pressure in fit ("mks", "cgs")
-        :type units: str
-        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
-        :type correlation: str
-        :return: Coefficients A, B, C, D for each compound
-        :rtype: 4 np.ndarrays
+        Args:
+            Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).
+            units: Units for pressure in fit ("mks", "cgs").
+            correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+
+        Returns:
+            Coefficients A, B, C, D for each compound.
+
+        Raises:
+            ValueError: If units or Tvals are invalid.
         """
         if units == "cgs":
             units = "dyne/cm^2"
@@ -718,8 +672,20 @@ class Fuel:
             raise ValueError("Tvals must be None, length 2, or length > 2.")
 
         # Antoine equation log10(p) = A - B/(C + T)
-        def antoine_eq(T, A, B, C):
-            """Antoine equation for vapor pressure."""
+        def antoine_eq(
+            T: float | types.Array1D, A: float, B: float, C: float
+        ) -> float | types.Array1D:
+            """Antoine equation for vapor pressure.
+
+            Args:
+                T: Temperature.
+                A: Antoine coefficient A.
+                B: Antoine coefficient B.
+                C: Antoine coefficient C.
+
+            Returns:
+                log10(pressure).
+            """
             return A - B / (T + C)
 
         # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
@@ -752,15 +718,14 @@ class Fuel:
     def molar_liquid_vol(
         self, T: types.Quantity0D, comp_idx: int | None = None
     ) -> types.Quantity1D:
-        """
-        Compute molar liquid volume with temperature correction.
+        """Compute molar liquid volume with temperature correction.
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Molar liquid volume in m^3/mol.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Molar liquid volume in m^3/mol.
         """
         Tstp = Units.Quantity(298, "K")
         T = T.to("K")
@@ -789,15 +754,14 @@ class Fuel:
     def latent_heat_vaporization(
         self, T: types.Quantity0D, comp_idx: int | None = None
     ) -> types.Quantity1D:
-        """
-        Calculate latent heat of vaporization adjusted for temperature.
+        """Calculate latent heat of vaporization adjusted for temperature.
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Latent heat of vaporization in J/kg.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Latent heat of vaporization in J/kg.
         """
         T = T.to("K")
 
@@ -834,26 +798,21 @@ class Fuel:
         MW_gas: types.Quantity0D = MW_gas,
         correlation: Literal["Tee", "Wilke"] = "Tee",
     ) -> types.Quantity1D:
-        """
-        Compute diffusion coefficients using Lennard-Jones parameters.
+        """Compute diffusion coefficients using Lennard-Jones parameters.
 
-        :meta private: Uses Wilke and Lee method (Poling, equation 11-4.1).
-        :meta private: Ambient gas defaults to air parameters.
+        Uses Wilke and Lee method (Poling, equation 11-4.1). Ambient gas
+        defaults to air parameters.
 
-        :param p: Pressure in Pa.
-        :type p: pint.Quantity[float]
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param sigma_gas: Collision diameter in m.
-        :type sigma_gas: pint.Quantity[float]
-        :param epsilonByKB_gas: Well depth over Boltzmann constant, in K.
-        :type epsilonByKB_gas: pint.Quantity[float]
-        :param MW_gas: Mean molecular weight of ambient gas in kg/mol.
-        :type MW_gas: pint.Quantity[float]
-        :param correlation: Method to calculate sigma and epsilon ("Tee" or "Wilke").
-        :type correlation: str
-        :return: Diffusion coefficient.
-        :rtype: pint.Quantity[float]
+        Args:
+            p: Pressure in Pa.
+            T: Temperature to compute property.
+            sigma_gas: Collision diameter in m.
+            epsilonByKB_gas: Well depth over Boltzmann constant, in K.
+            MW_gas: Mean molecular weight of ambient gas in kg/mol.
+            correlation: Method to calculate sigma and epsilon ("Tee" or "Wilke").
+
+        Returns:
+            Diffusion coefficient.
         """
         p = p.to("bar")
         T = T.to("K")
@@ -921,19 +880,17 @@ class Fuel:
         comp_idx: int | None = None,
         correlation: Literal["Brock-Bird", "Pitzer"] = "Brock-Bird",
     ) -> types.Quantity1D:
-        """
-        Calculate surface tension of each compound at a given temperature.
+        """Calculate surface tension of each compound at a given temperature.
 
-        :meta private: Uses Brock-Bird (default) or Pitzer correlations (Poling 12-3.5, 12-3.7).
+        Uses Brock-Bird (default) or Pitzer correlations (Poling 12-3.5, 12-3.7).
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :param correlation: Correlation method ("Brock-Bird" or "Pitzer").
-        :type correlation: str
-        :return: Surface tension in N/m.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+            correlation: Correlation method ("Brock-Bird" or "Pitzer").
+
+        Returns:
+            Surface tension in N/m.
         """
         T = T.to("K")
         if comp_idx is None:
@@ -973,17 +930,16 @@ class Fuel:
         T: types.Quantity0D,
         comp_idx: int | None = None,
     ) -> types.Quantity1D:
-        """
-        Calculate thermal conductivity at a given temperature.
+        """Calculate thermal conductivity at a given temperature.
 
-        :meta private: Uses Latini et al. method (Poling equation 10-9.1).
+        Uses Latini et al. method (Poling equation 10-9.1).
 
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param comp_idx: Index of compound to calculate property for.
-        :type comp_idx: int or None
-        :return: Thermal conductivity in W/m/K.
-        :rtype: pint.Quantity[float]
+        Args:
+            T: Temperature to compute property.
+            comp_idx: Index of compound to calculate property for.
+
+        Returns:
+            Thermal conductivity in W/m/K.
         """
         T = T.to("K")
         if comp_idx is None:
@@ -1030,15 +986,14 @@ class Fuel:
     def mixture_density(
         self, Yi: types.Quantity1D, T: types.Quantity0D
     ) -> types.Quantity1D:
-        """
-        Calculate mixture density at a given temperature.
+        """Calculate mixture density at a given temperature.
 
-        :param Yi: Mass fractions of each compound.
-        :type Yi: pint.Quantity[np.ndarray]
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :return: Mixture density in kg/m^3.
-        :rtype: pint.Quantity[float]
+        Args:
+            Yi: Mass fractions of each compound.
+            T: Temperature to compute property.
+
+        Returns:
+            Mixture density in kg/m^3.
         """
         T = T.to("K")
         MW = self.MW.to("kg/mol")
@@ -1055,19 +1010,17 @@ class Fuel:
         T: types.Quantity0D,
         correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
-        """
-        Calculate kinematic viscosity of the mixture.
+        """Calculate kinematic viscosity of the mixture.
 
-        :meta private: Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
+        Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
 
-        :param Yi: Mass fractions of each compound.
-        :type Yi: pint.Quantity[np.ndarray]
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
-        :type correlation: str
-        :return: Mixture kinematic viscosity in m^2/s.
-        :rtype: pint.Quantity[float]
+        Args:
+            Yi: Mass fractions of each compound.
+            T: Temperature to compute property.
+            correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+
+        Returns:
+            Mixture kinematic viscosity in m^2/s.
         """
         T = T.to("K")
         nu_i = self.viscosity_kinematic(T).to("m^2/s").magnitude
@@ -1090,17 +1043,15 @@ class Fuel:
         T: types.Quantity0D,
         correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
-        """
-        Calculate dynamic viscosity of the mixture.
+        """Calculate dynamic viscosity of the mixture.
 
-        :param Yi: Mass fractions of each compound.
-        :type Yi: pint.Quantity[np.ndarray]
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
-        :type correlation: str
-        :return: Mixture dynamic viscosity in Pa*s.
-        :rtype: pint.Quantity[float]
+        Args:
+            Yi: Mass fractions of each compound.
+            T: Temperature to compute property.
+            correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+
+        Returns:
+            Mixture dynamic viscosity in Pa*s.
         """
         T = T.to("K")
         nu = self.mixture_kinematic_viscosity(Yi, T, correlation=correlation)
@@ -1114,17 +1065,15 @@ class Fuel:
         T: types.Quantity0D,
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> types.Quantity0D:
-        """
-        Calculate vapor pressure of the mixture.
+        """Calculate vapor pressure of the mixture.
 
-        :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: pint.Quantity[np.ndarray]
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
-        :type correlation: str
-        :return: Mixture vapor pressure in Pa.
-        :rtype: pint.Quantity[float]
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            T: Temperature to compute property.
+            correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+
+        Returns:
+            Mixture vapor pressure in Pa.
         """
         T = T.to("K")
 
@@ -1146,19 +1095,19 @@ class Fuel:
         units: Literal["mks", "cgs", "dyne/cm^2", "Pa"] = "mks",
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> tuple[float, float, float, float]:
-        """
-        Estimate Antoine coefficients for vapor pressure of the mixture.
+        """Estimate Antoine coefficients for vapor pressure of the mixture.
 
-        :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: pint.Quantity[np.ndarray]
-        :param Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
-        :type Tvals: pint.Quantity1D or None
-        :param units: Units for pressure in fit ("mks", "cgs")
-        :type units: str
-        :param correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
-        :type correlation: str
-        :return: Coefficients A, B, C, D
-        :rtype: tuple[float, float, float, float]
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            Tvals: Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).
+            units: Units for pressure in fit ("mks", "cgs").
+            correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
+
+        Returns:
+            Coefficients A, B, C, D.
+
+        Raises:
+            ValueError: If units or Tvals are invalid.
         """
         if units == "cgs":
             units = "dyne/cm^2"
@@ -1191,19 +1140,16 @@ class Fuel:
         def antoine_eq(
             T: float | types.Array1D, A: float, B: float, C: float
         ) -> float | types.Array1D:
-            """
-            Antoine equation for vapor pressure.
+            """Antoine equation for vapor pressure.
 
-            :param T: Temperature.
-            :type T: float
-            :param A: Antoine coefficient A.
-            :type A: float
-            :param B: Antoine coefficient B.
-            :type B: float
-            :param C: Antoine coefficient C.
-            :type C: float
-            :return: log10(pressure).
-            :rtype: float
+            Args:
+                T: Temperature.
+                A: Antoine coefficient A.
+                B: Antoine coefficient B.
+                C: Antoine coefficient C.
+
+            Returns:
+                log10(pressure).
             """
             return A - B / (T + C)
 
@@ -1235,19 +1181,18 @@ class Fuel:
         T: types.Quantity0D,
         correlation: Literal["Pitzer", "Brock-Bird"] = "Brock-Bird",
     ) -> types.Quantity0D:
-        """
-        Calculate surface tension of the mixture.
+        """Calculate surface tension of the mixture.
 
-        :meta private: Uses arithmetic pseudo-property method recommended by Hugill and van Welsenes (1986).
+        Uses arithmetic pseudo-property method recommended by Hugill and van
+        Welsenes (1986).
 
-        :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: pint.Quantity[np.ndarray]
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :param correlation: Correlation method ("Pitzer" or "Brock-Bird").
-        :type correlation: str
-        :return: Mixture surface tension in N/m.
-        :rtype: pint.Quantity[float]
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            T: Temperature to compute property.
+            correlation: Correlation method ("Pitzer" or "Brock-Bird").
+
+        Returns:
+            Mixture surface tension in N/m.
         """
         T = T.to("K")
 
@@ -1267,15 +1212,14 @@ class Fuel:
         Yi: types.Quantity1D,
         T: types.Quantity0D,
     ) -> types.Quantity0D:
-        """
-        Calculate thermal conductivity of the mixture.
+        """Calculate thermal conductivity of the mixture.
 
-        :param Yi: Mass fractions of each compound in the mixture.
-        :type Yi: pint.Quantity[np.ndarray]
-        :param T: Temperature in Kelvin.
-        :type T: pint.Quantity[float]
-        :return: Thermal conductivity in W/m/K.
-        :rtype: pint.Quantity[float]
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            T: Temperature to compute property.
+
+        Returns:
+            Thermal conductivity in W/m/K.
         """
         T = T.to("K")
         tc = self.thermal_conductivity(T).to("W/(m*K)").magnitude

@@ -1,5 +1,4 @@
-"""
-Utilities for plotting fuel properties and composition.
+"""Utilities for plotting fuel properties and composition.
 
 This module provides functions for visualizing:
 - Fuel composition by compound and chemical family
@@ -28,8 +27,7 @@ def plot_composition(
     save=True,
     display=False,
 ):
-    """
-    Plot the composition of a given fuel.
+    """Plot the composition of a given fuel.
 
     :param fuel_name: Name of the fuel to plot.
     :type fuel_name: str
@@ -66,14 +64,12 @@ def plot_composition(
     fuel = fl.Fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
 
     # Create DataFrame with compound data and carbon numbers from fuel object
-    df = pd.DataFrame(
-        {
-            "Compound": fuel.compounds,
-            "Weight %": fuel.Y_0 * 100,
-            "Family": fuel.hc_type,
-            "nC": fuel.nC,
-        }
-    )
+    df = pd.DataFrame({
+        "Compound": fuel.compounds,
+        "Weight %": fuel.Y_0 * 100,
+        "Family": fuel.hc_type,
+        "nC": fuel.nC,
+    })
 
     # Get unique families from the fuel data in canonical order
     canonical_order = ["n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene"]
@@ -233,8 +229,7 @@ def plot_mixture_properties(
     save=True,
     display=False,
 ):
-    """
-    Plot mixture properties for fuel(s) over a temperature range.
+    """Plot mixture properties for fuel(s) over a temperature range.
 
     :param fuel_names: Name or list of fuel names to plot.
     :type fuel_names: str or list[str]
@@ -542,9 +537,7 @@ def plot_mixture_properties(
 
 
 def comp_main():
-    """
-    Entry point for fl-plt-comp command - Plot fuel composition.
-    """
+    """Entry point for fl-plt-comp command - Plot fuel composition."""
     parser = argparse.ArgumentParser(
         description="Plot fuel composition by compound and chemical family."
     )
@@ -618,9 +611,7 @@ def comp_main():
 
 
 def props_main():
-    """
-    Entry point for fl-plt-props command - Plot mixture properties.
-    """
+    """Entry point for fl-plt-props command - Plot mixture properties."""
     parser = argparse.ArgumentParser(
         description="Plot mixture properties over temperature range for fuel(s)."
     )
@@ -703,8 +694,7 @@ def props_main():
 
 
 def main():
-    """
-    Main entry point for CLI usage.
+    """Main entry point for CLI usage.
 
     This function handles routing between composition and mixture properties plotting.
     """

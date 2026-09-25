@@ -11,13 +11,13 @@ def C2K(T: float) -> float: ...
 @overload
 def C2K(T: types.Array1D) -> types.Array1D: ...
 def C2K(T: float | types.Array1D) -> float | types.Array1D:
-    """
-    Convert temperature from Celsius to Kelvin.
+    """Convert temperature from Celsius to Kelvin.
 
-    :param T: Temperature in Celsius.
-    :type T: float or types.Array1D
-    :return: Temperature in Kelvin.
-    :rtype: float or types.Array1D
+    Args:
+        T: Temperature in Celsius.
+
+    Returns:
+        Temperature in Kelvin.
     """
     return T + 273.15
 
@@ -27,13 +27,13 @@ def K2C(T: float) -> float: ...
 @overload
 def K2C(T: types.Array1D) -> types.Array1D: ...
 def K2C(T: float | types.Array1D) -> float | types.Array1D:
-    """
-    Convert temperature from Kelvin to Celsius.
+    """Convert temperature from Kelvin to Celsius.
 
-    :param T: Temperature in Kelvin.
-    :type T: float or types.Array1D
-    :return: Temperature in Celsius.
-    :rtype: float or types.Array1D
+    Args:
+        T: Temperature in Kelvin.
+
+    Returns:
+        Temperature in Celsius.
     """
     return T - 273.15
 
@@ -43,13 +43,13 @@ def C2F(T: float) -> float: ...
 @overload
 def C2F(T: types.Array1D) -> types.Array1D: ...
 def C2F(T: float | types.Array1D) -> float | types.Array1D:
-    """
-    Convert temperature from Celsius to Fahrenheit.
+    """Convert temperature from Celsius to Fahrenheit.
 
-    :param T: Temperature in Celsius.
-    :type T: float or types.Array1D
-    :return: Temperature in Fahrenheit.
-    :rtype: float or types.Array1D
+    Args:
+        T: Temperature in Celsius.
+
+    Returns:
+        Temperature in Fahrenheit.
     """
     return T * 9 / 5 + 32
 
@@ -59,13 +59,13 @@ def F2C(T: float) -> float: ...
 @overload
 def F2C(T: types.Array1D) -> types.Array1D: ...
 def F2C(T: float | types.Array1D) -> float | types.Array1D:
-    """
-    Convert temperature from Fahrenheit to Celsius.
+    """Convert temperature from Fahrenheit to Celsius.
 
-    :param T: Temperature in Fahrenheit.
-    :type T: float or types.Array1D
-    :return: Temperature in Celsius.
-    :rtype: float or types.Array1D
+    Args:
+        T: Temperature in Fahrenheit.
+
+    Returns:
+        Temperature in Celsius.
     """
     return (T - 32) * 5 / 9
 
@@ -75,13 +75,13 @@ def F2K(T: float) -> float: ...
 @overload
 def F2K(T: types.Array1D) -> types.Array1D: ...
 def F2K(T: float | types.Array1D) -> float | types.Array1D:
-    """
-    Convert temperature from Fahrenheit to Kelvin.
+    """Convert temperature from Fahrenheit to Kelvin.
 
-    :param T: Temperature in Fahrenheit.
-    :type T: float or types.Array1D
-    :return: Temperature in Kelvin.
-    :rtype: float or types.Array1D
+    Args:
+        T: Temperature in Fahrenheit.
+
+    Returns:
+        Temperature in Kelvin.
     """
     return C2K(F2C(T))
 
@@ -91,30 +91,30 @@ def K2F(T: float) -> float: ...
 @overload
 def K2F(T: types.Array1D) -> types.Array1D: ...
 def K2F(T: float | types.Array1D) -> float | types.Array1D:
-    """
-    Convert temperature from Kelvin to Fahrenheit.
+    """Convert temperature from Kelvin to Fahrenheit.
 
-    :param T: Temperature in Kelvin.
-    :type T: float or types.Array1D
-    :return: Temperature in Fahrenheit.
-    :rtype: float or types.Array1D
+    Args:
+        T: Temperature in Kelvin.
+
+    Returns:
+        Temperature in Fahrenheit.
     """
     return C2F(K2C(T))
 
 
 def epsilon_to_characteristic_temperature(epsilon_j_per_mol: float) -> float:
-    """
-    Convert Lennard-Jones epsilon from J/mol to characteristic temperature in Kelvin.
+    """Convert Lennard-Jones epsilon from J/mol to characteristic temperature in Kelvin.
 
     The characteristic temperature (epsilon/k_B) is used in transport property
     correlations and is required by combustion codes like CHEMKIN.
 
     Uses the relation: T* = (epsilon_J/mol) / (N_A * k_B)
 
-    :param epsilon_j_per_mol: Lennard-Jones well depth epsilon in J/mol.
-    :type epsilon_j_per_mol: float
-    :return: Characteristic temperature (epsilon/k_B) in Kelvin.
-    :rtype: float
+    Args:
+        epsilon_j_per_mol: Lennard-Jones well depth epsilon in J/mol.
+
+    Returns:
+        Characteristic temperature (epsilon/k_B) in Kelvin.
     """
     epsilon_per_molecule = epsilon_j_per_mol / N_A.magnitude
     lj_welldepth_K = epsilon_per_molecule / k_B.magnitude

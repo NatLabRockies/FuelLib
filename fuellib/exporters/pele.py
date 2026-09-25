@@ -45,8 +45,7 @@ class UnitConverter:
     """Validate the unit system selected for a Pele export."""
 
     def __init__(self, units: str):
-        """
-        Initialize converter for specified unit system.
+        """Initialize converter for specified unit system.
 
         :param units: Unit system ('cgs' or 'mks').
         :type units: str
@@ -55,8 +54,7 @@ class UnitConverter:
         self._validate_units()
 
     def _validate_units(self):
-        """
-        Validate that the unit system is supported.
+        """Validate that the unit system is supported.
 
         :raises ValueError: If unit system is not 'mks' or 'cgs'.
         """
@@ -65,8 +63,7 @@ class UnitConverter:
 
 
 def get_git_info():
-    """
-    Get git commit hash and remote URL for FuelLib (with fallbacks).
+    """Get git commit hash and remote URL for FuelLib (with fallbacks).
 
     The commit is read from the FuelLib git repo when available; otherwise the
     installed package version is returned. The remote URL falls back to package
@@ -80,7 +77,8 @@ def get_git_info():
 
     try:
         git_commit = (
-            subprocess.check_output(
+            subprocess
+            .check_output(
                 ["git", "-C", fuellib_dir, "rev-parse", "HEAD"],
                 stderr=subprocess.DEVNULL,
             )
@@ -96,7 +94,8 @@ def get_git_info():
 
     try:
         git_remote = (
-            subprocess.check_output(
+            subprocess
+            .check_output(
                 ["git", "-C", fuellib_dir, "config", "--get", "remote.origin.url"],
                 stderr=subprocess.DEVNULL,
             )
@@ -111,8 +110,7 @@ def get_git_info():
 
 
 def _get_pypi_repo_url():
-    """
-    Get the repository URL from PyPI package metadata.
+    """Get the repository URL from PyPI package metadata.
 
     :return: Repository URL or PyPI package URL as fallback.
     :rtype: str
@@ -152,8 +150,7 @@ def _get_pypi_repo_url():
 
 
 def get_filename(fuel_name, liq_prop_model, export_mix, path):
-    """
-    Generate appropriate filename based on parameters.
+    """Generate appropriate filename based on parameters.
 
     :param fuel_name: Name of the fuel.
     :type fuel_name: str
@@ -179,8 +176,7 @@ def get_filename(fuel_name, liq_prop_model, export_mix, path):
 
 
 def create_individual_compounds_dataframe(fuel, compound_names, converter):
-    """
-    Create DataFrame for individual compound properties.
+    """Create DataFrame for individual compound properties.
 
     :param fuel: Fuel object containing compound properties.
     :type fuel: FuelLib.Fuel
@@ -198,30 +194,27 @@ def create_individual_compounds_dataframe(fuel, compound_names, converter):
     Cp_B = fuel.Cp_B / fuel.MW
     Cp_C = fuel.Cp_C / fuel.MW
 
-    return pd.DataFrame(
-        {
-            "Compound": compound_names,
-            "Family": fuel.fam,
-            "Y_0": fuel.Y_0,
-            "MW": list(fuel.MW),
-            "Tc": list(fuel.Tc),
-            "Pc": list(fuel.Pc),
-            "Vc": list(fuel.Vc),
-            "Tb": list(fuel.Tb),
-            "omega": list(fuel.omega),
-            "Vm_stp": list(fuel.Vm_stp),
-            "Cp_A": list(Cp_A),
-            "Cp_B": list(Cp_B),
-            "Cp_C": list(Cp_C),
-            "Cp_stp": list(Cp_A),  # For PeleMP model
-            "Lv_stp": list(fuel.Lv_stp),
-        }
-    )
+    return pd.DataFrame({
+        "Compound": compound_names,
+        "Family": fuel.fam,
+        "Y_0": fuel.Y_0,
+        "MW": list(fuel.MW),
+        "Tc": list(fuel.Tc),
+        "Pc": list(fuel.Pc),
+        "Vc": list(fuel.Vc),
+        "Tb": list(fuel.Tb),
+        "omega": list(fuel.omega),
+        "Vm_stp": list(fuel.Vm_stp),
+        "Cp_A": list(Cp_A),
+        "Cp_B": list(Cp_B),
+        "Cp_C": list(Cp_C),
+        "Cp_stp": list(Cp_A),  # For PeleMP model
+        "Lv_stp": list(fuel.Lv_stp),
+    })
 
 
 def create_mixture_dataframe(fuel, export_mix_name, converter):
-    """
-    Create DataFrame for mixture properties.
+    """Create DataFrame for mixture properties.
 
     :param fuel: Fuel object containing mixture properties.
     :type fuel: FuelLib.Fuel
@@ -245,30 +238,27 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
     Cp_B = fl.utility.mixing_rule(fuel.Cp_B / fuel.MW, X)
     Cp_C = fl.utility.mixing_rule(fuel.Cp_C / fuel.MW, X)
 
-    return pd.DataFrame(
-        {
-            "Compound": [export_mix_name],
-            "Family": [st.mode(fuel.fam).mode],
-            "Y_0": [1.0],
-            "MW": [fuel.mean_molecular_weight(fuel.Y_0)],
-            "Tc": [fl.utility.mixing_rule(fuel.Tc, X)],
-            "Pc": [fl.utility.mixing_rule(fuel.Pc, X)],
-            "Vc": [fl.utility.mixing_rule(fuel.Vc, X)],
-            "Tb": [fl.utility.mixing_rule(fuel.Tb, X)],
-            "omega": [fl.utility.mixing_rule(fuel.omega, X)],
-            "Vm_stp": [fl.utility.mixing_rule(fuel.Vm_stp, X)],
-            "Cp_A": [Cp_A],
-            "Cp_B": [Cp_B],
-            "Cp_C": [Cp_C],
-            "Cp_stp": [Cp_A],  # For MP model: Cp_stp = Cp_A
-            "Lv_stp": [fl.utility.mixing_rule(fuel.Lv_stp, X)],
-        }
-    )
+    return pd.DataFrame({
+        "Compound": [export_mix_name],
+        "Family": [st.mode(fuel.fam).mode],
+        "Y_0": [1.0],
+        "MW": [fuel.mean_molecular_weight(fuel.Y_0)],
+        "Tc": [fl.utility.mixing_rule(fuel.Tc, X)],
+        "Pc": [fl.utility.mixing_rule(fuel.Pc, X)],
+        "Vc": [fl.utility.mixing_rule(fuel.Vc, X)],
+        "Tb": [fl.utility.mixing_rule(fuel.Tb, X)],
+        "omega": [fl.utility.mixing_rule(fuel.omega, X)],
+        "Vm_stp": [fl.utility.mixing_rule(fuel.Vm_stp, X)],
+        "Cp_A": [Cp_A],
+        "Cp_B": [Cp_B],
+        "Cp_C": [Cp_C],
+        "Cp_stp": [Cp_A],  # For MP model: Cp_stp = Cp_A
+        "Lv_stp": [fl.utility.mixing_rule(fuel.Lv_stp, X)],
+    })
 
 
 def vec_to_str(vec):
-    """
-    Convert a list or numpy array to a string representation.
+    """Convert a list or numpy array to a string representation.
 
     :param vec: List or numpy array to convert.
     :type vec: list or pd.Series or pd.DataFrame
@@ -294,8 +284,7 @@ def export_pele(
     liq_prop_model="gcm",
     psat_antoine=True,
 ):
-    """
-    Export fuel properties to input file for Pele simulations.
+    """Export fuel properties to input file for Pele simulations.
 
     :param fuel: An instance of the fuel class.
     :type fuel: fuel object
@@ -560,8 +549,7 @@ def export_pele(
 
 
 def main():
-    """
-    Main function to execute the export process.
+    """Main function to execute the export process.
 
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str

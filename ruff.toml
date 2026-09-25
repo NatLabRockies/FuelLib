@@ -64,7 +64,12 @@ select = [
 convention = "google"
 
 [lint.per-file-ignores]
+"docs/**.py" = ["ALL"]
 "tests/**.py" = ["ALL"]
+"fuellib/cli/**.py" = ["ALL"]
+"fuellib/exporters/**.py" = ["ALL"]
+"fuellib/_data_locator.py" = ["ALL"]
+"tutorials/**.py" = ["ALL"]
 
 [format]
 # Like Black, use double quotes for strings.

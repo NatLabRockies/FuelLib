@@ -6,8 +6,7 @@ import sys
 
 
 def main():
-    """
-    Remove the documentation build directory and generated files.
+    """Remove the documentation build directory and generated files.
 
     Cleans up the Sphinx build output in docs/_build/ and
     generated documentation in docs/generated/

@@ -1,5 +1,4 @@
-"""
-Constantinou-Gani (CG) group-contribution method decomposition for SAF-relevant
+"""Constantinou-Gani (CG) group-contribution method decomposition for SAF-relevant
 hydrocarbons.
 
 Reference: Constantinou & Gani, AIChE J. 40(10), 1994.
@@ -189,8 +188,7 @@ assert len(CG_GROUP_NAMES) == 121, f"Expected 121 groups, got {len(CG_GROUP_NAME
 
 
 def _find_terminal_vinyls(mol):
-    """
-    Locate terminal alpha-olefin vinyl groups (CH2=CH-R).
+    """Locate terminal alpha-olefin vinyl groups (CH2=CH-R).
     Returns (count, set_of_covered_atom_indices).
     """
     covered = set()
@@ -221,8 +219,7 @@ def _find_terminal_vinyls(mol):
 
 
 def _find_aromatic_substituents(mol, excluded):
-    """
-    Assign aromatic-substituent carbons to ACCH3/ACCH2/ACCH.
+    """Assign aromatic-substituent carbons to ACCH3/ACCH2/ACCH.
     The matching aromatic ring carbon is consumed (not counted as AC later).
     Returns (subgroups_dict, consumed_aromatic_set).
     """
@@ -271,8 +268,7 @@ def _find_aromatic_substituents(mol, excluded):
 
 
 def _classify_aliphatic_atom(atom):
-    """
-    Assign one first-order group name (CH3/CH2/CH/C) to an aliphatic carbon.
+    """Assign one first-order group name (CH3/CH2/CH/C) to an aliphatic carbon.
     Only for atoms not already assigned to vinyl or aromatic-substituent groups.
     """
     if atom.GetSymbol() != "C":
@@ -312,8 +308,7 @@ def _classify_aliphatic_atom(atom):
 
 
 def _first_order_decomposition(mol):
-    """
-    Decompose molecule into first-order CG groups.
+    """Decompose molecule into first-order CG groups.
     Returns dict mapping group name → count.
     """
     counts = {}
@@ -345,8 +340,7 @@ def _first_order_decomposition(mol):
 
 
 def _detect_branching_groups(mol):
-    """
-    Detect second-order branching groups:
+    """Detect second-order branching groups:
     - (CH3)2CH: aliphatic CH with exactly 2 CH3 neighbors
     - (CH3)3C: quaternary C with exactly 3 CH3 neighbors
     - CH(CH3)CH(CH3): adjacent pair of CH's, each with at least 1 CH3
@@ -461,8 +455,7 @@ def _detect_branching_groups(mol):
 
 
 def _detect_rings(mol):
-    """
-    Count non-aromatic rings by size (3-7 membered).
+    """Count non-aromatic rings by size (3-7 membered).
     Uses the Smallest Set of Smallest Rings (SSSR).
 
     A ring is counted if it is NOT fully aromatic. This handles fused
@@ -485,8 +478,7 @@ def _detect_rings(mol):
 
 
 def _detect_alicyclic_sidechain(mol):
-    """
-    Detect alicyclic side-chain CcyclicCm (m > 1).
+    """Detect alicyclic side-chain CcyclicCm (m > 1).
 
     NOTE: Based on empirical evidence from FuelLib refCompounds.csv, ALL
     monocycloparaffins (including ethylcyclohexane, propylcyclohexane, etc.)
@@ -516,8 +508,7 @@ def _detect_ch3ch3(mol):
 
 
 def _second_order_decomposition(mol):
-    """
-    Decompose molecule into second-order CG groups.
+    """Decompose molecule into second-order CG groups.
     Returns dict mapping group name → count.
     """
     counts = {}
@@ -549,8 +540,7 @@ def _second_order_decomposition(mol):
 
 
 def decompose(smiles):
-    """
-    Decompose a hydrocarbon SMILES into CG first-order and second-order group counts.
+    """Decompose a hydrocarbon SMILES into CG first-order and second-order group counts.
 
     :param smiles: SMILES string.
     :return: dict mapping group name → count (only non-zero entries).
@@ -575,15 +565,12 @@ def decompose(smiles):
 
 
 def to_vector(counts):
-    """
-    Convert a group-count dict to a 121-element list in canonical order.
-    """
+    """Convert a group-count dict to a 121-element list in canonical order."""
     return [counts.get(name, 0) for name in CG_GROUP_NAMES]
 
 
 def verify_formula(smiles, counts):
-    """
-    Cross-check that first-order subgroup counts reproduce the molecular formula.
+    """Cross-check that first-order subgroup counts reproduce the molecular formula.
     Only checks C and H from the first 15 groups (hydrocarbon groups).
     """
     mol = Chem.AddHs(Chem.MolFromSmiles(smiles))
@@ -609,8 +596,7 @@ def verify_formula(smiles, counts):
 
 
 def _load_refcompounds():
-    """
-    Load refCompounds.csv from FuelLib
+    """Load refCompounds.csv from FuelLib
     Returns dict: compound_name → list of 121 int counts.
     """
     ref_path = os.path.join(
@@ -641,8 +627,7 @@ def _load_refcompounds():
 
 
 def compare_with_fuellib(name, computed_vector, ref_data):
-    """
-    Compare computed decomposition vector against FuelLib refCompounds.
+    """Compare computed decomposition vector against FuelLib refCompounds.
     Returns (match, diff_report).
     """
     if ref_data is None or name not in ref_data:
