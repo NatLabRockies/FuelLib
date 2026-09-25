@@ -41,8 +41,10 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 print("    ✓ convert.C2K")
                 self.assertAlmostEqual(fl.convert.K2C(298.15), 25.0)
                 print("    ✓ convert.K2C")
+                droplet_radius = Units.Quantity(1e-4, "m")
                 self.assertAlmostEqual(
-                    fl.utility.droplet_volume(1e-4), 4.0 / 3.0 * np.pi * (1e-4) ** 3
+                    fl.utility.droplet_volume(droplet_radius).to("m^3").magnitude,
+                    4.0 / 3.0 * np.pi * (1e-4) ** 3,
                 )
                 print("    ✓ utility.droplet_volume")
 
@@ -230,11 +232,17 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Droplet helpers
                 print("  Droplet Properties:")
-                m = fl.utility.droplet_mass(fuel, 2.0e-5, Yi, self.T)
+                r = Units.Quantity(2.0e-5, "m")
+                m = fl.utility.droplet_mass(fuel, r, Yi, self.T)
                 self.assertEqual(m.shape, fuel.MW.shape)
                 self.assertTrue(np.all(m >= 0.0))
                 self.assertTrue(
-                    np.allclose(fl.utility.droplet_mass(fuel, 0.0, Yi, self.T), 0.0)
+                    np.allclose(
+                        fl.utility.droplet_mass(
+                            fuel, Units.Quantity(0.0, "m"), Yi, self.T
+                        ),
+                        0.0,
+                    )
                 )
                 print("    ✓ utility.droplet_mass")
 

@@ -203,12 +203,10 @@ class Fuel:
         else:
             self.pelephysics_keys = None
 
-        self.Y_0: types.Array1D = (
-            df_gcxgc["Weight %"].to_numpy().flatten().astype(float)
-        )
+        _Y_0: types.Array1D = df_gcxgc["Weight %"].to_numpy().flatten().astype(float)
         """Initial mass fractions of the fuel components."""
-        self.Y_0 /= np.sum(self.Y_0)
-        self.Y_0: types.Quantity1D = Units.Quantity(self.Y_0, "dimensionless")
+        _Y_0 /= np.sum(_Y_0)
+        self.Y_0: types.Quantity1D = Units.Quantity(_Y_0, "dimensionless")
 
         # Make sure mixture data is consistent:
         _N_g1 = 78
