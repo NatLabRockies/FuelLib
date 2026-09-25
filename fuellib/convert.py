@@ -1,81 +1,108 @@
 """Command Line Unit conversion functions."""
 
+from typing import overload
+
 from .constants import N_A, k_B
+from .utils import types
 
 
-def C2K(T):
+@overload
+def C2K(T: float) -> float: ...
+@overload
+def C2K(T: types.Array1D) -> types.Array1D: ...
+def C2K(T: float | types.Array1D) -> float | types.Array1D:
     """
     Convert temperature from Celsius to Kelvin.
 
     :param T: Temperature in Celsius.
-    :type T: float or np.ndarray
+    :type T: float or types.Array1D
     :return: Temperature in Kelvin.
-    :rtype: float or np.ndarray
+    :rtype: float or types.Array1D
     """
     return T + 273.15
 
 
-def K2C(T):
+@overload
+def K2C(T: float) -> float: ...
+@overload
+def K2C(T: types.Array1D) -> types.Array1D: ...
+def K2C(T: float | types.Array1D) -> float | types.Array1D:
     """
     Convert temperature from Kelvin to Celsius.
 
     :param T: Temperature in Kelvin.
-    :type T: float or np.ndarray
+    :type T: float or types.Array1D
     :return: Temperature in Celsius.
-    :rtype: float or np.ndarray
+    :rtype: float or types.Array1D
     """
     return T - 273.15
 
 
-def C2F(T):
+@overload
+def C2F(T: float) -> float: ...
+@overload
+def C2F(T: types.Array1D) -> types.Array1D: ...
+def C2F(T: float | types.Array1D) -> float | types.Array1D:
     """
     Convert temperature from Celsius to Fahrenheit.
 
     :param T: Temperature in Celsius.
-    :type T: float or np.ndarray
+    :type T: float or types.Array1D
     :return: Temperature in Fahrenheit.
-    :rtype: float or np.ndarray
+    :rtype: float or types.Array1D
     """
     return T * 9 / 5 + 32
 
 
-def F2C(T):
+@overload
+def F2C(T: float) -> float: ...
+@overload
+def F2C(T: types.Array1D) -> types.Array1D: ...
+def F2C(T: float | types.Array1D) -> float | types.Array1D:
     """
     Convert temperature from Fahrenheit to Celsius.
 
     :param T: Temperature in Fahrenheit.
-    :type T: float or np.ndarray
+    :type T: float or types.Array1D
     :return: Temperature in Celsius.
-    :rtype: float or np.ndarray
+    :rtype: float or types.Array1D
     """
     return (T - 32) * 5 / 9
 
 
-def F2K(T):
+@overload
+def F2K(T: float) -> float: ...
+@overload
+def F2K(T: types.Array1D) -> types.Array1D: ...
+def F2K(T: float | types.Array1D) -> float | types.Array1D:
     """
     Convert temperature from Fahrenheit to Kelvin.
 
     :param T: Temperature in Fahrenheit.
-    :type T: float or np.ndarray
+    :type T: float or types.Array1D
     :return: Temperature in Kelvin.
-    :rtype: float or np.ndarray
+    :rtype: float or types.Array1D
     """
     return C2K(F2C(T))
 
 
-def K2F(T):
+@overload
+def K2F(T: float) -> float: ...
+@overload
+def K2F(T: types.Array1D) -> types.Array1D: ...
+def K2F(T: float | types.Array1D) -> float | types.Array1D:
     """
     Convert temperature from Kelvin to Fahrenheit.
 
     :param T: Temperature in Kelvin.
-    :type T: float or np.ndarray
+    :type T: float or types.Array1D
     :return: Temperature in Fahrenheit.
-    :rtype: float or np.ndarray
+    :rtype: float or types.Array1D
     """
     return C2F(K2C(T))
 
 
-def epsilon_to_characteristic_temperature(epsilon_j_per_mol):
+def epsilon_to_characteristic_temperature(epsilon_j_per_mol: float) -> float:
     """
     Convert Lennard-Jones epsilon from J/mol to characteristic temperature in Kelvin.
 

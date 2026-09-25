@@ -19,8 +19,8 @@ FuelLib/fuelData/groupDecompositionData/refCompounds.csv
 
 import csv
 import os
+
 from rdkit import Chem
-from rdkit.Chem import rdmolops
 
 
 class UnsupportedGroupError(ValueError):
@@ -741,10 +741,10 @@ if __name__ == "__main__":
                 match, report = compare_with_fuellib(ref_name, vec, ref_data)
                 if match is True:
                     n_pass += 1
-                    print(f"    → FuelLib comparison: PASS")
+                    print("    → FuelLib comparison: PASS")
                 elif match is False:
                     n_fail += 1
-                    print(f"    → FuelLib comparison: FAIL")
+                    print("    → FuelLib comparison: FAIL")
                     print(f"      {report}")
                     issues.append(f"  FUELLIB MISMATCH: {name} vs {ref_name}")
                 else:

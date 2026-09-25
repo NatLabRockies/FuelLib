@@ -5,7 +5,7 @@ import pandas as pd
 
 import fuellib as fl
 from fuellib._data_locator import get_fueldata_props_dir
-from fuellib.units import Units
+from fuellib.utils import Units
 
 FUELDATA_PROPS_DIR = get_fueldata_props_dir()
 

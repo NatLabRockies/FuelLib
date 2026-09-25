@@ -6,7 +6,7 @@ import pandas as pd
 
 import fuellib as fl
 
-from ..units import Units
+from ..utils import Units
 
 # Default data directory - use fuellib's embedded data
 FUELDATA_DIR = fl.get_fueldata_dir()
@@ -513,7 +513,6 @@ def main():
 
     :raises FileNotFoundError: If required files for the specified fuel are not found.
     """
-
     # Set up argument parser
     parser = argparse.ArgumentParser(
         description="Export mixture fuel properties for Converge simulations."

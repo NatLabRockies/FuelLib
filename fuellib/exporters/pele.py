@@ -11,7 +11,7 @@ from scipy import stats as st
 
 import fuellib as fl
 
-from ..units import Units
+from ..utils import Units
 
 # Default data directory - use fuellib's embedded data
 FUELDATA_DIR = fl.get_fueldata_dir()
@@ -275,7 +275,6 @@ def vec_to_str(vec):
     :return: String representation of the vector.
     :rtype: str
     """
-
     # If strings return string[0] string[1] ... string[n]
     if isinstance(vec, list):
         return " ".join(f"{v}" for v in vec)
@@ -599,7 +598,6 @@ def main():
 
     :raises FileNotFoundError: If required files for the specified fuel are not found.
     """
-
     # Set up argument parser
     parser = argparse.ArgumentParser(
         description="Export fuel properties for Pele simulations."

@@ -1,6 +1,6 @@
 """Physical constants used in FuelLib calculations."""
 
-from .units import Units
+from .utils import Units
 
 # Physical constants
 #: Boltzmann's constant in J/K.

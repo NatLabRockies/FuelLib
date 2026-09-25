@@ -16,7 +16,7 @@ import pandas as pd
 
 import fuellib as fl
 
-from ..units import Units
+from ..utils import Units
 
 
 def plot_composition(

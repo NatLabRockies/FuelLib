@@ -9,8 +9,8 @@ def mixing_rule(var_n, X, pseudo_prop="arithmetic"):
 
     :param var_n: Individual compound properties.
     :type var_n: np.ndarray or pint.Quantity[np.ndarray]
-    :param X: Mole fractions of the compounds.
-    :type X: np.ndarray
+    :param X: Mole (or mass) fractions of the compounds.
+    :type X: np.ndarray or pint.Quantity[np.ndarray]
     :param pseudo_prop: Type of mean ("arithmetic" or "geometric").
     :type pseudo_prop: str, optional
     :return: Mixture property value.
@@ -18,7 +18,7 @@ def mixing_rule(var_n, X, pseudo_prop="arithmetic"):
     """
     units = getattr(var_n, "units", None)
     values = var_n.magnitude if units is not None else np.asarray(var_n)
-    mole_fractions = np.asarray(X)
+    mole_fractions = X.magnitude if hasattr(X, "magnitude") else np.asarray(X)
 
     num_comps = len(values)
     var_mix = 0.0
