@@ -66,6 +66,7 @@ Development tools (Sphinx, Ruff, ty, pytest) are available for developers instal
    :caption: Contents:
 
    fuelprops
+   gcm
    units
    tutorials
    sourcecode   
