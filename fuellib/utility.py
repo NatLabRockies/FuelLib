@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Literal, cast, overload
 import numpy as np
 import pint
 
-from .utils import types
+from .utils import Units, types
 
 if TYPE_CHECKING:
     from .fuel import Fuel
@@ -78,7 +78,7 @@ def droplet_volume(r: types.Quantity0D) -> types.Quantity0D:
 
 def droplet_mass(
     fuel: Fuel, r: types.Quantity0D, Yi: types.Quantity1D, T: types.Quantity0D
-) -> types.Array1D:
+) -> types.Quantity1D:
     """Calculate the mass of each compound in the fuel provided the radius of the droplet.
 
     Args:
@@ -88,16 +88,16 @@ def droplet_mass(
         T: Droplet temperature in Kelvin.
 
     Returns:
-        Mass of each compound in droplet in kg.
+        Mass of each compound in the droplet in kg.
     """
     Yi_magnitude = Yi.to("dimensionless").magnitude
     volume = droplet_volume(r)
     if volume > 0:
         return (
             volume / (fuel.molar_liquid_vol(T) @ Yi_magnitude) * Yi_magnitude * fuel.MW
-        ).magnitude
+        ).to("kg")
     else:
-        return np.zeros_like(fuel.MW)
+        return Units.Quantity(np.zeros_like(fuel.MW.magnitude), "kg")
 
 
 __all__ = ["droplet_mass", "droplet_volume", "mixing_rule"]
