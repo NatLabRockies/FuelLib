@@ -16,18 +16,18 @@ if TYPE_CHECKING:
 @overload
 def mixing_rule(
     var_n: types.Array1D,
-    X: types.Array1D | types.Quantity1D,
+    X: types.Quantity1D,
     pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
 ) -> float: ...
 @overload
 def mixing_rule(
     var_n: types.Quantity1D,
-    X: types.Array1D | types.Quantity1D,
+    X: types.Quantity1D,
     pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
 ) -> types.Quantity0D: ...
 def mixing_rule(
     var_n: types.Array1D | types.Quantity1D,
-    X: types.Array1D | types.Quantity1D,
+    X: types.Quantity1D,
     pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
 ) -> float | types.Quantity0D:
     """Mixing rules for computing mixture properties.
@@ -46,7 +46,7 @@ def mixing_rule(
     else:
         units = None
         values = np.asarray(var_n)
-    mole_fractions = X.magnitude if isinstance(X, pint.Quantity) else np.asarray(X)
+    mag_X = X.to("dimensionless").magnitude
 
     num_comps = len(values)
     var_mix = 0.0
@@ -58,7 +58,7 @@ def mixing_rule(
             else:
                 # Use arithmetic definition for the pseudo property
                 var_ij = (values[i] + values[j]) / 2
-            var_mix += mole_fractions[i] * mole_fractions[j] * var_ij
+            var_mix += mag_X[i] * mag_X[j] * var_ij
 
     return cast("types.Quantity0D", var_mix * units) if units is not None else var_mix
 

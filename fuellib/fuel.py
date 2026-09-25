@@ -1120,7 +1120,7 @@ class Fuel:
         # Define or get temperature nodes for fit
         if Tvals is None:
             print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
-            X = self.Y2X(Yi).magnitude
+            X = self.Y2X(Yi)
             Tb = mixing_rule(self.Tb, X)
             T = Units.Quantity(
                 np.linspace(273.15, np.min(Tb.to("K").magnitude), 20), "K"
@@ -1195,7 +1195,7 @@ class Fuel:
         T = T.to("K")
 
         # Mole fraction for each compound
-        Xi = self.Y2X(Yi).magnitude
+        Xi = self.Y2X(Yi)
 
         # Surface tension for each compound (N/m)
         sti = self.surface_tension(T, correlation=correlation)
