@@ -1,0 +1,1178 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fuellib.fuel.Fuel &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=cb975c41"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fuellib.constants" href="fuellib.constants.html" />
+    <link rel="prev" title="fuellib.fuel" href="fuellib.fuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            FuelLib
+              <img src="../_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mass-specific-heat-capacity-of-the-liquid">Mass specific heat capacity of the liquid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../units.html">Units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../units.html#basic-example">Basic example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../units.html#type-annotations">Type annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../units.html#further-reading">Further reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#required-input-files">Required Input Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-cli.html">Command-Line Interface (CLI) Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-cli.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-cli.html#unit-conversion-tools">Unit Conversion Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-cli.html#fuel-management">Fuel Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-cli.html#export-for-cfd">Export for CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-cli.html#developer-tools">Developer Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-custom-fuels.html">Adding Custom Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-custom-fuels.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-custom-fuels.html#metadata-configuration">Metadata Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-custom-fuels.html#gcxgc-composition-data">GCxGC Composition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-custom-fuels.html#group-decomposition-data">Group Decomposition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-custom-fuels.html#using-custom-fuels">Using Custom Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-custom-fuels.html#tips-and-best-practices">Tips and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-export-pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials-export-converge.html">Exporting Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials-export-converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sourcecode.html">Source Code</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sourcecode.html#public-api">Public API</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="fuellib.fuel.html">fuellib.fuel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuellib.constants.html">fuellib.constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuellib.convert.html">fuellib.convert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuellib.utility.html">fuellib.utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuellib.utils.types.html">fuellib.utils.types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Contributing to FuelLib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../development.html#optional-conda-environment">Optional: Conda Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../development.html#optional-pixi-environment">Optional: Pixi Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#pre-commit-hooks">Pre-commit Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#optional-uv">Optional: uv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#working-with-units-pint">Working with Units (pint)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#updating-the-changelog">Updating the Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#contributing-guidelines">Contributing Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#building-and-viewing-documentation-locally">Building and Viewing Documentation Locally</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../sourcecode.html">Source Code</a></li>
+          <li class="breadcrumb-item"><a href="fuellib.fuel.html">fuellib.fuel</a></li>
+      <li class="breadcrumb-item active">fuellib.fuel.Fuel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/fuellib.fuel.Fuel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fuellib-fuel-fuel">
+<h1>fuellib.fuel.Fuel<a class="headerlink" href="#fuellib-fuel-fuel" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fuellib.fuel.</span></span><span class="sig-name descname"><span class="pre">Fuel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decompName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuelDataDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for handling group contribution calculations of thermodynamic and mixture properties.</p>
+<p>Initialize Fuel object and pre-compute GCM properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the mixture as it appears in its gcData file.</p></li>
+<li><p><strong>decompName</strong> (<em>str</em><em> | </em><em>None</em>) – Name of the groupDecomposition file if different from name. Defaults to None.</p></li>
+<li><p><strong>fuelDataDir</strong> (<em>str</em><em> | </em><em>None</em>) – Directory where the fuel data is stored. If None, uses built-in embedded data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a GCM property cannot be found.</p>
+</dd>
+</dl>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.name" title="fuellib.fuel.Fuel.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Name of the fuel/mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.fuelDataDir" title="fuellib.fuel.Fuel.fuelDataDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuelDataDir</span></code></a></p></td>
+<td><p>Directory containing the fuel data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.fuelDataGcDir" title="fuellib.fuel.Fuel.fuelDataGcDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuelDataGcDir</span></code></a></p></td>
+<td><p>Directory containing the gas chromatography data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.fuelDataDecompDir" title="fuellib.fuel.Fuel.fuelDataDecompDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuelDataDecompDir</span></code></a></p></td>
+<td><p>Directory containing the group decomposition data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.fuelDataPropsDir" title="fuellib.fuel.Fuel.fuelDataPropsDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuelDataPropsDir</span></code></a></p></td>
+<td><p>Directory containing the fuel properties data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.groupDecompFile" title="fuellib.fuel.Fuel.groupDecompFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groupDecompFile</span></code></a></p></td>
+<td><p>File containing the group decomposition data for this fuel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.gcxgcFile" title="fuellib.fuel.Fuel.gcxgcFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcxgcFile</span></code></a></p></td>
+<td><p>File containing the GCxGC compositional data for this fuel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.gcmTableFile" title="fuellib.fuel.Fuel.gcmTableFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcmTableFile</span></code></a></p></td>
+<td><p>File containing the GCM table data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Nij" title="fuellib.fuel.Fuel.Nij"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Nij</span></code></a></p></td>
+<td><p>Array containing the group decomposition data for each compound.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.num_compounds" title="fuellib.fuel.Fuel.num_compounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_compounds</span></code></a></p></td>
+<td><p>Number of compounds in the fuel mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.num_groups" title="fuellib.fuel.Fuel.num_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_groups</span></code></a></p></td>
+<td><p>Number of functional groups considered in the decomposition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.fam" title="fuellib.fuel.Fuel.fam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fam</span></code></a></p></td>
+<td><p>Hydrocarbon family codes for thermal conductivity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.hc_type" title="fuellib.fuel.Fuel.hc_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hc_type</span></code></a></p></td>
+<td><p>Hydrocarbon types for each compound:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.nC" title="fuellib.fuel.Fuel.nC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nC</span></code></a></p></td>
+<td><p>Number of carbon atoms in each compound.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.nH" title="fuellib.fuel.Fuel.nH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nH</span></code></a></p></td>
+<td><p>Number of hydrogen atoms in each compound.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.compounds" title="fuellib.fuel.Fuel.compounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compounds</span></code></a></p></td>
+<td><p>List of compound names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.formulas" title="fuellib.fuel.Fuel.formulas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">formulas</span></code></a></p></td>
+<td><p>Molecular formulas of the fuel components, if available.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.pelephysics_keys" title="fuellib.fuel.Fuel.pelephysics_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pelephysics_keys</span></code></a></p></td>
+<td><p>PelePhysics keys for the fuel components, if available.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.MW" title="fuellib.fuel.Fuel.MW"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MW</span></code></a></p></td>
+<td><p>Molecular weights in kg/mol.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Tc" title="fuellib.fuel.Fuel.Tc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tc</span></code></a></p></td>
+<td><p>Critical temperature in K.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Pc" title="fuellib.fuel.Fuel.Pc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pc</span></code></a></p></td>
+<td><p>Critical pressure in Pa.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Vc" title="fuellib.fuel.Fuel.Vc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vc</span></code></a></p></td>
+<td><p>Critical volume in m^3/mol.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Tb" title="fuellib.fuel.Fuel.Tb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tb</span></code></a></p></td>
+<td><p>Boiling temperature in K.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Tm" title="fuellib.fuel.Fuel.Tm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tm</span></code></a></p></td>
+<td><p>Melting temperature in K.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Hf" title="fuellib.fuel.Fuel.Hf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Hf</span></code></a></p></td>
+<td><p>Enthalpy of formation in J/mol.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Gf" title="fuellib.fuel.Fuel.Gf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gf</span></code></a></p></td>
+<td><p>Gibbs free energy in J/mol.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Hv_stp" title="fuellib.fuel.Fuel.Hv_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Hv_stp</span></code></a></p></td>
+<td><p>Enthalpy of vaporization at 298 K in J/mol.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.omega" title="fuellib.fuel.Fuel.omega"><code class="xref py py-obj docutils literal notranslate"><span class="pre">omega</span></code></a></p></td>
+<td><p>Accentric factor (dimensionless).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Vm_stp" title="fuellib.fuel.Fuel.Vm_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vm_stp</span></code></a></p></td>
+<td><p>Molar liquid volume at 298 K in m^3/mol.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Cp_stp" title="fuellib.fuel.Fuel.Cp_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cp_stp</span></code></a></p></td>
+<td><p>Molar specific heat at 298 K in J/(mol*K).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Cp_B" title="fuellib.fuel.Fuel.Cp_B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cp_B</span></code></a></p></td>
+<td><p>Temperature-corrected specific heat (B) in J/(mol*K).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Cp_C" title="fuellib.fuel.Fuel.Cp_C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cp_C</span></code></a></p></td>
+<td><p>Temperature-corrected specific heat (C) in J/(mol*K).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Lv_stp" title="fuellib.fuel.Fuel.Lv_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lv_stp</span></code></a></p></td>
+<td><p>Latent heat of vaporization at 298 K in J/kg.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.epsilonByKB" title="fuellib.fuel.Fuel.epsilonByKB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">epsilonByKB</span></code></a></p></td>
+<td><p>Lennard-Jones well depth over Boltzmann constant in K.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.sigma" title="fuellib.fuel.Fuel.sigma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code></a></p></td>
+<td><p>Lennard-Jones collision diameter in m.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Cl" title="fuellib.fuel.Fuel.Cl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cl</span></code></a></p></td>
+<td><p>Compute liquid mass specific heat capacity in J/kg/K at a given temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Cp" title="fuellib.fuel.Fuel.Cp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cp</span></code></a></p></td>
+<td><p>Compute molar specific heat capacity at a given temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.X2Y" title="fuellib.fuel.Fuel.X2Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X2Y</span></code></a></p></td>
+<td><p>Calculate the mass fractions from the mole fractions of each component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.Y2X" title="fuellib.fuel.Fuel.Y2X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y2X</span></code></a></p></td>
+<td><p>Calculate the mole fractions from the mass fractions of each component.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.density" title="fuellib.fuel.Fuel.density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">density</span></code></a></p></td>
+<td><p>Calculate the density of each component at temperature T.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.diffusion_coeff" title="fuellib.fuel.Fuel.diffusion_coeff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffusion_coeff</span></code></a></p></td>
+<td><p>Compute diffusion coefficients using Lennard-Jones parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.latent_heat_vaporization" title="fuellib.fuel.Fuel.latent_heat_vaporization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">latent_heat_vaporization</span></code></a></p></td>
+<td><p>Calculate latent heat of vaporization adjusted for temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mass2X" title="fuellib.fuel.Fuel.mass2X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass2X</span></code></a></p></td>
+<td><p>Calculate the mole fractions from the mass of each component.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mass2Y" title="fuellib.fuel.Fuel.mass2Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass2Y</span></code></a></p></td>
+<td><p>Calculate the mass fractions from the mass of each component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mean_molecular_weight" title="fuellib.fuel.Fuel.mean_molecular_weight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_molecular_weight</span></code></a></p></td>
+<td><p>Calculate the mean molecular weight of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mixture_density" title="fuellib.fuel.Fuel.mixture_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixture_density</span></code></a></p></td>
+<td><p>Calculate mixture density at a given temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mixture_dynamic_viscosity" title="fuellib.fuel.Fuel.mixture_dynamic_viscosity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixture_dynamic_viscosity</span></code></a></p></td>
+<td><p>Calculate dynamic viscosity of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mixture_kinematic_viscosity" title="fuellib.fuel.Fuel.mixture_kinematic_viscosity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixture_kinematic_viscosity</span></code></a></p></td>
+<td><p>Calculate kinematic viscosity of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mixture_surface_tension" title="fuellib.fuel.Fuel.mixture_surface_tension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixture_surface_tension</span></code></a></p></td>
+<td><p>Calculate surface tension of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mixture_thermal_conductivity" title="fuellib.fuel.Fuel.mixture_thermal_conductivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixture_thermal_conductivity</span></code></a></p></td>
+<td><p>Calculate thermal conductivity of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mixture_vapor_pressure" title="fuellib.fuel.Fuel.mixture_vapor_pressure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixture_vapor_pressure</span></code></a></p></td>
+<td><p>Calculate vapor pressure of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.mixture_vapor_pressure_antoine_coeffs" title="fuellib.fuel.Fuel.mixture_vapor_pressure_antoine_coeffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixture_vapor_pressure_antoine_coeffs</span></code></a></p></td>
+<td><p>Estimate Antoine coefficients for vapor pressure of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.molar_liquid_vol" title="fuellib.fuel.Fuel.molar_liquid_vol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">molar_liquid_vol</span></code></a></p></td>
+<td><p>Compute molar liquid volume with temperature correction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.psat" title="fuellib.fuel.Fuel.psat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psat</span></code></a></p></td>
+<td><p>Compute saturated vapor pressure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.psat_antoine_coeffs" title="fuellib.fuel.Fuel.psat_antoine_coeffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psat_antoine_coeffs</span></code></a></p></td>
+<td><p>Estimate Antoine coefficients for vapor pressure of an individual compound.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.surface_tension" title="fuellib.fuel.Fuel.surface_tension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">surface_tension</span></code></a></p></td>
+<td><p>Calculate surface tension of each compound at a given temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.thermal_conductivity" title="fuellib.fuel.Fuel.thermal_conductivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thermal_conductivity</span></code></a></p></td>
+<td><p>Calculate thermal conductivity at a given temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.viscosity_dynamic" title="fuellib.fuel.Fuel.viscosity_dynamic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">viscosity_dynamic</span></code></a></p></td>
+<td><p>Calculate liquid dynamic viscosity based on droplet temperature and density.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fuellib.fuel.Fuel.viscosity_kinematic" title="fuellib.fuel.Fuel.viscosity_kinematic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">viscosity_kinematic</span></code></a></p></td>
+<td><p>Calculate the viscosity using Dutt's equation.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Cl">
+<span class="sig-name descname"><span class="pre">Cl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.Cl" title="Link to this definition"></a></dt>
+<dd><p>Compute liquid mass specific heat capacity in J/kg/K at a given temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mass specific heat capacity in J/kg/K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Cp">
+<span class="sig-name descname"><span class="pre">Cp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.Cp" title="Link to this definition"></a></dt>
+<dd><p>Compute molar specific heat capacity at a given temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Molar specific heat capacity in J/mol/K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Cp_B">
+<span class="sig-name descname"><span class="pre">Cp_B</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Cp_B" title="Link to this definition"></a></dt>
+<dd><p>Temperature-corrected specific heat (B) in J/(mol*K).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Cp_C">
+<span class="sig-name descname"><span class="pre">Cp_C</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Cp_C" title="Link to this definition"></a></dt>
+<dd><p>Temperature-corrected specific heat (C) in J/(mol*K).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Cp_stp">
+<span class="sig-name descname"><span class="pre">Cp_stp</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Cp_stp" title="Link to this definition"></a></dt>
+<dd><p>Molar specific heat at 298 K in J/(mol*K).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Gf">
+<span class="sig-name descname"><span class="pre">Gf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Gf" title="Link to this definition"></a></dt>
+<dd><p>Gibbs free energy in J/mol.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Hf">
+<span class="sig-name descname"><span class="pre">Hf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Hf" title="Link to this definition"></a></dt>
+<dd><p>Enthalpy of formation in J/mol.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Hv_stp">
+<span class="sig-name descname"><span class="pre">Hv_stp</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Hv_stp" title="Link to this definition"></a></dt>
+<dd><p>Enthalpy of vaporization at 298 K in J/mol.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Lv_stp">
+<span class="sig-name descname"><span class="pre">Lv_stp</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Lv_stp" title="Link to this definition"></a></dt>
+<dd><p>Latent heat of vaporization at 298 K in J/kg.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.MW">
+<span class="sig-name descname"><span class="pre">MW</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.MW" title="Link to this definition"></a></dt>
+<dd><p>Molecular weights in kg/mol.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Nij">
+<span class="sig-name descname"><span class="pre">Nij</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Nij" title="Link to this definition"></a></dt>
+<dd><p>Array containing the group decomposition data for each compound.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Pc">
+<span class="sig-name descname"><span class="pre">Pc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Pc" title="Link to this definition"></a></dt>
+<dd><p>Critical pressure in Pa.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Tb">
+<span class="sig-name descname"><span class="pre">Tb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Tb" title="Link to this definition"></a></dt>
+<dd><p>Boiling temperature in K.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Tc">
+<span class="sig-name descname"><span class="pre">Tc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Tc" title="Link to this definition"></a></dt>
+<dd><p>Critical temperature in K.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Tm">
+<span class="sig-name descname"><span class="pre">Tm</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Tm" title="Link to this definition"></a></dt>
+<dd><p>Melting temperature in K.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Vc">
+<span class="sig-name descname"><span class="pre">Vc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Vc" title="Link to this definition"></a></dt>
+<dd><p>Critical volume in m^3/mol.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Vm_stp">
+<span class="sig-name descname"><span class="pre">Vm_stp</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.Vm_stp" title="Link to this definition"></a></dt>
+<dd><p>Molar liquid volume at 298 K in m^3/mol.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.X2Y">
+<span class="sig-name descname"><span class="pre">X2Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.X2Y" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mass fractions from the mole fractions of each component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Xi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mole fractions of each compound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>num_compounds,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mass fractions of the compounds (shape</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.Y2X">
+<span class="sig-name descname"><span class="pre">Y2X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.Y2X" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mole fractions from the mass fractions of each component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>num_compounds,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mole fractions of the compounds (shape</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decompName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuelDataDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize Fuel object and pre-compute GCM properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the mixture as it appears in its gcData file.</p></li>
+<li><p><strong>decompName</strong> (<em>str</em><em> | </em><em>None</em>) – Name of the groupDecomposition file if different from name. Defaults to None.</p></li>
+<li><p><strong>fuelDataDir</strong> (<em>str</em><em> | </em><em>None</em>) – Directory where the fuel data is stored. If None, uses built-in embedded data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a GCM property cannot be found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.compounds">
+<span class="sig-name descname"><span class="pre">compounds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.compounds" title="Link to this definition"></a></dt>
+<dd><p>List of compound names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.density">
+<span class="sig-name descname"><span class="pre">density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.density" title="Link to this definition"></a></dt>
+<dd><p>Calculate the density of each component at temperature T.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature of the mixture in Kelvin.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Density of each compound in kg/m^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.diffusion_coeff">
+<span class="sig-name descname"><span class="pre">diffusion_coeff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_gas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Quantity(3.62,</span> <span class="pre">'angstrom')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilonByKB_gas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Quantity(97.0,</span> <span class="pre">'kelvin')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MW_gas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Quantity(0.02897,</span> <span class="pre">'kilogram</span> <span class="pre">/</span> <span class="pre">mole')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Tee'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.diffusion_coeff" title="Link to this definition"></a></dt>
+<dd><p>Compute diffusion coefficients using Lennard-Jones parameters.</p>
+<p>Uses Wilke and Lee method (Poling, equation 11-4.1). Ambient gas
+defaults to air parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Pressure in Pa.</p></li>
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>sigma_gas</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Collision diameter in m.</p></li>
+<li><p><strong>epsilonByKB_gas</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Well depth over Boltzmann constant, in K.</p></li>
+<li><p><strong>MW_gas</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Mean molecular weight of ambient gas in kg/mol.</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Tee'</em><em>, </em><em>'Wilke'</em><em>]</em>) – Method to calculate sigma and epsilon (“Tee” or “Wilke”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Diffusion coefficient.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.epsilonByKB">
+<span class="sig-name descname"><span class="pre">epsilonByKB</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.epsilonByKB" title="Link to this definition"></a></dt>
+<dd><p>Lennard-Jones well depth over Boltzmann constant in K.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.fam">
+<span class="sig-name descname"><span class="pre">fam</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.fam" title="Link to this definition"></a></dt>
+<dd><p>Hydrocarbon family codes for thermal conductivity.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Hydrocarbon Family</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>saturated</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>aromatics</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>cycloparaffins</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>olefins</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.formulas">
+<span class="sig-name descname"><span class="pre">formulas</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.formulas" title="Link to this definition"></a></dt>
+<dd><p>Molecular formulas of the fuel components, if available.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.fuelDataDecompDir">
+<span class="sig-name descname"><span class="pre">fuelDataDecompDir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.fuelDataDecompDir" title="Link to this definition"></a></dt>
+<dd><p>Directory containing the group decomposition data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.fuelDataDir">
+<span class="sig-name descname"><span class="pre">fuelDataDir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.fuelDataDir" title="Link to this definition"></a></dt>
+<dd><p>Directory containing the fuel data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.fuelDataGcDir">
+<span class="sig-name descname"><span class="pre">fuelDataGcDir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.fuelDataGcDir" title="Link to this definition"></a></dt>
+<dd><p>Directory containing the gas chromatography data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.fuelDataPropsDir">
+<span class="sig-name descname"><span class="pre">fuelDataPropsDir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.fuelDataPropsDir" title="Link to this definition"></a></dt>
+<dd><p>Directory containing the fuel properties data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.gcmTableFile">
+<span class="sig-name descname"><span class="pre">gcmTableFile</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.gcmTableFile" title="Link to this definition"></a></dt>
+<dd><p>File containing the GCM table data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.gcxgcFile">
+<span class="sig-name descname"><span class="pre">gcxgcFile</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.gcxgcFile" title="Link to this definition"></a></dt>
+<dd><p>File containing the GCxGC compositional data for this fuel.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.groupDecompFile">
+<span class="sig-name descname"><span class="pre">groupDecompFile</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.groupDecompFile" title="Link to this definition"></a></dt>
+<dd><p>File containing the group decomposition data for this fuel.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.hc_type">
+<span class="sig-name descname"><span class="pre">hc_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.hc_type" title="Link to this definition"></a></dt>
+<dd><p>Hydrocarbon types for each compound:</p>
+<ul class="simple">
+<li><p>“n-alkane”</p></li>
+<li><p>“iso-alkane”</p></li>
+<li><p>“alkene”</p></li>
+<li><p>“cyclo-alkane”</p></li>
+<li><p>“aromatic”</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.latent_heat_vaporization">
+<span class="sig-name descname"><span class="pre">latent_heat_vaporization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.latent_heat_vaporization" title="Link to this definition"></a></dt>
+<dd><p>Calculate latent heat of vaporization adjusted for temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Latent heat of vaporization in J/kg.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mass2X">
+<span class="sig-name descname"><span class="pre">mass2X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mass2X" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mole fractions from the mass of each component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mass</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass of each compound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>num_compounds,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mole fractions of the compounds (shape</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mass2Y">
+<span class="sig-name descname"><span class="pre">mass2Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mass2Y" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mass fractions from the mass of each component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mass</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass of each compound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>num_compounds,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mass fractions of the compounds (shape</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mean_molecular_weight">
+<span class="sig-name descname"><span class="pre">mean_molecular_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mean_molecular_weight" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean molecular weight of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean molecular weight of the mixture in kg/mol.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mixture_density">
+<span class="sig-name descname"><span class="pre">mixture_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mixture_density" title="Link to this definition"></a></dt>
+<dd><p>Calculate mixture density at a given temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound.</p></li>
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture density in kg/m^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mixture_dynamic_viscosity">
+<span class="sig-name descname"><span class="pre">mixture_dynamic_viscosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Kendall-Monroe'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mixture_dynamic_viscosity" title="Link to this definition"></a></dt>
+<dd><p>Calculate dynamic viscosity of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound.</p></li>
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Kendall-Monroe'</em><em>, </em><em>'Arrhenius'</em><em>]</em>) – Mixing model (“Kendall-Monroe” or “Arrhenius”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture dynamic viscosity in Pa*s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mixture_kinematic_viscosity">
+<span class="sig-name descname"><span class="pre">mixture_kinematic_viscosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Kendall-Monroe'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mixture_kinematic_viscosity" title="Link to this definition"></a></dt>
+<dd><p>Calculate kinematic viscosity of the mixture.</p>
+<p>Uses Kendall-Monroe (default) or Arrhenius mixing correlations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound.</p></li>
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Kendall-Monroe'</em><em>, </em><em>'Arrhenius'</em><em>]</em>) – Mixing model (“Kendall-Monroe” or “Arrhenius”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture kinematic viscosity in m^2/s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mixture_surface_tension">
+<span class="sig-name descname"><span class="pre">mixture_surface_tension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Brock-Bird'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mixture_surface_tension" title="Link to this definition"></a></dt>
+<dd><p>Calculate surface tension of the mixture.</p>
+<p>Uses arithmetic pseudo-property method recommended by Hugill and van
+Welsenes (1986).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Pitzer'</em><em>, </em><em>'Brock-Bird'</em><em>]</em>) – Correlation method (“Pitzer” or “Brock-Bird”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture surface tension in N/m.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mixture_thermal_conductivity">
+<span class="sig-name descname"><span class="pre">mixture_thermal_conductivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mixture_thermal_conductivity" title="Link to this definition"></a></dt>
+<dd><p>Calculate thermal conductivity of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Thermal conductivity in W/m/K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mixture_vapor_pressure">
+<span class="sig-name descname"><span class="pre">mixture_vapor_pressure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mixture_vapor_pressure" title="Link to this definition"></a></dt>
+<dd><p>Calculate vapor pressure of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Ambrose-Walton'</em><em>, </em><em>'Lee-Kesler'</em><em>]</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mixture vapor pressure in Pa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.mixture_vapor_pressure_antoine_coeffs">
+<span class="sig-name descname"><span class="pre">mixture_vapor_pressure_antoine_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.mixture_vapor_pressure_antoine_coeffs" title="Link to this definition"></a></dt>
+<dd><p>Estimate Antoine coefficients for vapor pressure of the mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Yi</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>]</em>) – Mass fractions of each compound in the mixture.</p></li>
+<li><p><strong>Tvals</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>] </em><em>| </em><em>None</em>) – Temperature range or nodes for Antoine fit in Kelvin (default [273.15, min(Tb)]).</p></li>
+<li><p><strong>units</strong> (<em>Literal</em><em>[</em><em>'mks'</em><em>, </em><em>'cgs'</em><em>, </em><em>'dyne/cm^2'</em><em>, </em><em>'Pa'</em><em>]</em>) – Units for pressure in fit (“mks”, “cgs”).</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Ambrose-Walton'</em><em>, </em><em>'Lee-Kesler'</em><em>]</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Coefficients A, B, C, D.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If units or Tvals are invalid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[float, float, float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.molar_liquid_vol">
+<span class="sig-name descname"><span class="pre">molar_liquid_vol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.molar_liquid_vol" title="Link to this definition"></a></dt>
+<dd><p>Compute molar liquid volume with temperature correction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Molar liquid volume in m^3/mol.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.nC">
+<span class="sig-name descname"><span class="pre">nC</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.nC" title="Link to this definition"></a></dt>
+<dd><p>Number of carbon atoms in each compound.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.nH">
+<span class="sig-name descname"><span class="pre">nH</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.nH" title="Link to this definition"></a></dt>
+<dd><p>Number of hydrogen atoms in each compound.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.name" title="Link to this definition"></a></dt>
+<dd><p>Name of the fuel/mixture.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.num_compounds">
+<span class="sig-name descname"><span class="pre">num_compounds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.num_compounds" title="Link to this definition"></a></dt>
+<dd><p>Number of compounds in the fuel mixture.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.num_groups">
+<span class="sig-name descname"><span class="pre">num_groups</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.num_groups" title="Link to this definition"></a></dt>
+<dd><p>Number of functional groups considered in the decomposition.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.omega">
+<span class="sig-name descname"><span class="pre">omega</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.omega" title="Link to this definition"></a></dt>
+<dd><p>Accentric factor (dimensionless).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.pelephysics_keys">
+<span class="sig-name descname"><span class="pre">pelephysics_keys</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#fuellib.fuel.Fuel.pelephysics_keys" title="Link to this definition"></a></dt>
+<dd><p>PelePhysics keys for the fuel components, if available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.psat">
+<span class="sig-name descname"><span class="pre">psat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.psat" title="Link to this definition"></a></dt>
+<dd><p>Compute saturated vapor pressure.</p>
+<p>Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Ambrose-Walton'</em><em>, </em><em>'Lee-Kesler'</em><em>]</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saturated vapor pressure in Pa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.psat_antoine_coeffs">
+<span class="sig-name descname"><span class="pre">psat_antoine_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Lee-Kesler'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.psat_antoine_coeffs" title="Link to this definition"></a></dt>
+<dd><p>Estimate Antoine coefficients for vapor pressure of an individual compound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Tvals</strong> (<em>Quantity</em><em>[</em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>]</em><em>]</em><em>] </em><em>| </em><em>None</em>) – Temperature range or nodes for Antoine fit in Kelvin (default [273.15, Tb_i]).</p></li>
+<li><p><strong>units</strong> (<em>Literal</em><em>[</em><em>'mks'</em><em>, </em><em>'cgs'</em><em>, </em><em>'dyne/cm^2'</em><em>, </em><em>'Pa'</em><em>]</em>) – Units for pressure in fit (“mks”, “cgs”).</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Ambrose-Walton'</em><em>, </em><em>'Lee-Kesler'</em><em>]</em>) – Correlation method (“Ambrose-Walton” or “Lee-Kesler”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Coefficients A, B, C, D for each compound.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If units or Tvals are invalid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[<em>ndarray</em>[tuple[int]], <em>ndarray</em>[tuple[int]], <em>ndarray</em>[tuple[int]], <em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.sigma">
+<span class="sig-name descname"><span class="pre">sigma</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#fuellib.fuel.Fuel.sigma" title="Link to this definition"></a></dt>
+<dd><p>Lennard-Jones collision diameter in m.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.surface_tension">
+<span class="sig-name descname"><span class="pre">surface_tension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Brock-Bird'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.surface_tension" title="Link to this definition"></a></dt>
+<dd><p>Calculate surface tension of each compound at a given temperature.</p>
+<p>Uses Brock-Bird (default) or Pitzer correlations (Poling 12-3.5, 12-3.7).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+<li><p><strong>correlation</strong> (<em>Literal</em><em>[</em><em>'Brock-Bird'</em><em>, </em><em>'Pitzer'</em><em>]</em>) – Correlation method (“Brock-Bird” or “Pitzer”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Surface tension in N/m.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.thermal_conductivity">
+<span class="sig-name descname"><span class="pre">thermal_conductivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.thermal_conductivity" title="Link to this definition"></a></dt>
+<dd><p>Calculate thermal conductivity at a given temperature.</p>
+<p>Uses Latini et al. method (Poling equation 10-9.1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Thermal conductivity in W/m/K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.viscosity_dynamic">
+<span class="sig-name descname"><span class="pre">viscosity_dynamic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.viscosity_dynamic" title="Link to this definition"></a></dt>
+<dd><p>Calculate liquid dynamic viscosity based on droplet temperature and density.</p>
+<p>Uses Dutt’s equation (4.23) for kinematic viscosity, combined with density.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dynamic viscosity in Pa*s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fuellib.fuel.Fuel.viscosity_kinematic">
+<span class="sig-name descname"><span class="pre">viscosity_kinematic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fuellib.fuel.Fuel.viscosity_kinematic" title="Link to this definition"></a></dt>
+<dd><p>Calculate the viscosity using Dutt’s equation.</p>
+<p>Uses Dutt’s equation (4.23) from “Viscosity of Liquids”. The equation
+predicts viscosity in mm^2/s and is converted to SI units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>Quantity</em><em>[</em><em>float</em><em>]</em>) – Temperature to compute property.</p></li>
+<li><p><strong>comp_idx</strong> (<em>int</em><em> | </em><em>None</em>) – Index of compound to calculate property for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Viscosity of each component in m^2/s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Quantity</em>[<em>ndarray</em>[tuple[int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fuellib.fuel.html" class="btn btn-neutral float-left" title="fuellib.fuel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fuellib.constants.html" class="btn btn-neutral float-right" title="fuellib.constants" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

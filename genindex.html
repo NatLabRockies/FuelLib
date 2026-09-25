@@ -1,0 +1,579 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Index &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mass-specific-heat-capacity-of-the-liquid">Mass specific heat capacity of the liquid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="units.html#basic-example">Basic example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#type-annotations">Type annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#further-reading">Further reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#required-input-files">Required Input Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-cli.html">Command-Line Interface (CLI) Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#unit-conversion-tools">Unit Conversion Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#fuel-management">Fuel Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#export-for-cfd">Export for CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#developer-tools">Developer Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-custom-fuels.html">Adding Custom Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#metadata-configuration">Metadata Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#gcxgc-composition-data">GCxGC Composition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#group-decomposition-data">Group Decomposition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#using-custom-fuels">Using Custom Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#tips-and-best-practices">Tips and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-converge.html">Exporting Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#public-api">Public API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.html">fuellib.fuel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.constants.html">fuellib.constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.convert.html">fuellib.convert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utility.html">fuellib.utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.types.html">fuellib.utils.types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Contributing to FuelLib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#optional-conda-environment">Optional: Conda Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development.html#optional-pixi-environment">Optional: Pixi Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#pre-commit-hooks">Pre-commit Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#optional-uv">Optional: uv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#working-with-units-pint">Working with Units (pint)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#updating-the-changelog">Updating the Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#contributing-guidelines">Contributing Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#building-and-viewing-documentation-locally">Building and Viewing Documentation Locally</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Index</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
+ 
+</div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.__init__">__init__() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.convert.C2F.html#fuellib.convert.C2F">C2F() (in module fuellib.convert)</a>
+</li>
+      <li><a href="generated/fuellib.convert.C2K.html#fuellib.convert.C2K">C2K() (in module fuellib.convert)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Cl">Cl() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.compounds">compounds (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Cp">Cp() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Cp_B">Cp_B (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Cp_C">Cp_C (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Cp_stp">Cp_stp (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.density">density() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.diffusion_coeff">diffusion_coeff() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.utility.droplet_mass.html#fuellib.utility.droplet_mass">droplet_mass() (in module fuellib.utility)</a>
+</li>
+      <li><a href="generated/fuellib.utility.droplet_volume.html#fuellib.utility.droplet_volume">droplet_volume() (in module fuellib.utility)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.convert.epsilon_to_characteristic_temperature.html#fuellib.convert.epsilon_to_characteristic_temperature">epsilon_to_characteristic_temperature() (in module fuellib.convert)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.epsilonByKB">epsilonByKB (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.convert.F2C.html#fuellib.convert.F2C">F2C() (in module fuellib.convert)</a>
+</li>
+      <li><a href="generated/fuellib.convert.F2K.html#fuellib.convert.F2K">F2K() (in module fuellib.convert)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.fam">fam (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.formulas">formulas (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel">Fuel (class in fuellib.fuel)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.fuelDataDecompDir">fuelDataDecompDir (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.fuelDataDir">fuelDataDir (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.fuelDataGcDir">fuelDataGcDir (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.fuelDataPropsDir">fuelDataPropsDir (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    fuellib.constants
+
+      <ul>
+        <li><a href="generated/fuellib.constants.html#module-fuellib.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    fuellib.convert
+
+      <ul>
+        <li><a href="generated/fuellib.convert.html#module-fuellib.convert">module</a>
+</li>
+      </ul></li>
+      <li>
+    fuellib.fuel
+
+      <ul>
+        <li><a href="generated/fuellib.fuel.html#module-fuellib.fuel">module</a>
+</li>
+      </ul></li>
+      <li>
+    fuellib.utility
+
+      <ul>
+        <li><a href="generated/fuellib.utility.html#module-fuellib.utility">module</a>
+</li>
+      </ul></li>
+      <li>
+    fuellib.utils.types
+
+      <ul>
+        <li><a href="generated/fuellib.utils.types.html#module-fuellib.utils.types">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.gcmTableFile">gcmTableFile (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.gcxgcFile">gcxgcFile (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Gf">Gf (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.groupDecompFile">groupDecompFile (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.hc_type">hc_type (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Hf">Hf (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Hv_stp">Hv_stp (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.convert.K2C.html#fuellib.convert.K2C">K2C() (in module fuellib.convert)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.convert.K2F.html#fuellib.convert.K2F">K2F() (in module fuellib.convert)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.latent_heat_vaporization">latent_heat_vaporization() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Lv_stp">Lv_stp (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mass2X">mass2X() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mass2Y">mass2Y() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mean_molecular_weight">mean_molecular_weight() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.utility.mixing_rule.html#fuellib.utility.mixing_rule">mixing_rule() (in module fuellib.utility)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mixture_density">mixture_density() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mixture_dynamic_viscosity">mixture_dynamic_viscosity() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mixture_kinematic_viscosity">mixture_kinematic_viscosity() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mixture_surface_tension">mixture_surface_tension() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mixture_thermal_conductivity">mixture_thermal_conductivity() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mixture_vapor_pressure">mixture_vapor_pressure() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.mixture_vapor_pressure_antoine_coeffs">mixture_vapor_pressure_antoine_coeffs() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="generated/fuellib.constants.html#module-fuellib.constants">fuellib.constants</a>
+</li>
+        <li><a href="generated/fuellib.convert.html#module-fuellib.convert">fuellib.convert</a>
+</li>
+        <li><a href="generated/fuellib.fuel.html#module-fuellib.fuel">fuellib.fuel</a>
+</li>
+        <li><a href="generated/fuellib.utility.html#module-fuellib.utility">fuellib.utility</a>
+</li>
+        <li><a href="generated/fuellib.utils.types.html#module-fuellib.utils.types">fuellib.utils.types</a>
+</li>
+      </ul></li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.molar_liquid_vol">molar_liquid_vol() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.MW">MW (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.name">name (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.nC">nC (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.nH">nH (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Nij">Nij (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.num_compounds">num_compounds (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.num_groups">num_groups (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.omega">omega (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Pc">Pc (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.pelephysics_keys">pelephysics_keys (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.psat">psat() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.psat_antoine_coeffs">psat_antoine_coeffs() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.utils.types.Units.html#fuellib.utils.types.Units.Q">Q (fuellib.utils.types.Units attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.sigma">sigma (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.surface_tension">surface_tension() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Tb">Tb (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Tc">Tc (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.thermal_conductivity">thermal_conductivity() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Tm">Tm (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.utils.types.Units.html#fuellib.utils.types.Units">Units (class in fuellib.utils.types)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.utils.types.Units.html#fuellib.utils.types.Units.Quantity">Units.Quantity (class in fuellib.utils.types)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Vc">Vc (fuellib.fuel.Fuel attribute)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.viscosity_dynamic">viscosity_dynamic() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.viscosity_kinematic">viscosity_kinematic() (fuellib.fuel.Fuel method)</a>
+</li>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Vm_stp">Vm_stp (fuellib.fuel.Fuel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.X2Y">X2Y() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.Y2X">Y2X() (fuellib.fuel.Fuel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

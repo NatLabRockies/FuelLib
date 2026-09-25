@@ -1,0 +1,86 @@
+fuellib.fuel.Fuel
+=================
+
+.. currentmodule:: fuellib.fuel
+
+.. autoclass:: Fuel
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Fuel.name
+      ~Fuel.fuelDataDir
+      ~Fuel.fuelDataGcDir
+      ~Fuel.fuelDataDecompDir
+      ~Fuel.fuelDataPropsDir
+      ~Fuel.groupDecompFile
+      ~Fuel.gcxgcFile
+      ~Fuel.gcmTableFile
+      ~Fuel.Nij
+      ~Fuel.num_compounds
+      ~Fuel.num_groups
+      ~Fuel.fam
+      ~Fuel.hc_type
+      ~Fuel.nC
+      ~Fuel.nH
+      ~Fuel.compounds
+      ~Fuel.formulas
+      ~Fuel.pelephysics_keys
+      ~Fuel.MW
+      ~Fuel.Tc
+      ~Fuel.Pc
+      ~Fuel.Vc
+      ~Fuel.Tb
+      ~Fuel.Tm
+      ~Fuel.Hf
+      ~Fuel.Gf
+      ~Fuel.Hv_stp
+      ~Fuel.omega
+      ~Fuel.Vm_stp
+      ~Fuel.Cp_stp
+      ~Fuel.Cp_B
+      ~Fuel.Cp_C
+      ~Fuel.Lv_stp
+      ~Fuel.epsilonByKB
+      ~Fuel.sigma
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Fuel.Cl
+      ~Fuel.Cp
+      ~Fuel.X2Y
+      ~Fuel.Y2X
+      ~Fuel.density
+      ~Fuel.diffusion_coeff
+      ~Fuel.latent_heat_vaporization
+      ~Fuel.mass2X
+      ~Fuel.mass2Y
+      ~Fuel.mean_molecular_weight
+      ~Fuel.mixture_density
+      ~Fuel.mixture_dynamic_viscosity
+      ~Fuel.mixture_kinematic_viscosity
+      ~Fuel.mixture_surface_tension
+      ~Fuel.mixture_thermal_conductivity
+      ~Fuel.mixture_vapor_pressure
+      ~Fuel.mixture_vapor_pressure_antoine_coeffs
+      ~Fuel.molar_liquid_vol
+      ~Fuel.psat
+      ~Fuel.psat_antoine_coeffs
+      ~Fuel.surface_tension
+      ~Fuel.thermal_conductivity
+      ~Fuel.viscosity_dynamic
+      ~Fuel.viscosity_kinematic
+   
+   

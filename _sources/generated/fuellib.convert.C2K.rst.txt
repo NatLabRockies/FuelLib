@@ -1,0 +1,6 @@
+fuellib.convert.C2K
+===================
+
+.. currentmodule:: fuellib.convert
+
+.. autofunction:: C2K
