@@ -1,5 +1,4 @@
-"""
-Utilities for managing and querying the fuel library.
+"""Utilities for managing and querying the fuel library.
 
 This module provides tools for listing and discovering available fuels
 in the FuelLib database, including source information and metadata.
@@ -21,8 +20,7 @@ except ImportError:
 
 
 def load_fuel_metadata(fuel_data_dir=None):
-    """
-    Load fuel metadata from YAML file if available.
+    """Load fuel metadata from YAML file if available.
 
     :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/,
                          groupDecompositionData/, and fuel_metadata.yaml).
@@ -60,9 +58,7 @@ def load_fuel_metadata(fuel_data_dir=None):
 
 
 def list_fuels_main():
-    """
-    Entry point for fl-fuels command - List all available fuels in the library.
-    """
+    """Entry point for fl-fuels command - List all available fuels in the library."""
     parser = argparse.ArgumentParser(
         description="List all available fuels in the FuelLib library."
     )

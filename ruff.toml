@@ -32,8 +32,8 @@ exclude = [
 line-length = 88
 indent-width = 4
 
-# Assume Python 3.14
-target-version = "py314"
+# Assume Python 3.12 (matches minimum supported version in pyproject.toml)
+target-version = "py312"
 
 preview = true
 
@@ -64,7 +64,12 @@ select = [
 convention = "google"
 
 [lint.per-file-ignores]
+"docs/**.py" = ["ALL"]
 "tests/**.py" = ["ALL"]
+"fuellib/cli/**.py" = ["ALL"]
+"fuellib/exporters/**.py" = ["ALL"]
+"fuellib/_data_locator.py" = ["ALL"]
+"tutorials/**.py" = ["ALL"]
 
 [format]
 # Like Black, use double quotes for strings.

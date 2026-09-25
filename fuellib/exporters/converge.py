@@ -31,9 +31,7 @@ class UnitConverter:
     """MKS column labels for Converge property files."""
 
     def __init__(self):
-        """
-        Initialize MKS labels.
-        """
+        """Initialize MKS labels."""
         self._set_labels()
 
     def _set_labels(self):
@@ -54,8 +52,7 @@ class UnitConverter:
     def create_data_dict(
         self, T, T_crit, mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
     ):
-        """
-        Create an MKS data dictionary for CSV output.
+        """Create an MKS data dictionary for CSV output.
 
         :param T: Temperature array.
         :type T: np.ndarray
@@ -102,8 +99,7 @@ def export_converge(
     temp_step=10,
     export_mix=False,
 ):
-    """
-    Export mixture fuel properties to csv files for Converge simulations.
+    """Export mixture fuel properties to csv files for Converge simulations.
 
     :param fuel: Fuel object containing properties to export.
     :type fuel: fl.Fuel
@@ -180,8 +176,7 @@ def export_converge(
     converter = UnitConverter()
 
     def nearest_temp(x, base=temp_step):
-        """
-        Round to nearest multiple of temp_step.
+        """Round to nearest multiple of temp_step.
 
         :param x: Temperature value to round.
         :type x: float
@@ -193,8 +188,7 @@ def export_converge(
         return base * round((x / base).magnitude)
 
     def nearest_floor(array, value):
-        """
-        Find the largest value in the array that is less than or equal to the given value.
+        """Find the largest value in the array that is less than or equal to the given value.
 
         :param array: Array of temperature values.
         :type array: np.ndarray
@@ -212,8 +206,7 @@ def export_converge(
             )
 
     def nearest_ceil(array, value):
-        """
-        Find the smallest value in the array that is greater than or equal to the given value.
+        """Find the smallest value in the array that is greater than or equal to the given value.
 
         :param array: Array of temperature values.
         :type array: np.ndarray
@@ -231,8 +224,7 @@ def export_converge(
             )
 
     def validate_temperature_range(T_array, T_freeze, T_crit, is_mixture=True):
-        """
-        Validate and adjust temperature range based on freezing and critical temperatures.
+        """Validate and adjust temperature range based on freezing and critical temperatures.
 
         :param T_array: Array of temperature values.
         :type T_array: np.ndarray
@@ -285,8 +277,7 @@ def export_converge(
         return T_min_allowed, T_max_allowed, adjusted_T
 
     def calculate_mixture_properties(T_array, fuel):
-        """
-        Calculate mixture properties for a range of temperatures.
+        """Calculate mixture properties for a range of temperatures.
 
         :param T_array: Array of temperature values.
         :type T_array: np.ndarray
@@ -326,8 +317,7 @@ def export_converge(
         return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
 
     def calculate_component_properties(T_array, fuel, comp_idx):
-        """
-        Calculate individual component properties for a range of temperatures.
+        """Calculate individual component properties for a range of temperatures.
 
         :param T_array: Array of temperature values.
         :type T_array: np.ndarray
@@ -361,8 +351,7 @@ def export_converge(
         return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
 
     def export_properties_to_csv(file_path, data_dict, overwrite=True):
-        """
-        Export properties data to CSV file.
+        """Export properties data to CSV file.
 
         :param file_path: Path to the output CSV file.
         :type file_path: str
@@ -414,13 +403,11 @@ def export_converge(
 
             # Create temperature array up to critical temperature
             maxtemps = Units.Quantity(
-                np.array(
-                    [
-                        (nearest_temp(T_crit) - temp_step).magnitude,
-                        nearest_temp(T_crit).magnitude,
-                        (nearest_temp(T_crit) + temp_step).magnitude,
-                    ]
-                ),
+                np.array([
+                    (nearest_temp(T_crit) - temp_step).magnitude,
+                    nearest_temp(T_crit).magnitude,
+                    (nearest_temp(T_crit) + temp_step).magnitude,
+                ]),
                 "K",
             )
             T_nearest_floor = nearest_floor(maxtemps, T_crit)
@@ -487,8 +474,7 @@ def export_converge(
 
 
 def main():
-    """
-    Main function to execute the export process.
+    """Main function to execute the export process.
 
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str

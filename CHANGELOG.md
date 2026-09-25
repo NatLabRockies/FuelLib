@@ -8,16 +8,28 @@ used to parse and validate this file's entries against that format.
 ## [Unreleased]
 
 ### Added
-- Feature 1
-- Feature 2...
+- `TypeAlias` to type aliases in `types` module.
+- `@overload` decorators to `utility.mixing_rule` to address `ty` errors.
+- Sphinx-parsable type annotations and docstrings to `Fuel` attributes.
+- Templates defining `class` and `module` documentation behavior.
+  - `class` template separates attributes from methods and provides tables with links to each definition.
+  - `module` template provides a table of all methods in the module & links to each definition.
+- Docstrings to all public modules.
 
 ### Fixed
-- Fix 1
-- Fix 2...
+- Converted docstrings in `fuel`, `convert`, and `utility` modules to `Google` style (from `sphinx`) to enable `ruff` formatting and checking.
+  - `docs/conf.py` updated to parse `Google` style docstrings.
+- Ran `ruff check . --fix` to auto-format simple violations (e.g., dictionary formatting, docstring empty lines, ...).
 
 ### Changed
-- Change 1
-- Change 2...
+- `Array` aliases no longer specify dtype to lax type checking and reduce size of type annotations in documents.
+- `ruff.toml` ignores `docs`, `cli`, `exporters`, `_data_locator`, and `tutorials`.
+- `fuel.get_row()` -> `fuel._get_row()` to avoid documenting inner utility functions.
+
+### Removed
+- Redundant type hints in docstrings.
+- Redundant attribute definitions on the `Fuel` class.
+- `test_source_docstrings` in favor of `ruff` enforcing docstring rules.
 
 
 ## [3.0.4] - 2026-09-24

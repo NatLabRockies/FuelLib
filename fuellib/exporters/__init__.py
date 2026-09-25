@@ -1,5 +1,4 @@
-"""
-Export utilities for FuelLib.
+"""Export utilities for FuelLib.
 
 This module provides functions to export FuelLib data in various formats.
 """

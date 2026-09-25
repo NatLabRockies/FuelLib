@@ -41,8 +41,6 @@ extensions = [
     "sphinxcontrib.bibtex",
 ]
 
-# sphinx_autodoc_typehints
-
 autodoc_default_options = {
     "members": True,
     "undoc-members": False,
@@ -60,8 +58,8 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-""" # Saving for a future PR
 # Autodoc type hints configuration
+autoclass_content = "both"
 autodoc_typehints = "description"
 simplify_optional_unions = (
     False  # Show Optional[Union[A, B]] instead of Union[A, B, None]
@@ -69,7 +67,11 @@ simplify_optional_unions = (
 typehints_use_signature = True  # Show parameter types in signature
 typehints_use_signature_return = True  # Show return type in signature
 typehints_defaults = "braces"  # "param (type, (default: value)) -- description"
-"""
+
+# Explicitly tell Napoleon to parse Google docstrings
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False  # Turn off NumPy if you only use Google
+napoleon_include_init_with_doc = True
 
 
 # -- Options for HTML output -------------------------------------------------

@@ -67,9 +67,11 @@ def main():
             T, data, pred = get_pred_and_data(fuel_name, prop)
 
             # Create a dataframe for this property
-            df_prop = pd.DataFrame(
-                {"Temperature": T, prop: pred, f"Error_{prop}": np.abs(data - pred)}
-            )
+            df_prop = pd.DataFrame({
+                "Temperature": T,
+                prop: pred,
+                f"Error_{prop}": np.abs(data - pred),
+            })
 
             if df_combined is None:
                 # Initialize combined dataframe
@@ -90,9 +92,10 @@ def main():
             units = [get_unit_for_column(col) for col in df_combined.columns]
 
             # Create MultiIndex columns (name + unit)
-            df_combined.columns = pd.MultiIndex.from_arrays(
-                [df_combined.columns, units]
-            )
+            df_combined.columns = pd.MultiIndex.from_arrays([
+                df_combined.columns,
+                units,
+            ])
 
             # Save final table
             df_combined.to_csv(export_name, index=False)

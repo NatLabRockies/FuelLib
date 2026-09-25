@@ -1,5 +1,4 @@
-"""
-Build Sphinx documentation for FuelLib.
+"""Build Sphinx documentation for FuelLib.
 
 This script builds the HTML documentation using Sphinx, handling the proper
 setup of paths and environment variables needed for autodoc to work correctly.
@@ -11,8 +10,7 @@ import sys
 
 
 def main():
-    """
-    Build the FuelLib documentation.
+    """Build the FuelLib documentation.
 
     Changes to the docs directory and runs sphinx-build to generate HTML documentation.
     """
