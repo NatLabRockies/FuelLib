@@ -9,7 +9,7 @@ explicit and lets you convert between unit systems without manually tracking
 conversion factors.
 
 All quantities are created from a single shared unit registry,
-``fuellib.Units`` (equivalently ``fuellib.units.Units``). Quantities
+``fuellib.Units`` (equivalently ``fuellib.utils.Units``). Quantities
 created from a different ``pint.UnitRegistry`` instance are **not**
 compatible with FuelLib's quantities, so always use ``fl.Units`` (or
 ``fl.Units.Quantity``) to build new quantities of your own, such as a
@@ -42,6 +42,28 @@ Basic example
 Arithmetic between quantities automatically combines/cancels units, and pint
 raises an error if you try to combine incompatible units (e.g. adding a
 temperature to a pressure), which helps catch unit-mismatch bugs early.
+
+Type annotations
+----------------
+
+FuelLib provides type aliases from ``fuellib.utils.types`` for annotating
+unit-aware code. ``Quantity0D`` represents a Pint quantity with a scalar
+magnitude, while ``Quantity1D`` and ``Quantity2D`` represent quantities with
+one- and two-dimensional ``float64`` NumPy-array magnitudes. Use ``Array1D``
+and ``Array2D`` for the corresponding bare NumPy arrays.
+
+For example:
+
+.. code-block:: python
+
+   from fuellib.utils import Units, types
+
+   def heat_sample(
+      temperature: types.Quantity0D,
+      heat_capacity: types.Quantity1D,
+   ) -> types.Quantity1D:
+      temperature = temperature.to("K")
+      return heat_capacity * (temperature / Units.Quantity(1, "K"))
 
 Further reading
 ----------------
