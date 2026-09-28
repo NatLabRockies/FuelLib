@@ -2,6 +2,7 @@
 
 import pytest
 
+<<<<<<< HEAD
 from fuellib import Fuel, Units
 
 import numpy as np
@@ -37,12 +38,16 @@ class TestParsing:
         assert fuel.pelephysics_keys is not None
         assert len(fuel.pelephysics_keys) == fuel.num_compounds
         assert all(isinstance(key, str) for key in fuel.pelephysics_keys)
+=======
+from fuellib import Fuel
+>>>>>>> f2fdf5d (Add RDKit module for molecular weights)
 
 
 class TestRDKitProperties:
     """Unit tests for the RDKit properties of the Fuel class."""
 
     @pytest.mark.parametrize(
+<<<<<<< HEAD
         "fuel_name",
         [("decane"), ("posf10325")],
     )
@@ -80,12 +85,18 @@ class TestRDKitProperties:
         assert fuel.inchi == expected_inchi
 
     @pytest.mark.parametrize(
+=======
+>>>>>>> f2fdf5d (Add RDKit module for molecular weights)
         "fuel_name, expected_nC, expected_nH",
         [("decane", [10], [22]), ("heptane-decane", [7, 10], [16, 22])],
     )
     def test_nC_and_nH(
         self, fuel_name: str, expected_nC: list[int], expected_nH: list[int]
+<<<<<<< HEAD
     ) -> None:
+=======
+    ):
+>>>>>>> f2fdf5d (Add RDKit module for molecular weights)
         """Test the number of carbon atoms for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
         assert fuel.nC == expected_nC
@@ -93,6 +104,7 @@ class TestRDKitProperties:
 
     @pytest.mark.parametrize(
         "fuel_name, expected_MW",
+<<<<<<< HEAD
         [("decane", [142.286]), ("heptane-decane", [100.205, 142.286])],
     )
     def test_MW(self, fuel_name: str, expected_MW: list[float]) -> None:
@@ -257,3 +269,20 @@ class TestMemberFunctions:
         Yi = fuel.X2Y(Xi)
         Xi_roundtrip = fuel.Y2X(Yi)
         assert Xi_roundtrip.magnitude == pytest.approx(Xi.magnitude)
+=======
+        [("decane", [0.142286]), ("heptane-decane", [0.100205, 0.142286])],
+    )
+    def test_MW(self, fuel_name: str, expected_MW: list[float]):
+        """Test the molecular weights of the compounds in the fuel mixture."""
+        fuel = Fuel(fuel_name)
+        MW = fuel.MW.to("kg/mol").magnitude
+        assert MW == pytest.approx(expected_MW)
+
+    @pytest.mark.parametrize(
+        "fuel_name, expected_formulas",
+        [("decane", ["C10H22"]), ("heptane-decane", ["C7H16", "C10H22"])],
+    )
+    def test_formulas(self, fuel_name: str, expected_formulas: list[str]):
+        fuel = Fuel(fuel_name)
+        assert fuel.formulas == expected_formulas
+>>>>>>> f2fdf5d (Add RDKit module for molecular weights)
