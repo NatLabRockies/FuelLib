@@ -6,12 +6,7 @@ and Gani (1994, 1995) to calculate thermodynamic and mixture properties of fuels
 See :class:`Fuel` for the main class and complete API documentation.
 """
 
-try:
-    from importlib.metadata import version
-
-    __version__ = version("fuellib")
-except ImportError:
-    __version__ = "unknown"
+__version__ = "3.0.3"
 
 # Import fuel class
 # Import submodules for namespacing
