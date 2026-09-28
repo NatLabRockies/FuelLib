@@ -13,42 +13,48 @@ import pint
 
 # NumPy
 _ = np.array([1])  # Check that NumPy is available
-#: One-dimensional NumPy array.
 Array1D: TypeAlias = np.ndarray[tuple[int,]]
-#: Two-dimensional NumPy array.
+"""One-dimensional NumPy array."""
 Array2D: TypeAlias = np.ndarray[tuple[int, int]]
+"""Two-dimensional NumPy array."""
 
 # Pint
 ureg = pint.UnitRegistry()
+"""Pint unit registry and quantity type definitions."""
+
 ## NOTE: TypeVar provides a way to define generic types that can be used for type
 ## hinting. This will be important when we begin to implement optional dependencies, as
 ## it allows us to define types that can adapt to the available numerical library.
 PintQuantityT = TypeVar("PintQuantityT", bound=pint.Quantity)
-#: Unit-aware scalar quantity.
+"""Pint quantity type variable."""
 Quantity0D: TypeAlias = pint.Quantity[float]
-#: Unit-aware quantity with a one-dimensional array magnitude.
+"""Unit-aware scalar quantity with a float/zero-dimensional array magnitude."""
 Quantity1D: TypeAlias = pint.Quantity[Array1D]
-#: Unit-aware quantity with a two-dimensional array magnitude.
+"""Unit-aware quantity with a one-dimensional array magnitude."""
 Quantity2D: TypeAlias = pint.Quantity[Array2D]
+"""Unit-aware quantity with a two-dimensional array magnitude."""
 
-UnxtQuantityT = TypeVar(
-    "UnxtQuantityT", bound=object
-)  # Placeholder for Unxt quantity type
+UnxtQuantityT = TypeVar("UnxtQuantityT", bound=object)
+"""Placeholder for Unxt quantity type variable."""
 
 
-QuantityT = (
-    PintQuantityT if "pint" in globals() else UnxtQuantityT
-)  # Placeholder for type selection
+QuantityT = PintQuantityT if "pint" in globals() else UnxtQuantityT
+"""Resolved quantity type variable based on the available numerical library."""
 
 
 class Units:
     """Wrapper class for the resolved Units registry.
 
-    Currently a placeholder but will be expanded to include the Unxt registry
+    This class provides a unified interface for accessing the quantity type
+    and unit registry based on the available numerical library.
+
+    Currently a placeholder but will be expanded to include the Unxt registry.
     """
 
     Quantity: ClassVar[type[QuantityT]] = ureg.Quantity
+    """Resolved quantity type based on the available numerical library."""
     Q: ClassVar[type[QuantityT]] = ureg.Quantity  # Alias for Quantity
+    """Alias for the resolved quantity type based on the available numerical library."""
 
 
 __all__ = [
