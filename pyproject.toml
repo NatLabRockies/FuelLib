@@ -131,30 +131,3 @@ source = ["fuellib"]
 show_missing = true
 skip_covered = true
 fail_under = 1
-
-# Pixi configurations
-[tool.pixi.workspace]
-channels = ["conda-forge"]
-platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
-
-[tool.pixi.dependencies]
-python = ">=3.12,<3.15"
-
-[tool.pixi.pypi-dependencies]
-fuellib = { path = ".", editable = true }
-
-[tool.pixi.environments]
-default = { solve-group = "default" }
-dev = { features = ["dev"], solve-group = "default" }
-
-[tool.pixi.feature.dev.tasks]
-# Pre-commit hooks
-fmt = "ruff format ."
-lint = "ruff check . --fix"
-types = "ty check"
-imports = "lint-imports"
-test = "pytest"
-pre-commit = "lefthook run pre-commit --all-files"
-# Build and clean documentation
-docs-build = "fl-build-docs"
-docs-clean = "fl-clean-docs"
