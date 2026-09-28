@@ -8,6 +8,52 @@ used to parse and validate this file's entries against that format.
 ## [Unreleased]
 
 ### Added
+- `fuellib.rdk` module wrapping RDKit for molecule-level structural analysis and
+  property calculations: `rdk.mol` provides `from_smiles()`/`smiles()`,
+  `from_inchi()`/`inchi()`, `hill_formula()`, `atom_counts()`, `has_aromatic()`,
+  `has_ring()`, `has_double_bond()`, `has_branch()`, and `molecular_weight()`.
+- `Fuel.smiles`, `Fuel.rdkit_mols` (cached RDKit `Mol` objects built from
+  `Fuel.smiles`), `Fuel.gcxgc_data` (GCxGC data as a `pandas.DataFrame`), and
+  `Fuel.compounds`/`Fuel.num_compounds`/`Fuel.Y_0` as properties derived from
+  `gcxgc_data`.
+- `tbump.toml` configuring `tbump` for version bumping, wired to update
+  `pyproject.toml` and `fuellib/__init__.py` and to regenerate `CHANGELOG.md`
+  via `keepachangelog release` before committing.
+- `tests/test_fuel.py` covering RDKit-backed `Fuel.nC`, `Fuel.nH`, `Fuel.MW`, and
+  `Fuel.formulas` for single- and multi-compound fuels.
+- `tests/test_accuracy.py::TestFuelMWAccuracy` verifying `Fuel.mean_molecular_weight`
+  against expected values for `heptane` and `posf10325`.
+- `tests/baselinePredictions/generate_baseline_updated.py` and
+  `tests/baselinePredictions/decane_test.csv` for regenerating/validating
+  temperature-dependent property baselines.
+- Excluded `.venv/` from `lefthook` pre-commit checks.
+- `.github/workflows/release.yml` triggered on `v*.*.*` tag pushes: runs
+  `keepachangelog release` to update `CHANGELOG.md`, then commits the change
+  to a `changelog` branch and opens/auto-merges a pull request into `main`
+  (instead of pushing directly), to comply with branch protection rules
+  requiring pull requests and passing status checks.
+
+### Changed
+- `Fuel.MW`, `Fuel.nC`, `Fuel.nH`, `Fuel.hc_type`, `Fuel.fam`, and
+  `Fuel.formulas` are now derived from RDKit
+  molecule parsing of each compound's `SMILES` string (via `fuellib.rdk.mol`)
+  instead of from the Gani group-decomposition matrix (`Nij`) or the
+  `gani.MW` GCM property, removing the need for hand-tuned alkyl/olefinic/aromatic
+  group index ranges in `Fuel.__init__`.
+- Added SMILES in `gcData` CSVs:
+  (`decane_init.csv`, `dodecane_init.csv`, `hefa-came_init.csv`,
+  `hefa-mfat_init.csv`, `hefa-tall_init.csv`, `heptane-decane_init.csv`,
+  `heptane_init.csv`, `jet-a_init.csv`, `posf10264_init.csv`, `posf10289_init.csv`,
+  `posf10325_init.csv`, `posf11498_init.csv`, `posf4658_init.csv`).
+
+### Removed
+- `Fuel.Nij` attribute and the `gani.MW` GCM property (`fuellib.gcm.gani.MW`),
+  superseded by RDKit-derived `Fuel.MW`.
+- `MW` row from `fuellib/gcm/gani.csv`.
+
+## [3.0.4] - 2026-09-28
+
+### Added
 - `gcm` module providing an extensible framework for Group Contribution Method (GCM)
   property predictions, decoupling property formulas from `Fuel`.
   - `core.PropertyProtocol`: runtime-checkable protocol defining the

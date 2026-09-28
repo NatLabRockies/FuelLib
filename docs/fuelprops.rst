@@ -325,6 +325,12 @@ that:
 * olefins contain one or more pairs of carbon atoms linked by a double bond and do not contain aromatic groups or rings
 * all other compounds are assumed to be saturated hydrocarbons. 
 
+These structural checks are performed on each compound's `RDKit <https://www.rdkit.org/docs/>`_
+``Mol`` object (built from its SMILES string via
+:func:`~fuellib.rdk.mol.from_smiles`) using
+:func:`~fuellib.rdk.mol.has_aromatic`, :func:`~fuellib.rdk.mol.has_ring`,
+and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
+
 
 .. _tab-thermal-conductivity-parameters:
 

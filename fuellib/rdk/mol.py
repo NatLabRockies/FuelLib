@@ -169,4 +169,8 @@ __all__ = [
     "inchi",
     "atom_counts",
     "molecular_weight",
+    "has_aromatic",
+    "has_ring",
+    "has_double_bond",
+    "has_branch",
 ]
