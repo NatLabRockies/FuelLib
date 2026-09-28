@@ -79,7 +79,7 @@ def droplet_volume(r: types.Quantity0D) -> types.Quantity0D:
 def droplet_mass(
     fuel: Fuel, r: types.Quantity0D, Yi: types.Quantity1D, T: types.Quantity0D
 ) -> types.Quantity1D:
-    """Calculate the mass of each compound in the fuel provided the radius of the droplet.
+    """Calculate the mass of each compound in the fuel provided droplet radius.
 
     Args:
         fuel: An instance of the fuel class.

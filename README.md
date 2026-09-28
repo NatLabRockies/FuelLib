@@ -32,20 +32,13 @@ The easiest way to install FuelLib is via pip from [pypi.org/project/fuellib](ht
 pip install fuellib
 ~~~
 
-For better dependency isolation, it is recommended to create a [conda](https://www.anaconda.com/download) environment, or to manage dependencies with [pixi](https://pixi.prefix.dev/latest/). For example:
+For better dependency isolation, it is recommended to create a [conda](https://www.anaconda.com/download) environment. For example:
 
 #### Using Conda
 ~~~
 conda create --name fuellib-env python
 conda activate fuellib-env
 pip install fuellib
-~~~
-
-#### Using Pixi
-~~~
-git clone https://github.com/NatLabRockies/FuelLib.git
-cd FuelLib
-pixi install
 ~~~
 
 ### Option 2: Development Installation (For Contributors)
@@ -57,17 +50,26 @@ git clone https://github.com/NatLabRockies/FuelLib.git
 cd FuelLib
 ~~~
 
+#### Install Development Dependencies (uv, Recommended)
+
+[uv](https://docs.astral.sh/uv/) is the recommended way to set up a FuelLib development
+environment: it creates and manages a virtual environment for you and installs
+dependencies much faster than `pip`.
+
+~~~
+uv venv
+uv pip install -e '.[dev]'  # Install with development tools (docs, testing, formatting)
+~~~
+
+Run `uv lock` to regenerate `uv.lock` after changing dependencies in `pyproject.toml`,
+keeping installs reproducible across machines.
+
 #### Install Development Dependencies (Conda)
 ~~~
 conda create --name fuellib-dev-env python
 conda activate fuellib-dev-env
 conda install -c conda-forge rust
 pip install -e '.[dev]'  # Install with development tools (docs, testing, formatting)
-~~~
-
-#### Install Development Dependencies (Pixi)
-~~~
-pixi install -e dev
 ~~~
 > **Note:** Building `grimp` (a dependency of `import-linter`) requires a Rust toolchain. On macOS you may need to run `brew install rust`.
 
@@ -86,7 +88,7 @@ Quick start:
 1. Fork the main repository
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
-4. Install development dependencies: `pip install -e '.[dev]'` or `pixi install -e dev`
+4. Install development dependencies: `uv venv && uv pip install -e '.[dev]'` (or `pip install -e '.[dev]'`)
 5. Format the source code files using the provided CLI command: `fl-format`
 6. Run tests and build documentation locally to verify your changes
 7. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.

@@ -33,6 +33,7 @@ dependencies = [
     "rdkit>=2022.3.1",
     "importlib-resources>=5.0; python_version < '3.9'",
     "pint>=0.26.1",
+    "pydantic>=2.13.5",
 ]
 
 [project.optional-dependencies]
@@ -50,6 +51,7 @@ dev = [
     "import-linter>=2.13",
     "uv>=0.12.6",
     "keepachangelog>=2.0.0",
+    "taskipy>=1.14.1",
 ]
 
 [project.scripts]
@@ -68,6 +70,20 @@ fl-K2F = "fuellib.cli.temp_converter:k2f_main"
 fl-plt-comp = "fuellib.cli.plotting:comp_main"
 fl-plt-props = "fuellib.cli.plotting:props_main"
 fl-fuels = "fuellib.cli.fuel_manager:list_fuels_main"
+
+# Developer tasks
+[tool.taskipy.tasks]
+# Individual tasks for pre-commit hooks
+format = { cmd = "ruff format", help = "Format codebase" }
+lint = { cmd = "ruff check --fix", help = "Format codebase" }
+types = { cmd = "ty check", help = "Format codebase" }
+test = { cmd = "pytest", help = "Run test suite" }
+# Pre-commit hooks (see lefthook.yaml)
+pre-commit = { cmd = "lefthook run pre-commit", help = "Run pre-commit suite" }
+# Build and view docs
+build-docs = { cmd = "sphinx-build -M html docs/ docs/_build", help = "Build docs with sphinx" }
+view-docs = { cmd = "bash fuellib/cli/view-docs.sh", help = "View docs built with sphinx" }
+
 
 [project.urls]
 Repository = "https://github.com/NatLabRockies/FuelLib"
@@ -130,30 +146,3 @@ source = ["fuellib"]
 show_missing = true
 skip_covered = true
 fail_under = 1
-
-# Pixi configurations
-[tool.pixi.workspace]
-channels = ["conda-forge"]
-platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
-
-[tool.pixi.dependencies]
-python = ">=3.12,<3.15"
-
-[tool.pixi.pypi-dependencies]
-fuellib = { path = ".", editable = true }
-
-[tool.pixi.environments]
-default = { solve-group = "default" }
-dev = { features = ["dev"], solve-group = "default" }
-
-[tool.pixi.feature.dev.tasks]
-# Pre-commit hooks
-fmt = "ruff format ."
-lint = "ruff check . --fix"
-types = "ty check"
-imports = "lint-imports"
-test = "pytest"
-pre-commit = "lefthook run pre-commit --all-files"
-# Build and clean documentation
-docs-build = "fl-build-docs"
-docs-clean = "fl-clean-docs"
