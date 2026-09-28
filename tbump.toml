@@ -1,0 +1,31 @@
+github_url = "https://github.com/TroyNSmith/FuelLib"
+
+[version]
+current = "3.0.3"
+regex = '''
+  (?P<major>\d+)
+  \.
+  (?P<minor>\d+)
+  \.
+  (?P<patch>\d+)
+  '''
+
+[git]
+message_template = "Bump to {new_version}"
+tag_template = "v{new_version}"
+
+[[file]]
+src = "pyproject.toml"
+search = 'version = "{current_version}"'
+
+[[file]]
+src = "fuellib/__init__.py"
+search = '__version__ = "{current_version}"'
+
+[[before_commit]]
+name = "Update changelog"
+cmd = "uv run keepachangelog release {new_version}"
+
+[[before_commit]]
+name = "Add changelog to commit"
+cmd = "git add CHANGELOG.md"
