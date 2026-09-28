@@ -1,3 +1,4 @@
+import pytest
 import os
 import unittest
 
@@ -6,6 +7,7 @@ import pandas as pd
 from get_pred_and_data import get_pred_and_data
 
 from fuellib.utils import Units
+from fuellib import Fuel
 
 # Locate the tests baseline directory
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -118,6 +120,25 @@ class CompTestCase(unittest.TestCase):
                     )
 
         print(f"\n{passed_checks}/{total_checks} fuel-property checks passed")
+
+
+class TestFuelMWAccuracy:
+    """Test class for verifying the accuracy of fuel molecular weight predictions."""
+
+    @pytest.mark.parametrize(
+        "fuel_name, expected_mw",
+        [
+            ("heptane", 0.10020),
+            ("posf10325", 0.15897),
+        ],
+    )
+    def test_fuel_mw(self, fuel_name: str, expected_mw: float) -> None:
+        """Test that the mean molecular weight of the fuel roughly matches the expected value."""
+        fuel = Fuel(fuel_name)
+        mw = fuel.mean_molecular_weight(fuel.Y_0).magnitude  # kg/mol expected
+        assert np.isclose(mw, expected_mw, atol=1e-4), (
+            f"{fuel_name}: expected {expected_mw}, got {mw}"
+        )
 
 
 if __name__ == "__main__":

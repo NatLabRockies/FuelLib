@@ -360,20 +360,3 @@ def alibakhshi_phi(fuel: "Fuel") -> types.Quantity1D:
     _check_compatible_dims(phi_j, nij)
     phi_i: types.Array1D = np.matmul(nij, phi_j)
     return Units.Quantity(phi_i, "K")
-
-
-@gani_gcm.register_property
-def MW(fuel: "Fuel") -> types.Quantity1D:
-    """Predict the molecular weight (MW) for a fuel's components.
-
-    Args:
-        fuel: The fuel object containing the decomposition matrix.
-
-    Returns:
-        The predicted molecular weights (MW) in g/mol.
-    """
-    nij = _get_decomp(fuel)
-    mw_j = _get_row("MW")
-    _check_compatible_dims(mw_j, nij)
-    mw_i: types.Array1D = np.matmul(nij, mw_j)
-    return Units.Quantity(mw_i, "g/mol")

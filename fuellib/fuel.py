@@ -1,12 +1,14 @@
 """Fuel class for Group Contribution Method calculations."""
 
 from __future__ import annotations
-from functools import cached_property
+
 import os
+from functools import cached_property
 from typing import Literal
 
 import numpy as np
 import pandas as pd
+from rdkit.Chem import Mol
 from scipy.optimize import curve_fit
 
 from ._data_locator import (
@@ -19,6 +21,7 @@ from ._data_locator import (
 )
 from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
 from .gcm import GCMRegistry
+from .rdk import mol
 from .utility import mixing_rule
 from .utils import Units, types
 
@@ -37,9 +40,6 @@ class Fuel:
                 Defaults to None.
             fuelDataDir: Directory where the fuel data is stored. If None, uses built-in
                 embedded data.
-
-        Raises:
-            ValueError: If a GCM property cannot be found.
         """
         self.name: str = name
         """Name of the fuel/mixture."""
@@ -90,16 +90,6 @@ class Fuel:
         self.gcmTableFile: str = os.path.join(gcmtable_dir, "gcmTable.csv")
         """File containing the GCM table data."""
 
-        # Read GCxGC/compound data
-        df_gcxgc = pd.read_csv(self.gcxgcFile)
-
-        self.compounds: list[str] = [
-            compound.strip() for compound in df_gcxgc["Compound"].to_list()
-        ]
-        """List of compound names."""
-        self.num_compounds: int = len(self.compounds)
-        """Number of compounds in the fuel mixture."""
-
         self.fam: types.Array1D = np.zeros(self.num_compounds, dtype=int)
         """Hydrocarbon family codes for thermal conductivity.
 
@@ -111,7 +101,6 @@ class Fuel:
         2    cycloparaffins
         3    olefins
         ==== ==================
-
         """
 
         # Classify hydrocarbon by type (n-alkane, iso-alkane, cyclo-alkane, aromatic)
@@ -154,67 +143,7 @@ class Fuel:
                 # Only CH3 and CH2 -> n-alkane (linear)
                 self.hc_type[i] = "n-alkane"
 
-        # Calculate carbon and hydrogen numbers from first-order group decomposition
-        # For jet fuels, use only alkyl (0-3) and aromatic (10-14) groups
-        # Alkyl: CH3=1C,3H; CH2=1C,2H; CH=1C,1H; C=1C,0H
-        # Aromatic: ACH=1C,1H; AC=1C,0H; ACCH3=2C,3H; ACCH2=2C,2H; ACCH=2C,1H
-        alkyl_carbons = np.array([1, 1, 1, 1])  # groups 0-3
-        alkyl_hydrogens = np.array([3, 2, 1, 0])
-        # Olefinic: group 4 appears to represent 2 carbons with 3 hydrogens in UNIFAC
-        olefinic_carbons = np.array([2, 1, 1, 0, 0, 0])  # groups 4-9
-        olefinic_hydrogens = np.array([3, 1, 0, 0, 0, 0])
-        aromatic_carbons = np.array([1, 1, 2, 2, 2])  # groups 10-14
-        aromatic_hydrogens = np.array([1, 0, 3, 2, 1])
-
-        self.nC: types.Array1D = np.zeros(self.num_compounds, dtype=float)
-        """Number of carbon atoms in each compound."""
-        self.nH: types.Array1D = np.zeros(self.num_compounds, dtype=float)
-        """Number of hydrogen atoms in each compound."""
-        for i in range(self.num_compounds):
-            # Alkyl contribution (groups 0-3)
-            self.nC[i] = np.dot(self.Nij[i, 0:4], alkyl_carbons)
-            self.nH[i] = np.dot(self.Nij[i, 0:4], alkyl_hydrogens)
-            # Olefinic contribution (groups 4-9)
-            self.nC[i] += np.dot(self.Nij[i, 4:10], olefinic_carbons)
-            self.nH[i] += np.dot(self.Nij[i, 4:10], olefinic_hydrogens)
-            # Aromatic contribution (groups 10-14)
-            self.nC[i] += np.dot(self.Nij[i, 10:15], aromatic_carbons)
-            self.nH[i] += np.dot(self.Nij[i, 10:15], aromatic_hydrogens)
-
-        # Load molecular formulas if available
-        if "Formula" in df_gcxgc.columns:
-            self.formulas: types.Array1D | None = np.array([
-                formula.strip() if pd.notna(formula) else None
-                for formula in df_gcxgc["Formula"].to_list()
-            ])
-            """Molecular formulas of the fuel components, if available."""
-        else:
-            self.formulas = None
-
-        if "PelePhysics Key" in df_gcxgc.columns:
-            self.pelephysics_keys: types.Array1D | None = np.array([
-                key.strip() for key in df_gcxgc["PelePhysics Key"].to_list()
-            ])
-            """PelePhysics keys for the fuel components, if available."""
-        else:
-            self.pelephysics_keys = None
-
-        _Y_0: types.Array1D = df_gcxgc["Weight %"].to_numpy().flatten().astype(float)
-        """Initial mass fractions of the fuel components."""
-        _Y_0 /= np.sum(_Y_0)
-        self.Y_0: types.Quantity1D = Units.Quantity(_Y_0, "dimensionless")
-
-        # Make sure mixture data is consistent:
-        if self.Y_0.shape[0] != self.num_compounds:
-            raise ValueError(
-                f"Insufficient mixture description:\n"
-                f"The number of compounds in {self.groupDecompFile} does not "
-                f"equal the number of compounds in {self.gcxgcFile}."
-            )
-
         # --- Compute critical properties at standard temp (num_compounds,)
-        self.MW: types.Quantity1D = self.get_property("gani", "MW").to("kg/mol")
-        """Molecular weights in kg/mol."""
         self.Tc: types.Quantity1D = self.get_property("gani", "Tc").to("K")
         """Critical temperature in K."""
         self.Pc: types.Quantity1D = self.get_property("gani", "Pc").to("Pa")
@@ -264,6 +193,58 @@ class Fuel:
     # -------------------------------------------------------------------------
     # Parsing functions
     # -------------------------------------------------------------------------
+    @property
+    def gcxgc_data(self) -> pd.DataFrame:
+        """GCxGC data in a pandas DataFrame.
+
+        Returns:
+            pandas DataFrame representing the GCxGC data.
+                Shape: (num_compounds, num_columns)
+        """
+        return pd.read_csv(self.gcxgcFile, header=0, index_col=0)
+
+    @property
+    def Y_0(self) -> types.Quantity1D:
+        """List of initial mass fractions for the compounds in the fuel mixture."""
+        if "Weight %" not in self.gcxgc_data.columns:
+            return Units.Quantity([], "dimensionless")
+        Y_0 = self.gcxgc_data["Weight %"].to_numpy().flatten().astype(float)
+        return Units.Quantity(Y_0 / np.sum(Y_0), "dimensionless")
+
+    @property
+    def compounds(self) -> list[str]:
+        """List of compounds in the fuel mixture."""
+        return list(self.gcxgc_data.index)
+
+    @property
+    def num_compounds(self) -> int:
+        """Number of compounds in the fuel mixture."""
+        return len(self.compounds)
+
+    @property
+    def smiles(self) -> list[str]:
+        """List of SMILES strings for the compounds in the fuel mixture.
+
+        Raises:
+            ValueError: If the SMILES column is missing from the GCxGC data.
+        """
+        if "SMILES" not in self.gcxgc_data.columns:
+            msg = "SMILES column is missing from the GCxGC data."
+            raise ValueError(msg)
+        return [smiles.strip() for smiles in self.gcxgc_data["SMILES"].to_list()]
+
+    @property
+    def formulas(self) -> list[str]:
+        """List of chemical formulas for the compounds in the fuel mixture."""
+        return [mol.hill_formula(m) for m in self.rdkit_mols]
+
+    @property
+    def pelephysics_keys(self) -> list[str]:
+        """List of PelePhysics keys for the compounds in the fuel mixture."""
+        if "PelePhysics Key" not in self.gcxgc_data.columns:
+            return []
+        return [key.strip() for key in self.gcxgc_data["PelePhysics Key"].to_list()]
+
     def gani_decomp(self) -> pd.DataFrame:
         """Parse the Gani decomposition matrix into a DataFrame.
 
@@ -284,6 +265,31 @@ class Fuel:
             )
             raise ValueError(msg)
         return df.loc[self.compounds]
+
+    # -------------------------------------------------------------------------
+    # Data initialization
+    # -------------------------------------------------------------------------
+    @cached_property
+    def rdkit_mols(self) -> list[Mol]:
+        """RDKit `Mol` objects for the compounds in the fuel mixture."""
+        return [mol.from_smiles(smiles) for smiles in self.smiles]
+
+    @property
+    def nC(self) -> list[int]:
+        """Number of carbon atoms for each compound in the fuel mixture."""
+        return [mol.atom_counts(m).get("C", 0) for m in self.rdkit_mols]
+
+    @property
+    def nH(self) -> list[int]:
+        """Number of hydrogen atoms for each compound in the fuel mixture."""
+        return [mol.atom_counts(m).get("H", 0) for m in self.rdkit_mols]
+
+    @property
+    def MW(self) -> types.Quantity1D:
+        """Molecular weights of the compounds in the fuel mixture in kg/mol."""
+        return Units.Q([mol.molecular_weight(m) for m in self.rdkit_mols], "g/mol").to(
+            "kg/mol"
+        )
 
     @cached_property
     def gcm_properties(self) -> dict[str, dict[str, types.Quantity1D]]:
