@@ -33,6 +33,41 @@ To use a specific conda environment:
    conda install -c conda-forge rust
    pip install -e '.[dev]'
 
+Developer Tasks
+----------------
+
+Common developer tasks are defined with `taskipy <https://github.com/taskipy/taskipy>`_
+in the ``[tool.taskipy.tasks]`` table of ``pyproject.toml``, and can be run with
+``task <name>`` (or ``uv run task <name>`` if using uv):
+
+.. list-table::
+   :header-rows: 1
+
+   * - Task
+     - Command
+     - Description
+   * - ``format``
+     - ``ruff format``
+     - Format the codebase
+   * - ``lint``
+     - ``ruff check --fix``
+     - Lint the codebase, auto-fixing issues where possible
+   * - ``types``
+     - ``ty check``
+     - Run static type checking
+   * - ``test``
+     - ``pytest``
+     - Run the test suite
+   * - ``pre-commit``
+     - ``lefthook run pre-commit``
+     - Run the full pre-commit suite (format, lint, types, test)
+   * - ``build-docs``
+     - ``sphinx-build -M html docs/ docs/_build``
+     - Build the documentation with Sphinx
+   * - ``view-docs``
+     - ``bash fuellib/cli/view-docs.sh``
+     - Open the built documentation in a browser
+
 Pre-commit Hooks
 -----------------
 

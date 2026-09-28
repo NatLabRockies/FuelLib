@@ -82,4 +82,5 @@ Click on links below for the full auto-documentation of the API.
     fuellib.convert
     fuellib.utility
     fuellib.utils.types
-    fuellib.gcm
+    fuellib.gcm.core
+    fuellib.gcm.gani

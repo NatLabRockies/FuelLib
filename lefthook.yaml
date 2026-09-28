@@ -2,16 +2,16 @@ pre-commit:
   parallel: false
   commands:
     1-fmt:
-      run: ruff format .
+      run: uv run ruff format
 
     2-lint:
-      run: ruff check . --fix
+      run: uv run ruff check --fix
 
     3-types:
-      run: ty check
+      run: uv run ty check
 
     4-test:
-      run: pytest
+      run: uv run pytest
 
     5-check-clean:
       run: git diff --exit-code
