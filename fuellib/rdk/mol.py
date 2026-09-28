@@ -95,6 +95,57 @@ def atom_counts(mol: Mol) -> dict[str, int]:
     return Counter(atom.GetSymbol() for atom in mol.GetAtoms())
 
 
+def has_aromatic(mol: Mol) -> bool:
+    """Check if `mol` contains any aromatic atoms.
+
+    Args:
+        mol: RDKit Mol object.
+
+    Returns:
+        True if the molecule contains any aromatic atoms, False otherwise.
+    """
+    return any(atom.GetIsAromatic() for atom in mol.GetAtoms())
+
+
+def has_ring(mol: Mol) -> bool:
+    """Check if `mol` contains any ring structures.
+
+    Args:
+        mol: RDKit Mol object.
+
+    Returns:
+        True if the molecule contains any ring structures, False otherwise.
+    """
+    return mol.GetRingInfo().NumRings() > 0
+
+
+def has_double_bond(mol: Mol) -> bool:
+    """Check if `mol` contains any double bonds.
+
+    Args:
+        mol: RDKit Mol object.
+
+    Returns:
+        True if the molecule contains any double bonds, False otherwise.
+    """
+    return any(
+        bond.GetBondType() == Chem.rdchem.BondType.DOUBLE for bond in mol.GetBonds()
+    )
+
+
+def has_branch(mol: Mol) -> bool:
+    """Check if `mol` contains any branches.
+
+    Args:
+        mol: RDKit Mol object.
+
+    Returns:
+        True if the molecule contains any branches, False otherwise.
+    """
+    mol = Chem.RemoveAllHs(mol)
+    return any(atom.GetDegree() > 2 for atom in mol.GetAtoms())
+
+
 # Molecular property calculations
 def molecular_weight(mol: Mol, *, exact: bool = False) -> float:
     """Calculate the molecular weight of `mol`.

@@ -90,59 +90,6 @@ class Fuel:
         self.gcmTableFile: str = os.path.join(gcmtable_dir, "gcmTable.csv")
         """File containing the GCM table data."""
 
-        self.fam: types.Array1D = np.zeros(self.num_compounds, dtype=int)
-        """Hydrocarbon family codes for thermal conductivity.
-
-        ==== ==================
-        Code Hydrocarbon Family
-        ==== ==================
-        0    saturated
-        1    aromatics
-        2    cycloparaffins
-        3    olefins
-        ==== ==================
-        """
-
-        # Classify hydrocarbon by type (n-alkane, iso-alkane, cyclo-alkane, aromatic)
-        # Based on group decompositions from Constantinou-Gani method
-        self.hc_type: types.Array1D = np.array([""] * self.num_compounds, dtype=object)
-        """Hydrocarbon types for each compound:
-
-        * "n-alkane"
-        * "iso-alkane"
-        * "alkene"
-        * "cyclo-alkane"
-        * "aromatic"
-        """
-
-        # Read functional group data for mixture (num_compounds,num_groups)
-        df_Nij = pd.read_csv(self.groupDecompFile)
-        self.Nij: types.Array2D = df_Nij.iloc[:, 1:].to_numpy()
-        """Array containing the group decomposition data for each compound."""
-        _aromatics = (10, 15)  # Start/end indices for aromatic groups in Gani GCM
-        _cyclics = (83, 88)  # Start/end indices for cyclic groups in Gani GCM
-        _alkenes = (4, 10)  # Start/end indices for olefinic groups in Gani GCM
-        _branching = (78, 83)  # Start/end indices for branching groups in Gani GCM
-        for i in range(self.num_compounds):
-            # Check if aromatic: does it contain AC's?
-            if sum(self.Nij[i, _aromatics[0] : _aromatics[1]]) > 0:
-                self.fam[i] = 1
-                self.hc_type[i] = "aromatic"
-            # Check if cycloparaffin: does it contain rings?
-            elif sum(self.Nij[i, _cyclics[0] : _cyclics[1]]) > 0:
-                self.fam[i] = 2
-                self.hc_type[i] = "cyclo-alkane"
-            # Check if olefin: does it contain double bonds?
-            elif sum(self.Nij[i, _alkenes[0] : _alkenes[1]]) > 0:
-                self.fam[i] = 3
-                self.hc_type[i] = "alkene"
-            # Check for branching groups (CH, C quaternary carbons)
-            elif sum(self.Nij[i, _branching[0] : _branching[1]]) > 0:
-                self.hc_type[i] = "iso-alkane"
-            else:
-                # Only CH3 and CH2 -> n-alkane (linear)
-                self.hc_type[i] = "n-alkane"
-
         # --- Compute critical properties at standard temp (num_compounds,)
         self.Tc: types.Quantity1D = self.get_property("gani", "Tc").to("K")
         """Critical temperature in K."""
@@ -290,6 +237,62 @@ class Fuel:
         return Units.Q([mol.molecular_weight(m) for m in self.rdkit_mols], "g/mol").to(
             "kg/mol"
         )
+
+    @property
+    def hc_type(self) -> list[str]:
+        """Hydrocarbon type for each compound in the fuel mixture.
+
+        Possible values (in ascending priority) are:
+        * "n-alkane"
+        * "iso-alkane"
+        * "alkene"
+        * "cyclo-alkane"
+        * "aromatic"
+        """
+        hc_types = []
+        for m in self.rdkit_mols:
+            if mol.has_aromatic(m):
+                hc_types.append("aromatic")
+            elif mol.has_ring(m):
+                hc_types.append("cyclo-alkane")
+            elif mol.has_double_bond(m):
+                hc_types.append("alkene")
+            elif mol.has_branch(m):
+                hc_types.append("iso-alkane")
+            else:
+                hc_types.append("n-alkane")
+        return hc_types
+
+    @property
+    def fam(self) -> types.Array1D:
+        """Hydrocarbon family codes for thermal conductivity.
+
+        ==== ==================
+        Code Hydrocarbon Family
+        ==== ==================
+        0    saturated
+        1    aromatics
+        2    cycloparaffins
+        3    olefins
+        ==== ==================
+
+        Raises:
+            ValueError: If an unknown hydrocarbon type is encountered.
+        """
+        fam_codes = []
+        for hc in self.hc_type:
+            if hc == "n-alkane" or hc == "iso-alkane":
+                fam_codes.append(0)
+            elif hc == "aromatic":
+                fam_codes.append(1)
+            elif hc == "cyclo-alkane":
+                fam_codes.append(2)
+            elif hc == "alkene":
+                fam_codes.append(3)
+            else:
+                msg = f"Unknown hydrocarbon type '{hc}' encountered."
+                raise ValueError(msg)
+        return np.array(fam_codes, dtype=int)
 
     @cached_property
     def gcm_properties(self) -> dict[str, dict[str, types.Quantity1D]]:
