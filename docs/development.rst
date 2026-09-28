@@ -144,9 +144,8 @@ New contributions are always welcome! To contribute:
 2. Create a new branch for your feature: ``git checkout -b newFeature``
 3. Make your changes and update documentation as needed
 4. Ensure development dependencies are installed (see Development Setup above)
-5. Format and lint your code using ``fl-format`` (or ``ruff format .``) and ``ruff check . --fix``
-
-6. Run tests to verify your changes. See `.github/workflows/ci.yml` for the most up-to-date list of tests run in CI
+5. Format, lint, and test your code using the provided development tasks (e.g., ``uv run task pre-commit``).
+6. Update the CHANGELOG (under `[UNRELEASED]`) with detailed descriptions of the contributions.
 7. Open a Pull Request (PR) from your fork to the main FuelLib repository
 
 Building and Viewing Documentation Locally

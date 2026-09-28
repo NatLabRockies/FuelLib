@@ -130,22 +130,25 @@ class Fuel:
         df_Nij = pd.read_csv(self.groupDecompFile)
         self.Nij: types.Array2D = df_Nij.iloc[:, 1:].to_numpy()
         """Array containing the group decomposition data for each compound."""
-
+        _aromatics = (10, 15)  # Start/end indices for aromatic groups in Gani GCM
+        _cyclics = (83, 88)  # Start/end indices for cyclic groups in Gani GCM
+        _alkenes = (4, 10)  # Start/end indices for olefinic groups in Gani GCM
+        _branching = (78, 83)  # Start/end indices for branching groups in Gani GCM
         for i in range(self.num_compounds):
             # Check if aromatic: does it contain AC's?
-            if sum(self.Nij[i, 10:15]) > 0:
+            if sum(self.Nij[i, _aromatics[0] : _aromatics[1]]) > 0:
                 self.fam[i] = 1
                 self.hc_type[i] = "aromatic"
             # Check if cycloparaffin: does it contain rings?
-            elif sum(self.Nij[i, 83:88]) > 0:
+            elif sum(self.Nij[i, _cyclics[0] : _cyclics[1]]) > 0:
                 self.fam[i] = 2
                 self.hc_type[i] = "cyclo-alkane"
             # Check if olefin: does it contain double bonds?
-            elif sum(self.Nij[i, 4:10]) > 0:
+            elif sum(self.Nij[i, _alkenes[0] : _alkenes[1]]) > 0:
                 self.fam[i] = 3
                 self.hc_type[i] = "alkene"
             # Check for branching groups (CH, C quaternary carbons)
-            elif sum(self.Nij[i, 78:83]) > 0:
+            elif sum(self.Nij[i, _branching[0] : _branching[1]]) > 0:
                 self.hc_type[i] = "iso-alkane"
             else:
                 # Only CH3 and CH2 -> n-alkane (linear)

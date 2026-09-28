@@ -49,23 +49,23 @@ def _get_decomp(fuel: "Fuel") -> types.Array2D:
 
 
 def _check_compatible_dims(
-    cj: Annotated[types.Array1D, "GCM property vector"],
-    ij: Annotated[types.Array2D, "Group decomposition matrix"],
+    xj: Annotated[types.Array1D, "GCM property vector"],
+    Aij: Annotated[types.Array2D, "Group decomposition matrix"],
 ) -> None:
     """Check if the shape of the GCM properties and group decomposition matrix match.
 
     Args:
-        cj: The GCM contribution vector.
-        ij: The group decomposition matrix.
+        xj: The GCM property vector.
+        Aij: The group decomposition matrix.
 
     Raises:
         ValueError: If the dimensions of the GCM contribution vector and the group
             decomposition matrix are incompatible.
     """
-    if ij.shape[1] != cj.shape[0]:
+    if Aij.shape[1] != xj.shape[0]:
         msg = (
-            f"Incompatible dimensions: GCM contribution vector has length {cj.shape[0]}"
-            f", but group decomposition matrix has {ij.shape[1]} columns."
+            f"Incompatible dimensions: GCM contribution vector has length {xj.shape[0]}"
+            f", but group decomposition matrix has {Aij.shape[1]} columns."
         )
         raise ValueError(msg)
 
