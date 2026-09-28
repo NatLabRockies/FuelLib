@@ -14,6 +14,7 @@ used to parse and validate this file's entries against that format.
   `has_ring()`, `has_double_bond()`, `has_branch()`, and `molecular_weight()`.
 - `Fuel.smiles`, `Fuel.rdkit_mols` (cached RDKit `Mol` objects built from
 <<<<<<< HEAD
+<<<<<<< HEAD
   `Fuel.smiles`) for working with RDKit
 =======
   `Fuel.smiles`), `Fuel.gcxgc_data` (GCxGC data as a `pandas.DataFrame`), and
@@ -23,16 +24,22 @@ used to parse and validate this file's entries against that format.
   `pyproject.toml` and `fuellib/__init__.py` and to regenerate `CHANGELOG.md`
   via `keepachangelog release` before committing.
 >>>>>>> 1f0f5c7 (Minor doc changes)
+=======
+  `Fuel.smiles`) for working with RDKit
+>>>>>>> 5a032e2 (Update baselinePredictions)
 - `tests/test_fuel.py` covering RDKit-backed `Fuel.nC`, `Fuel.nH`, `Fuel.MW`, and
   `Fuel.formulas` for single- and multi-compound fuels.
 - `tests/test_accuracy.py::TestFuelMWAccuracy` verifying `Fuel.mean_molecular_weight`
   against expected values for `heptane` and `posf10325`.
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Excluded `.venv/` from `lefthook` pre-commit checks.
 =======
 - `tests/baselinePredictions/generate_baseline_updated.py` and
   `tests/baselinePredictions/decane_test.csv` for regenerating/validating
   temperature-dependent property baselines.
+=======
+>>>>>>> 5a032e2 (Update baselinePredictions)
 - Excluded `.venv/` from `lefthook` pre-commit checks.
 - `.github/workflows/release.yml` triggered on `v*.*.*` tag pushes: runs
   `keepachangelog release` to update `CHANGELOG.md`, then commits the change
@@ -52,6 +59,7 @@ used to parse and validate this file's entries against that format.
   `hefa-mfat_init.csv`, `hefa-tall_init.csv`, `heptane-decane_init.csv`,
   `heptane_init.csv`, `jet-a_init.csv`, `posf10264_init.csv`, `posf10289_init.csv`,
   `posf10325_init.csv`, `posf11498_init.csv`, `posf4658_init.csv`).
+- Fixed `tests/baselinePredictions/generate_baseline.py` to understand recent package changes.
 
 ### Removed
 - `Fuel.Nij` attribute and the `gani.MW` GCM property (`fuellib.gcm.gani.MW`),
