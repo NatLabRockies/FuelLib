@@ -43,6 +43,8 @@ used to parse and validate this file's entries against that format.
   Duplicates the GCM property table/equations from `fuelprops.rst` for
   convenience. Linked into the docs toctree (`index.rst`) and API listing
   (`sourcecode.rst`).
+- `taskipy` for shortcuts to common `dev` tasks.
+- Documentation for `development.rst` pointing to developer-specific tools.
 
 ### Fixed
 - `ruff` now selects `E501` so the existing `line-length = 88` setting is actually
