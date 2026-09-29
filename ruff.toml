@@ -58,6 +58,7 @@ select = [
     "D", # enforces docstring presence and basic formatting
     "DOC", # validates docstring content against the function signature
     "ANN", # enforces type annotations
+    "E501", # enforces line-length limit
 ]
 
 [lint.pydocstyle]

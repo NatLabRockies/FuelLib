@@ -1,19 +1,17 @@
 pre-commit:
   parallel: false
-  exclude:
-    - .pixi/
   commands:
     1-fmt:
-      run: pixi run fmt
+      run: uv run ruff format
 
     2-lint:
-      run: pixi run lint
+      run: uv run ruff check --fix
 
     3-types:
-      run: pixi run types
+      run: uv run ty check
 
     4-test:
-      run: pixi run test
+      run: uv run pytest
 
     5-check-clean:
       run: git diff --exit-code

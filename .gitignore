@@ -24,10 +24,6 @@ venv/
 composition_*.png
 mixture_*.png
 
-# pixi environments
-.pixi/*
-!.pixi/config.toml
-pixi.lock
 uv.lock
 
 # pytest

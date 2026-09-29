@@ -33,23 +33,40 @@ To use a specific conda environment:
    conda install -c conda-forge rust
    pip install -e '.[dev]'
 
-Optional: Pixi Environment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Developer Tasks
+----------------
 
-If you have `pixi <https://pixi.sh>`_ installed, you can use the ``dev`` environment
-and its tasks instead of managing a virtual environment by hand:
+Common developer tasks are defined with `taskipy <https://github.com/taskipy/taskipy>`_
+in the ``[tool.taskipy.tasks]`` table of ``pyproject.toml``, and can be run with
+``task <name>`` (or ``uv run task <name>`` if using uv):
 
-.. code-block:: bash
+.. list-table::
+   :header-rows: 1
 
-   pixi run -e dev fmt      # ruff format .
-   pixi run -e dev lint     # ruff check . --fix
-   pixi run -e dev types    # ty check
-   pixi run -e dev test     # pytest (with coverage)
-
-.. note::
-
-   Building ``grimp`` (a dependency of ``import-linter``) requires a Rust
-   toolchain. On macOS you may need to run ``brew install rust``.
+   * - Task
+     - Command
+     - Description
+   * - ``format``
+     - ``ruff format``
+     - Format the codebase
+   * - ``lint``
+     - ``ruff check --fix``
+     - Lint the codebase, auto-fixing issues where possible
+   * - ``types``
+     - ``ty check``
+     - Run static type checking
+   * - ``test``
+     - ``pytest``
+     - Run the test suite
+   * - ``pre-commit``
+     - ``lefthook run pre-commit``
+     - Run the full pre-commit suite (format, lint, types, test)
+   * - ``build-docs``
+     - ``sphinx-build -M html docs/ docs/_build``
+     - Build the documentation with Sphinx
+   * - ``view-docs``
+     - ``bash fuellib/cli/view-docs.sh``
+     - Open the built documentation in a browser
 
 Pre-commit Hooks
 -----------------
@@ -62,10 +79,9 @@ type-checking, and test tasks automatically before each commit. After installing
 
    lefthook install
 
-You can also run the full pre-commit suite manually with ``pixi run -e dev pre-commit``.
-Note that the ``import-linter`` module-layering check (``pixi run -e dev imports``) is not
-yet part of the pre-commit suite, since the codebase doesn't fully match the target module
-layering yet.
+You can also run the full pre-commit suite manually with ``lefthook run pre-commit --all-files``.
+Note that the ``import-linter`` module-layering check (``lint-imports``) is not yet part of
+the pre-commit suite, since the codebase doesn't fully match the target module layering yet.
 
 Test coverage is currently enforced at a low threshold (``fail_under = 20`` in
 ``pyproject.toml``) while the codebase is migrated; this will be raised over time.
@@ -128,9 +144,8 @@ New contributions are always welcome! To contribute:
 2. Create a new branch for your feature: ``git checkout -b newFeature``
 3. Make your changes and update documentation as needed
 4. Ensure development dependencies are installed (see Development Setup above)
-5. Format and lint your code using ``fl-format`` (or ``pixi run -e dev fmt``) and ``pixi run -e dev lint``
-
-6. Run tests to verify your changes. See `.github/workflows/ci.yml` for the most up-to-date list of tests run in CI
+5. Format, lint, and test your code using the provided development tasks (e.g., ``uv run task pre-commit``).
+6. Update the CHANGELOG (under `[UNRELEASED]`) with detailed descriptions of the contributions.
 7. Open a Pull Request (PR) from your fork to the main FuelLib repository
 
 Building and Viewing Documentation Locally
