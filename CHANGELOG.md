@@ -38,6 +38,9 @@ used to parse and validate this file's entries against that format.
   `heptane_init.csv`, `jet-a_init.csv`, `posf10264_init.csv`, `posf10289_init.csv`,
   `posf10325_init.csv`, `posf11498_init.csv`, `posf4658_init.csv`).
 - Fixed `tests/baselinePredictions/generate_baseline.py` to understand recent package changes.
+  - Regenerated `baselinePredictions` with new values.
+- Increased minimum test coverage to 45% to prevent regression (PR coverage is at 47.28%).
+  - Individual test suites in the `ci.yml` use `--no-cov` to prevent failing from module-level undercoverage.
 
 ### Removed
 - `Fuel.Nij` attribute and the `gani.MW` GCM property (`fuellib.gcm.gani.MW`),
