@@ -130,6 +130,7 @@ used to parse and validate this file's entries against that format.
   superseded by RDKit-derived `Fuel.MW`.
 - `MW` row from `fuellib/gcm/gani.csv`.
 
+<<<<<<< HEAD
 ## [3.0.4] - 2026-09-28
 
 ### Added
@@ -212,6 +213,8 @@ used to parse and validate this file's entries against that format.
 ### Fixed
 - `test_api.py` now takes a flexible approach to ensuring the user interface remains consistent across versions without enforcing overly strict rules.
 
+=======
+>>>>>>> 7baa57f (Expand tests and address PR comments)
 ## [3.0.3] - 2026-09-23
 
 ### Added
