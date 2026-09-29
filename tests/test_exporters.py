@@ -12,13 +12,18 @@ import tempfile
 import fuellib as fl
 
 
-def run_export_command(cmd, output_dir=None):
+def run_export_command(cmd, output_dir=None, timeout=180):
     """Run an export command and verify it succeeds.
 
     :param cmd: Command to run as a list of strings.
     :type cmd: list
     :param output_dir: Optional output directory for the export. If provided, adds -o flag.
     :type output_dir: str, optional
+    :param timeout: Maximum time (seconds) to wait for the command to complete.
+        Individual-component exports iterate over every compound in the fuel
+        (e.g. posf10264 has ~66 compounds) and can legitimately take tens of
+        seconds, so a generous default is used to avoid flaky failures.
+    :type timeout: float, optional
     :raises RuntimeError: If the command fails.
     """
     # Add output directory flag if provided
@@ -27,7 +32,7 @@ def run_export_command(cmd, output_dir=None):
 
     try:
         result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=60, check=False
+            cmd, capture_output=True, text=True, timeout=timeout, check=False
         )
         if result.returncode != 0:
             print(f"Command failed: {' '.join(cmd)}")
@@ -42,7 +47,9 @@ def run_export_command(cmd, output_dir=None):
 def test_pele_individual_component():
     """Test fl-export-pele individual component export."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        run_export_command(["fl-export-pele", "-f", "posf10264"], output_dir=tmpdir)
+        run_export_command(
+            ["fl-export-pele", "-f", "posf10264"], output_dir=tmpdir, timeout=180
+        )
 
 
 def test_pele_default_deposition_species():
@@ -111,7 +118,9 @@ def test_pele_deposit_species():
 def test_converge_individual_component():
     """Test fl-export-converge individual component export."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        run_export_command(["fl-export-converge", "-f", "posf10264"], output_dir=tmpdir)
+        run_export_command(
+            ["fl-export-converge", "-f", "posf10264"], output_dir=tmpdir, timeout=180
+        )
 
 
 def test_converge_mixture():
@@ -149,6 +158,7 @@ def test_pele_custom_fuel_data_dir():
         run_export_command(
             ["fl-export-pele", "-f", "posf10264", "-dir", custom_fueldata],
             output_dir=output_dir,
+            timeout=180,
         )
 
 

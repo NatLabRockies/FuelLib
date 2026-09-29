@@ -485,3 +485,24 @@ def thermal_conductivity_latini(
     A = Astar * Tb**alpha / (MW_beta * Tc**gamma)
     tc = A * (1 - Tr) ** (0.38) / (Tr ** (1 / 6))
     return Units.Quantity(tc, "W/(m*K)")
+
+
+def freeze_point_boehm(
+    fuel: "Fuel",
+) -> types.Quantity1D:
+    """Calculate the freeze point of each compound using the Boehm method.
+
+    Args:
+        fuel: Fuel object.
+
+    Returns:
+        Freeze point in K.
+    """
+    Tc = fuel.Tc.to("K").magnitude
+    Pc = fuel.Pc.to("Pa").magnitude
+    omega = fuel.omega.magnitude
+
+    Pc = Pc * 1e-5  # convert from Pa to bar
+    Tfp = Tc * (0.567 + 1.15 * omega) * (1 - np.log(Pc) / 10)
+
+    return Units.Quantity(Tfp, "K")
