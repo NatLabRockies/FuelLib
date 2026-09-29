@@ -12,8 +12,11 @@ pre-commit:
     3-types:
       run: uv run ty check
 
-    4-test:
+    4-imports:
+      run: uv run lint-imports
+
+    5-test:
       run: uv run pytest
 
-    5-check-clean:
+    6-check-clean:
       run: git diff --exit-code

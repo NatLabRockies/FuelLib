@@ -5,6 +5,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
+## [Unreleased] (correlate)
+
+### Added
+- `fuellib.correlate` module for performing component- or mixture-wise correlations.
+  * Algorithms from legacy definitions (e.g. `Fuel.density(...)`) moved to appropriate `correlation` submodules; original API maintained by wrapping new definitions.
+  * `comp_idx` removed from function parameters; retained in `Fuel.{function}` for maintaining API.
+  * Function names renamed to be more descriptive (no abbreviations, include equation author if available):
+    * `correlate.module.fully_typed_out_equation_name{_author}`
+    * `mixture_function_name` -> `mixture.function_name` (module name implicitly adds `mixture` to function call).
+- Recent module additions to `importlinter` contract.
+  * `lint-imports` task added to `pyproject.toml` and `lefthook.yaml`.
+- Rules to `ruff.toml` enforcing code format quality:
+  * *INP001*: `__init__.py` required in submodules.
+  * *I001*: require organized import block.
+  * *RUF022*: "dunder" (`__all__`) must be sorted.
+  * *F403*: prohibit wildcard imports (`from module import *`).
+  * *F405*: prohibit names possibly fetched from wildcard imports.
+
+### Changed
+- `Yi` is an optional parameter in `fuellib.correlate.mixture` functions; defaults to `fuel.Y_0`.
+  * `correlate.mixture` function strings with `function(fuel, Yi, T, ...)` -> `function(fuel, T, Yi, ...)` to be consistent with function strings in `correlate.components` (`function(fuel, T, ...)`) and ensure that optional parameters are listed after non-optional.
+
+### Fixed
+- `[tool.importlinter]` now ignores imports under `if TYPE_CHECKING: ...`.
+
 ## [3.0.5] - 2026-09-29
 
 ### Added
