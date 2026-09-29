@@ -21,7 +21,7 @@ def _prep_quantity(quantity: types.Quantity1D) -> list[str | float]:
     return [str(quantity.units)] + quantity.magnitude.tolist()
 
 
-fuel_names = ["heptane", "decane", "posf10264", "posf10325", "posf10289"]
+fuel_names = ["heptane", "decane", "dodecane", "posf10264", "posf10325", "posf10289"]
 properties = {
     "Density": "g/cm^3",
     "Viscosity": "mm^2/s",
@@ -44,7 +44,7 @@ def main():
                 "Temperature": _prep_quantity(T.to("celsius")),
                 prop_name: _prep_quantity(pred.to(prop_unit)),
                 f"Error_{prop_name}": _prep_quantity(
-                    data.to(prop_unit) - pred.to(prop_unit)
+                    abs(data.to(prop_unit) - pred.to(prop_unit))
                 ),
             })
 

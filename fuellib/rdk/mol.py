@@ -15,8 +15,13 @@ def from_smiles(smiles: str) -> Mol:
 
     Returns:
         RDKit Mol object instantiated from the SMILES string.
+
+    Raises:
+        ValueError: If the SMILES string is invalid.
     """
-    mol = Chem.MolFromSmiles(smiles)
+    mol: Mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        raise ValueError(f"Invalid SMILES string: {smiles}")
     mol = Chem.AddHs(mol)
     return mol
 
@@ -30,6 +35,7 @@ def smiles(mol: Mol) -> str:
     Returns:
         SMILES string representation of the molecule.
     """
+    mol = Chem.RemoveAllHs(mol)
     return Chem.MolToSmiles(mol)
 
 
@@ -41,8 +47,13 @@ def from_inchi(inchi: str) -> Mol:
 
     Returns:
         RDKit Mol object instantiated from the InChI string.
+
+    Raises:
+        ValueError: If the InChI string is invalid.
     """
     mol = Chem.MolFromInchi(inchi, sanitize=False, removeHs=False)
+    if mol is None:
+        raise ValueError(f"Invalid InChI string: {inchi}")
     mol = Chem.AddHs(mol)
     return mol
 
@@ -69,11 +80,14 @@ def hill_formula(mol: Mol) -> str:
         Hill formula string representing the molecule.
     """
     atom_counts_dict = atom_counts(mol)
-    nC = atom_counts_dict.pop("C", 0)
+    if "C" not in atom_counts_dict:
+        return "".join(
+            f"{atom}{count}" if count > 1 else atom
+            for atom, count in sorted(atom_counts_dict.items())
+        )
+    nC = atom_counts_dict.pop("C")
+    formula_parts = [f"C{nC}" if nC > 1 else "C"]
     nH = atom_counts_dict.pop("H", 0)
-    formula_parts = []
-    if nC > 0:
-        formula_parts.append(f"C{nC}" if nC > 1 else "C")
     if nH > 0:
         formula_parts.append(f"H{nH}" if nH > 1 else "H")
     for atom, count in sorted(atom_counts_dict.items()):
@@ -136,6 +150,14 @@ def has_double_bond(mol: Mol) -> bool:
 def has_branch(mol: Mol) -> bool:
     """Check if `mol` contains any branches.
 
+    A branch is identified by an atom bonded to more than two neighbors
+    (degree > 2) after removing explicit hydrogens. If such an atom is not
+    part of a ring, it is a branch point. If it is part of a ring, it is
+    only considered a branch point if at least one of its neighbors lies
+    outside the ring (i.e., a substituent hanging off the ring), since
+    ring atoms themselves commonly have degree > 2 without representing a
+    branch (i.e., fused-ring systems).
+
     Args:
         mol: RDKit Mol object.
 
@@ -143,7 +165,14 @@ def has_branch(mol: Mol) -> bool:
         True if the molecule contains any branches, False otherwise.
     """
     mol = Chem.RemoveAllHs(mol)
-    return any(atom.GetDegree() > 2 for atom in mol.GetAtoms())
+    for atom in mol.GetAtoms():
+        if atom.GetDegree() > 2:
+            if not atom.IsInRing():
+                return True
+            for neighbor in atom.GetNeighbors():
+                if not neighbor.IsInRing():
+                    return True
+    return False
 
 
 # Molecular property calculations
@@ -152,7 +181,11 @@ def molecular_weight(mol: Mol, *, exact: bool = False) -> float:
 
     Args:
         mol: RDKit Mol object.
-        exact: Whether to calculate the monoisotopic molecular weight.
+        exact: Whether to calculate the monoisotopic molecular weight, i.e.
+            the mass of the molecule computed using the most abundant
+            isotope of each element rather than each element's standard
+            atomic weight (which is averaged over isotopic abundance).
+            Defaults to `False`, which uses standard atomic weights.
 
     Returns:
         Molecular weight of the molecule in atomic mass units (amu).

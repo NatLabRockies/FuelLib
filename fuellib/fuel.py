@@ -140,7 +140,7 @@ class Fuel:
     # -------------------------------------------------------------------------
     # Parsing functions
     # -------------------------------------------------------------------------
-    @property
+    @cached_property
     def gcxgc_data(self) -> pd.DataFrame:
         """GCxGC data in a pandas DataFrame.
 
@@ -181,15 +181,10 @@ class Fuel:
         return [smiles.strip() for smiles in self.gcxgc_data["SMILES"].to_list()]
 
     @property
-    def formulas(self) -> list[str]:
-        """List of chemical formulas for the compounds in the fuel mixture."""
-        return [mol.hill_formula(m) for m in self.rdkit_mols]
-
-    @property
-    def pelephysics_keys(self) -> list[str]:
+    def pelephysics_keys(self) -> list[str] | None:
         """List of PelePhysics keys for the compounds in the fuel mixture."""
         if "PelePhysics Key" not in self.gcxgc_data.columns:
-            return []
+            return None
         return [key.strip() for key in self.gcxgc_data["PelePhysics Key"].to_list()]
 
     def gani_decomp(self) -> pd.DataFrame:
@@ -220,6 +215,16 @@ class Fuel:
     def rdkit_mols(self) -> list[Mol]:
         """RDKit `Mol` objects for the compounds in the fuel mixture."""
         return [mol.from_smiles(smiles) for smiles in self.smiles]
+
+    @property
+    def formulas(self) -> list[str]:
+        """List of chemical formulas for the compounds in the fuel mixture."""
+        return [mol.hill_formula(m) for m in self.rdkit_mols]
+
+    @property
+    def inchi(self) -> list[str]:
+        """List of InChI strings for the compounds in the fuel mixture."""
+        return [mol.inchi(m) for m in self.rdkit_mols]
 
     @property
     def nC(self) -> list[int]:
