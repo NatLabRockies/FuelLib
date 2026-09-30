@@ -38,100 +38,12 @@ used to parse and validate this file's entries against that format.
   `from_inchi()`/`inchi()`, `hill_formula()`, `atom_counts()`, `has_aromatic()`,
   `has_ring()`, `has_double_bond()`, `has_branch()`, and `molecular_weight()`.
 - `Fuel.smiles`, `Fuel.rdkit_mols` (cached RDKit `Mol` objects built from
-<<<<<<< HEAD
-<<<<<<< HEAD
   `Fuel.smiles`) for working with RDKit
-=======
-  `Fuel.smiles`), `Fuel.gcxgc_data` (GCxGC data as a `pandas.DataFrame`), and
-  `Fuel.compounds`/`Fuel.num_compounds`/`Fuel.Y_0` as properties derived from
-  `gcxgc_data`.
-- `tbump.toml` configuring `tbump` for version bumping, wired to update
-  `pyproject.toml` and `fuellib/__init__.py` and to regenerate `CHANGELOG.md`
-  via `keepachangelog release` before committing.
->>>>>>> 1f0f5c7 (Minor doc changes)
-=======
-  `Fuel.smiles`) for working with RDKit
->>>>>>> 5a032e2 (Update baselinePredictions)
 - `tests/test_fuel.py` covering RDKit-backed `Fuel.nC`, `Fuel.nH`, `Fuel.MW`, and
   `Fuel.formulas` for single- and multi-compound fuels.
 - `tests/test_accuracy.py::TestFuelMWAccuracy` verifying `Fuel.mean_molecular_weight`
   against expected values for `heptane` and `posf10325`.
-<<<<<<< HEAD
-<<<<<<< HEAD
 - Excluded `.venv/` from `lefthook` pre-commit checks.
-=======
-- `tests/baselinePredictions/generate_baseline_updated.py` and
-  `tests/baselinePredictions/decane_test.csv` for regenerating/validating
-  temperature-dependent property baselines.
-=======
->>>>>>> 5a032e2 (Update baselinePredictions)
-- Excluded `.venv/` from `lefthook` pre-commit checks.
-- `.github/workflows/release.yml` triggered on `v*.*.*` tag pushes: runs
-  `keepachangelog release` to update `CHANGELOG.md`, then commits the change
-  to a `changelog` branch and opens/auto-merges a pull request into `main`
-  (instead of pushing directly), to comply with branch protection rules
-  requiring pull requests and passing status checks.
-
-### Changed
-- `Fuel.MW`, `Fuel.nC`, `Fuel.nH`, `Fuel.hc_type`, `Fuel.fam`, and
-  `Fuel.formulas` are now derived from RDKit
-  molecule parsing of each compound's `SMILES` string (via `fuellib.rdk.mol`)
-  instead of from the Gani group-decomposition matrix (`Nij`) or the
-  `gani.MW` GCM property, removing the need for hand-tuned alkyl/olefinic/aromatic
-  group index ranges in `Fuel.__init__`.
-- Added SMILES in `gcData` CSVs:
-  (`decane_init.csv`, `dodecane_init.csv`, `hefa-came_init.csv`,
-  `hefa-mfat_init.csv`, `hefa-tall_init.csv`, `heptane-decane_init.csv`,
-  `heptane_init.csv`, `jet-a_init.csv`, `posf10264_init.csv`, `posf10289_init.csv`,
-  `posf10325_init.csv`, `posf11498_init.csv`, `posf4658_init.csv`).
-- Fixed `tests/baselinePredictions/generate_baseline.py` to understand recent package changes.
-
-### Removed
-- `Fuel.Nij` attribute and the `gani.MW` GCM property (`fuellib.gcm.gani.MW`),
-  superseded by RDKit-derived `Fuel.MW`.
-- `MW` row from `fuellib/gcm/gani.csv`.
-
-## [3.0.4] - 2026-09-28
-
-### Added
-- `gcm` module providing an extensible framework for Group Contribution Method (GCM)
-  property predictions, decoupling property formulas from `Fuel`.
-  - `core.PropertyProtocol`: runtime-checkable protocol defining the
-    `(fuel: Fuel) -> types.Quantity1D` signature required of any GCM property function.
-  - `core.GCM`: a named collection of property functions with `register_property()`,
-    `list_property_fns()`, `get_property()` (case-insensitive, raises `ValueError`
-    listing available properties on a miss), `predict()`, and `predict_all()`.
-  - `core.GCMRegistry`: class-level registry of `GCM` instances, with `register()`,
-    `list_methods()`, and case-insensitive `get_gcm()`.
-  - `gcm.gani` implementing the Constantinou-Gani (and extended) method: loads
-    group-contribution coefficients from `gcm.gani.csv` and registers 18 property
-    functions (`Tc`, `Pc`, `Vc`, `Tb`, `Tm`, `Hf`, `Gf`, `Hv_stp`, `omega`, `Vm_stp`,
-    `Cp_stp`, `Cp_B`, `Cp_C`, `rd_A`, `rd_B`, `rd_D`, `alibakhshi_phi`, `MW`) against
-    a `gani` `GCMRegistry` entry, replacing formulas previously duplicated inline in
-    `fuel.__init__`.
-- `fuel.gani_decomp()` builds a fuel's group-decomposition matrix for the Gani method
-  by reading the group decomposition file and validating that all of `fuel.compounds`
-  are present (raising `ValueError` listing any missing compounds).
-- Cached `fuel.gcm_properties` property that pre-computes predictions from every
-  registered GCM method (via `GCMRegistry`) for a `Fuel` instance.
-- `fuel.get_property(method, property_name)` for case-insensitive lookup of a GCM
-  prediction from `fuel.gcm_properties`, raising `KeyError` if either the method or
-  property is unregistered.
-- `tests/test_gcm.py` covering the `gcm` module (`core.GCM`, `core.GCMRegistry`, and
-  all `gcm.gani` property functions), including registration, error handling, and
-  decomposition-matrix column resorting/partial-group-coverage behavior in
-  `gani._get_decomp` (columns are reindexed to the canonical group order and any
-  group missing from a fuel's decomposition is zero-filled instead of erroring).
-- `docs/gcm.rst` documenting the `gcm` abstraction: `core.PropertyProtocol`,
-  `core.GCM`, and `core.GCMRegistry`; how the `gani` method is registered on top
-  of them; how to register new properties/methods; and the new
-  `fuel.gani_decomp()`, `fuel.gcm_properties`, and `fuel.get_property()` members.
-  Duplicates the GCM property table/equations from `fuelprops.rst` for
-  convenience. Linked into the docs toctree (`index.rst`) and API listing
-  (`sourcecode.rst`).
-- `taskipy` for shortcuts to common `dev` tasks.
-- Documentation for `development.rst` pointing to developer-specific tools.
->>>>>>> 1f0f5c7 (Minor doc changes)
 
 
 ### Changed
@@ -155,7 +67,6 @@ used to parse and validate this file's entries against that format.
   superseded by RDKit-derived `Fuel.MW`.
 - `MW` row from `fuellib/gcm/gani.csv`.
 
-<<<<<<< HEAD
 ## [3.0.4] - 2026-09-28
 
 ### Added
@@ -222,24 +133,6 @@ used to parse and validate this file's entries against that format.
   twice — once for validation, once for storage — now computed once via the `gcm`
   abstraction).
 
-## [3.0.4] - 2026-09-24
-
-### Added
-- Function string type hints to definitions in the `fuel` and `convert` modules.
-  - `@overload` decorators on `convert` functions to ensure the proper types are tracked.
-- `utils/` module exporting `types` and `Units` to organize FuelLib utilities.
-- `ruff.toml` to thoroughly define `ruff` behavior.
-- `Units` class wrapping quantity-providing dependencies, such as `pint` or `unxt`, based on their availability.
-- `sphinx-autodoc-typehints` to eliminate redundancy between function signatures and docstrings (not yet implemented).
-
-### Changed
-- Moved `Units` to the `types` module to facilitate future optional dependencies.
-
-### Fixed
-- `test_api.py` now takes a flexible approach to ensuring the user interface remains consistent across versions without enforcing overly strict rules.
-
-=======
->>>>>>> 7baa57f (Expand tests and address PR comments)
 ## [3.0.3] - 2026-09-23
 
 ### Added
