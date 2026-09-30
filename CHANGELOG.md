@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
-## [Unreleased]
+## [3.0.5] - 2026-09-29
 
 ### Added
 - `fuellib.rdk` module wrapping RDKit for molecule-level structural analysis and
@@ -26,12 +26,11 @@ used to parse and validate this file's entries against that format.
   requiring pull requests and passing status checks.
 
 ### Changed
-- `Fuel.MW`, `Fuel.nC`, `Fuel.nH`, `Fuel.hc_type`, `Fuel.fam`, and
+- **BREAKING**:`Fuel.MW`, `Fuel.nC`, `Fuel.nH`, `Fuel.hc_type`, `Fuel.fam`, and
   `Fuel.formulas` are now derived from RDKit
   molecule parsing of each compound's `SMILES` string (via `fuellib.rdk.mol`)
   instead of from the Gani group-decomposition matrix (`Nij`) or the
-  `gani.MW` GCM property, removing the need for hand-tuned alkyl/olefinic/aromatic
-  group index ranges in `Fuel.__init__`.
+  `gani.MW` GCM property, removing the need for hand-tuned alkyl/olefinic/aromatic group index ranges in `Fuel.__init__`.
 - Added SMILES in `gcData` CSVs:
   (`decane_init.csv`, `dodecane_init.csv`, `hefa-came_init.csv`,
   `hefa-mfat_init.csv`, `hefa-tall_init.csv`, `heptane-decane_init.csv`,
