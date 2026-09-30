@@ -9,7 +9,6 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 from rdkit.Chem import Mol
-from scipy.optimize import curve_fit
 
 from . import correlate
 from ._data_locator import (
