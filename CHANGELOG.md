@@ -8,6 +8,48 @@ used to parse and validate this file's entries against that format.
 ## [Unreleased]
 
 ### Added
+- `fuellib.rdk` module wrapping RDKit for molecule-level structural analysis and
+  property calculations: `rdk.mol` provides `from_smiles()`/`smiles()`,
+  `from_inchi()`/`inchi()`, `hill_formula()`, `atom_counts()`, `has_aromatic()`,
+  `has_ring()`, `has_double_bond()`, `has_branch()`, and `molecular_weight()`.
+- `Fuel.smiles`, `Fuel.rdkit_mols` (cached RDKit `Mol` objects built from
+  `Fuel.smiles`) for working with RDKit
+- `tests/test_fuel.py` covering RDKit-backed `Fuel.nC`, `Fuel.nH`, `Fuel.MW`, and
+  `Fuel.formulas` for single- and multi-compound fuels.
+- `tests/test_accuracy.py::TestFuelMWAccuracy` verifying `Fuel.mean_molecular_weight`
+  against expected values for `heptane` and `posf10325`.
+- Excluded `.venv/` from `lefthook` pre-commit checks.
+- `.github/workflows/release.yml` triggered on `v*.*.*` tag pushes: runs
+  `keepachangelog release` to update `CHANGELOG.md`, then commits the change
+  to a `changelog` branch and opens/auto-merges a pull request into `main`
+  (instead of pushing directly), to comply with branch protection rules
+  requiring pull requests and passing status checks.
+
+### Changed
+- `Fuel.MW`, `Fuel.nC`, `Fuel.nH`, `Fuel.hc_type`, `Fuel.fam`, and
+  `Fuel.formulas` are now derived from RDKit
+  molecule parsing of each compound's `SMILES` string (via `fuellib.rdk.mol`)
+  instead of from the Gani group-decomposition matrix (`Nij`) or the
+  `gani.MW` GCM property, removing the need for hand-tuned alkyl/olefinic/aromatic
+  group index ranges in `Fuel.__init__`.
+- Added SMILES in `gcData` CSVs:
+  (`decane_init.csv`, `dodecane_init.csv`, `hefa-came_init.csv`,
+  `hefa-mfat_init.csv`, `hefa-tall_init.csv`, `heptane-decane_init.csv`,
+  `heptane_init.csv`, `jet-a_init.csv`, `posf10264_init.csv`, `posf10289_init.csv`,
+  `posf10325_init.csv`, `posf11498_init.csv`, `posf4658_init.csv`).
+- Fixed `tests/baselinePredictions/generate_baseline.py` to understand recent package changes.
+  - Regenerated `baselinePredictions` with new values.
+- Increased minimum test coverage to 45% to prevent regression (PR coverage is at 47.28%).
+  - Individual test suites in the `ci.yml` use `--no-cov` to prevent failing from module-level undercoverage.
+
+### Removed
+- `Fuel.Nij` attribute and the `gani.MW` GCM property (`fuellib.gcm.gani.MW`),
+  superseded by RDKit-derived `Fuel.MW`.
+- `MW` row from `fuellib/gcm/gani.csv`.
+
+## [3.0.4] - 2026-09-28
+
+### Added
 - `gcm` module providing an extensible framework for Group Contribution Method (GCM)
   property predictions, decoupling property formulas from `Fuel`.
   - `core.PropertyProtocol`: runtime-checkable protocol defining the

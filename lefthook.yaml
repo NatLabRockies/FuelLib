@@ -1,5 +1,7 @@
 pre-commit:
   parallel: false
+  exclude:
+    - .venv/
   commands:
     1-fmt:
       run: uv run ruff format

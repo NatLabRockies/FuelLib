@@ -269,7 +269,6 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
             "compounds",
             "formulas",
             "Y_0",
-            "Nij",
             "num_compounds",
             "MW",
             "Tc",
