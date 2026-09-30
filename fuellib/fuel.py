@@ -23,7 +23,6 @@ from ._data_locator import (
 from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
 from .gcm import GCMRegistry
 from .rdk import mol
-from .utility import mixing_rule
 from .utils import Units, types
 
 

@@ -13,6 +13,60 @@ if TYPE_CHECKING:
     from ..fuel import Fuel
 
 
+def arithmetic(
+    X: types.Quantity1D,
+    var_n: types.Quantity1D,
+) -> types.Quantity0D:
+    """Arithmetic mixing rule for computing mixture properties.
+
+    Args:
+        X: Mole fractions of the compounds.
+        var_n: Individual compound properties.
+
+    Returns:
+        Mixture property value.
+    """
+    values = var_n.magnitude
+    mag_X = X.to("dimensionless").magnitude
+
+    num_comps = len(values)
+    var_mix = 0.0
+    for i in range(num_comps):
+        for j in range(num_comps):
+            # Use arithmetic definition for the pseudo property
+            var_ij = (values[i] + values[j]) / 2
+            var_mix += mag_X[i] * mag_X[j] * var_ij
+
+    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+
+
+def geometric(
+    X: types.Quantity1D,
+    var_n: types.Quantity1D,
+) -> types.Quantity0D:
+    """Geometric mixing rule for computing mixture properties.
+
+    Args:
+        X: Mole fractions of the compounds.
+        var_n: Individual compound properties.
+
+    Returns:
+        Mixture property value.
+    """
+    values = var_n.magnitude
+    mag_X = X.to("dimensionless").magnitude
+
+    num_comps = len(values)
+    var_mix = 0.0
+    for i in range(num_comps):
+        for j in range(num_comps):
+            # Use geometric definition for the pseudo property
+            var_ij = (values[i] * values[j]) ** 0.5
+            var_mix += mag_X[i] * mag_X[j] * var_ij
+
+    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+
+
 def mean_molecular_weight(
     fuel: "Fuel", Yi: types.Quantity1D | None = None
 ) -> types.Quantity0D:
@@ -187,7 +241,7 @@ def saturated_vapor_pressure_antoine_coeffs(
     if Tvals is None:
         print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
         Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
-        Tb = helpers.arithmetic_mixing_rule(Xi, fuel.Tb)
+        Tb = arithmetic(Xi, fuel.Tb)
         T = Units.Quantity(np.linspace(273.15, np.min(Tb.to("K").magnitude), 20), "K")
     elif len(Tvals) == 2:
         T = Units.Quantity(np.linspace(Tvals[0].magnitude, Tvals[1].magnitude, 20), "K")
@@ -263,7 +317,7 @@ def surface_tension(
     # Surface tension for each compound (N/m)
     sti = components.surface_tension(fuel, T, correlation=correlation)
     # Mixture surface tension via arithmetic mean, Poling (12-5.2)
-    st = helpers.arithmetic_mixing_rule(Xi, sti)
+    st = arithmetic(Xi, sti)
     return st.to("N/m")
 
 

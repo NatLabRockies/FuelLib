@@ -395,12 +395,16 @@ are used throughout this section.
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: fuellib.utility.mixing_rule
+.. autofunction:: fuellib.correlate.mixture.arithmetic
+   :noindex:
+
+.. autofunction:: fuellib.correlate.mixture.geometric
    :noindex:
 
 While many of the mixture properties in FuelLib have a unique mixing rule,
-FuelLib's *mixing_rule* function provides a general mixing rule based on the suggestions
-of Harstad et al\ :footcite:p:`harstad_efficient_1997`. For a given property :math:`Q`
+FuelLib's *arithmetic* and *geometric* functions provide
+general mixing rules based on the suggestions of Harstad et al\ :footcite:p:`harstad_efficient_1997`.
+For a given property :math:`Q`
 
 .. math::
    Q = \sum_{i=1}^{N_c} \sum_{j=1}^{N_c} X_i X_j Q_{ij},

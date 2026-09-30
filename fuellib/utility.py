@@ -2,34 +2,22 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, cast, overload
+from typing import TYPE_CHECKING, Literal
 
 import numpy as np
-import pint
 
+from . import correlate
 from .utils import Units, types
 
 if TYPE_CHECKING:
     from .fuel import Fuel
 
 
-@overload
-def mixing_rule(
-    var_n: types.Array1D,
-    X: types.Quantity1D,
-    pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
-) -> float: ...
-@overload
 def mixing_rule(
     var_n: types.Quantity1D,
     X: types.Quantity1D,
     pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
-) -> types.Quantity0D: ...
-def mixing_rule(
-    var_n: types.Array1D | types.Quantity1D,
-    X: types.Quantity1D,
-    pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
-) -> float | types.Quantity0D:
+) -> types.Quantity0D:
     """Mixing rules for computing mixture properties.
 
     Args:
@@ -40,27 +28,9 @@ def mixing_rule(
     Returns:
         Mixture property value.
     """
-    if isinstance(var_n, pint.Quantity):
-        units = var_n.units
-        values = var_n.magnitude
-    else:
-        units = None
-        values = np.asarray(var_n)
-    mag_X = X.to("dimensionless").magnitude
-
-    num_comps = len(values)
-    var_mix = 0.0
-    for i in range(num_comps):
-        for j in range(num_comps):
-            if pseudo_prop.casefold() == "geometric":
-                # Use geometric mean definition for the pseudo property
-                var_ij = (values[i] * values[j]) ** 0.5
-            else:
-                # Use arithmetic definition for the pseudo property
-                var_ij = (values[i] + values[j]) / 2
-            var_mix += mag_X[i] * mag_X[j] * var_ij
-
-    return cast("types.Quantity0D", var_mix * units) if units is not None else var_mix
+    if pseudo_prop.casefold() == "geometric":
+        return correlate.mixture.geometric(X, var_n)
+    return correlate.mixture.arithmetic(X, var_n)
 
 
 def droplet_volume(r: types.Quantity0D) -> types.Quantity0D:
