@@ -19,11 +19,7 @@ used to parse and validate this file's entries against that format.
 - `tests/test_accuracy.py::TestFuelMWAccuracy` verifying `Fuel.mean_molecular_weight`
   against expected values for `heptane` and `posf10325`.
 - Excluded `.venv/` from `lefthook` pre-commit checks.
-- `.github/workflows/release.yml` triggered on `v*.*.*` tag pushes: runs
-  `keepachangelog release` to update `CHANGELOG.md`, then commits the change
-  to a `changelog` branch and opens/auto-merges a pull request into `main`
-  (instead of pushing directly), to comply with branch protection rules
-  requiring pull requests and passing status checks.
+
 
 ### Changed
 - **BREAKING**:`Fuel.MW`, `Fuel.nC`, `Fuel.nH`, `Fuel.hc_type`, `Fuel.fam`, and
