@@ -18,7 +18,6 @@ from fuellib.gcm.gani import (
     Gf,
     Hf,
     Hv_stp,
-    MW,
     Pc,
     Tb,
     Tc,
@@ -186,10 +185,6 @@ class GaniPropertyTestCase(unittest.TestCase):
     def test_alibakhshi_phi(self):
         """alibakhshi_phi should return finite phi parameters in K."""
         self._assert_valid_quantity(alibakhshi_phi(self.fuel), "K")
-
-    def test_mw(self):
-        """MW should return finite molecular weights in g/mol."""
-        self._assert_valid_quantity(MW(self.fuel), "g/mol")
 
 
 class GaniHelperFunctionTestCase(unittest.TestCase):

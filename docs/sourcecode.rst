@@ -23,6 +23,9 @@ FuelLib File Organization
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
 
+    - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
+        - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, double bonds, branching), and molecular weight
+
     - **data**: directory containing fuel data and metadata    
         
         - **fuelData:** 
@@ -84,3 +87,4 @@ Click on links below for the full auto-documentation of the API.
     fuellib.utils.types
     fuellib.gcm.core
     fuellib.gcm.gani
+    fuellib.rdk.mol

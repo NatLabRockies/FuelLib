@@ -1,47 +1,28 @@
-import os
+#!/usr/bin/env python3
+"""Generate updated baseline predictions for Fuel properties."""
+
 import sys
 
-import numpy as np
+from pathlib import Path
+
 import pandas as pd
+from fuellib import Fuel
+from fuellib.utils import types
 
-"""
-Script for calculating baseline FuelLib mixture property predictions for CI testing
-Use this to update threshold values in CI test as model improves
-"""
-
-# Add the FuelLib directory to the Python path
-FUELLIB_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-if FUELLIB_DIR not in sys.path:
-    sys.path.insert(0, FUELLIB_DIR)
-
-# Add the tests directory to import get_pred_and_data
-TESTS_DIR = os.path.dirname(os.path.dirname(__file__))
-if TESTS_DIR not in sys.path:
-    sys.path.insert(0, TESTS_DIR)
+baseline_dir = Path(__file__).parent
+if str(baseline_dir.parent) not in sys.path:
+    sys.path.insert(0, str(baseline_dir.parent))
 
 from get_pred_and_data import get_pred_and_data
 
-# Directories for tests and baseline predictions
-# test_dir = os.path.dirname(__file__)
-baseline_dir = os.path.dirname(__file__)
-# baseline_dir = os.path.join(test_dir, "baselinePredictions")
 
-# Fuel for GCM and data for validation (see fuelData/propertiesData for fuels)
-# Options: 'decane','dodecane', 'heptane', 'posf10264', 'posf10325', 'posf10289'
+def _prep_quantity(quantity: types.Quantity1D) -> list[str | float]:
+    """Convert a Quantity1D to a list of float values with units in 0th index."""
+    return [str(quantity.units)] + quantity.magnitude.tolist()
+
+
 fuel_names = ["heptane", "decane", "dodecane", "posf10264", "posf10325", "posf10289"]
-
-# Properties to test
-prop_names = [
-    "Density",
-    "Viscosity",
-    "VaporPressure",
-    "SurfaceTension",
-    "ThermalConductivity",
-]
-
-# Property units
-prop_units = {
-    "Temperature": "celsius",
+properties = {
     "Density": "g/cm^3",
     "Viscosity": "mm^2/s",
     "VaporPressure": "kPa",
@@ -50,55 +31,38 @@ prop_units = {
 }
 
 
-def get_unit_for_column(col_name):
-    for prop, value in prop_units.items():
-        if prop in col_name:
-            return value
-    return ""
-
-
 def main():
-    # Loop through each fuel and generate csv of baseline property predictions
+    """Generate updated baseline predictions for Fuel properties."""
     for fuel_name in fuel_names:
-        export_name = os.path.join(baseline_dir, f"{fuel_name}.csv")
-        df_combined = None
+        out_file = baseline_dir / f"{fuel_name}.csv"
 
-        for prop in prop_names:
-            T, data, pred = get_pred_and_data(fuel_name, prop)
+        df_combined = pd.DataFrame()
+        for prop_name, prop_unit in properties.items():
+            T, data, pred = get_pred_and_data(fuel_name, prop_name)
 
-            # Create a dataframe for this property
             df_prop = pd.DataFrame({
-                "Temperature": T,
-                prop: pred,
-                f"Error_{prop}": np.abs(data - pred),
+                "Temperature": _prep_quantity(T.to("celsius")),
+                prop_name: _prep_quantity(pred.to(prop_unit)),
+                f"Error_{prop_name}": _prep_quantity(
+                    abs(data.to(prop_unit) - pred.to(prop_unit))
+                ),
             })
 
-            if df_combined is None:
-                # Initialize combined dataframe
+            if df_combined.empty:
                 df_combined = df_prop
             else:
-                # Merge on Temperature using outer join to ensure all temperatures are kept
                 df_combined = pd.merge(
                     df_combined, df_prop, on="Temperature", how="outer"
                 )
 
-        # Sort by Temperature (optional, but nice for clean output)
-        if df_combined is not None:
-            df_combined = df_combined.sort_values(by="Temperature").reset_index(
-                drop=True
-            )
+        is_numeric = pd.to_numeric(df_combined["Temperature"], errors="coerce").notna()
+        units_row = df_combined[~is_numeric]
+        data_rows = df_combined[is_numeric].sort_values(
+            by="Temperature", key=lambda s: s.astype(float)
+        )
+        df_combined = pd.concat([units_row, data_rows], ignore_index=True)
 
-            # Generate units list in correct order
-            units = [get_unit_for_column(col) for col in df_combined.columns]
-
-            # Create MultiIndex columns (name + unit)
-            df_combined.columns = pd.MultiIndex.from_arrays([
-                df_combined.columns,
-                units,
-            ])
-
-            # Save final table
-            df_combined.to_csv(export_name, index=False)
+        df_combined.to_csv(out_file, index=False)
 
 
 if __name__ == "__main__":
