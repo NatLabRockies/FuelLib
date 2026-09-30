@@ -23,6 +23,11 @@ FuelLib File Organization
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
 
+    - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
+        - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity)
+        - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules
+        - ``helpers.py``: shared helper functions for mixing rules and mass/mole fraction conversions
+
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, double bonds, branching), and molecular weight
 
@@ -88,3 +93,6 @@ Click on links below for the full auto-documentation of the API.
     fuellib.gcm.core
     fuellib.gcm.gani
     fuellib.rdk.mol
+    fuellib.correlate.components
+    fuellib.correlate.mixture
+    fuellib.correlate.helpers

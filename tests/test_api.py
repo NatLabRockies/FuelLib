@@ -57,6 +57,14 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                     fl.utility.mixing_rule(fuel.Tc, Xi, pseudo_prop="geometric")
                 )
                 print("    ✓ utility.mixing_rule (geometric)")
+                self._assert_finite_and_positive(
+                    fl.correlate.mixture.arithmetic(Xi, fuel.Tc)
+                )
+                print("    ✓ correlate.mixture.arithmetic")
+                self._assert_finite_and_positive(
+                    fl.correlate.mixture.geometric(Xi, fuel.Tc)
+                )
+                print("    ✓ correlate.mixture.geometric")
 
                 # Composition conversion methods
                 print("  Composition Conversions:")

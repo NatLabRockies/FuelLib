@@ -1,7 +1,8 @@
 """Type definitions for FuelLib."""
 
 from __future__ import annotations
-from typing import ClassVar, TypeVar, TypeAlias
+
+from typing import ClassVar, TypeAlias, TypeVar
 
 import numpy as np
 import pint

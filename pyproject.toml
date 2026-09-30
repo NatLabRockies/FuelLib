@@ -77,6 +77,7 @@ fl-fuels = "fuellib.cli.fuel_manager:list_fuels_main"
 format = { cmd = "ruff format", help = "Format codebase" }
 lint = { cmd = "ruff check --fix", help = "Format codebase" }
 types = { cmd = "ty check", help = "Format codebase" }
+imports = { cmd = "lint-imports", help = "Check import contracts" }
 test = { cmd = "pytest", help = "Run test suite" }
 # Pre-commit hooks (see lefthook.yaml)
 pre-commit = { cmd = "lefthook run pre-commit", help = "Run pre-commit suite" }
@@ -109,17 +110,17 @@ include = [
 # Import-linter configurations
 [tool.importlinter]
 root_package = "fuellib"
+exclude_type_checking_imports = true
 
 [[tool.importlinter.contracts]]
 name = "Module layering"
 type = "layers"
 layers = [
+    "fuellib.exporters | fuellib.cli", # Not importable by any modules
     "fuellib.fuel",
+    "fuellib.correlate",
     "fuellib.gcm",
-    "fuellib.comp",
-]
-ignore_imports = [
-    "fuellib.comp -> fuellib.gcm.core",
+    "fuellib.rdk | fuellib.utils | fuellib.data", # Importable by all modules
 ]
 
 # Pytest configurations

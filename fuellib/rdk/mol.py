@@ -196,14 +196,14 @@ def molecular_weight(mol: Mol, *, exact: bool = False) -> float:
 
 
 __all__ = [
-    "from_smiles",
-    "smiles",
-    "from_inchi",
-    "inchi",
     "atom_counts",
-    "molecular_weight",
+    "from_inchi",
+    "from_smiles",
     "has_aromatic",
-    "has_ring",
-    "has_double_bond",
     "has_branch",
+    "has_double_bond",
+    "has_ring",
+    "inchi",
+    "molecular_weight",
+    "smiles",
 ]

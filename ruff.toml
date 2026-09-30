@@ -59,6 +59,11 @@ select = [
     "DOC", # validates docstring content against the function signature
     "ANN", # enforces type annotations
     "E501", # enforces line-length limit
+    "INP001", # require __init__.py in submodules
+    "I001", # unsorted imports
+    "RUF022", # unsorted dunder __all__
+    "F403", # wildcard imports
+    "F405", # names relying on wildcard imports
 ]
 
 [lint.pydocstyle]
