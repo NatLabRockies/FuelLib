@@ -382,20 +382,22 @@ group-contribution term:
 where :math:`\phi_k` are the group contributions registered as the ``alibakhshi_phi``
 property of the ``gani`` GCM (:doc:`gcm`).
 
+.. _sec-lower-heating-value:
+
 Lower heating value
 ^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: fuellib.correlate.components.lower_heating_value
    :noindex:
 
-The lower (net) heating value is computed from a Hess cycle using the Constantinou-Gani
+The lower (net) heating value :math:`LHV_i` is computed from a Hess cycle using the Constantinou-Gani
 enthalpy of formation :math:`\Delta H_{f,i}` and enthalpy of vaporization
 :math:`\Delta H_{v,\textit{stp},i}`. The liquid-phase enthalpy of formation is
 
 .. math::
    \Delta H_{f,\ell,i} = \Delta H_{f,i} - \Delta H_{v,\textit{stp},i},
 
-and the enthalpy of combustion of a compound with :math:`n_{C,i}` carbon and
+and the molar enthalpy of combustion (an exothermic, i.e. negative, quantity in J/mol) of a compound with :math:`n_{C,i}` carbon and
 :math:`n_{H,i}` hydrogen atoms (from its RDKit molecule) is
 
 .. math::
@@ -432,18 +434,18 @@ are used throughout this section.
    :widths: auto
    :align: center
    
-   ===============  ===============  =====================
-   Symbol           Units            Description
-   ===============  ===============  =====================
-   :math:`\rho`     kg/m\ :sup:`3`   Density
-   :math:`\nu`      m\ :sup:`2`/s    Kinematic viscosity
-   :math:`p_v`      Pa               Vapor pressure
-   :math:`\sigma`   N/m              Surface tension
-   :math:`\lambda`  W/m/K            Thermal conductivity
-   :math:`T_{fr}`   K                Freeze point
-   :math:`T_{fp}`   K                Flash point
-   :math:`LHV`      J/kg             Heat of combustion
-   ===============  ===============  =====================
+   ========================  ===============  =====================
+   Symbol                    Units            Description
+   ========================  ===============  =====================
+   :math:`\rho`              kg/m\ :sup:`3`   Density
+   :math:`\nu`               m\ :sup:`2`/s    Kinematic viscosity
+   :math:`p_v`               Pa               Vapor pressure
+   :math:`\sigma`            N/m              Surface tension
+   :math:`\lambda`           W/m/K            Thermal conductivity
+   :math:`T_{fr}`            K                Freeze point
+   :math:`T_{fp}`            K                Flash point
+   :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
+   ========================  ===============  =====================
 
 .. _tab-mass-mole-fracs:
 
@@ -639,11 +641,14 @@ Mixture heat of combustion
 .. autofunction:: fuellib.correlate.mixture.heat_of_combustion
    :noindex:
 
-The heat of combustion of the mixture is the mass-fraction weighted average of the
-component lower heating values (see Lower heating value above):
+The mixture heat of combustion :math:`\Delta H^\circ_c` is reported per unit mass as the
+positive magnitude of the heat released, and is computed as the mass-fraction weighted
+average of the component lower heating values
+:math:`LHV_i` (see :ref:`Lower heating value <sec-lower-heating-value>`). It is distinct
+from the molar enthalpy of combustion :math:`\Delta H_{c,i}` of a single compound:
 
 .. math::
-   LHV = \sum_{i=1}^{N_c} Y_i \, LHV_i.
+   \Delta H^\circ_c = \sum_{i=1}^{N_c} Y_i \, LHV_i.
 
 This is a net heating value assuming gaseous water products, and is an engineering
 estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter test.

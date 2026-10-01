@@ -642,7 +642,8 @@ def heat_of_combustion(
 
     Combines each component's lower heating value
     (`components.lower_heating_value`) with a mass-fraction weighted mixing
-    rule, `LHV_mix = sum(Yi * LHV_i)`. This is a net (lower) heating value,
+    rule, `dHc_mix = sum(Yi * LHV_i)`, reported as the positive heat released
+    per unit mass. This is a net (lower) basis,
     consistent with gaseous-water combustion products; it is an engineering
     estimate related to ASTM D4809/D3338 heating-value characterization, not
     a simulated bomb-calorimeter test.
