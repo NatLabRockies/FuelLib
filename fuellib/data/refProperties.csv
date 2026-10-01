@@ -1,2 +1,69 @@
 Common_Name,Property,Units,Value,Error,Source
 n-heptane,Tm,celsius,-91.61,,https://emhub1.energy.gov/pacteel/search#142-82-5
+toluene,YSI,NaN,170.9,7.7,measured_name
+ethyl benzene,YSI,NaN,223.7,9.3,measured_name
+propyl benzene,YSI,NaN,235.7,9.9,measured_name
+butyl benzene,YSI,NaN,245.1,9.9,measured_formula_kw_butyl
+pentyl benzene,YSI,NaN,255,10.5,measured_formula_kw_pentyl
+hexyl benzene,YSI,NaN,246.7,9.9,measured_formula_kw_hexyl
+heptyl benzene,YSI,NaN,257.1,10.5,measured_formula_unique
+octyl benzene,YSI,NaN,257.1,10.5,measured_formula_unique
+nonyl benzene,YSI,NaN,283.2,11.6,measured_formula_unique
+naphthalene,YSI,NaN,466.1,8.4,measured_name
+1-methyl naphthalene,YSI,NaN,649.1,24.7,measured_name
+1-ethyl naphthalene,YSI,NaN,732.7,27.4,measured_name
+1-propyl naphthalene,YSI,NaN,882.5666667,23.42880468,extrapolated_di_arom
+indane,YSI,NaN,439.5,16.6,measured_name
+tetralin,YSI,NaN,336,13.4,measured_name
+2-methyl tetralin,YSI,NaN,336,13.4,holdlargest_cyclo_arom
+2-ethly tetralin,YSI,NaN,336,13.4,holdlargest_cyclo_arom
+2-propyl tetralin,YSI,NaN,336,13.4,holdlargest_cyclo_arom
+2-butyl tetralin,YSI,NaN,336,13.4,holdlargest_cyclo_arom
+2-methyl hexane,YSI,NaN,42.4,2,measured_name
+2-methyl heptane,YSI,NaN,49.4,2,measured_name
+2-methyl octane,YSI,NaN,60.2,2,measured_formula_kw_methyl
+2-methyl nonane,YSI,NaN,57.2,2,measured_formula_unique
+2-methyl decane,YSI,NaN,64.7,2,measured_formula_unique
+2-methyl undecane,YSI,NaN,99.3,2.9,measured_formula_kw_methyl
+2-methyl dodecane,YSI,NaN,94.94,8.526853939,extrapolated_iso_alkane
+2-methyl tridecane,YSI,NaN,104.2942857,8.526853939,extrapolated_iso_alkane
+2-methyl tetradecane,YSI,NaN,113.6485714,8.526853939,extrapolated_iso_alkane
+2-methyl pentadecane,YSI,NaN,123.0028571,8.526853939,extrapolated_iso_alkane
+2-methyl hexadecane,YSI,NaN,132.3571429,8.526853939,extrapolated_iso_alkane
+2-methyl heptadecane,YSI,NaN,141.7114286,8.526853939,extrapolated_iso_alkane
+2-methyl octadecane,YSI,NaN,151.0657143,8.526853939,extrapolated_iso_alkane
+2-methyl nonadecane,YSI,NaN,160.42,8.526853939,extrapolated_iso_alkane
+n-heptane,YSI,NaN,36,2.2,measured_name
+n-octane,YSI,NaN,42.6,2,measured_name
+n-nonane,YSI,NaN,50.1,2,measured_name
+n-decane,YSI,NaN,57.2,2,measured_name
+n-undecane,YSI,NaN,64.7,2,measured_name
+n-dodecane,YSI,NaN,71.7,2.1,measured_name
+n-tridecane,YSI,NaN,78.90666667,0.195017297,extrapolated_n_alkane
+n-tetradecane,YSI,NaN,86.10380952,0.195017297,extrapolated_n_alkane
+n-pentadecane,YSI,NaN,93.30095238,0.195017297,extrapolated_n_alkane
+n-hexadecane,YSI,NaN,100.4980952,0.195017297,extrapolated_n_alkane
+n-heptadecane,YSI,NaN,107.6952381,0.195017297,extrapolated_n_alkane
+n-octadecane,YSI,NaN,114.892381,0.195017297,extrapolated_n_alkane
+methyl cyclohexane,YSI,NaN,53.6,2,measured_name
+ethyl cyclohexane,YSI,NaN,60.7,2,measured_name
+propyl cyclohexane,YSI,NaN,69.2,2.1,measured_name
+butyl cyclohexane,YSI,NaN,76.8,2.2,measured_name
+pentyl cyclohexane,YSI,NaN,83.45945946,0.553221523,extrapolated_mono_cyclo
+hexyl cyclohexane,YSI,NaN,90.3,2.6,measured_formula_unique
+heptyl cyclohexane,YSI,NaN,98.28108108,0.553221523,extrapolated_mono_cyclo
+octyl cyclohexane,YSI,NaN,105.6918919,0.553221523,extrapolated_mono_cyclo
+nonyl cyclohexane,YSI,NaN,113.1027027,0.553221523,extrapolated_mono_cyclo
+decyl cyclohexane,YSI,NaN,120.5135135,0.553221523,extrapolated_mono_cyclo
+undecyl cyclohexane,YSI,NaN,127.9243243,0.553221523,extrapolated_mono_cyclo
+Octahydropentalene,YSI,NaN,100.3,3.5,holdlargest_di_cyclo
+Hydrindane,YSI,NaN,100.3,3.5,holdlargest_di_cyclo
+Decalin,YSI,NaN,100.3,3.5,holdlargest_di_cyclo
+2-methyldecalin,YSI,NaN,100.3,3.5,holdlargest_di_cyclo
+2-ethyldecalin,YSI,NaN,100.3,3.5,measured_formula_unique
+2-propyldecalin,YSI,NaN,100.3,3.5,holdlargest_di_cyclo
+2-butyldecalin,YSI,NaN,100.3,3.5,holdlargest_di_cyclo
+2-pentyldecalin,YSI,NaN,100.3,3.5,holdlargest_di_cyclo
+C1CC2C(C1)C1CCCC21   ,YSI,NaN,98.86324324,0.343093424,crossfill_tri_cyclo_from_mono_cyclo_x1.3
+C1CC2CC3CCCC3C2C1    ,YSI,NaN,108.4972973,0.343093424,crossfill_tri_cyclo_from_mono_cyclo_x1.3
+C1CC2CC3CCCC3CC2C1   ,YSI,NaN,118.1313514,0.343093424,crossfill_tri_cyclo_from_mono_cyclo_x1.3
