@@ -13,6 +13,7 @@ populated values back. Use :func:`validate` to check the two tables for
 consistency; the loaders do so automatically.
 """
 
+import csv
 from pathlib import Path
 
 import pandas as pd
@@ -76,6 +77,17 @@ def validate(compounds: pd.DataFrame, properties: pd.DataFrame) -> None:
     errors += _property_errors(properties, set(compounds["Common_Name"]))
     if errors:
         raise ValueError("Invalid reference data:\n  " + "\n  ".join(errors))
+
+
+def _read_csv(path: Path) -> pd.DataFrame:
+    # Spreadsheet exports often append empty, unnamed columns and pad cells
+    # with whitespace; drop the former and strip the latter.
+    df = pd.read_csv(path, skipinitialspace=True)
+    extra = [c for c in df.columns if str(c).startswith("Unnamed:")]
+    df = df.drop(columns=[c for c in extra if df[c].isna().all()])
+    for col in df.select_dtypes(include=["object", "string"]).columns:
+        df[col] = df[col].str.strip()
+    return df
 
 
 def _is_missing(series: pd.Series) -> pd.Series:
@@ -284,8 +296,8 @@ def load_compounds() -> pd.DataFrame:
     Returns:
         DataFrame with columns :data:`COMPOUND_HEADERS`.
     """
-    compounds = populate_missing(pd.read_csv(COMPOUNDS_PATH))
-    validate(compounds, pd.read_csv(PROPERTIES_PATH))
+    compounds = populate_missing(_read_csv(COMPOUNDS_PATH))
+    validate(compounds, _read_csv(PROPERTIES_PATH))
     return compounds
 
 
@@ -296,7 +308,8 @@ def update_compounds_csv() -> pd.DataFrame:
         The populated and validated compounds table.
     """
     compounds = load_compounds()
-    compounds.to_csv(COMPOUNDS_PATH, index=False)
+    # InChI strings contain commas, so quote every non-numeric field.
+    compounds.to_csv(COMPOUNDS_PATH, index=False, quoting=csv.QUOTE_NONNUMERIC)
     return compounds
 
 
@@ -306,8 +319,8 @@ def load_properties() -> pd.DataFrame:
     Returns:
         DataFrame with columns :data:`PROPERTY_HEADERS`.
     """
-    properties = pd.read_csv(PROPERTIES_PATH)
-    validate(populate_missing(pd.read_csv(COMPOUNDS_PATH)), properties)
+    properties = _read_csv(PROPERTIES_PATH)
+    validate(populate_missing(_read_csv(COMPOUNDS_PATH)), properties)
     return properties
 
 
@@ -330,3 +343,7 @@ def properties_by_smiles(smiles: str) -> pd.DataFrame | None:
     if common_names.empty:
         return None
     return properties[properties["Common_Name"].isin(common_names)]
+
+
+if __name__ == "__main__":
+    update_compounds_csv()
