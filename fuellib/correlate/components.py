@@ -88,7 +88,7 @@ def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1
     return (nu_i * rho_i).to("Pa*s")
 
 
-def molar_specific_heat(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def molar_specific_heat_capacity(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Compute molar specific heat capacity at a given temperature.
 
     Args:
@@ -104,7 +104,31 @@ def molar_specific_heat(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     return cp.to("J/(mol*K)")
 
 
-def liquid_mass_specific_heat(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def molar_specific_heat_capacity_ruzicka(
+    fuel: "Fuel", T: types.Quantity0D
+) -> types.Quantity1D:
+    """Compute molar specific heat capacity in J/mol/K at a given temperature.
+
+    Uses the Ruzicka-Domalski correlation.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+
+    Returns:
+        Molar specific heat capacity in J/mol/K.
+    """
+    Tr = T.to("K") / 100.0
+    rd_a = fuel.get_property("gani", "rd_A").to("")
+    rd_b = fuel.get_property("gani", "rd_B").to("K^-1")
+    rd_d = fuel.get_property("gani", "rd_D").to("K^-2")
+    cp_molar = constants.gas_constant * (rd_a + rd_b * Tr + rd_d * Tr**2)
+    return cp_molar.to("J/(mol*K)")
+
+
+def liquid_mass_specific_heat_capacity(
+    fuel: "Fuel", T: types.Quantity0D
+) -> types.Quantity1D:
     """Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
 
     Args:
@@ -116,8 +140,26 @@ def liquid_mass_specific_heat(fuel: "Fuel", T: types.Quantity0D) -> types.Quanti
     """
     T = T.to("K")
     MW = fuel.MW
-    cp = molar_specific_heat(fuel, T)
+    cp = molar_specific_heat_capacity(fuel, T)
     return (cp / MW).to("J/(kg*K)")
+
+
+def liquid_mass_specific_heat_capacity_ruzicka(
+    fuel: "Fuel", T: types.Quantity0D
+) -> types.Quantity1D:
+    """Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
+
+    Uses the Ruzicka-Domalski correlation.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+
+    Returns:
+        Mass specific heat capacity in J/kg/K.
+    """
+    cp_molar = molar_specific_heat_capacity_ruzicka(fuel, T)
+    return (cp_molar / fuel.MW).to("J/(kg*K)")
 
 
 def saturated_vapor_pressure(
@@ -487,22 +529,82 @@ def thermal_conductivity_latini(
     return Units.Quantity(tc, "W/(m*K)")
 
 
-def freeze_point_boehm(
-    fuel: "Fuel",
-) -> types.Quantity1D:
-    """Calculate the freeze point of each compound using the Boehm method.
+def flash_point_alqaheem(fuel: "Fuel") -> types.Quantity1D:
+    """Calculate component flash points using the Alqaheem-Riazi correlation.
+
+    Uses the Alqaheem and Riazi (2017) correlation, which estimates the
+    flash point of a hydrocarbon as a fixed fraction of its (anchored)
+    normal boiling point:
+
+        Tfp_i = 0.70 * Tb_i
 
     Args:
         fuel: Fuel object.
 
     Returns:
-        Freeze point in K.
+        Component flash points in K.
     """
-    Tc = fuel.Tc.to("K").magnitude
-    Pc = fuel.Pc.to("Pa").magnitude
-    omega = fuel.omega.magnitude
+    Tb = fuel.get_property("gani", "Tb").to("K")
+    return 0.70 * Tb
 
-    Pc = Pc * 1e-5  # convert from Pa to bar
-    Tfp = Tc * (0.567 + 1.15 * omega) * (1 - np.log(Pc) / 10)
 
-    return Units.Quantity(Tfp, "K")
+def flash_point_alibashki(fuel: "Fuel") -> types.Quantity1D:
+    """Calculate component flash points using the Alibakhshi et al. correlation.
+
+    Uses the modified group-contribution correlation of Alibakhshi et al.
+    (2015):
+
+        Tfp_i = 12.14 + 0.73 * Tb_i + sum_k(N_ik * phi_k)
+
+    where `Tb_i` is the (anchored) normal boiling point and `phi_k` are the
+    Alibakhshi group-contribution terms tabulated in
+    `gcmExtendedTable.csv`.
+
+    Args:
+        fuel: Fuel object.
+
+    Returns:
+        Component flash points in K.
+    """
+    Tb = fuel.get_property("gani", "Tb").to("K")
+    phi = fuel.get_property("gani", "alibakhshi_phi").to("K")
+    return Units.Quantity(12.14, "K") + 0.73 * Tb + phi
+
+
+def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
+    """Calculate component lower heating values from a Hess cycle.
+
+    Uses heat of formation and heat of vaporization derived from the Constantinou-Gani
+    GCM. For component `i` with `nC` carbon atoms and `nH` hydrogen atoms, the
+    liquid-phase heat of formation is
+
+        Hf_liq_i = Hf_gas_i - Hv_stp_i,
+
+    the heat of combustion is
+
+        dHc_i = nC_i * Hf(CO2, g) + (nH_i / 2) * Hf(H2O, g) - Hf_liq_i,
+
+    using Hf(CO2, g) = -393.51 kJ/mol and Hf(H2O, g) = -241.83 kJ/mol at
+    298.15 K, and the net (lower) heating value is LHV_i = -dHc_i / MW_i.
+
+    This estimate corresponds to hydrocarbons only; it does not account for
+    heteroatom-containing groups. Callers combining this with
+    heteroatom-containing compounds should validate the group decomposition
+    before use. The result is an engineering estimate related to ASTM
+    D4809/D3338 heating-value characterization, not a simulated
+    bomb-calorimeter test.
+
+    Args:
+        fuel: Fuel object.
+
+    Returns:
+        Lower heating values of the components in J/kg.
+    """
+    dH_form_co2 = Units.Quantity(-393.51, "kJ/mol")  # At 298.15 K
+    dH_form_h2o = Units.Quantity(-241.83, "kJ/mol")  # At 298.15 K
+    Hf = fuel.get_property("gani", "Hf").to("J/mol")
+    Hv_stp = fuel.get_property("gani", "Hv_stp").to("J/mol")
+    Hf_liq = Hf - Hv_stp
+    nC = np.array(fuel.nC)
+    nH = np.array(fuel.nH)
+    return -(nC * dH_form_co2 + 0.5 * nH * dH_form_h2o - Hf_liq) / fuel.MW

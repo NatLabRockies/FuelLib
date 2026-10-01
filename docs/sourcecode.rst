@@ -22,14 +22,16 @@ FuelLib File Organization
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
+        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM, including hydrocarbon family identification
+        - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
 
     - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
-        - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity)
-        - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules
+        - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity, flash point, lower heating value)
+        - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion)
         - ``helpers.py``: shared helper functions for mixing rules and mass/mole fraction conversions
 
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
-        - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, double bonds, branching), and molecular weight
+        - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
 
     - **data**: directory containing fuel data and metadata    
         
@@ -92,6 +94,7 @@ Click on links below for the full auto-documentation of the API.
     fuellib.utils.types
     fuellib.gcm.core
     fuellib.gcm.gani
+    fuellib.gcm.boehm
     fuellib.rdk.mol
     fuellib.correlate.components
     fuellib.correlate.mixture

@@ -90,3 +90,6 @@ Temp,Temp_Units,Property,Property_Units,Property_Value
 126.85,celsius,ThermalConductivity,W/m/K,0.11286
 136.85,celsius,ThermalConductivity,W/m/K,0.11081
 140,celsius,ThermalConductivity,W/m/K,0.11017
+NaN,celsius,FreezePoint,celsius,-9.6
+NaN,celsius,FlashPoint,celsius,71.0
+NaN,celsius,BoilingPoint,celsius,216.0

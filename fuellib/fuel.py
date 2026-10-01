@@ -462,7 +462,7 @@ class Fuel:
         Returns:
             Molar specific heat capacity in J/mol/K.
         """
-        cp = correlate.components.molar_specific_heat(self, T)
+        cp = correlate.components.molar_specific_heat_capacity(self, T)
         return cp[comp_idx] if comp_idx is not None else cp
 
     def Cl(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
@@ -476,7 +476,7 @@ class Fuel:
         Returns:
             Mass specific heat capacity in J/kg/K.
         """
-        cp = correlate.components.liquid_mass_specific_heat(self, T)
+        cp = correlate.components.liquid_mass_specific_heat_capacity(self, T)
         return cp[comp_idx] if comp_idx is not None else cp
 
     def psat(

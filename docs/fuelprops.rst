@@ -113,10 +113,12 @@ provided :math:`T` in K unless noted otherwise.
    :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
-   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity. 
+   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
    :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
+   :math:`T_{fp,i}`               K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
+   :math:`LHV_i`                  J/kg                   Lower heating value.
    =============================  =====================  ===============================================================
 
 
@@ -222,6 +224,13 @@ The mass specific heat capacity for each compound at standard pressure temperatu
 
 .. math::
    C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}} 
+
+Alternatively, the Ruzicka-Domalski\ :footcite:p:`ruzicka_estimation_1993` group additivity correlation
+is available, with :math:`\theta = T / 100` (K) and the ``rd_A``, ``rd_B``, and ``rd_D``
+properties of the ``gani`` GCM (:doc:`gcm`):
+
+.. math::
+   C_{p,i} = R \big(A_i + B_i \theta + D_i \theta^2\big).
 
 
 
@@ -347,6 +356,64 @@ and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
    3            Olefins                     0.0361           1.2              1.0              0.167         
    ===========  ==========================  ===============  ===============  ===============  =============== 
 
+Flash point
+^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.components.flash_point_alqaheem
+   :noindex:
+
+.. autofunction:: fuellib.correlate.components.flash_point_alibashki
+   :noindex:
+
+Two correlations are available for the flash point :math:`T_{fp,i}` of each compound,
+both based on the Constantinou-Gani normal boiling point :math:`T_{b,i}`.
+The Alqaheem and Riazi\ :footcite:p:`alqaheem_flash_2017` correlation takes the flash point as a fixed fraction
+of the boiling point:
+
+.. math::
+   T_{fp,i} = 0.70 \, T_{b,i}.
+
+The modified group-contribution correlation of Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015` adds a
+group-contribution term:
+
+.. math::
+   T_{fp,i} = 12.14 + 0.73 \, T_{b,i} + \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \phi_k,
+
+where :math:`\phi_k` are the group contributions registered as the ``alibakhshi_phi``
+property of the ``gani`` GCM (:doc:`gcm`).
+
+.. _sec-lower-heating-value:
+
+Lower heating value
+^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.components.lower_heating_value
+   :noindex:
+
+The lower (net) heating value :math:`LHV_i` is computed from a Hess cycle using the Constantinou-Gani
+enthalpy of formation :math:`\Delta H_{f,i}` and enthalpy of vaporization
+:math:`\Delta H_{v,\textit{stp},i}`. The liquid-phase enthalpy of formation is
+
+.. math::
+   \Delta H_{f,\ell,i} = \Delta H_{f,i} - \Delta H_{v,\textit{stp},i},
+
+and the molar enthalpy of combustion (an exothermic, i.e. negative, quantity in J/mol) of a compound with :math:`n_{C,i}` carbon and
+:math:`n_{H,i}` hydrogen atoms (from its RDKit molecule) is
+
+.. math::
+   \Delta H_{c,i} = n_{C,i} \, \Delta H_f^{\text{CO}_2(g)}
+   + \frac{n_{H,i}}{2} \, \Delta H_f^{\text{H}_2\text{O}(g)} - \Delta H_{f,\ell,i},
+
+with :math:`\Delta H_f^{\text{CO}_2(g)} = -393.51` kJ/mol and
+:math:`\Delta H_f^{\text{H}_2\text{O}(g)} = -241.83` kJ/mol at 298.15 K. The lower
+heating value is then
+
+.. math::
+   LHV_i = -\frac{\Delta H_{c,i}}{M_{w,i}}.
+
+This estimate is valid for hydrocarbons only and does not account for
+heteroatom-containing groups.
+
 .. _eq-mixture-properties:
 
 Equations for mixture properties from GCM
@@ -367,15 +434,18 @@ are used throughout this section.
    :widths: auto
    :align: center
    
-   ===============  ===============  =====================
-   Symbol           Units            Description
-   ===============  ===============  =====================
-   :math:`\rho`     kg/m\ :sup:`3`   Density
-   :math:`\nu`      m\ :sup:`2`/s    Kinematic viscosity
-   :math:`p_v`      Pa               Vapor pressure
-   :math:`\sigma`   N/m              Surface tension
-   :math:`\lambda`  W/m/K            Thermal conductivity
-   ===============  ===============  =====================
+   ========================  ===============  =====================
+   Symbol                    Units            Description
+   ========================  ===============  =====================
+   :math:`\rho`              kg/m\ :sup:`3`   Density
+   :math:`\nu`               m\ :sup:`2`/s    Kinematic viscosity
+   :math:`p_v`               Pa               Vapor pressure
+   :math:`\sigma`            N/m              Surface tension
+   :math:`\lambda`           W/m/K            Thermal conductivity
+   :math:`T_{fr}`            K                Freeze point
+   :math:`T_{fp}`            K                Flash point
+   :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
+   ========================  ===============  =====================
 
 .. _tab-mass-mole-fracs:
 
@@ -512,6 +582,76 @@ Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 
 .. math::
    \lambda = \bigg(\sum_{i=1}^{N_c} Y_i \lambda_i^{-2} \bigg)^{-1/2}.
+
+Mixture freeze point
+^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.mixture.freeze_point_boehm
+   :noindex:
+
+The freeze point of the mixture is estimated with the solid-liquid equilibrium model
+of Boehm et al.\ :footcite:p:`boehm_blend_2022`, equation 21. For each compound :math:`j` with mole fraction
+:math:`X_j`, the candidate freeze temperature :math:`T_j` solves
+
+.. math::
+   T_j \Big[\Delta S_{\textit{fus},j} + X_j \Delta C_{p,j} \ln\frac{T_j}{T_{m,j}}
+   + \alpha \, \Delta S_{\textit{mix},j}\Big]
+   = \Delta H_{\textit{fus},j} + X_j \Delta C_{p,j} (T_{m,j} - T_j),
+
+where
+
+.. math::
+   \Delta S_{\textit{mix},j} &= -\frac{R}{X_j}\big[(1 - X_j)\ln(1 - X_j) + X_j \ln X_j\big], \\
+   \Delta H_{\textit{fus},j} &= T_{m,j} \, \Delta S_{\textit{fus},j}, \\
+   \Delta C_{p,j} &= -0.35 \, C_{p,\ell,j}(298.15 \text{ K}),
+
+:math:`T_{m,j}` is the Constantinou-Gani melting point, :math:`\Delta S_{\textit{fus},j}`
+is provided by the ``boehm`` GCM (see :doc:`gcm`), and :math:`\alpha` is an optional
+scaling of the ideal mixing-entropy term (default 1). The mixture freeze point is the
+highest :math:`T_j` among compounds with :math:`X_j > 10^{-6}`, i.e. the temperature at
+which the first crystal forms on cooling. This is an equilibrium screening model that
+does not capture cooling rate, supercooling, or solid-phase nonideality.
+
+Mixture flash point
+^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.mixture.flash_point_alqaheem
+   :noindex:
+
+.. autofunction:: fuellib.correlate.mixture.flash_point_alibashki
+   :noindex:
+
+The mixture flash point is computed from the component flash points :math:`T_{fp,i}`
+(see Flash point above) with either a linear mass-fraction mixing rule,
+
+.. math::
+   T_{fp} = \sum_{i=1}^{N_c} Y_i T_{fp,i},
+
+or the ideal Liaw-Chiu\ :footcite:p:`liaw_general_2006` mixing rule (default), which solves for :math:`T_{fp}` such that
+
+.. math::
+   \sum_{i=1}^{N_c} X_i \frac{p_{\textit{sat},i}(T_{fp})}{p_{\textit{sat},i}(T_{fp,i})} = 1,
+
+where :math:`p_{\textit{sat},i}` is evaluated with the Lee-Kesler correlation. This
+mixing rule does not model nonideal liquid activity coefficients.
+
+Mixture heat of combustion
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.mixture.heat_of_combustion
+   :noindex:
+
+The mixture heat of combustion :math:`\Delta H^\circ_c` is reported per unit mass as the
+positive magnitude of the heat released, and is computed as the mass-fraction weighted
+average of the component lower heating values
+:math:`LHV_i` (see :ref:`Lower heating value <sec-lower-heating-value>`). It is distinct
+from the molar enthalpy of combustion :math:`\Delta H_{c,i}` of a single compound:
+
+.. math::
+   \Delta H^\circ_c = \sum_{i=1}^{N_c} Y_i \, LHV_i.
+
+This is a net heating value assuming gaseous water products, and is an engineering
+estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter test.
 
 Reference Compounds for Jet Fuels
 ---------------------------------
