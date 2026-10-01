@@ -8,6 +8,7 @@ import pandas as pd
 
 from fuellib.utils import Units
 from fuellib import Fuel, correlate
+from baselinePredictions.generate_baseline import method_map
 
 # Locate the tests baseline directory
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -27,15 +28,6 @@ class MixtureTestCase(unittest.TestCase):
     base_file = data_dir / "mixture_baseline.csv"
     base_data = pd.read_csv(base_file)
 
-    method_map = {
-        "density": correlate.mixture.density,
-        "viscosity": correlate.mixture.kinematic_viscosity_dutt,
-        "vaporpressure": correlate.mixture.saturated_vapor_pressure,
-        "dynamicviscosity": correlate.mixture.dynamic_viscosity_dutt,
-        "surfacetension": correlate.mixture.surface_tension,
-        "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
-        "cp": correlate.components.molar_specific_heat,
-    }
     prop_width = max(len(prop) for prop in method_map.keys())
 
     def test_mixture_accuracy(self) -> None:
@@ -60,7 +52,7 @@ class MixtureTestCase(unittest.TestCase):
                     base_mapes = []
                     pred_mapes = []
                     prop_data = fuel_data[fuel_data["Property"] == prop_name]
-                    method = self.method_map.get(
+                    method = method_map.get(
                         prop_name.replace(" ", "").strip().lower(), None
                     )
                     if method is None:
@@ -68,8 +60,12 @@ class MixtureTestCase(unittest.TestCase):
                         raise ValueError(msg)
 
                     for row in prop_data.itertuples():
-                        T = Units.Quantity(row.Temp, row.Temp_Units)
-                        pred = method(fuel=fuel, T=T).to(row.Property_Units)
+                        # Temperature-independent properties (e.g., freeze point) have
+                        # no Temp (parsed as NaN), so do not pass T to the method.
+                        kwargs = {}
+                        if not pd.isna(row.Temp):
+                            kwargs["T"] = Units.Quantity(row.Temp, row.Temp_Units)
+                        pred = method(fuel=fuel, **kwargs).to(row.Property_Units)
                         pred_val = pred.magnitude
                         if isinstance(pred_val, np.ndarray):
                             if pred_val.size != 1:

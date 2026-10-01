@@ -120,7 +120,8 @@ layers = [
     "fuellib.fuel",
     "fuellib.correlate",
     "fuellib.gcm",
-    "fuellib.rdk | fuellib.utils | fuellib.data", # Importable by all modules
+    "fuellib.rdk",
+    "fuellib.utils | fuellib.data", # Importable by all modules
 ]
 
 # Pytest configurations
