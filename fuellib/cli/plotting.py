@@ -374,12 +374,16 @@ def plot_mixture_properties(
         )
 
     def get_property_label(prop_name, prop_units):
-        """Create a label using the unit specified by the data source."""
+        """Create a label using the plot unit for the property."""
         label = "Vapor Pressure" if prop_name == "VaporPressure" else prop_name
         return rf"{label} [$\mathrm{{{prop_units}}}$]"
 
-    def get_predictions_and_data(fuel_name, prop_name):
-        """Get predicted and experimental data for a property."""
+    def get_predictions_and_data(fuel_name, prop_name, output_units=None):
+        """Get predicted and experimental data for a property.
+
+        When ``output_units`` is provided, convert all returned property values to
+        those units.
+        """
         fuel = fl.Fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
 
         # Try to load experimental data
@@ -458,12 +462,13 @@ def plot_mixture_properties(
             except (ValueError, TypeError, RuntimeError):
                 pred.magnitude[i] = np.nan
 
+        plot_units = output_units if output_units is not None else prop_units
         return (
             T_data.to("celsius").magnitude,
-            prop_data.magnitude,
+            prop_data.to(plot_units).magnitude,
             T_pred.to("celsius").magnitude,
-            pred.magnitude,
-            prop_units,
+            pred.to(plot_units).magnitude,
+            plot_units,
         )
 
     # Create figure with subplots
@@ -477,10 +482,13 @@ def plot_mixture_properties(
 
     # Plot properties for each fuel
     for i, prop_name in enumerate(property_names):
+        plot_units = None
         for fuel_idx, fuel_name in enumerate(fuel_names):
             T_data, prop_data, T_pred, pred, prop_units = get_predictions_and_data(
-                fuel_name, prop_name
+                fuel_name, prop_name, output_units=plot_units
             )
+            if plot_units is None:
+                plot_units = prop_units
             line_color, marker_style = get_line_spec(fuel_name, fuel_index=fuel_idx)
 
             # Plot predictions
