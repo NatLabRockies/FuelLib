@@ -605,7 +605,9 @@ where
    \Delta H_{\textit{fus},j} &= T_{m,j} \, \Delta S_{\textit{fus},j}, \\
    \Delta C_{p,j} &= -0.35 \, C_{p,\ell,j}(298.15 \text{ K}),
 
-:math:`T_{m,j}` is the Constantinou-Gani melting point, :math:`\Delta S_{\textit{fus},j}`
+:math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.Fuel.Tm` (a reference value
+when available, otherwise the Constantinou-Gani prediction; see :ref:`sec-reference-properties`),
+:math:`\Delta S_{\textit{fus},j}`
 is provided by the ``boehm`` GCM (see :doc:`gcm`), and :math:`\alpha` is an optional
 scaling of the ideal mixing-entropy term (default 1). The mixture freeze point is the
 highest :math:`T_j` among compounds with :math:`X_j > 10^{-6}`, i.e. the temperature at
@@ -671,6 +673,38 @@ When provided, the PelePhysics keys can be used to link the compounds in FuelLib
    :header-rows: 1
    :align: center
    :widths: auto
+
+.. _sec-reference-properties:
+
+Reference Property Data
+-----------------------
+
+Measured properties of pure compounds can replace group-contribution predictions.
+These data are stored in two CSV files in ``fuellib/data`` and accessed through
+:mod:`fuellib.data.references`:
+
+- ``refCompounds.csv``: ``Common_Name``, ``InChI``, ``SMILES``, ``Num_C``, ``Family``.
+- ``refProperties.csv``: ``Common_Name``, ``Property``, ``Units``, ``Value``, ``Error``, ``Source``.
+
+Only ``Common_Name`` and ``SMILES`` are required for each compound. Missing ``InChI``,
+``Num_C``, and ``Family`` values are derived from the SMILES when the data are loaded
+(:func:`~fuellib.data.references.populate_missing`); the files are only modified by
+calling :func:`~fuellib.data.references.update_compounds_csv`. ``Family`` is one of
+``n-alkane``, ``iso-alkane``, ``alkene``, ``monocyclic``, ``dicyclic``, ``tricyclic``,
+``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. ``Property`` is one of ``DCN``,
+``YSI``, ``Tc``, ``Pc``, ``Vc``, ``Tm``, or ``Tb``, and ``Error`` is optional.
+
+:func:`~fuellib.data.references.validate` checks both tables for consistency (exact headers,
+unique names/InChI/SMILES, known families and properties, ``InChI`` and ``Num_C`` that
+match the SMILES, numeric values, and properties that refer to listed compounds) and is
+called by the loaders, so malformed data raise a ``ValueError`` listing every problem.
+A compound's properties can be retrieved from a SMILES string with
+:func:`~fuellib.data.references.properties_by_smiles`.
+
+Currently, :attr:`~fuellib.fuel.Fuel.Tm` uses the reference melting point of each compound
+found in the tables and the Constantinou-Gani prediction for all others. Pass
+``use_references=False`` to :class:`~fuellib.fuel.Fuel` to use only the group-contribution
+prediction.
 
 Validation
 ----------

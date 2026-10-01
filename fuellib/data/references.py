@@ -2,8 +2,8 @@
 
 Data are stored in two CSV files next to this module:
 
-- ``referenceCompounds.csv``: compound names, identifiers, and families.
-- ``referenceProperties.csv``: measured property values for those compounds.
+- ``refCompounds.csv``: compound names, identifiers, and families.
+- ``refProperties.csv``: measured property values for those compounds.
 
 Only ``Common_Name`` and ``SMILES`` are required for each compound. Missing
 ``InChI``, ``Num_C``, and ``Family`` values are derived from the SMILES by
