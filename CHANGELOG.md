@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
+## [Unreleased]
+
+### Changed
+- `propertiesData` .csv files store Temperature vs. Value entries in individual rows rather than in a matrix format to enable non-Temperature dependent properties to be stored (e.g., "FreezePoint", "FlashPoint", ...) by setting Temp to "NaN".
+  * `test_accuracy.py` and `generate_baseline.py` updated to respect this change.
+  * Baseline predictions stored in `tests/baselinePredictions/mixture_baseline.csv` rather than individual per-fuel files.
+
+### Fixed
+- Added `ruff` rules `F401` and `F841` to prevent unused imports and variables; allowed `ruff` to automatically fix existing violations.
+
 ## [3.0.6] - 2026-09-30
 
 ### Added

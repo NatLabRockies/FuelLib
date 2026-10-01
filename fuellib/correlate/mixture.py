@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit
 
-from .. import constants
 from ..utils import Units, types
 from . import components, helpers
 

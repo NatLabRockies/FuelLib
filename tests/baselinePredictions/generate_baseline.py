@@ -1,69 +1,77 @@
-#!/usr/bin/env python3
-"""Generate updated baseline predictions for Fuel properties."""
-
-import sys
-
-from pathlib import Path
+"""Generate and fetch baseline predictions for fuel properties."""
 
 import pandas as pd
-from fuellib import Fuel
-from fuellib.utils import types
+import numpy as np
+from pathlib import Path
+from fuellib import correlate, Units, Fuel
 
-baseline_dir = Path(__file__).parent
-if str(baseline_dir.parent) not in sys.path:
-    sys.path.insert(0, str(baseline_dir.parent))
+data_dir = Path(__file__).parent
+mixture_file = data_dir / "mixture_baseline.csv"
+mixture_data = pd.DataFrame(
+    columns=[
+        "Fuel",
+        "Temp",
+        "Temp_Units",
+        "Property",
+        "Property_Units",
+        "Baseline_Value",
+        "Baseline_Error",
+    ]
+)
 
-from get_pred_and_data import get_pred_and_data
-
-
-def _prep_quantity(quantity: types.Quantity1D) -> list[str | float]:
-    """Convert a Quantity1D to a list of float values with units in 0th index."""
-    return [str(quantity.units)] + quantity.magnitude.tolist()
-
-
-fuel_names = ["heptane", "decane", "dodecane", "posf10264", "posf10325", "posf10289"]
-properties = {
-    "Density": "g/cm^3",
-    "Viscosity": "mm^2/s",
-    "VaporPressure": "kPa",
-    "SurfaceTension": "N/m",
-    "ThermalConductivity": "W/m/K",
+fuel_names = {"decane", "dodecane", "heptane", "posf10264", "posf10325", "posf10289"}
+method_map = {
+    "density": correlate.mixture.density,
+    "viscosity": correlate.mixture.kinematic_viscosity_dutt,
+    "vaporpressure": correlate.mixture.saturated_vapor_pressure,
+    "dynamicviscosity": correlate.mixture.dynamic_viscosity_dutt,
+    "surfacetension": correlate.mixture.surface_tension,
+    "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
+    "cp": correlate.components.molar_specific_heat,
 }
 
 
-def main():
-    """Generate updated baseline predictions for Fuel properties."""
+def update_baseline() -> None:
+    """Update the baseline predictions in the mixture data."""
     for fuel_name in fuel_names:
-        out_file = baseline_dir / f"{fuel_name}.csv"
+        fuel = Fuel(fuel_name)
+        props_file = Path(fuel.fuelDataPropsDir) / f"{fuel_name}.csv"
 
-        df_combined = pd.DataFrame()
-        for prop_name, prop_unit in properties.items():
-            T, data, pred = get_pred_and_data(fuel_name, prop_name)
+        if not props_file.exists():
+            raise FileNotFoundError(f"Fuel data file not found: {props_file}")
 
-            df_prop = pd.DataFrame({
-                "Temperature": _prep_quantity(T.to("celsius")),
-                prop_name: _prep_quantity(pred.to(prop_unit)),
-                f"Error_{prop_name}": _prep_quantity(
-                    abs(data.to(prop_unit) - pred.to(prop_unit))
-                ),
-            })
+        props_data = pd.read_csv(props_file)
+        for prop_name in props_data["Property"].unique():
+            prop_data = props_data[props_data["Property"] == prop_name]
+            method = method_map.get(prop_name.replace(" ", "").strip().lower(), None)
+            if method is None:
+                print(f"No method found for property '{prop_name}'; skipping.")
+                continue
 
-            if df_combined.empty:
-                df_combined = df_prop
-            else:
-                df_combined = pd.merge(
-                    df_combined, df_prop, on="Temperature", how="outer"
-                )
+            for row in prop_data.itertuples():
+                T = Units.Quantity(row.Temp, row.Temp_Units)
+                prop_val = Units.Quantity(row.Property_Value, row.Property_Units)
+                pred_val = method(fuel=fuel, T=T).to(row.Property_Units)
 
-        is_numeric = pd.to_numeric(df_combined["Temperature"], errors="coerce").notna()
-        units_row = df_combined[~is_numeric]
-        data_rows = df_combined[is_numeric].sort_values(
-            by="Temperature", key=lambda s: s.astype(float)
-        )
-        df_combined = pd.concat([units_row, data_rows], ignore_index=True)
+                pred_mag = pred_val.magnitude
+                if isinstance(pred_mag, np.ndarray):
+                    if pred_mag.size != 1:
+                        msg = f"Expected a single value for property '{prop_name}' of fuel '{fuel_name}', but got an array of size {pred_mag.size}."
+                        raise ValueError(msg)
+                    pred_mag = pred_mag.item()
 
-        df_combined.to_csv(out_file, index=False)
+                mixture_data.loc[len(mixture_data)] = [
+                    fuel_name,
+                    row.Temp,
+                    row.Temp_Units,
+                    prop_name,
+                    row.Property_Units,
+                    pred_mag,
+                    pred_mag - prop_val.magnitude,
+                ]
+
+    mixture_data.to_csv(mixture_file, index=False)
 
 
 if __name__ == "__main__":
-    main()
+    update_baseline()
