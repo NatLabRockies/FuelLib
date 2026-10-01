@@ -1,0 +1,6 @@
+fuellib.convert.K2C
+===================
+
+.. currentmodule:: fuellib.convert
+
+.. autofunction:: K2C

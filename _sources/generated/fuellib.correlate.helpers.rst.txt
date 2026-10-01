@@ -1,0 +1,18 @@
+﻿fuellib.correlate.helpers
+=========================
+
+.. automodule:: fuellib.correlate.helpers
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      mass_fractions_to_mole_fractions
+      mass_to_mass_fractions
+      mass_to_mole_fractions
+      mole_fractions_to_mass_fractions
+   

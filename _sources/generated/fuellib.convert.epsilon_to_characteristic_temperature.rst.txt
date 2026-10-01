@@ -1,0 +1,6 @@
+fuellib.convert.epsilon\_to\_characteristic\_temperature
+========================================================
+
+.. currentmodule:: fuellib.convert
+
+.. autofunction:: epsilon_to_characteristic_temperature

@@ -1,0 +1,567 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Group Contribution Method Abstraction &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Units" href="units.html" />
+    <link rel="prev" title="Fuel Property Prediction Model" href="fuelprops.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mass-specific-heat-capacity-of-the-liquid">Mass specific heat capacity of the liquid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#flash-point">Flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#lower-heating-value">Lower heating value</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-freeze-point">Mixture freeze point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-flash-point">Mixture flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-heat-of-combustion">Mixture heat of combustion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Group Contribution Method Abstraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#core-concepts">Core concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-gani-method">The <code class="docutils literal notranslate"><span class="pre">gani</span></code> method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#equations-for-gcm-properties">Equations for GCM properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-boehm-method">The <code class="docutils literal notranslate"><span class="pre">boehm</span></code> method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registering-a-new-property">Registering a new property</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fuel-integration"><code class="docutils literal notranslate"><span class="pre">Fuel</span></code> integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See also</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="units.html#basic-example">Basic example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#type-annotations">Type annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#further-reading">Further reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#required-input-files">Required Input Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-cli.html">Command-Line Interface (CLI) Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#unit-conversion-tools">Unit Conversion Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#fuel-management">Fuel Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#export-for-cfd">Export for CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#developer-tools">Developer Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-custom-fuels.html">Adding Custom Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#metadata-configuration">Metadata Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#gcxgc-composition-data">GCxGC Composition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#group-decomposition-data">Group Decomposition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#using-custom-fuels">Using Custom Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#tips-and-best-practices">Tips and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-converge.html">Exporting Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#public-api">Public API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.html">fuellib.fuel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.constants.html">fuellib.constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.convert.html">fuellib.convert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utility.html">fuellib.utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.types.html">fuellib.utils.types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.core.html">fuellib.gcm.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.gani.html">fuellib.gcm.gani</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.boehm.html">fuellib.gcm.boehm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.rdk.mol.html">fuellib.rdk.mol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.components.html">fuellib.correlate.components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.mixture.html">fuellib.correlate.mixture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.helpers.html">fuellib.correlate.helpers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Contributing to FuelLib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#optional-conda-environment">Optional: Conda Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#developer-tasks">Developer Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#pre-commit-hooks">Pre-commit Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#optional-uv">Optional: uv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#working-with-units-pint">Working with Units (pint)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#updating-the-changelog">Updating the Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#contributing-guidelines">Contributing Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#building-and-viewing-documentation-locally">Building and Viewing Documentation Locally</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Group Contribution Method Abstraction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gcm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="group-contribution-method-abstraction">
+<h1>Group Contribution Method Abstraction<a class="headerlink" href="#group-contribution-method-abstraction" title="Link to this heading"></a></h1>
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">fuellib.gcm</span></code> module provides a generic, extensible framework for
+registering and evaluating Group Contribution Method (GCM) property
+predictions. It decouples the definition of individual property formulas
+(such as the Constantinou-Gani correlations described in
+<a class="reference internal" href="fuelprops.html"><span class="doc">Fuel Property Prediction Model</span></a>) from the <a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel" title="fuellib.fuel.Fuel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fuel</span></code></a> class, so new
+methods or properties can be added without modifying <code class="docutils literal notranslate"><span class="pre">fuel.py</span></code>.</p>
+<section id="core-concepts">
+<h2>Core concepts<a class="headerlink" href="#core-concepts" title="Link to this heading"></a></h2>
+<p>Three pieces make up the abstraction, all defined in
+<a class="reference internal" href="generated/fuellib.gcm.core.html#module-fuellib.gcm.core" title="fuellib.gcm.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fuellib.gcm.core</span></code></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/fuellib.gcm.core.PropertyProtocol.html#fuellib.gcm.core.PropertyProtocol" title="fuellib.gcm.core.PropertyProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyProtocol</span></code></a>: a runtime-checkable
+<code class="docutils literal notranslate"><span class="pre">Protocol</span></code> describing the required signature of a property function,
+<code class="docutils literal notranslate"><span class="pre">(fuel:</span> <span class="pre">Fuel)</span> <span class="pre">-&gt;</span> <span class="pre">Quantity1D</span></code>. Any callable matching this signature can
+be registered as a property predictor.</p></li>
+<li><p><a class="reference internal" href="generated/fuellib.gcm.core.GCM.html#fuellib.gcm.core.GCM" title="fuellib.gcm.core.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a>: a named collection of property functions
+(a single group-contribution <em>method</em>, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;gani&quot;</span></code>). It supports
+registering, listing, retrieving, and evaluating property functions.</p></li>
+<li><p><a class="reference internal" href="generated/fuellib.gcm.core.GCMRegistry.html#fuellib.gcm.core.GCMRegistry" title="fuellib.gcm.core.GCMRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCMRegistry</span></code></a>: a process-wide registry of
+<a class="reference internal" href="generated/fuellib.gcm.core.GCM.html#fuellib.gcm.core.GCM" title="fuellib.gcm.core.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a> instances, keyed by method name.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.gcm</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCMRegistry</span>
+
+<span class="n">GCMRegistry</span><span class="o">.</span><span class="n">list_methods</span><span class="p">()</span>
+<span class="c1"># ['boehm', 'gani']</span>
+
+<span class="n">gani</span> <span class="o">=</span> <span class="n">GCMRegistry</span><span class="o">.</span><span class="n">get_gcm</span><span class="p">(</span><span class="s2">"gani"</span><span class="p">)</span>
+<span class="n">gani</span><span class="o">.</span><span class="n">list_property_fns</span><span class="p">()</span>
+<span class="c1"># ['alibakhshi_phi', 'cp_b', 'cp_c', 'cp_stp', 'gf', 'hf', 'hv_stp', 'mw', ...]</span>
+
+<span class="n">gani</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="s2">"Tc"</span><span class="p">,</span> <span class="n">fuel</span><span class="p">)</span>       <span class="c1"># Quantity1D of critical temperatures</span>
+<span class="n">gani</span><span class="o">.</span><span class="n">predict_all</span><span class="p">(</span><span class="n">fuel</span><span class="p">)</span>         <span class="c1"># {'gani': {'tc': ..., 'pc': ..., ...}}</span>
+</pre></div>
+</div>
+<p>Method and property name lookups (<code class="docutils literal notranslate"><span class="pre">GCMRegistry.get_gcm</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GCM.get_property</span></code>, <code class="docutils literal notranslate"><span class="pre">GCM.predict</span></code>) are case-insensitive. Looking up an
+unregistered method or property raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> listing the
+available options.</p>
+</section>
+<section id="the-gani-method">
+<h2>The <code class="docutils literal notranslate"><span class="pre">gani</span></code> method<a class="headerlink" href="#the-gani-method" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="generated/fuellib.gcm.gani.html#module-fuellib.gcm.gani" title="fuellib.gcm.gani"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fuellib.gcm.gani</span></code></a> implements the Constantinou-Gani (and extended)
+correlations from <a class="reference internal" href="fuelprops.html"><span class="doc">Fuel Property Prediction Model</span></a> on top of this abstraction. On import,
+it registers a <code class="docutils literal notranslate"><span class="pre">&quot;gani&quot;</span></code> <a class="reference internal" href="generated/fuellib.gcm.core.GCM.html#fuellib.gcm.core.GCM" title="fuellib.gcm.core.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a> with
+<a class="reference internal" href="generated/fuellib.gcm.core.GCMRegistry.html#fuellib.gcm.core.GCMRegistry" title="fuellib.gcm.core.GCMRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCMRegistry</span></code></a> and populates it with property
+functions for <code class="docutils literal notranslate"><span class="pre">MW</span></code>, <code class="docutils literal notranslate"><span class="pre">Tc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pc</span></code>, <code class="docutils literal notranslate"><span class="pre">Vc</span></code>, <code class="docutils literal notranslate"><span class="pre">Tb</span></code>, <code class="docutils literal notranslate"><span class="pre">Tm</span></code>, <code class="docutils literal notranslate"><span class="pre">Hf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Gf</span></code>, <code class="docutils literal notranslate"><span class="pre">Hv_stp</span></code>, <code class="docutils literal notranslate"><span class="pre">omega</span></code>, <code class="docutils literal notranslate"><span class="pre">Vm_stp</span></code>, <code class="docutils literal notranslate"><span class="pre">Cp_stp</span></code>, <code class="docutils literal notranslate"><span class="pre">Cp_B</span></code>, <code class="docutils literal notranslate"><span class="pre">Cp_C</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rd_A</span></code>, <code class="docutils literal notranslate"><span class="pre">rd_B</span></code>, <code class="docutils literal notranslate"><span class="pre">rd_D</span></code>, and <code class="docutils literal notranslate"><span class="pre">alibakhshi_phi</span></code>. Group-contribution
+coefficients are read from <code class="docutils literal notranslate"><span class="pre">fuellib/gcm/gani.csv</span></code> into a module-level
+table indexed by property name, with one column per first- or
+second-order group.</p>
+<section id="table-of-gcm-properties">
+<span id="tab-gcm-properties-gcm"></span><h3>Table of GCM properties<a class="headerlink" href="#table-of-gcm-properties" title="Link to this heading"></a></h3>
+<table class="docutils align-center" id="id19">
+<caption><span class="caption-number">Table 8 </span><span class="caption-text">GCM properties of the <em>i-th</em> component in a mixture. The subscript <em>stp</em> denotes a standard pressure assumption.</span><a class="headerlink" href="#id19" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Group Contributions</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(M_{w,i}\)</span></p></td>
+<td><p>kg/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(m_{w1k}\)</span></p></td>
+<td><p>g/mol</p></td>
+<td><p>Molecular weight.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_{c,i}\)</span></p></td>
+<td><p>K</p></td>
+<td><p><span class="math notranslate nohighlight">\(t_{c1k}\)</span>, <span class="math notranslate nohighlight">\(t_{c2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Critical temperature<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(p_{c,i}\)</span></p></td>
+<td><p>Pa</p></td>
+<td><p><span class="math notranslate nohighlight">\(p_{c1k}\)</span>, <span class="math notranslate nohighlight">\(p_{c2j}\)</span></p></td>
+<td><p>bar<sup>-0.5</sup></p></td>
+<td><p>Critical pressure<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(V_{c,i}\)</span></p></td>
+<td><p>m<sup>3</sup>/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(v_{c1k}\)</span>, <span class="math notranslate nohighlight">\(v_{c2j}\)</span></p></td>
+<td><p>m<sup>3</sup>/kmol</p></td>
+<td><p>Critical volume<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(T_{b,i}\)</span></p></td>
+<td><p>K</p></td>
+<td><p><span class="math notranslate nohighlight">\(t_{b1k}\)</span>, <span class="math notranslate nohighlight">\(t_{b2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Normal boiling point<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_{m,i}\)</span></p></td>
+<td><p>K</p></td>
+<td><p><span class="math notranslate nohighlight">\(t_{m1k}\)</span>, <span class="math notranslate nohighlight">\(t_{m2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Normal melting point<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta H_{f,i}\)</span></p></td>
+<td><p>J/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{f1k}\)</span>, <span class="math notranslate nohighlight">\(h_{f2j}\)</span></p></td>
+<td><p>kJ/mol</p></td>
+<td><p>Enthalpy of formation at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta G_{f,i}\)</span></p></td>
+<td><p>J/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(g_{f1k}\)</span>, <span class="math notranslate nohighlight">\(g_{f2j}\)</span></p></td>
+<td><p>kJ/mol</p></td>
+<td><p>Standard Gibbs free energy at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta H_{v,\textit{stp},i}\)</span></p></td>
+<td><p>J/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{v1k}\)</span>, <span class="math notranslate nohighlight">\(h_{v2j}\)</span></p></td>
+<td><p>kJ/mol</p></td>
+<td><p>Enthalpy of vaporization at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\omega_i\)</span></p></td>
+<td><p>1</p></td>
+<td><p><span class="math notranslate nohighlight">\(\omega_{1k}\)</span>, <span class="math notranslate nohighlight">\(\omega_{2j}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>Acentric factor<a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(V_{m,\textit{stp},i}\)</span></p></td>
+<td><p>m<sup>3</sup>/mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(v_{m1k}\)</span>, <span class="math notranslate nohighlight">\(v_{m2j}\)</span></p></td>
+<td><p>m<sup>3</sup>/kmol</p></td>
+<td><p>Liquid molar volume at 298 K<a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(C_{p,i}\)</span></p></td>
+<td><p>J/mol/K</p></td>
+<td><p><span class="math notranslate nohighlight">\(C_{pA1_k}\)</span>, <span class="math notranslate nohighlight">\(C_{pA2_k}\)</span>,…</p></td>
+<td><p>J/mol/K</p></td>
+<td><p>Molar specific heat capacity<a class="footnote-reference brackets" href="#footcite-nielsen-molecular-1998" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Each of these properties maps directly onto a registered <code class="docutils literal notranslate"><span class="pre">gani</span></code> property
+function of the same (lowercased) name (e.g. <span class="math notranslate nohighlight">\(T_{c,i}\)</span> -&gt; <code class="docutils literal notranslate"><span class="pre">Tc</span></code>,
+<span class="math notranslate nohighlight">\(\Delta H_{f,i}\)</span> -&gt; <code class="docutils literal notranslate"><span class="pre">Hf</span></code>). See <a class="reference internal" href="fuelprops.html"><span class="doc">Fuel Property Prediction Model</span></a> for the full
+description of the underlying physics and additional derived correlations
+(density, viscosity, vapor pressure, surface tension, thermal conductivity)
+built on top of these GCM properties.</p>
+</section>
+<section id="equations-for-gcm-properties">
+<span id="eq-gcm-properties-gcm"></span><h3>Equations for GCM properties<a class="headerlink" href="#equations-for-gcm-properties" title="Link to this heading"></a></h3>
+<p>The properties of each compound in a mixture can be calculated as the sum of contributions
+from the first- and second-order groups that make up the compound. For a given mixture,
+let <span class="math notranslate nohighlight">\(\mathbf{N}\)</span> be an <span class="math notranslate nohighlight">\(N_c \times N_{g_1}\)</span> matrix that represents the
+number of first-order groups in each compound, where <span class="math notranslate nohighlight">\(N_c\)</span> is the number of compounds
+in the mixture and <span class="math notranslate nohighlight">\(N_{g_1}\)</span> is the total number of first-order groups as defined
+by Constantinou and Gani<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.
+Similarly, let <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> be an <span class="math notranslate nohighlight">\(N_c \times N_{g_2}\)</span> matrix that specifies
+the number of second-order groups in each compound, where <span class="math notranslate nohighlight">\(N_{g_2}\)</span> is the total
+number of second-order groups. The total number of groups <span class="math notranslate nohighlight">\(N_g = N_{g_1} + N_{g_2} = 121\)</span>.
+The GCM properties for the <em>i-th</em> compound in the mixture are calculated as
+follows<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}M_{w,i} &amp;= \bigg[\sum_{k = 1}^{N_{g_1}}\mathbf{N}_{ik}m_{w1k} \bigg] \times 10^{-3}, \\
+T_{c,i} &amp;= 181.28 \ln  \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} t_{c1k} + \sum_{j=1}^{N_{g_2}}         \mathbf{M}_{ij} t_{c2j} \bigg],\\
+p_{c,i} &amp;= \Bigg( \bigg[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} p_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}     p_{c2j} + 0.10022\bigg]^{-2}  + 1.3705\Bigg)\times 10^{5}, \\
+V_{c,i} &amp;= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}      v_{c2j} \bigg] -0.00435 \Bigg)\times 10^{-3}, \\
+T_{b,i} &amp;= 204.359 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{b1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{b2j}\bigg],\\
+T_{m,i} &amp;= 102.425 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{m1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{m2j}\bigg],\\
+\Delta H_{f,i} &amp;= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
+\Delta G_{f,i} &amp;= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
+\Delta H_{v,\textit{stp},i} &amp;= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
+\omega_i &amp;= 0.4085 \bigg[ \ln \Big(  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big) \bigg]^{1/0.5050}, \\
+V_{m,\textit{stp},i} &amp;= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
+C_{p,i} &amp; =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \\
+    &amp; +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \\
+    &amp; +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
+\theta &amp;= \frac{T - 298.15}{700}\end{split}\]</div>
+<p>These closed-form expressions are exactly what each corresponding <code class="docutils literal notranslate"><span class="pre">gani</span></code>
+property function evaluates, using the decomposition matrices <code class="docutils literal notranslate"><span class="pre">nij</span></code>
+(<span class="math notranslate nohighlight">\(\mathbf{N}\)</span>) and, where second-order groups are involved,
+<code class="docutils literal notranslate"><span class="pre">mij</span></code> (<span class="math notranslate nohighlight">\(\mathbf{M}\)</span>) returned by <code class="docutils literal notranslate"><span class="pre">_get_decomp</span></code> and the
+coefficient rows (<span class="math notranslate nohighlight">\(m_{w1k}\)</span>, <span class="math notranslate nohighlight">\(t_{c1k}\)</span>, …) returned by
+<code class="docutils literal notranslate"><span class="pre">_get_row</span></code>.</p>
+<p>Each property function follows the same pattern:</p>
+<ol class="arabic simple">
+<li><p>Build the fuel’s group decomposition matrix, reindexed to match the
+table’s canonical column (group) order, via the internal
+<code class="docutils literal notranslate"><span class="pre">_get_decomp</span></code> helper. Any group present in the table but missing from
+the fuel’s decomposition data is treated as zero, so a fuel need not
+define every group as long as the ones it does define are covered by
+the table (partial group coverage).</p></li>
+<li><p>Look up the property’s group-contribution row from the table via the
+internal <code class="docutils literal notranslate"><span class="pre">_get_row</span></code> helper (raises <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if the property has
+no row in the table).</p></li>
+<li><p>Apply the property’s closed-form correlation and return the result as
+a unit-aware <code class="xref py py-data docutils literal notranslate"><span class="pre">Quantity1D</span></code> (see <a class="reference internal" href="units.html"><span class="doc">Units</span></a>).</p></li>
+</ol>
+</section>
+</section>
+<section id="the-boehm-method">
+<h2>The <code class="docutils literal notranslate"><span class="pre">boehm</span></code> method<a class="headerlink" href="#the-boehm-method" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="generated/fuellib.gcm.boehm.html#module-fuellib.gcm.boehm" title="fuellib.gcm.boehm"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fuellib.gcm.boehm</span></code></a> registers a <code class="docutils literal notranslate"><span class="pre">&quot;boehm&quot;</span></code>
+<a class="reference internal" href="generated/fuellib.gcm.core.GCM.html#fuellib.gcm.core.GCM" title="fuellib.gcm.core.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a> that provides the fusion entropy,
+<span class="math notranslate nohighlight">\(\Delta S_{\textit{fus},i}\)</span>, of each compound following Boehm
+(2022). It currently registers a single property, <code class="docutils literal notranslate"><span class="pre">dS_fus</span></code> (J/mol/K), which
+is used by <a class="reference internal" href="generated/fuellib.correlate.mixture.freeze_point_boehm.html#fuellib.correlate.mixture.freeze_point_boehm" title="fuellib.correlate.mixture.freeze_point_boehm"><code class="xref py py-func docutils literal notranslate"><span class="pre">freeze_point_boehm()</span></code></a>.</p>
+<p>Each compound is first assigned to a hydrocarbon family from its RDKit
+<code class="docutils literal notranslate"><span class="pre">Mol</span></code> object (see <a class="reference internal" href="generated/fuellib.rdk.mol.html#module-fuellib.rdk.mol" title="fuellib.rdk.mol"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fuellib.rdk.mol</span></code></a>, including
+<a class="reference internal" href="generated/fuellib.rdk.mol.has_fused_rings.html#fuellib.rdk.mol.has_fused_rings" title="fuellib.rdk.mol.has_fused_rings"><code class="xref py py-func docutils literal notranslate"><span class="pre">has_fused_rings()</span></code></a> and
+<a class="reference internal" href="generated/fuellib.rdk.mol.count_aromatic_rings.html#fuellib.rdk.mol.count_aromatic_rings" title="fuellib.rdk.mol.count_aromatic_rings"><code class="xref py py-func docutils literal notranslate"><span class="pre">count_aromatic_rings()</span></code></a>). The families are <code class="docutils literal notranslate"><span class="pre">n-alkane</span></code>,
+<code class="docutils literal notranslate"><span class="pre">iso-alkane</span></code>, <code class="docutils literal notranslate"><span class="pre">alkene</span></code>, <code class="docutils literal notranslate"><span class="pre">monocyclic</span></code>, <code class="docutils literal notranslate"><span class="pre">dicyclic</span></code>, <code class="docutils literal notranslate"><span class="pre">tricyclic</span></code>,
+<code class="docutils literal notranslate"><span class="pre">alkylbenzene</span></code>, <code class="docutils literal notranslate"><span class="pre">cycloaromatic</span></code>, and <code class="docutils literal notranslate"><span class="pre">diaromatic</span></code>. The fusion entropy is
+then a linear function of the carbon number <span class="math notranslate nohighlight">\(n_{C,i}\)</span>, with parameters
+<span class="math notranslate nohighlight">\(A_f\)</span>, <span class="math notranslate nohighlight">\(B_f\)</span>, and <span class="math notranslate nohighlight">\(C_{\textit{ref},f}\)</span> for family <span class="math notranslate nohighlight">\(f\)</span>
+read from <code class="docutils literal notranslate"><span class="pre">fuellib/gcm/boehm.csv</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[\Delta S_{\textit{fus},i} = \max\big[A_f + B_f (n_{C,i} - C_{\textit{ref},f}),\, 20\big].\]</div>
+<p>Compounds whose family is not in the table fall back to the Walden-rule value
+of 56.5 J/mol/K.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fuel</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">"boehm"</span><span class="p">,</span> <span class="s2">"dS_fus"</span><span class="p">)</span>   <span class="c1"># Quantity1D in J/(mol*K)</span>
+</pre></div>
+</div>
+</section>
+<section id="registering-a-new-property">
+<h2>Registering a new property<a class="headerlink" href="#registering-a-new-property" title="Link to this heading"></a></h2>
+<p>New properties can be added to an existing GCM (or a new one) with the
+<a class="reference internal" href="generated/fuellib.gcm.core.GCM.html#fuellib.gcm.core.GCM.register_property" title="fuellib.gcm.core.GCM.register_property"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register_property()</span></code></a> decorator. A property
+function must accept a <a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel" title="fuellib.fuel.Fuel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fuel</span></code></a> and return a
+<code class="xref py py-data docutils literal notranslate"><span class="pre">Quantity1D</span></code> with one value per compound in
+<code class="docutils literal notranslate"><span class="pre">fuel.compounds</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.gcm.gani</span><span class="w"> </span><span class="kn">import</span> <span class="n">gani_gcm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Units</span><span class="p">,</span> <span class="n">types</span>
+
+
+<span class="nd">@gani_gcm</span><span class="o">.</span><span class="n">register_property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_new_property</span><span class="p">(</span><span class="n">fuel</span><span class="p">:</span> <span class="s2">"Fuel"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">Quantity1D</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Predict some new property from the Gani decomposition."""</span>
+    <span class="n">nij</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">gani_decomp</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># derive coefficients, e.g. from a new table row</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># apply the correlation</span>
+    <span class="k">return</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The function is registered under its (lowercased) <code class="docutils literal notranslate"><span class="pre">__name__</span></code>, so it
+immediately becomes available via <code class="docutils literal notranslate"><span class="pre">gani_gcm.predict(&quot;my_new_property&quot;,</span>
+<span class="pre">fuel)</span></code> and through <code class="docutils literal notranslate"><span class="pre">fuel.get_property(&quot;gani&quot;,</span> <span class="pre">&quot;my_new_property&quot;)</span></code> once
+a new <a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel" title="fuellib.fuel.Fuel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fuel</span></code></a> (or its cached
+<a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.gcm_properties" title="fuellib.fuel.Fuel.gcm_properties"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gcm_properties</span></code></a>) is evaluated.</p>
+<p>A completely new method can likewise be registered with
+<a class="reference internal" href="generated/fuellib.gcm.core.GCMRegistry.html#fuellib.gcm.core.GCMRegistry.register" title="fuellib.gcm.core.GCMRegistry.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.gcm</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCMRegistry</span>
+
+<span class="n">my_gcm</span> <span class="o">=</span> <span class="n">GCMRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">"my_method"</span><span class="p">,</span> <span class="n">property_fns</span><span class="o">=</span><span class="p">[])</span>
+
+
+<span class="nd">@my_gcm</span><span class="o">.</span><span class="n">register_property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">some_property</span><span class="p">(</span><span class="n">fuel</span><span class="p">:</span> <span class="s2">"Fuel"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">Quantity1D</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="fuel-integration">
+<h2><code class="docutils literal notranslate"><span class="pre">Fuel</span></code> integration<a class="headerlink" href="#fuel-integration" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel" title="fuellib.fuel.Fuel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fuel</span></code></a> exposes three members that tie into the
+registry:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.gani_decomp" title="fuellib.fuel.Fuel.gani_decomp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gani_decomp()</span></code></a>: reads the fuel’s group
+decomposition file and returns it restricted to <code class="docutils literal notranslate"><span class="pre">fuel.compounds</span></code>,
+raising a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if any compound in the mixture is missing from
+the file.</p></li>
+<li><p><a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.gcm_properties" title="fuellib.fuel.Fuel.gcm_properties"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gcm_properties</span></code></a> (a cached property):
+evaluates every registered GCM method against the fuel and returns a
+nested mapping <code class="docutils literal notranslate"><span class="pre">{method_name:</span> <span class="pre">{property_name:</span> <span class="pre">Quantity1D}}</span></code>. Because it
+is cached, each method/property pair is only computed once per
+<code class="docutils literal notranslate"><span class="pre">Fuel</span></code> instance.</p></li>
+<li><p><a class="reference internal" href="generated/fuellib.fuel.Fuel.html#fuellib.fuel.Fuel.get_property" title="fuellib.fuel.Fuel.get_property"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_property()</span></code></a>: a case-insensitive lookup into
+<code class="docutils literal notranslate"><span class="pre">gcm_properties</span></code>, raising <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if either the method or the
+property name is not present.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fuel</span> <span class="o">=</span> <span class="n">Fuel</span><span class="p">(</span><span class="s2">"decane"</span><span class="p">)</span>
+
+<span class="n">fuel</span><span class="o">.</span><span class="n">gani_decomp</span><span class="p">()</span>                       <span class="c1"># DataFrame, one row per compound</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">gcm_properties</span><span class="p">[</span><span class="s2">"gani"</span><span class="p">][</span><span class="s2">"tc"</span><span class="p">]</span>        <span class="c1"># Quantity1D of critical temperatures</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">"gani"</span><span class="p">,</span> <span class="s2">"Tc"</span><span class="p">)</span>          <span class="c1"># same values, case-insensitive lookup</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Fuel.__init__</span></code> itself now calls <code class="docutils literal notranslate"><span class="pre">self.get_property(&quot;gani&quot;,</span> <span class="pre">...)</span></code> to
+populate its critical-property attributes (<code class="docutils literal notranslate"><span class="pre">Tc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pc</span></code>, <code class="docutils literal notranslate"><span class="pre">Vc</span></code>, etc.)
+instead of duplicating the group-contribution formulas inline, so those
+attributes and the registry stay in sync automatically.</p>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="fuelprops.html"><span class="doc">Fuel Property Prediction Model</span></a> for the underlying Constantinou-Gani correlations and
+their physical meaning.</p></li>
+<li><p><a class="reference internal" href="units.html"><span class="doc">Units</span></a> for details on <code class="xref py py-data docutils literal notranslate"><span class="pre">Quantity1D</span></code> and
+the unit-aware value types returned by GCM property functions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tests/test_gcm.py</span></code> for further usage examples, including registration,
+error handling, and decomposition-matrix behavior.</p></li>
+</ul>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div class="docutils container" id="id18">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-constantinou-new-1994" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id3">3</a>,<a role="doc-backlink" href="#id4">4</a>,<a role="doc-backlink" href="#id5">5</a>,<a role="doc-backlink" href="#id6">6</a>,<a role="doc-backlink" href="#id7">7</a>,<a role="doc-backlink" href="#id8">8</a>,<a role="doc-backlink" href="#id13">9</a>,<a role="doc-backlink" href="#id15">10</a>)</span>
+<p>Leonidas Constantinou and Rafiqul Gani. New group contribution method for estimating properties of pure compounds. <em>AIChE Journal</em>, 40(10):1697–1710, October 1994. URL: <a class="reference external" href="https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690401011">https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690401011</a> (visited on 2024-07-08), <a class="reference external" href="https://doi.org/10.1002/aic.690401011">doi:10.1002/aic.690401011</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-constantinou-estimation-1995" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id9">1</a>,<a role="doc-backlink" href="#id10">2</a>,<a role="doc-backlink" href="#id14">3</a>,<a role="doc-backlink" href="#id16">4</a>)</span>
+<p>Leonidas Constantinou, Rafiqul Gani, and John P. O’Connell. Estimation of the acentric factor and the liquid molar volume at 298 K using a new group contribution method. <em>Fluid Phase Equilibria</em>, 103(1):11–22, January 1995. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/037838129402593P">https://linkinghub.elsevier.com/retrieve/pii/037838129402593P</a> (visited on 2024-07-08), <a class="reference external" href="https://doi.org/10.1016/0378-3812(94)02593-P">doi:10.1016/0378-3812(94)02593-P</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-nielsen-molecular-1998" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">3</a><span class="fn-bracket">]</span></span>
+<p>T.L. Nielsen. Molecular Structure Based Property Prediction, 15-point Project Department of Chemical Engineering. <em>Technical University of Denmark Lyngby</em>, 1998.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-poling-properties-2001" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id12">1</a>,<a role="doc-backlink" href="#id17">2</a>)</span>
+<p>Bruce E. Poling, John M. Prausnitz, and John P. O’Connell. <em>The properties of gases and liquids</em>. McGraw-Hill international editions Chemical engineering series. McGraw-Hill, New York, NY, 5. ed edition, 2001. ISBN 978-0-07-011682-5 978-0-07-118971-2. URL: <a class="reference external" href="https://www.accessengineeringlibrary.com/content/book/9780070116825?implicit-login=true">https://www.accessengineeringlibrary.com/content/book/9780070116825?implicit-login=true</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fuelprops.html" class="btn btn-neutral float-left" title="Fuel Property Prediction Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="units.html" class="btn btn-neutral float-right" title="Units" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
