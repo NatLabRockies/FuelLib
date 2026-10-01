@@ -29,7 +29,7 @@ Three pieces make up the abstraction, all defined in
    from fuellib.gcm import GCMRegistry
 
    GCMRegistry.list_methods()
-   # ['gani']
+   # ['boehm', 'gani']
 
    gani = GCMRegistry.get_gcm("gani")
    gani.list_property_fns()
@@ -52,7 +52,11 @@ it registers a ``"gani"`` :class:`~fuellib.gcm.core.GCM` with
 :class:`~fuellib.gcm.core.GCMRegistry` and populates it with property
 functions for ``MW``, ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``Hf``,
 ``Gf``, ``Hv_stp``, ``omega``, ``Vm_stp``, ``Cp_stp``, ``Cp_B``, ``Cp_C``,
-``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Group-contribution
+``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Note that
+:attr:`~fuellib.fuel.Fuel.Tm` is not the raw ``gani`` prediction: it uses
+reference melting points from :mod:`fuellib.data.references` when available
+(see :ref:`sec-reference-properties`) and falls back to ``gani`` otherwise.
+Group-contribution
 coefficients are read from ``fuellib/gcm/gani.csv`` into a module-level
 table indexed by property name, with one column per first- or
 second-order group.
@@ -145,6 +149,36 @@ Each property function follows the same pattern:
    no row in the table).
 3. Apply the property's closed-form correlation and return the result as
    a unit-aware :data:`~fuellib.utils.types.Quantity1D` (see :doc:`units`).
+
+The ``boehm`` method
+--------------------
+
+:mod:`fuellib.gcm.boehm` registers a ``"boehm"``
+:class:`~fuellib.gcm.core.GCM` that provides the fusion entropy,
+:math:`\Delta S_{\textit{fus},i}`, of each compound following Boehm
+(2022). It currently registers a single property, ``dS_fus`` (J/mol/K), which
+is used by :func:`~fuellib.correlate.mixture.freeze_point_boehm`.
+
+Each compound is first assigned to a hydrocarbon family from its RDKit
+``Mol`` object (see :mod:`fuellib.rdk.mol`, including
+:func:`~fuellib.rdk.mol.has_fused_rings` and
+:func:`~fuellib.rdk.mol.count_aromatic_rings`). The families are ``n-alkane``,
+``iso-alkane``, ``alkene``, ``monocyclic``, ``dicyclic``, ``tricyclic``,
+``alkylbenzene``, ``cycloaromatic``, and ``diaromatic``. The fusion entropy is
+then a linear function of the carbon number :math:`n_{C,i}`, with parameters
+:math:`A_f`, :math:`B_f`, and :math:`C_{\textit{ref},f}` for family :math:`f`
+read from ``fuellib/gcm/boehm.csv``:
+
+.. math::
+
+   \Delta S_{\textit{fus},i} = \max\big[A_f + B_f (n_{C,i} - C_{\textit{ref},f}),\, 20\big].
+
+Compounds whose family is not in the table fall back to the Walden-rule value
+of 56.5 J/mol/K.
+
+.. code-block:: python
+
+   fuel.get_property("boehm", "dS_fus")   # Quantity1D in J/(mol*K)
 
 Registering a new property
 ---------------------------

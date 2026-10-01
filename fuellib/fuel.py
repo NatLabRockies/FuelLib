@@ -20,6 +20,7 @@ from ._data_locator import (
     get_metadata_decomp_name,
 )
 from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
+from .data import references
 from .gcm import GCMRegistry
 from .rdk import mol
 from .utils import Units, types
@@ -29,7 +30,12 @@ class Fuel:
     """Class for handling calculations of thermodynamic and mixture properties."""
 
     def __init__(
-        self, name: str, decompName: str | None = None, fuelDataDir: str | None = None
+        self,
+        name: str,
+        decompName: str | None = None,
+        fuelDataDir: str | None = None,
+        *,
+        use_references: bool = True,
     ) -> None:
         """Initialize Fuel object and pre-compute GCM properties.
 
@@ -39,9 +45,13 @@ class Fuel:
                 Defaults to None.
             fuelDataDir: Directory where the fuel data is stored. If None, uses built-in
                 embedded data.
+            use_references: Whether to use reference data for property calculations.
+                Defaults to True.
         """
         self.name: str = name
         """Name of the fuel/mixture."""
+        self.use_references: bool = use_references
+        """Whether to use reference data for property calculations."""
         if decompName is None:
             # Try to get decomposition name from metadata
             decompName: str = get_metadata_decomp_name(name, fuelDataDir)
@@ -98,8 +108,6 @@ class Fuel:
         """Critical volume in m^3/mol."""
         self.Tb: types.Quantity1D = self.get_property("gani", "Tb").to("K")
         """Boiling temperature in K."""
-        self.Tm: types.Quantity1D = self.get_property("gani", "Tm").to("K")
-        """Melting temperature in K."""
         self.Hf: types.Quantity1D = self.get_property("gani", "Hf").to("J/mol")
         """Enthalpy of formation in J/mol."""
         self.Gf: types.Quantity1D = self.get_property("gani", "Gf").to("J/mol")
@@ -338,6 +346,31 @@ class Fuel:
         return self.gcm_properties[method][property_name]
 
     # -------------------------------------------------------------------------
+    # Property getters
+    # -------------------------------------------------------------------------
+    @cached_property
+    def Tm(self) -> types.Quantity1D:
+        """Melting temperatures in K.
+
+        Uses reference data if `self.use_references` is True.
+        """
+        Tm = self.get_property("gani", "Tm")
+        if not self.use_references:
+            return Tm
+        values = np.array(Tm.to("K").magnitude, dtype=float)
+        for i, smiles in enumerate(self.smiles):
+            ref_props = references.properties_by_smiles(smiles)
+            if ref_props is None:
+                continue
+            ref_Tm = ref_props[ref_props["Property"] == "Tm"]
+            if ref_Tm.empty:
+                continue
+            row = ref_Tm.iloc[0]
+            units = row["Units"] if pd.notna(row["Units"]) else "K"
+            values[i] = Units.Quantity(float(row["Value"]), units).to("K").magnitude
+        return Units.Quantity(values, "K")
+
+    # -------------------------------------------------------------------------
     # Member functions
     # -------------------------------------------------------------------------
     def mean_molecular_weight(
@@ -462,7 +495,7 @@ class Fuel:
         Returns:
             Molar specific heat capacity in J/mol/K.
         """
-        cp = correlate.components.molar_specific_heat(self, T)
+        cp = correlate.components.molar_specific_heat_capacity(self, T)
         return cp[comp_idx] if comp_idx is not None else cp
 
     def Cl(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
@@ -476,7 +509,7 @@ class Fuel:
         Returns:
             Mass specific heat capacity in J/kg/K.
         """
-        cp = correlate.components.liquid_mass_specific_heat(self, T)
+        cp = correlate.components.liquid_mass_specific_heat_capacity(self, T)
         return cp[comp_idx] if comp_idx is not None else cp
 
     def psat(

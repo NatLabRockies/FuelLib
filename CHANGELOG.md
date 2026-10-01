@@ -5,7 +5,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
-## [Unreleased]
+## [Unreleased] (YSI, DCN prep)
+
+### Added
+- `data.references` module for loading, validating, and querying reference compounds with measured properties.
+  * `data/refCompounds.csv` (`Common_Name`, `InChI`, `SMILES`, `Num_C`, `Family`) and `data/refProperties.csv` (`Common_Name`, `Property`, `Units`, `Value`, `Error`, `Source`) store the data; initial entries provide the n-heptane melting point (`Tm`).
+  * `references.load_compounds`, `references.load_properties`, and `references.properties_by_smiles` (matches by InChI derived from the SMILES).
+  * `references.populate_missing` fills missing `InChI`, `Num_C`, and `Family` values from the SMILES (only `Common_Name` and `SMILES` are required); `references.update_compounds_csv` writes the populated values back to the CSV.
+  * `references.classify_family` assigns one of `references.FAMILIES` (`n-alkane`, `iso-alkane`, `alkene`, `monocyclic`, `dicyclic`, `tricyclic`, `alkylbenzene`, `cycloaromatic`, `diaromatic`) to a hydrocarbon.
+  * `references.validate` collects and reports all header, duplicate, family, `Num_C`, `InChI`/SMILES consistency, property name, and numeric `Value`/`Error` problems; the loaders call it automatically.
+- `Fuel.use_references` (keyword-only `use_references` argument to `Fuel.__init__`, default `True`) to toggle use of reference data in property calculations.
+- `tests/test_ref_compounds.py` covering the shipped reference data, `validate`, `classify_family`, and `populate_missing`.
+
+### Changed
+- `Fuel.Tm` is a cached property that uses reference `Tm` values (converted to K) for compounds found in `refProperties.csv`, falling back to the Gani prediction otherwise or when `use_references=False`.
+- `correlate.mixture.freeze_point_boehm` uses `fuel.Tm` rather than exclusively the Gani prediction.
+- Heptane `FreezePoint` in `propertiesData/heptane.csv` updated from -91.0 to -91.61 celsius.
+- `fuellib.data` imports `references` and may import `fuellib.rdk` and `fuellib.utils`; `[tool.importlinter]` layers updated accordingly (`fuellib.data` now sits above `fuellib.rdk`).
+
+### Fixed
+- `test_accuracy::MixtureTestCase` reconstructs the known property value as `Baseline_Value - Baseline_Error` (`Baseline_Error` is prediction minus known), which previously caused improved predictions (e.g., heptane FreezePoint) to be reported as regressions.
+
+## [Unreleased] (freeze point, flash point, heat of combustion)
+
+### Added
+- `gcm.boehm` with accompanying `boehm.csv` for parsing Boehm (2022) `dS_fus` parameters.
+- `rdk.mol.has_fused_rings` and `rdk.mol.count_aromatic_rings` for assigning Boehm groups.
+- `flash_point_alqaheem`, `flash_point_alibashki`, and `lower_heating_value` to `correlate.components`.
+- `freeze_point_boehm`, `flash_point_alqaheem`, `flash_point_alibashki`, and `heat_of_combustion` to `correlate.mixture`.
+- Baseline values for FreezePoint, FlashPoint, and HeatOfCombustion.
+- `constants.gas_constant` (ideal gas constant, R = 8.31446 J/(mol*K)).
+
+### Fixed
+- `test_accuracy::MixtureTestCase` pulls `method_map` from `baselinePredictions.generate_baseline` to ensure the same methods are being used in generating vs. testing predictions.
+- `import-linter` contract allows `fuellib.rdk` to import `fuellib.utils`.
+
+
+## [Unreleased] (props and accuracy tests)
 
 ### Changed
 - `propertiesData` .csv files store Temperature vs. Value entries in individual rows rather than in a matrix format to enable non-Temperature dependent properties to be stored (e.g., "FreezePoint", "FlashPoint", ...) by setting Temp to "NaN".

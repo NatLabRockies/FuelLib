@@ -2,8 +2,12 @@
 
 from collections import Counter
 
+import numpy as np
 from rdkit import Chem
 from rdkit.Chem import Descriptors, Mol
+from scipy.sparse.csgraph import connected_components
+
+from ..utils import types
 
 
 # Instantiation functions
@@ -173,6 +177,64 @@ def has_branch(mol: Mol) -> bool:
                 if not neighbor.IsInRing():
                     return True
     return False
+
+
+def _ring_matrix(mol: Mol) -> types.Array2D:
+    """Get the rings in `mol`.
+
+    Args:
+        mol: RDKit Mol object.
+
+    Returns:
+        A ring-membership matrix (2D list) where each row corresponds to a ring
+        and each column corresponds to an atom in the molecule. An entry is 1
+        if the atom is part of the ring, and 0 otherwise.
+    """
+    rings = [list(ring) for ring in Chem.GetSSSR(mol)]
+    rmat = np.zeros((len(rings), mol.GetNumAtoms()))
+    for i, ring in enumerate(rings):
+        rmat[i, ring] = 1
+    return rmat
+
+
+def has_fused_rings(mol: Mol, *, number_of_rings: int | None = None) -> bool:
+    """Check if `mol` contains any fused systems of a specific number of rings.
+
+    Args:
+        mol: RDKit Mol object.
+        number_of_rings: If specified, only consider fused rings where the fused system
+            contains this number of rings.
+
+    Returns:
+        Whether the molecule contains any fused systems with specified number of rings.
+    """
+    rmat = _ring_matrix(mol)
+    shared_atoms = rmat @ rmat.T
+    fused_adjacency = (shared_atoms >= 2).astype(int)
+    np.fill_diagonal(fused_adjacency, 0)
+    n_systems, labels = connected_components(fused_adjacency, directed=False)
+    system_sizes = np.bincount(labels, minlength=n_systems)
+    fused_system_sizes = system_sizes[system_sizes > 1]
+    if number_of_rings is None:
+        return len(fused_system_sizes) > 0
+    return any(fused_system_sizes == number_of_rings)
+
+
+def count_aromatic_rings(mol: Mol) -> int:
+    """Count the number of aromatic rings in `mol`.
+
+    A ring is considered aromatic if every atom in the ring is aromatic.
+
+    Args:
+        mol: RDKit Mol object.
+
+    Returns:
+        Number of aromatic rings in the molecule.
+    """
+    rings = Chem.GetSSSR(mol)
+    return sum(
+        all(mol.GetAtomWithIdx(idx).GetIsAromatic() for idx in ring) for ring in rings
+    )
 
 
 # Molecular property calculations

@@ -3,7 +3,9 @@
 from typing import TYPE_CHECKING, Literal
 
 import numpy as np
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, root
+
+from fuellib import constants
 
 from ..utils import Units, types
 from . import components, helpers
@@ -340,3 +342,315 @@ def thermal_conductivity_latini(
     tci = components.thermal_conductivity_latini(fuel, T).to("W/(m*K)").magnitude
     tc = np.sum(Yi.magnitude * tci ** (-2)) ** (-0.5)
     return Units.Quantity(tc, "W/(m*K)")
+
+
+def freeze_point_boehm(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+    *,
+    alpha: float = 1.0,
+) -> types.Quantity0D:
+    """Calculate the freeze point of the mixture using the Boehm method.
+
+    Solves the solid-liquid equilibrium model of Boehm et al. (2022),
+    equation 21, for every compound using its mole fraction in the mixture,
+    and returns the highest candidate temperature, which marks the first
+    crystal to form on cooling. A scipy root finder is used in place of the
+    fixed-point iteration used in the original reference implementation.
+
+    For each hydrocarbon family, `fusion_families.csv` supplies the entropy
+    of fusion `dS_fus_i = max(A_f + B_f * (nC_i - C_ref_f), 20)` in
+    J/(mol*K); unclassified compounds fall back to the Walden-rule estimate
+    of 56.5 J/mol/K. The enthalpy of fusion is `dH_fus_i = Tm_i * dS_fus_i`,
+    and the solid-minus-liquid heat-capacity approximation is
+    `dCp_i = -0.35 * Cp_L_i(298.15 K)` on a molar basis. Boehm's equation 21
+    is solved per compound `j` against the ideal binary mixing entropy of
+    that compound relative to the rest of the mixture,
+
+        dS_mix_j = -(R / x_j) * [(1 - x_j) * ln(1 - x_j) + x_j * ln(x_j)],
+
+        T_j = (dH_fus_j + x_j * dCp_j * (Tm_j - T_j))
+              / (dS_fus_j + x_j * dCp_j * ln(T_j / Tm_j) + alpha * dS_mix_j).
+
+    Components with mole fraction at or below 1e-6 are excluded from the
+    result. This is an equilibrium screening model; it does not represent
+    cooling rate, supercooling, crystal kinetics, or detailed solid-phase
+    nonideality.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        alpha: Scaling applied to the ideal mixing-entropy term.
+            Defaults to 1.0 (classical ideal-solution entropy term).
+
+    Returns:
+        Mixture freeze point in K.
+
+    Raises:
+        RuntimeError: If the root finder fails to converge.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    Xi = (
+        helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
+    )
+
+    R = constants.gas_constant.to("J/(mol*K)")
+    Tm = fuel.Tm.to("K")
+    dS_fus = fuel.get_property("boehm", "dS_fus").to("J/(mol*K)")
+    dH_fus = Tm * dS_fus
+    dCp = (
+        -0.35
+        * components.liquid_mass_specific_heat_capacity_ruzicka(
+            fuel, Units.Quantity(298.15, "K")
+        )
+        * fuel.MW
+    ).to("J/(mol*K)")
+
+    # Ideal mixing entropy for each compound at its mole fraction in the
+    # mixture. This is the only composition-dependent term in the model.
+    Xi_safe = np.clip(Xi, 1e-6, 1.0 - 1e-6)
+    dS_mix = (
+        -R
+        / Xi_safe
+        * ((1.0 - Xi_safe) * np.log(1.0 - Xi_safe) + Xi_safe * np.log(Xi_safe))
+    )
+
+    Tm_mag = Tm.magnitude
+    dH_fus_mag = dH_fus.magnitude
+    dS_fus_mag = dS_fus.magnitude
+    dCp_mag = dCp.magnitude
+    dS_mix_mag = dS_mix.magnitude
+
+    def residual(T: types.Array1D) -> types.Array1D:
+        """Residual of Boehm et al. (2022), equation 21, for each compound.
+
+        Args:
+            T: Candidate freeze temperature of each compound in K.
+
+        Returns:
+            Residual of equation 21 for each compound.
+        """
+        T_safe = np.maximum(T, 1.0)
+        lhs = T_safe * (
+            dS_fus_mag
+            + Xi_safe * dCp_mag * np.log(T_safe / Tm_mag)
+            + alpha * dS_mix_mag
+        )
+        rhs = dH_fus_mag + Xi_safe * dCp_mag * (Tm_mag - T_safe)
+        return lhs - rhs
+
+    sol = root(residual, Tm_mag)
+    if not sol.success:
+        raise RuntimeError(
+            f"Freeze point root-finding failed to converge: {sol.message}"
+        )
+
+    # Mark non-physical (non-positive or non-finite) solutions as -inf, and
+    # only let compounds actually present in the mixture (Xi > 1e-6) set the
+    # freeze point, matching the reference implementation's convention.
+    T_candidates = np.where(np.isfinite(sol.x) & (sol.x > 0), sol.x, -np.inf)
+    T_freeze = np.max(np.where(Xi > 1e-6, T_candidates, -np.inf))
+
+    return Units.Quantity(T_freeze, "K")
+
+
+def _liaw_chiu_flash_point(
+    Xi: types.Array1D,
+    Tf_i: types.Array1D,
+    Tc: types.Array1D,
+    Pc: types.Array1D,
+    omega: types.Array1D,
+) -> float:
+    """Solve the ideal Liaw-Chiu mixture flash-point criterion.
+
+    Solves for the mixture flash point T such that
+    sum(Xi * psat(T) / psat(Tf_i)) = 1, where psat is evaluated with the
+    Lee-Kesler correlation for each compound at its own critical properties.
+    A scipy root finder is used in place of the fixed-point iteration used
+    in the original reference implementation.
+
+    Args:
+        Xi: Mole fractions of each compound in the mixture.
+        Tf_i: Flash point of each compound in K.
+        Tc: Critical temperature of each compound in K.
+        Pc: Critical pressure of each compound.
+        omega: Acentric factor of each compound.
+
+    Returns:
+        Mixture flash point in K.
+
+    Raises:
+        RuntimeError: If the root finder fails to converge.
+    """
+
+    def _psat_lee_kesler(
+        T: types.Array1D | float,
+        Tc: types.Array1D,
+        Pc: types.Array1D,
+        omega: types.Array1D,
+    ) -> types.Array1D:
+        """Lee-Kesler saturated vapor pressure for each compound.
+
+        Args:
+            T: Temperature in K.
+            Tc: Critical temperature of each compound in K.
+            Pc: Critical pressure of each compound.
+            omega: Acentric factor of each compound.
+
+        Returns:
+            Saturated vapor pressure (units follow whatever `Pc` is given in).
+        """
+        Tr = T / Tc
+        f0 = 5.92714 - (6.09648 / Tr) - 1.28862 * np.log(Tr) + 0.169347 * (Tr**6)
+        f1 = 15.2518 - (15.6875 / Tr) - 13.4721 * np.log(Tr) + 0.43577 * (Tr**6)
+        return Pc * np.exp(f0 + omega * f1)
+
+    psat_ref = _psat_lee_kesler(Tf_i, Tc, Pc, omega)
+
+    def residual(T: types.Array1D) -> types.Array1D:
+        """Residual of the ideal Liaw-Chiu mixture flash-point criterion.
+
+        Args:
+            T: Candidate mixture flash point in K.
+
+        Returns:
+            Residual of the flash-point criterion.
+        """
+        psat_T = _psat_lee_kesler(T[0], Tc, Pc, omega)
+        return np.array([np.sum(Xi * psat_T / psat_ref) - 1.0])
+
+    T0 = np.sum(Xi * Tf_i)
+    sol = root(residual, [T0])
+    if not sol.success:
+        raise RuntimeError(
+            f"Flash point root-finding failed to converge: {sol.message}"
+        )
+
+    return sol.x[0]
+
+
+def flash_point_alqaheem(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+    *,
+    mixing_rule: Literal["linear", "Liaw"] = "Liaw",
+) -> types.Quantity0D:
+    """Calculate the flash point of the mixture using the Alqaheem method.
+
+    Uses the Alqaheem-Riazi pure-component correlation
+    (`components.flash_point_alqaheem`) combined with either the Liaw-Chiu
+    (default) or linear mixing rule; see `flash_point_alibashki` for the
+    Liaw-Chiu mixture-rule formulation shared by both methods.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        mixing_rule: Mixing rule to use.
+            Defaults to "Liaw".
+
+    Returns:
+        Mixture flash point in K.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    T_fpi = components.flash_point_alqaheem(fuel)
+    if mixing_rule.casefold() == "linear".casefold():
+        return np.sum(Yi * T_fpi)
+
+    # Liaw-Chiu mixing rule: solve for the mixture flash point T such that
+    # sum(Xi * psat(T) / psat(Tf_i)) = 1, where psat is evaluated with the
+    # Lee-Kesler correlation for each compound at its own critical properties.
+    Xi = (
+        helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
+    )
+    Tc = fuel.Tc.to("K").magnitude
+    Pc = fuel.Pc.magnitude
+    omega = fuel.omega.magnitude
+    Tf_i = T_fpi.to("K").magnitude
+
+    T_flash = _liaw_chiu_flash_point(Xi, Tf_i, Tc, Pc, omega)
+    return Units.Quantity(T_flash, "K")
+
+
+def flash_point_alibashki(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+    *,
+    mixing_rule: Literal["linear", "Liaw"] = "Liaw",
+) -> types.Quantity0D:
+    """Calculate the flash point of the mixture using the Alibashki method.
+
+    Uses the Alibakhshi et al. pure-component correlation
+    (`components.flash_point_alibashki`) combined with either the Liaw-Chiu
+    (default) or linear mixing rule.
+
+    For `mixing_rule="linear"`, the mixture flash point is the mass-fraction
+    weighted average, `Tfp_mix = sum(Yi * Tfp_i)`.
+
+    For `mixing_rule="Liaw"` (default), mole fractions `Xi` are used with the
+    ideal-activity Liaw-Chiu (2006) relation, which solves for the mixture
+    flash point `Tfp_mix` satisfying
+
+        sum(Xi * Psat_i(Tfp_mix) / Psat_i(Tfp_i)) = 1,
+
+    where `Psat_i` is evaluated with the Lee-Kesler correlation using each
+    compound's own critical properties (see
+    `components.saturated_vapor_pressure`). The residual is solved with a
+    bounded Newton iteration (`helpers.liaw_chiu_flash_point`) initialized
+    from the mole-fraction-weighted pure-component flash point. This ideal
+    mixing rule does not model nonideal liquid activity coefficients.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        mixing_rule: Mixing rule to use.
+            Defaults to "Liaw".
+
+    Returns:
+        Mixture flash point in K.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    T_fpi = components.flash_point_alibashki(fuel)
+    if mixing_rule.casefold() == "linear".casefold():
+        return np.sum(Yi * T_fpi)
+
+    # Liaw-Chiu mixing rule: solve for the mixture flash point T such that
+    # sum(Xi * psat(T) / psat(Tf_i)) = 1, where psat is evaluated with the
+    # Lee-Kesler correlation for each compound at its own critical properties.
+    Xi = (
+        helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
+    )
+    Tc = fuel.Tc.to("K").magnitude
+    Pc = fuel.Pc.magnitude
+    omega = fuel.omega.magnitude
+    Tf_i = T_fpi.to("K").magnitude
+
+    T_flash = _liaw_chiu_flash_point(Xi, Tf_i, Tc, Pc, omega)
+    return Units.Quantity(T_flash, "K")
+
+
+def heat_of_combustion(
+    fuel: "Fuel", Yi: types.Quantity1D | None = None
+) -> types.Quantity1D:
+    """Calculate the heat of combustion of the fuel using a Hess cycle.
+
+    Combines each component's lower heating value
+    (`components.lower_heating_value`) with a mass-fraction weighted mixing
+    rule, `LHV_mix = sum(Yi * LHV_i)`. This is a net (lower) heating value,
+    consistent with gaseous-water combustion products; it is an engineering
+    estimate related to ASTM D4809/D3338 heating-value characterization, not
+    a simulated bomb-calorimeter test.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        Heat of combustion of the mixture in J/kg.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    lhv_i = components.lower_heating_value(fuel)
+    return np.sum(Yi * lhv_i)

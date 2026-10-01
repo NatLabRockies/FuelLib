@@ -27,7 +27,10 @@ method_map = {
     "dynamicviscosity": correlate.mixture.dynamic_viscosity_dutt,
     "surfacetension": correlate.mixture.surface_tension,
     "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
-    "cp": correlate.components.molar_specific_heat,
+    "cp": correlate.components.molar_specific_heat_capacity,
+    "freezepoint": correlate.mixture.freeze_point_boehm,
+    "flashpoint": correlate.mixture.flash_point_alibashki,
+    "heatofcombustion": correlate.mixture.heat_of_combustion,
 }
 
 
@@ -49,9 +52,13 @@ def update_baseline() -> None:
                 continue
 
             for row in prop_data.itertuples():
-                T = Units.Quantity(row.Temp, row.Temp_Units)
+                # Temperature-independent properties (e.g., freeze point) have no Temp
+                # (pandas parses "NaN" as float nan), so do not pass T to the method.
+                kwargs = {}
+                if not pd.isna(row.Temp):
+                    kwargs["T"] = Units.Quantity(row.Temp, row.Temp_Units)
                 prop_val = Units.Quantity(row.Property_Value, row.Property_Units)
-                pred_val = method(fuel=fuel, T=T).to(row.Property_Units)
+                pred_val = method(fuel=fuel, **kwargs).to(row.Property_Units)
 
                 pred_mag = pred_val.magnitude
                 if isinstance(pred_mag, np.ndarray):

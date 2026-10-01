@@ -34,6 +34,7 @@ dependencies = [
     "importlib-resources>=5.0; python_version < '3.9'",
     "pint>=0.26.1",
     "pydantic>=2.13.5",
+    "uncertainties>=3.2.3",
 ]
 
 [project.optional-dependencies]
@@ -120,7 +121,9 @@ layers = [
     "fuellib.fuel",
     "fuellib.correlate",
     "fuellib.gcm",
-    "fuellib.rdk | fuellib.utils | fuellib.data", # Importable by all modules
+    "fuellib.data", # May import rdk and utils
+    "fuellib.rdk",
+    "fuellib.utils", # Importable by all modules
 ]
 
 # Pytest configurations
