@@ -16,7 +16,6 @@ used to parse and validate this file's entries against that format.
   * `references.validate` collects and reports all header, duplicate, family, `Num_C`, `InChI`/SMILES consistency, property name, and numeric `Value`/`Error` problems; the loaders call it automatically.
 - `Fuel.use_references` (keyword-only `use_references` argument to `Fuel.__init__`, default `True`) to toggle use of reference data in property calculations.
 - `tests/test_ref_compounds.py` covering the shipped reference data, `validate`, `classify_family`, and `populate_missing`.
-- `openpyxl` dependency.
 
 ### Changed
 - `Fuel.Tm` is a cached property that uses reference `Tm` values (converted to K) for compounds found in `refProperties.csv`, falling back to the Gani prediction otherwise or when `use_references=False`.

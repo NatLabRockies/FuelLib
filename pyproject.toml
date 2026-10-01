@@ -34,7 +34,7 @@ dependencies = [
     "importlib-resources>=5.0; python_version < '3.9'",
     "pint>=0.26.1",
     "pydantic>=2.13.5",
-    "openpyxl>=3.1.5",
+    "uncertainties>=3.2.3",
 ]
 
 [project.optional-dependencies]
