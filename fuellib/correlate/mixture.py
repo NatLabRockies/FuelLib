@@ -493,6 +493,9 @@ def _liaw_chiu_flash_point(
     ) -> types.Array1D:
         """Lee-Kesler saturated vapor pressure for each compound.
 
+        Copies `components.saturated_vapor_pressure(..., correlation="lee_kesler")`
+        in a scipy-based root-finding context.
+
         Args:
             T: Temperature in K.
             Tc: Critical temperature of each compound in K.

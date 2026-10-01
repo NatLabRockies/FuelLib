@@ -113,11 +113,11 @@ provided :math:`T` in K unless noted otherwise.
    :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
-   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity. 
+   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
    :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
-   :math:`T_{fp,i}`               K                      Flash point (Alqaheem-Riazi or Alibakhshi et al.).
+   :math:`T_{fp,i}`               K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
    :math:`LHV_i`                  J/kg                   Lower heating value.
    =============================  =====================  ===============================================================
 
@@ -224,6 +224,13 @@ The mass specific heat capacity for each compound at standard pressure temperatu
 
 .. math::
    C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}} 
+
+Alternatively, the Ruzicka-Domalski\ :footcite:p:`ruzicka_estimation_1993` group additivity correlation
+is available, with :math:`\theta = T / 100` (K) and the ``rd_A``, ``rd_B``, and ``rd_D``
+properties of the ``gani`` GCM (:doc:`gcm`):
+
+.. math::
+   C_{p,i} = R \big(A_i + B_i \theta + D_i \theta^2\big).
 
 
 
@@ -360,13 +367,13 @@ Flash point
 
 Two correlations are available for the flash point :math:`T_{fp,i}` of each compound,
 both based on the Constantinou-Gani normal boiling point :math:`T_{b,i}`.
-The Alqaheem and Riazi (2017) correlation takes the flash point as a fixed fraction
+The Alqaheem and Riazi\ :footcite:p:`alqaheem_flash_2017` correlation takes the flash point as a fixed fraction
 of the boiling point:
 
 .. math::
    T_{fp,i} = 0.70 \, T_{b,i}.
 
-The modified group-contribution correlation of Alibakhshi et al. (2015) adds a
+The modified group-contribution correlation of Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015` adds a
 group-contribution term:
 
 .. math::
@@ -581,7 +588,7 @@ Mixture freeze point
    :noindex:
 
 The freeze point of the mixture is estimated with the solid-liquid equilibrium model
-of Boehm et al. (2022), equation 21. For each compound :math:`j` with mole fraction
+of Boehm et al.\ :footcite:p:`boehm_blend_2022`, equation 21. For each compound :math:`j` with mole fraction
 :math:`X_j`, the candidate freeze temperature :math:`T_j` solves
 
 .. math::
@@ -618,7 +625,7 @@ The mixture flash point is computed from the component flash points :math:`T_{fp
 .. math::
    T_{fp} = \sum_{i=1}^{N_c} Y_i T_{fp,i},
 
-or the ideal Liaw-Chiu (2006) mixing rule (default), which solves for :math:`T_{fp}` such that
+or the ideal Liaw-Chiu\ :footcite:p:`liaw_general_2006` mixing rule (default), which solves for :math:`T_{fp}` such that
 
 .. math::
    \sum_{i=1}^{N_c} X_i \frac{p_{\textit{sat},i}(T_{fp})}{p_{\textit{sat},i}(T_{fp,i})} = 1,
