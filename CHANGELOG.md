@@ -18,6 +18,7 @@ used to parse and validate this file's entries against that format.
 ### Fixed
 - `test_accuracy::MixtureTestCase` pulls `method_map` from `baselinePredictions.generate_baseline` to ensure the same methods are being used in generating vs. testing predictions.
 - `import-linter` contract allows `fuellib.rdk` to import `fuellib.utils`.
+- `test_accuracy::MixtureTestCase` reconstructs the known property value as `Baseline_Value - Baseline_Error` (`Baseline_Error` is prediction minus known), which previously caused improved predictions (e.g., heptane FreezePoint) to be reported as regressions.
 
 ## [Unreleased] (props and accuracy tests)
 
