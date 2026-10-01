@@ -37,8 +37,8 @@ Temp,Temp_Units,Property,Property_Units,Property_Value
 140,celsius,HeatCapacity,kJ/kg/K,2.37
 150,celsius,HeatCapacity,kJ/kg/K,2.41
 160,celsius,HeatCapacity,kJ/kg/K,2.46
--40,celsius,DerivedCetaneNumber,dimensionless,39.2
+NaN,celsius,DerivedCetaneNumber,dimensionless,39.2
 NaN,celsius,FlashPoint,celsius,60
 NaN,celsius,FreezePoint,celsius,-50
 NaN,celsius,SmokePoint,mm,20
-25,celsius,HeatOfCombustion,MJ/kg,42.878
+NaN,celsius,HeatOfCombustion,MJ/kg,42.878
