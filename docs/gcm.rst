@@ -52,7 +52,11 @@ it registers a ``"gani"`` :class:`~fuellib.gcm.core.GCM` with
 :class:`~fuellib.gcm.core.GCMRegistry` and populates it with property
 functions for ``MW``, ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``Hf``,
 ``Gf``, ``Hv_stp``, ``omega``, ``Vm_stp``, ``Cp_stp``, ``Cp_B``, ``Cp_C``,
-``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Group-contribution
+``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Note that
+:attr:`~fuellib.fuel.Fuel.Tm` is not the raw ``gani`` prediction: it uses
+reference melting points from :mod:`fuellib.data.references` when available
+(see :ref:`sec-reference-properties`) and falls back to ``gani`` otherwise.
+Group-contribution
 coefficients are read from ``fuellib/gcm/gani.csv`` into a module-level
 table indexed by property name, with one column per first- or
 second-order group.
