@@ -43,6 +43,20 @@ used to parse and validate this file's entries against that format.
 
 ## [Unreleased] (props and accuracy tests)
 
+### Added
+- `gcm.boehm` with accompanying `boehm.csv` for parsing Boehm (2022) `dS_fus` parameters.
+- `rdk.mol.has_fused_rings` and `rdk.mol.count_aromatic_rings` for assigning Boehm groups.
+- `flash_point_alqaheem`, `flash_point_alibashki`, and `lower_heating_value` to `correlate.components`.
+- `freeze_point_boehm`, `flash_point_alqaheem`, `flash_point_alibashki`, and `heat_of_combustion` to `correlate.mixture`.
+- Baseline values for FreezePoint, FlashPoint, and HeatOfCombustion.
+- `constants.gas_constant` (ideal gas constant, R = 8.31446 J/(mol*K)).
+
+### Fixed
+- `test_accuracy::MixtureTestCase` pulls `method_map` from `baselinePredictions.generate_baseline` to ensure the same methods are being used in generating vs. testing predictions.
+- `import-linter` contract allows `fuellib.rdk` to import `fuellib.utils`.
+
+## [Unreleased] (props and accuracy tests)
+
 ### Changed
 - `propertiesData` .csv files store Temperature vs. Value entries in individual rows rather than in a matrix format to enable non-Temperature dependent properties to be stored (e.g., "FreezePoint", "FlashPoint", ...) by setting Temp to "NaN".
   * `test_accuracy.py` and `generate_baseline.py` updated to respect this change.
