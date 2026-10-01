@@ -2,7 +2,6 @@
 
 from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 
-import pandas as pd
 from pydantic import BaseModel
 
 from ..utils import types

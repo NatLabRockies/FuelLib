@@ -397,17 +397,18 @@ def plot_mixture_properties(
             data_file = os.path.join(props_dir, f"{data_filename}.csv")
             if os.path.exists(data_file):
                 try:
-                    data_units = pd.read_csv(data_file, nrows=1)
-                    data = pd.read_csv(data_file, skiprows=[1])
-                    if prop_name in data.columns:
-                        mask = data[prop_name].notna()
-                        temp_units = data_units.at[0, "Temperature"]
-                        prop_units = data_units.at[0, prop_name]
-                        T_data = Units.Quantity(
-                            data.loc[mask, "Temperature"].to_numpy(), temp_units
-                        )
+                    data = pd.read_csv(data_file)
+                    data = data[
+                        (data["Property"] == prop_name)
+                        & data["Temp"].notna()
+                        & data["Property_Value"].notna()
+                    ]
+                    if len(data) > 0:
+                        temp_units = data["Temp_Units"].iloc[0]
+                        prop_units = data["Property_Units"].iloc[0]
+                        T_data = Units.Quantity(data["Temp"].to_numpy(), temp_units)
                         prop_data = Units.Quantity(
-                            data.loc[mask, prop_name].to_numpy(), prop_units
+                            data["Property_Value"].to_numpy(), prop_units
                         )
                 except (OSError, KeyError, ValueError):
                     pass
