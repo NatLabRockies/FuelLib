@@ -159,7 +159,10 @@ The ``boehm`` method
 (2022). It currently registers a single property, ``dS_fus`` (J/mol/K), which
 is used by :func:`~fuellib.correlate.mixture.freeze_point_boehm`.
 
-Each compound is first assigned to a hydrocarbon family from its RDKit
+Each compound is first assigned to a hydrocarbon family. When
+``fuel.use_references`` is ``True`` and the compound is listed in
+``refCompounds.csv`` (see :ref:`sec-reference-properties`), its reference
+``Family`` is used; otherwise the family is identified from its RDKit
 ``Mol`` object (see :mod:`fuellib.rdk.mol`, including
 :func:`~fuellib.rdk.mol.has_fused_rings` and
 :func:`~fuellib.rdk.mol.count_aromatic_rings`). The families are ``n-alkane``,

@@ -445,7 +445,14 @@ are used throughout this section.
    :math:`T_{fr}`            K                Freeze point
    :math:`T_{fp}`            K                Flash point
    :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
+   :math:`YSI`               --               Yield sooting index
+   :math:`DCN`               --               Derived cetane number
    ========================  ===============  =====================
+
+.. note::
+   The yield sooting index and derived cetane number are not predicted from group
+   contributions; they are taken from measured reference data for each compound
+   (see :ref:`sec-reference-properties`).
 
 .. _tab-mass-mole-fracs:
 
@@ -655,6 +662,40 @@ from the molar enthalpy of combustion :math:`\Delta H_{c,i}` of a single compoun
 This is a net heating value assuming gaseous water products, and is an engineering
 estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter test.
 
+Mixture yield sooting index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.mixture.yield_sooting_index
+   :noindex:
+
+The yield sooting index :math:`YSI` of the mixture is the mole-fraction weighted average
+of the component values :math:`YSI_i` from :attr:`~fuellib.fuel.Fuel.YSI`:
+
+.. math::
+   YSI = \sum_{i=1}^{N_c} X_i \, YSI_i.
+
+Components without a reference value (NaN) are excluded, a warning is logged listing
+them, and the mole fractions of the remaining components are renormalized to sum to one.
+If no component has a value, the result is NaN.
+
+Mixture derived cetane number
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.mixture.derived_cetane_number
+   :noindex:
+
+The derived cetane number :math:`DCN` of the mixture is the liquid volume-fraction
+weighted average of the component values :math:`DCN_i` from :attr:`~fuellib.fuel.Fuel.DCN`:
+
+.. math::
+   DCN = \sum_{i=1}^{N_c} \phi_i \, DCN_i, \qquad
+   \phi_i = \frac{Y_i/\rho_i(T_{ref})}{\sum_{k=1}^{N_c} Y_k/\rho_k(T_{ref})},
+
+where :math:`\rho_i` is the liquid density of compound *i* at the reference temperature
+:math:`T_{ref}` (default standard temperature). Unlike the yield sooting index, a
+``ValueError`` is raised if any component lacks a DCN value, since excluding components
+would bias the volume-weighted average.
+
 Reference Compounds for Jet Fuels
 ---------------------------------
 
@@ -701,10 +742,27 @@ called by the loaders, so malformed data raise a ``ValueError`` listing every pr
 A compound's properties can be retrieved from a SMILES string with
 :func:`~fuellib.data.references.properties_by_smiles`.
 
-Currently, :attr:`~fuellib.fuel.Fuel.Tm` uses the reference melting point of each compound
-found in the tables and the Constantinou-Gani prediction for all others. Pass
-``use_references=False`` to :class:`~fuellib.fuel.Fuel` to use only the group-contribution
-prediction.
+A compound's ``Family`` can be retrieved from a SMILES string with
+:func:`~fuellib.data.references.family_by_smiles`. The reference tables are cached and
+reloaded automatically when the CSV files change. When editing the CSVs in a spreadsheet,
+empty unnamed columns and padded whitespace are ignored on load, and running
+``python -m fuellib.data.references`` writes the populated ``InChI``, ``Num_C``, and
+``Family`` values back to ``refCompounds.csv``.
+
+The reference data are used as follows:
+
+- :attr:`~fuellib.fuel.Fuel.Tm` uses the reference melting point of each compound
+  found in the tables and the Constantinou-Gani prediction for all others.
+- The ``boehm`` GCM (see :doc:`gcm`) uses the reference ``Family`` of a compound, when
+  available, instead of identifying the family from its structure.
+- :attr:`~fuellib.fuel.Fuel.YSI` and :attr:`~fuellib.fuel.Fuel.DCN` are available only
+  for compounds with a ``YSI`` or ``DCN`` entry; all others are NaN. The ``YSI`` values
+  are from the McEnally-Pfefferle Yale YSI Database (Vol. 2) and the ``DCN`` values are
+  on the ASTM D6890 IQT scale.
+
+Pass ``use_references=False`` to :class:`~fuellib.fuel.Fuel` to use only the
+group-contribution prediction and structure-based family identification for
+:attr:`~fuellib.fuel.Fuel.Tm` and the ``boehm`` GCM.
 
 Validation
 ----------

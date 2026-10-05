@@ -27,8 +27,12 @@ FuelLib File Organization
 
     - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
         - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity, flash point, lower heating value)
-        - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion)
+        - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion, yield sooting index, derived cetane number)
         - ``helpers.py``: shared helper functions for mixing rules and mass/mole fraction conversions
+
+    - **utils**: subpackage with shared utilities
+        - ``types.py``: type aliases and the ``Units`` quantity registry
+        - ``logger.py``: ``FLLogger`` (the ``fuellib`` logger), ``set_log_level``, and ANSI color codes for terminal output
 
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
@@ -96,6 +100,7 @@ Click on links below for the full auto-documentation of the API.
     fuellib.convert
     fuellib.utility
     fuellib.utils.types
+    fuellib.utils.logger
     fuellib.gcm.core
     fuellib.gcm.gani
     fuellib.gcm.boehm
