@@ -9,6 +9,18 @@ used to parse and validate this file's entries against that format.
 
 ### Added
 - `utils.logger` with `FLLogger`, `set_log_level`, and `ANSI` (for access to ANSI codes across files).
+  * `FLLogger` and `set_log_level` exported from `fuellib` and `fuellib.utils`.
+- `Fuel.YSI` and `Fuel.DCN` cached properties returning per-compound yield sooting indices (McEnally-Pfefferle Yale YSI Database, Vol. 2) and derived cetane numbers (ASTM D6890 IQT scale) from `refProperties.csv`; compounds without reference data are NaN.
+- `correlate.mixture.yield_sooting_index` (mole-fraction mixing rule; components without a YSI are excluded with a warning and the remaining mole fractions renormalized) and `correlate.mixture.derived_cetane_number` (liquid volume-fraction mixing rule; raises `ValueError` if any component lacks a DCN).
+- Baseline predictions for `YieldSootingIndex` and `DerivedCetaneNumber` (`generate_baseline.method_map`).
+- `YSI` and `DCN` reference values and ~70 additional reference compounds in `data/refCompounds.csv` and `data/refProperties.csv`.
+- `references.family_by_smiles` to look up the reference family of a compound from its SMILES.
+- `.scratch/` to `.gitignore`.
+
+### Changed
+- `gcm.boehm` uses the `Family` from `refCompounds.csv` for reference compounds (when `Fuel.use_references` is `True`) rather than always identifying it from the structure.
+- `references` CSV loading tolerates empty/unnamed spreadsheet columns and padded whitespace; `references.update_compounds_csv` quotes non-numeric fields (InChI strings contain commas) and `python -m fuellib.data.references` regenerates `refCompounds.csv`.
+- `references.properties_by_smiles` uses a cached index (rebuilt when the CSV files change) instead of reloading and revalidating the CSVs on every call.
 
 ## [Unreleased] (YSI, DCN prep)
 
