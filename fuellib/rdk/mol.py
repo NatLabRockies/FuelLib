@@ -3,11 +3,14 @@
 from collections import Counter
 
 import numpy as np
-from rdkit import Chem
+from rdkit import Chem, RDLogger
 from rdkit.Chem import Descriptors, Mol
 from scipy.sparse.csgraph import connected_components
 
 from ..utils import types
+
+lg = RDLogger.logger()
+lg.setLevel(RDLogger.CRITICAL)
 
 
 # Instantiation functions

@@ -29,9 +29,10 @@ from ._data_locator import (
     get_metadata_props_data,
 )
 from .fuel import Fuel
-from .utils import Units
+from .utils import FLLogger, Units, set_log_level
 
 __all__ = [
+    "FLLogger",
     "Fuel",
     "Units",
     "constants",
@@ -45,5 +46,6 @@ __all__ = [
     "get_gcmtable_dir",
     "get_metadata_decomp_name",
     "get_metadata_props_data",
+    "set_log_level",
     "utility",
 ]

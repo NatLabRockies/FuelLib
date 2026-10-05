@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
+from ..data import references
 from ..rdk import mol
 from ..utils import Units, types
 from .core import GCMRegistry
@@ -18,6 +19,9 @@ boehm_gcm = GCMRegistry.register("boehm", property_fns=[])
 
 def _identify_families(fuel: "Fuel") -> list[str]:
     """Identify the families of a fuel's components.
+
+    The family from `refCompounds.csv` is used for reference compounds when
+    `fuel.use_references` is True; otherwise it is determined from the structure.
 
     =============== ==========================================
     Family          Description
@@ -43,7 +47,12 @@ def _identify_families(fuel: "Fuel") -> list[str]:
         ValueError: If the family cannot be identified.
     """
     families = []
-    for m in fuel.rdkit_mols:
+    for m, smiles in zip(fuel.rdkit_mols, fuel.smiles, strict=True):
+        if fuel.use_references:
+            ref_family = references.family_by_smiles(smiles)
+            if ref_family is not None:
+                families.append(ref_family)
+                continue
         aromatic = mol.has_aromatic(m)
         fused = mol.has_fused_rings(m)
         fused_two = mol.has_fused_rings(m, number_of_rings=2)

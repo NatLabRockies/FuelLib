@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
+## [Unreleased] (YSI, DCN implement)
+
+### Added
+- `utils.logger` with `FLLogger`, `set_log_level`, and `ANSI` (for access to ANSI codes across files).
+
 ## [Unreleased] (YSI, DCN prep)
 
 ### Added

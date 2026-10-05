@@ -14,6 +14,7 @@ consistency; the loaders do so automatically.
 """
 
 import csv
+from functools import lru_cache
 from pathlib import Path
 
 import pandas as pd
@@ -310,6 +311,7 @@ def update_compounds_csv() -> pd.DataFrame:
     compounds = load_compounds()
     # InChI strings contain commas, so quote every non-numeric field.
     compounds.to_csv(COMPOUNDS_PATH, index=False, quoting=csv.QUOTE_NONNUMERIC)
+    _build_index.cache_clear()
     return compounds
 
 
@@ -324,6 +326,36 @@ def load_properties() -> pd.DataFrame:
     return properties
 
 
+@lru_cache(maxsize=None)
+def _smiles_to_inchi(smiles: str) -> str:
+    return inchi(from_smiles(smiles))
+
+
+@lru_cache(maxsize=1)
+def _build_index(
+    stamp: tuple[int, int],
+) -> tuple[dict[str, pd.DataFrame], dict[str, str]]:
+    # `stamp` (file mtimes) only serves as the cache key, so edits to the CSVs
+    # trigger a rebuild.
+    compounds = load_compounds()
+    properties = load_properties()
+    props: dict[str, pd.DataFrame] = {}
+    families: dict[str, str] = {}
+    for inchi_str, name, family in zip(
+        compounds["InChI"], compounds["Common_Name"], compounds["Family"], strict=True
+    ):
+        props[inchi_str] = properties[properties["Common_Name"] == name]
+        families[inchi_str] = str(family)
+    return props, families
+
+
+def _index() -> tuple[dict[str, pd.DataFrame], dict[str, str]]:
+    return _build_index((
+        COMPOUNDS_PATH.stat().st_mtime_ns,
+        PROPERTIES_PATH.stat().st_mtime_ns,
+    ))
+
+
 def properties_by_smiles(smiles: str) -> pd.DataFrame | None:
     """Lookup reference properties by their SMILES string.
 
@@ -335,14 +367,24 @@ def properties_by_smiles(smiles: str) -> pd.DataFrame | None:
     Returns:
         DataFrame containing the matching reference properties, or ``None`` if no match.
     """
-    mol = from_smiles(smiles)
-    inchi_str = inchi(mol)
-    compounds = load_compounds()
-    properties = load_properties()
-    common_names = compounds.loc[compounds["InChI"] == inchi_str, "Common_Name"]
-    if common_names.empty:
-        return None
-    return properties[properties["Common_Name"].isin(common_names)]
+    props, _ = _index()
+    result = props.get(_smiles_to_inchi(smiles))
+    return None if result is None else result.copy()
+
+
+def family_by_smiles(smiles: str) -> str | None:
+    """Lookup the reference family of a compound by its SMILES string.
+
+    Converts SMILES to InChI internally to match with the reference compounds.
+
+    Args:
+        smiles: The SMILES string to search for.
+
+    Returns:
+        The family name, or ``None`` if the compound is not a reference compound.
+    """
+    _, families = _index()
+    return families.get(_smiles_to_inchi(smiles))
 
 
 if __name__ == "__main__":
