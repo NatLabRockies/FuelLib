@@ -31,6 +31,8 @@ method_map = {
     "freezepoint": correlate.mixture.freeze_point_boehm,
     "flashpoint": correlate.mixture.flash_point_alibashki,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
+    "yieldsootingindex": correlate.mixture.yield_sooting_index,
+    "derivedcetanenumber": correlate.mixture.derived_cetane_number,
 }
 
 

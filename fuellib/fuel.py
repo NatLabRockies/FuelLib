@@ -370,6 +370,46 @@ class Fuel:
             values[i] = Units.Quantity(float(row["Value"]), units).to("K").magnitude
         return Units.Quantity(values, "K")
 
+    @cached_property
+    def YSI(self) -> types.Quantity1D:
+        """Yield Sooting Indices.
+
+        Uses McEnally-Pfefferle Yale YSI Database (Vol. 2) data pulled from
+        `refProperties.csv` for reference compounds. Compounds not found in references
+        will receive a NaN value.
+        """  # ruff: ignore[property-docstring-starts-with-verb]
+        values = np.full(len(self.smiles), np.nan, dtype=float)
+        for i, smiles in enumerate(self.smiles):
+            ref_props = references.properties_by_smiles(smiles)
+            if ref_props is None:
+                continue
+            ref_YSI = ref_props[ref_props["Property"] == "YSI"]
+            if ref_YSI.empty:
+                continue
+            row = ref_YSI.iloc[0]
+            values[i] = row["Value"]
+        return Units.Quantity(values, "")
+
+    @cached_property
+    def DCN(self) -> types.Quantity1D:
+        """Derived cetane numbers (DCN) of the compounds.
+
+        Uses values pulled from `refProperties.csv` for reference compounds on
+        the ASTM D6890 IQT scale. Compounds not found in references will receive
+        a NaN value.
+        """
+        values = np.full(len(self.smiles), np.nan, dtype=float)
+        for i, smiles in enumerate(self.smiles):
+            ref_props = references.properties_by_smiles(smiles)
+            if ref_props is None:
+                continue
+            ref_DCN = ref_props[ref_props["Property"] == "DCN"]
+            if ref_DCN.empty:
+                continue
+            row = ref_DCN.iloc[0]
+            values[i] = row["Value"]
+        return Units.Quantity(values, "")
+
     # -------------------------------------------------------------------------
     # Member functions
     # -------------------------------------------------------------------------
