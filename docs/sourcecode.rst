@@ -33,8 +33,11 @@ FuelLib File Organization
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
 
-    - **data**: directory containing fuel data and metadata    
-        
+    - **data**: package containing fuel data, metadata, and reference data
+
+        - ``references.py``: loading, validation, and lookup of reference compounds and their measured properties
+        - ``refCompounds.csv``: reference compounds (``Common_Name``, ``InChI``, ``SMILES``, ``Num_C``, ``Family``)
+        - ``refProperties.csv``: measured reference properties (``Common_Name``, ``Property``, ``Units``, ``Value``, ``Error``, ``Source``)
         - **fuelData:** 
             - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
             - **groupDecompositionData:** directory containing a collection of functional group decompositions
@@ -64,6 +67,7 @@ FuelLib File Organization
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
+    - ``test_ref_compounds.py``: unit test for the reference data (``data.references``) including validation, family classification, and population of missing values.
     - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
@@ -96,6 +100,7 @@ Click on links below for the full auto-documentation of the API.
     fuellib.gcm.gani
     fuellib.gcm.boehm
     fuellib.rdk.mol
+    fuellib.data.references
     fuellib.correlate.components
     fuellib.correlate.mixture
     fuellib.correlate.helpers

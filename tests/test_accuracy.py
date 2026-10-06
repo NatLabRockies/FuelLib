@@ -72,10 +72,10 @@ class MixtureTestCase(unittest.TestCase):
                                 msg = f"Expected a single value for property '{prop_name}' of fuel '{fuel_name}', but got an array of size {pred_val.size}."
                                 raise ValueError(msg)
                             pred_val = pred_val.item()
-                        # Fetch the baseline prediction and recreate the known property value from baseline value + error
-                        # (This method skips an extra lookup)
+                        # Fetch the baseline prediction and recreate the known property value from baseline value - error
+                        # (Baseline_Error = prediction - known; this skips an extra lookup)
                         base_val = row.Baseline_Value  # Baseline prediction value
-                        prop_val = base_val + row.Baseline_Error  # Known value
+                        prop_val = base_val - row.Baseline_Error  # Known value
 
                         temps.append(row.Temp)
                         temp_units.append(row.Temp_Units)
