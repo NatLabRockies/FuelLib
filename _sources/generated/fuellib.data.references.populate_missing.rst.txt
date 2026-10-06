@@ -1,0 +1,6 @@
+fuellib.data.references.populate\_missing
+=========================================
+
+.. currentmodule:: fuellib.data.references
+
+.. autofunction:: populate_missing

@@ -1,0 +1,14 @@
+﻿fuellib.fuel
+============
+
+.. automodule:: fuellib.fuel
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Fuel
+   

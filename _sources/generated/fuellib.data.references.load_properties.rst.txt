@@ -1,0 +1,6 @@
+fuellib.data.references.load\_properties
+========================================
+
+.. currentmodule:: fuellib.data.references
+
+.. autofunction:: load_properties

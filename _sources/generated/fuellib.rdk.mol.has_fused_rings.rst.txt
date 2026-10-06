@@ -1,0 +1,6 @@
+fuellib.rdk.mol.has\_fused\_rings
+=================================
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: has_fused_rings

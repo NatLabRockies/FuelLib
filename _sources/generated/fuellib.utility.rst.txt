@@ -1,0 +1,17 @@
+﻿fuellib.utility
+===============
+
+.. automodule:: fuellib.utility
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      droplet_mass
+      droplet_volume
+      mixing_rule
+   

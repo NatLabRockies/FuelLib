@@ -1,0 +1,6 @@
+fuellib.data.references.load\_compounds
+=======================================
+
+.. currentmodule:: fuellib.data.references
+
+.. autofunction:: load_compounds

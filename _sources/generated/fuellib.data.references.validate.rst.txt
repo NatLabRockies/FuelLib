@@ -1,0 +1,6 @@
+fuellib.data.references.validate
+================================
+
+.. currentmodule:: fuellib.data.references
+
+.. autofunction:: validate

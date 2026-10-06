@@ -1,0 +1,21 @@
+﻿fuellib.data.references
+=======================
+
+.. automodule:: fuellib.data.references
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      classify_family
+      load_compounds
+      load_properties
+      populate_missing
+      properties_by_smiles
+      update_compounds_csv
+      validate
+   

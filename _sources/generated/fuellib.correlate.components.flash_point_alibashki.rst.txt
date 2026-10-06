@@ -1,0 +1,6 @@
+fuellib.correlate.components.flash\_point\_alibashki
+====================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: flash_point_alibashki

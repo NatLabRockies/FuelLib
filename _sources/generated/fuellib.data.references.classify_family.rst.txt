@@ -1,0 +1,6 @@
+fuellib.data.references.classify\_family
+========================================
+
+.. currentmodule:: fuellib.data.references
+
+.. autofunction:: classify_family

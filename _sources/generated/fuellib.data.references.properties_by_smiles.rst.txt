@@ -1,0 +1,6 @@
+fuellib.data.references.properties\_by\_smiles
+==============================================
+
+.. currentmodule:: fuellib.data.references
+
+.. autofunction:: properties_by_smiles

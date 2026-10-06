@@ -1,0 +1,27 @@
+﻿fuellib.rdk.mol
+===============
+
+.. automodule:: fuellib.rdk.mol
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      atom_counts
+      count_aromatic_rings
+      from_inchi
+      from_smiles
+      has_aromatic
+      has_branch
+      has_double_bond
+      has_fused_rings
+      has_ring
+      hill_formula
+      inchi
+      molecular_weight
+      smiles
+   

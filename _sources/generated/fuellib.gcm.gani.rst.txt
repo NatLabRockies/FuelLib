@@ -1,0 +1,31 @@
+﻿fuellib.gcm.gani
+================
+
+.. automodule:: fuellib.gcm.gani
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      Cp_B
+      Cp_C
+      Cp_stp
+      Gf
+      Hf
+      Hv_stp
+      Pc
+      Tb
+      Tc
+      Tm
+      Vc
+      Vm_stp
+      alibakhshi_phi
+      omega
+      rd_A
+      rd_B
+      rd_D
+   

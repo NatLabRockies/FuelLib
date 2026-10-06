@@ -1,0 +1,6 @@
+fuellib.data.references.update\_compounds\_csv
+==============================================
+
+.. currentmodule:: fuellib.data.references
+
+.. autofunction:: update_compounds_csv

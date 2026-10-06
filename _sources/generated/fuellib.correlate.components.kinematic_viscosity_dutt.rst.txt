@@ -1,0 +1,6 @@
+fuellib.correlate.components.kinematic\_viscosity\_dutt
+=======================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: kinematic_viscosity_dutt
