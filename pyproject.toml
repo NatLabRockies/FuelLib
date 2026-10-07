@@ -93,12 +93,22 @@ Issues = "https://github.com/NatLabRockies/FuelLib/issues"
 Documentation = "https://NatLabRockies.github.io/FuelLib"
 
 [tool.setuptools]
-packages = ["fuellib", "fuellib.exporters", "fuellib.cli"]
+packages = [
+    "fuellib",
+    "fuellib.cli",
+    "fuellib.correlate",
+    "fuellib.data",
+    "fuellib.exporters",
+    "fuellib.gcm",
+    "fuellib.rdk",
+    "fuellib.utils",
+]
 
 [tool.setuptools.package-data]
 fuellib = [
     "data/**/*.csv",
-    "data/**/*.yaml",
+    "data/*.yaml",
+    "gcm/*.csv",
 ]
 
 # Ty configurations
@@ -120,8 +130,8 @@ layers = [
     "fuellib.exporters | fuellib.cli", # Not importable by any modules
     "fuellib.fuel",
     "fuellib.correlate",
+    "fuellib.data",
     "fuellib.gcm",
-    "fuellib.data", # May import rdk and utils
     "fuellib.rdk",
     "fuellib.utils", # Importable by all modules
 ]

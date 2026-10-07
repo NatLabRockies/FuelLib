@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
-from fuellib import constants
-
-from ..utils import Units, types
+from ..data.database import Property
+from ..utils import FLLogger, Units, constants, types, utility
 from . import components, helpers
 
 if TYPE_CHECKING:
@@ -27,18 +26,7 @@ def arithmetic(
     Returns:
         Mixture property value.
     """
-    values = var_n.magnitude
-    mag_X = X.to("dimensionless").magnitude
-
-    num_comps = len(values)
-    var_mix = 0.0
-    for i in range(num_comps):
-        for j in range(num_comps):
-            # Use arithmetic definition for the pseudo property
-            var_ij = (values[i] + values[j]) / 2
-            var_mix += mag_X[i] * mag_X[j] * var_ij
-
-    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+    return utility.mixing_rule(var_n, X, pseudo_prop="arithmetic")
 
 
 def geometric(
@@ -54,18 +42,7 @@ def geometric(
     Returns:
         Mixture property value.
     """
-    values = var_n.magnitude
-    mag_X = X.to("dimensionless").magnitude
-
-    num_comps = len(values)
-    var_mix = 0.0
-    for i in range(num_comps):
-        for j in range(num_comps):
-            # Use geometric definition for the pseudo property
-            var_ij = (values[i] * values[j]) ** 0.5
-            var_mix += mag_X[i] * mag_X[j] * var_ij
-
-    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+    return utility.mixing_rule(var_n, X, pseudo_prop="geometric")
 
 
 def mean_molecular_weight(
@@ -397,7 +374,7 @@ def freeze_point_boehm(
 
     R = constants.gas_constant.to("J/(mol*K)")
     Tm = fuel.Tm.to("K")
-    dS_fus = fuel.get_property("boehm", "dS_fus").to("J/(mol*K)")
+    dS_fus = fuel.get_property(Property.DS_FUS, output_units="J/(mol*K)")
     dH_fus = Tm * dS_fus
     dCp = (
         -0.35
@@ -658,3 +635,82 @@ def heat_of_combustion(
     Yi = Yi if Yi is not None else fuel.Y_0
     lhv_i = components.lower_heating_value(fuel)
     return np.sum(Yi * lhv_i)
+
+
+def yield_sooting_index(
+    fuel: "Fuel", Yi: types.Quantity1D | None = None
+) -> types.Quantity1D:
+    """Calculate the yield sooting index of the fuel mixture.
+
+    Combines each component's yield sooting index (`components.yield_sooting_index`)
+    with a mole-fraction weighted mixing rule, `YSI_mix = sum(Xi * YSI_i)`.
+    Components without a YSI value (NaN) are excluded and the mole fractions of
+    the remaining components are renormalized to sum to one.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        Yield sooting index of the mixture.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless")
+    ysi_i = fuel.YSI
+    valid = ~np.isnan(ysi_i.magnitude)
+    if not np.all(valid):
+        msg = (
+            "Yield sooting index is unavailable for components:\n"
+            f"{', '.join(np.array(fuel.compounds)[~valid])}"
+            "\nThese are excluded and the remaining mole fractions renormalized.\n"
+            "Consider adding data to `referenceCompounds/compounds.csv`."
+        )
+        FLLogger.warning(msg)
+    if not np.any(valid):
+        return Units.Quantity(np.nan, "")
+    Xi_valid = Xi.magnitude[valid]
+    ysi_valid = ysi_i.magnitude[valid]
+    return Units.Quantity(np.sum(Xi_valid * ysi_valid) / np.sum(Xi_valid), "")
+
+
+def derived_cetane_number(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+    *,
+    T_ref: types.Quantity0D = constants.T_stp,
+) -> types.Quantity1D:
+    """Calculate the derived cetane number (DCN) of the fuel mixture.
+
+    Combines each component's derived cetane number with a linear, liquid volume
+    fraction mixing rule. Volume fractions are derived from mass fractions using
+    component liquid densities at T_ref.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        T_ref: Reference temperature for liquid densities.
+            Required for converting mass fractions to volume fractions.
+
+    Returns:
+        Derived cetane number of the mixture.
+
+    Raises:
+        ValueError: If derived cetane number is unavailable for any component.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    dcn_i = fuel.DCN
+    rho_i = components.density(fuel, T_ref).magnitude
+    valid = ~np.isnan(dcn_i.magnitude)
+    if not np.all(valid):
+        msg = (
+            "Derived cetane number is unavailable for components:\n"
+            f"{', '.join(np.array(fuel.compounds)[~valid])}"
+        )
+        raise ValueError(msg)
+    if not np.any(valid):
+        return Units.Quantity(np.nan, "")
+    tot_vol = np.sum(Yi / rho_i)
+    vol_frac = (Yi / rho_i) / tot_vol
+    return Units.Quantity(np.sum(vol_frac * dcn_i.magnitude), "")

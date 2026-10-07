@@ -2,7 +2,7 @@
 
 import argparse
 
-from .. import convert
+from ..utils import convert
 
 
 def eps2K_main():

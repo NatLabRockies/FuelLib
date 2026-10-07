@@ -13,9 +13,6 @@ import fuellib as fl
 
 from ..utils import Units
 
-# Default data directory - use fuellib's embedded data
-FUELDATA_DIR = fl.get_fueldata_dir()
-
 
 def _magnitude(value, unit=None):
     """Return a Quantity magnitude, optionally converted to ``unit``."""
@@ -360,13 +357,8 @@ def export_pele(
             )
         compound_names = fuel.compounds
 
-    # Check there are no spaces in compound_names
-    for compound in compound_names:
-        if " " in compound:
-            raise ValueError(
-                f"Pele cannot accept compounds with spaces. "
-                f"Compound '{compound}' contains spaces. Use a '-' instead."
-            )
+    # Pele cannot accept species names with spaces (e.g. "ethyl benzene").
+    compound_names = ["-".join(str(name).split()) for name in compound_names]
 
     # Unit conversion factors are now handled by the UnitConverter class
 
@@ -554,11 +546,8 @@ def main():
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str
 
-    :param --fuel_data_dir: Directory where fuel data files are located. Default is FuelLib/fuelData.
+    :param --fuel_data_dir: User database directory (optional). Default is the FuelLib database.
     :type --fuel_data_dir: str, optional
-
-    :param --fuel_decomp_name: Name of the decomposition file (optional). If not provided, defaults to fuel_name.
-    :type --fuel_decomp_name: str, optional
 
     :param --units: Units for critical properties. Options are "mks" (default) or "cgs".
     :type --units: str, optional
@@ -600,22 +589,13 @@ def main():
         help="Name of the fuel (mandatory).",
     )
 
-    # Optional argument for fuel data directory
+    # Optional argument for user database directory
     parser.add_argument(
         "-dir",
         "--fuel_data_dir",
-        default=FUELDATA_DIR,
-        metavar="PATH",
-        help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
-    )
-
-    # Optional argument for decomposition file name
-    parser.add_argument(
-        "-decomp",
-        "--fuel_decomp_name",
         default=None,
-        metavar="NAME",
-        help="Name of the decomposition file (optional). If not provided, defaults to fuel_name.",
+        metavar="PATH",
+        help="User database directory (optional, default: FuelLib database).",
     )
 
     # Optional argument for units
@@ -698,12 +678,7 @@ def main():
     # Parse arguments
     args = parser.parse_args()
     fuel_name = args.fuel_name
-    fuel_decomp_name = args.fuel_decomp_name
     fuel_data_dir = args.fuel_data_dir
-
-    # If decomposition name not provided, read from metadata (required)
-    if fuel_decomp_name is None:
-        fuel_decomp_name = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
 
     units = args.units.lower()
     dep_fuel_names = args.dep_fuel_names
@@ -717,22 +692,16 @@ def main():
     # Print the parsed arguments
     print("Preparing to export properties:")
     print(f"    Fuel name: {fuel_name}")
-    print(f"    Decomposition name: {fuel_decomp_name}")
     print(f"    Units: {units}")
     print(f"    Liquid property model: {liq_prop_model}")
     if liq_prop_model.lower() == "mp":
         print(f"    Antoine coefficients: {psat_antoine}")
     print(f"    Export mixture properties: {export_mix}")
     print(f"    Export directory: {export_dir}")
-    print(f"    Fuel data directory: {fuel_data_dir}")
+    print(f"    Fuel data directory: {fuel_data_dir or 'FuelLib database'}")
 
-    # Create the groupContribution object for the specified fuel
-    fuel = fl.Fuel(fuel_name, decompName=fuel_decomp_name, fuelDataDir=fuel_data_dir)
-    if dep_fuel_names is None and not export_mix:
-        if use_pp_keys and fuel.pelephysics_keys is not None:
-            dep_fuel_names = list(fuel.pelephysics_keys)
-        else:
-            dep_fuel_names = list(fuel.compounds)
+    # Create the Fuel object; deposition species default to the fuel species
+    fuel = fl.Fuel(fuel_name, userDataDir=fuel_data_dir)
 
     # Export properties for Pele
     export_pele(

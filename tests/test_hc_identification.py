@@ -1,21 +1,30 @@
 """Test hydrocarbon identification: nC, nH, and hc_type determination."""
 
 import re
-from pathlib import Path
 
 import pandas as pd
 import pytest
 
 import fuellib as fl
+from fuellib.data.database import DEFAULT_DIR, NUM_C_COL
+
+#: Expected `Fuel.hc_type` for each database family.
+FAMILY_TO_HC_TYPE = {
+    "n-alkane": "n-alkane",
+    "iso-alkane": "iso-alkane",
+    "alkene": "alkene",
+    "monocyclic": "cyclo-alkane",
+    "dicyclic": "cyclo-alkane",
+    "tricyclic": "cyclo-alkane",
+    "alkylbenzene": "aromatic",
+    "cycloaromatic": "aromatic",
+    "diaromatic": "aromatic",
+}
 
 
 def get_available_fuels():
-    """Discover available fuels from fuelData/gcData directory."""
-    gcdata_dir = fl.get_fueldata_gc_dir()
-    fuels = sorted([
-        f.name.replace("_init.csv", "") for f in Path(gcdata_dir).glob("*_init.csv")
-    ])
-    return fuels
+    """Discover available fuels from the database gcData directory."""
+    return sorted(f.stem for f in (DEFAULT_DIR / "gcData").glob("*.csv"))
 
 
 def extract_c_h_from_formula(formula):
@@ -29,59 +38,6 @@ def extract_c_h_from_formula(formula):
     if match:
         return int(match.group(1)), int(match.group(2))
     return None, None
-
-
-def infer_hc_type_from_formula(formula, compound_name=""):
-    """Infer expected hydrocarbon type from formula."""
-    if not formula or pd.isna(formula):
-        return None
-
-    nc, nh = extract_c_h_from_formula(formula)
-    if nc is None:
-        return None
-
-    # Check for aromatic patterns (diaromatics, cycloaromatics, benzenes)
-    if "Diaromatic" in compound_name or "aromatic" in compound_name.lower():
-        return "aromatic"
-    if "Benzene" in compound_name or "Toluene" in compound_name:
-        return "aromatic"
-
-    # Check for alkene patterns
-    if "Alkene" in compound_name:
-        return "alkene"
-
-    # Check for cycloalkane patterns
-    if "Cycloparaffin" in compound_name or "Cycloaromatic" in compound_name:
-        # These have aromatic rings attached, classified as aromatic
-        if "Cycloaromatic" in compound_name:
-            return "aromatic"
-        return "cyclo-alkane"
-
-    # For alkanes, check saturation
-    # Alkanes: CnH(2n+2)
-    if nh == 2 * nc + 2:
-        # Check if it's iso or n based on name
-        if "Isoparaffin" in compound_name or "iso" in compound_name.lower():
-            return "iso-alkane"
-        elif "n-C" in compound_name or compound_name.startswith("n-"):
-            return "n-alkane"
-        else:
-            # Default branched alkanes to iso-alkane
-            return "iso-alkane"
-
-    # Monocycloalkanes: CnH(2n)
-    if "Monocyclo" in compound_name and nh == 2 * nc:
-        return "cyclo-alkane"
-
-    # Dicycloalkanes: CnH(2n-2)
-    if "Dicyclo" in compound_name and nh == 2 * nc - 2:
-        return "cyclo-alkane"
-
-    # Tricycloalkanes: CnH(2n-4)
-    if "Tricyclo" in compound_name and nh == 2 * nc - 4:
-        return "cyclo-alkane"
-
-    return None
 
 
 class TestHCIdentification:
@@ -156,120 +112,24 @@ class TestHCIdentification:
         assert not mismatches, "Invalid hydrocarbon types:\n" + "\n".join(mismatches)
         print("✓ hc_type from decomp is consistent")
 
-        # === Test 4: hc_type matches formula-derived expectations ===
-        mismatches = []
-        formulas = (
-            fuel.formulas if fuel.formulas is not None else [None] * fuel.num_compounds
-        )
-        for compound, formula, hc_type_calc in zip(
-            fuel.compounds, formulas, fuel.hc_type
-        ):
-            if not formula or pd.isna(formula):
-                continue
-
-            hc_type_expected = infer_hc_type_from_formula(formula, compound)
-
-            if hc_type_expected is not None and hc_type_calc != hc_type_expected:
-                mismatches.append(
-                    f"{compound}: calculated hc_type='{hc_type_calc}', "
-                    f"expected hc_type='{hc_type_expected}' "
-                    f"(formula: {formula})"
-                )
-
-        assert not mismatches, "Hydrocarbon type mismatches:\n" + "\n".join(mismatches)
-        print("✓ hc_type from decomp matches formula-derived expectations")
-
-        # === Test 5: Aromatic compounds identified ===
-        formulas = (
-            fuel.formulas if fuel.formulas is not None else [None] * fuel.num_compounds
-        )
-        aromatic_names = {
-            compound
-            for compound, formula in zip(fuel.compounds, formulas)
-            if formula
-            and (
-                "Benzene" in compound
-                or "aromatic" in compound.lower()
-                or "naphthalene" in formula.lower()
+        # === Test 4: hc_type matches the database family ===
+        mismatches = [
+            f"{compound}: hc_type='{hc_type}', family='{family}'"
+            for compound, hc_type, family in zip(
+                fuel.compounds, fuel.hc_type, fuel.families, strict=True
             )
-        }
+            if FAMILY_TO_HC_TYPE[family] != hc_type
+        ]
+        assert not mismatches, "Hydrocarbon type mismatches:\n" + "\n".join(mismatches)
+        print("✓ hc_type matches database families")
 
-        mismatches = []
-        for compound, hc_type in zip(fuel.compounds, fuel.hc_type):
-            if compound in aromatic_names and hc_type != "aromatic":
-                mismatches.append(f"{compound}: should be aromatic but got '{hc_type}'")
-
-        assert not mismatches, (
-            "Aromatic compounds not correctly identified:\n" + "\n".join(mismatches)
-        )
-        aromatic_count = len(aromatic_names) if aromatic_names else 0
-        print(f"✓ aromatic compounds identified correctly ({aromatic_count} found)")
-
-        # === Test 6: n-alkane compounds identified ===
-        nalkane_names = {
-            compound for compound in fuel.compounds if compound.startswith("n-C")
-        }
-
-        mismatches = []
-        for compound, hc_type in zip(fuel.compounds, fuel.hc_type):
-            if compound in nalkane_names and hc_type != "n-alkane":
-                mismatches.append(f"{compound}: should be n-alkane but got '{hc_type}'")
-
-        assert not mismatches, (
-            "n-alkane compounds not correctly identified:\n" + "\n".join(mismatches)
-        )
-        nalkane_count = len(nalkane_names) if nalkane_names else 0
-        print(f"✓ n-alkane compounds identified correctly ({nalkane_count} found)")
-
-        # === Test 7: Cycloalkane compounds identified ===
-        cyclo_names = {
-            compound
-            for compound in fuel.compounds
-            if "cycloparaffin" in compound.lower()
-            and "aromatic" not in compound.lower()
-        }
-
-        mismatches = []
-        for compound, hc_type in zip(fuel.compounds, fuel.hc_type):
-            if compound in cyclo_names and hc_type != "cyclo-alkane":
-                mismatches.append(
-                    f"{compound}: should be cyclo-alkane but got '{hc_type}'"
-                )
-
-        assert not mismatches, (
-            "Cycloalkane compounds not correctly identified:\n" + "\n".join(mismatches)
-        )
-        cyclo_count = len(cyclo_names) if cyclo_names else 0
-        print(f"✓ cyclo-alkane compounds identified correctly ({cyclo_count} found)")
-
-        # === Test 7b: iso-alkane compounds identified ===
-        isoalkane_names = {
-            compound for compound in fuel.compounds if "Isoparaffin" in compound
-        }
-
-        mismatches = []
-        for compound, hc_type in zip(fuel.compounds, fuel.hc_type):
-            if compound in isoalkane_names and hc_type != "iso-alkane":
-                mismatches.append(
-                    f"{compound}: should be iso-alkane but got '{hc_type}'"
-                )
-
-        assert not mismatches, (
-            "iso-alkane compounds not correctly identified:\n" + "\n".join(mismatches)
-        )
-        isoalkane_count = len(isoalkane_names) if isoalkane_names else 0
-        print(f"✓ iso-alkane compounds identified correctly ({isoalkane_count} found)")
-
-        # === Test 8: Alkene compounds identified ===
-        alkene_names = {compound for compound in fuel.compounds if "Alkene" in compound}
-
-        mismatches = []
-        for compound, hc_type in zip(fuel.compounds, fuel.hc_type):
-            if compound in alkene_names and hc_type != "alkene":
-                mismatches.append(f"{compound}: should be alkene but got '{hc_type}'")
-
-        assert not mismatches, (
-            "Alkene compounds not correctly identified:\n" + "\n".join(mismatches)
-        )
-        alkene_count = len(alkene_names) if alkene_names else 0
-        print(f"✓ alkene compounds identified correctly ({alkene_count} found)")
+        # === Test 5: nC matches the database ===
+        mismatches = [
+            f"{compound}: nC={nc}, database Num_C={num_c}"
+            for compound, nc, num_c in zip(
+                fuel.compounds, fuel.nC, fuel.data[NUM_C_COL], strict=True
+            )
+            if nc != num_c
+        ]
+        assert not mismatches, "Carbon count mismatches:\n" + "\n".join(mismatches)
+        print("✓ nC matches database Num_C")

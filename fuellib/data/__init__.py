@@ -1,5 +1,6 @@
-"""FuelLib embedded data package."""
+"""FuelLib database."""
 
-from . import references
+from . import database
+from .database import Property, write_template
 
-__all__ = ["references"]
+__all__ = ["Property", "database", "write_template"]

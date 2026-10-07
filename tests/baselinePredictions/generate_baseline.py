@@ -31,6 +31,8 @@ method_map = {
     "freezepoint": correlate.mixture.freeze_point_boehm,
     "flashpoint": correlate.mixture.flash_point_alibashki,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
+    "yieldsootingindex": correlate.mixture.yield_sooting_index,
+    "derivedcetanenumber": correlate.mixture.derived_cetane_number,
 }
 
 
@@ -38,12 +40,11 @@ def update_baseline() -> None:
     """Update the baseline predictions in the mixture data."""
     for fuel_name in fuel_names:
         fuel = Fuel(fuel_name)
-        props_file = Path(fuel.fuelDataPropsDir) / f"{fuel_name}.csv"
+        props_data = fuel.properties_data
 
-        if not props_file.exists():
-            raise FileNotFoundError(f"Fuel data file not found: {props_file}")
+        if props_data is None:
+            raise FileNotFoundError(f"Fuel data file not found: {fuel_name}")
 
-        props_data = pd.read_csv(props_file)
         for prop_name in props_data["Property"].unique():
             prop_data = props_data[props_data["Property"] == prop_name]
             method = method_map.get(prop_name.replace(" ", "").strip().lower(), None)

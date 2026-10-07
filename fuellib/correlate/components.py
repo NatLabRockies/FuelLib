@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit
 
-from .. import constants
-from ..utils import Units, types
+from ..data.database import Property
+from ..utils import Units, constants, types
 
 if TYPE_CHECKING:
     from ..fuel import Fuel
@@ -119,9 +119,9 @@ def molar_specific_heat_capacity_ruzicka(
         Molar specific heat capacity in J/mol/K.
     """
     Tr = T.to("K") / 100.0
-    rd_a = fuel.get_property("gani", "rd_A").to("")
-    rd_b = fuel.get_property("gani", "rd_B").to("K^-1")
-    rd_d = fuel.get_property("gani", "rd_D").to("K^-2")
+    rd_a = fuel.get_property(Property.RD_A, output_units="")
+    rd_b = fuel.get_property(Property.RD_B, output_units="K^-1")
+    rd_d = fuel.get_property(Property.RD_D, output_units="K^-2")
     cp_molar = constants.gas_constant * (rd_a + rd_b * Tr + rd_d * Tr**2)
     return cp_molar.to("J/(mol*K)")
 
@@ -544,7 +544,7 @@ def flash_point_alqaheem(fuel: "Fuel") -> types.Quantity1D:
     Returns:
         Component flash points in K.
     """
-    Tb = fuel.get_property("gani", "Tb").to("K")
+    Tb = fuel.Tb
     return 0.70 * Tb
 
 
@@ -566,8 +566,8 @@ def flash_point_alibashki(fuel: "Fuel") -> types.Quantity1D:
     Returns:
         Component flash points in K.
     """
-    Tb = fuel.get_property("gani", "Tb").to("K")
-    phi = fuel.get_property("gani", "alibakhshi_phi").to("K")
+    Tb = fuel.Tb
+    phi = fuel.get_property(Property.ALIBAKHSHI_PHI, output_units="K")
     return Units.Quantity(12.14, "K") + 0.73 * Tb + phi
 
 
@@ -602,8 +602,8 @@ def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
     """
     dH_form_co2 = Units.Quantity(-393.51, "kJ/mol")  # At 298.15 K
     dH_form_h2o = Units.Quantity(-241.83, "kJ/mol")  # At 298.15 K
-    Hf = fuel.get_property("gani", "Hf").to("J/mol")
-    Hv_stp = fuel.get_property("gani", "Hv_stp").to("J/mol")
+    Hf = fuel.Hf
+    Hv_stp = fuel.Hv_stp
     Hf_liq = Hf - Hv_stp
     nC = np.array(fuel.nC)
     nH = np.array(fuel.nH)

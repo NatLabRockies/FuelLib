@@ -5,6 +5,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
+## [Unreleased] (Database)
+
+### Added
+- `fuellib.data` package rewritten (replacing the legacy layout): `referenceCompounds/compounds.csv` (identity columns plus value, units, err, and source columns for each property), `referenceCompounds/gani.csv` (Gani group decompositions keyed by InChI), `gcData/<fuel>.csv`, `propertiesData/<fuel>.csv`, and `fuel_metadata.yaml`.
+  * `database.Property` enumerates property columns (with `units`, `err`, and `source` companion column names); exported as `fuellib.Property`.
+  * `database.load_reference_database` auto-populates missing `Family`, `Num_C`, `InChI`, and Gani-predictable properties (written back to `compounds.csv`), merges an optional user database, and adds software-only GCM properties and the RDKit molecular weight.
+  * `database.load_gani_database`, `database.read_gc_data`, `database.match_gc_data` (by SMILES/InChI, else case-insensitive common name), and `database.write_template` (blank user database with CSV headers).
+- `Fuel(name, userDataDir=None)`, with `Fuel.references`, `Fuel.gc_data`, `Fuel.data`, `Fuel.properties_data`, `Fuel.userDataDir`, and `Fuel.families`.
+- `Fuel.get_property(field, *, output_units=None)` returns database values, converting mixed units to the most common unit.
+- `1-dodecene`, `1-hexadecene`, and `2-methyltricosane` reference compounds (POSF11498).
+- `tests/test_database.py`.
+
+### Changed
+- `Fuel` component properties (`Tc`, `Pc`, `Vc`, `Tb`, `Tm`, `Hf`, `Gf`, `Hv_stp`, `omega`, `Vm_stp`, `Cp_stp`, `Cp_B`, `Cp_C`, `MW`, `Lv_stp`, `epsilonByKB`, `sigma`, `YSI`, `DCN`) are cached properties read from the database, so literature values take precedence over GCM predictions.
+- `Fuel.compounds` returns reference compound names (e.g. `ethyl benzene` instead of `C2-Benzene`).
+- `Fuel.gani_decomp` reads `referenceCompounds/gani.csv`; `Fuel.gcm_properties` remains available for pure GCM predictions.
+- `gcm.boehm` uses the database `Family` of each compound.
+- `fl-export-pele` replaces spaces in compound names with `-`; `-dir` in the exporters and plotting CLIs is a user database directory.
+- YSI and DCN reference values moved into `compounds.csv`.
+- `fuellib/utility.py`, `fuellib/constants.py`, and `fuellib/convert.py` moved to `fuellib/utils/`; still available as `fuellib.utility`, `fuellib.constants`, and `fuellib.convert`.
+
+### Removed
+- Legacy `fuellib/data` files (`references.py`, `refCompounds.csv`, `refProperties.csv`, `fuelData/`), `fuellib/_data_locator.py`, and the `get_data_dir`, `get_fueldata_*`, `get_gcmtable_dir`, and `get_metadata_*` exports.
+- `Fuel` arguments `decompName`, `fuelDataDir`, and `use_references`; `Fuel.gcxgc_data`, `Fuel.use_references`, and the `Fuel.fuelData*Dir` and file-path attributes; `Fuel.get_property(method, property_name)` (use `Fuel.gcm_properties[method][property_name]`).
+- `-decomp` options of `fl-export-pele`, `fl-plt-comp`, and `fl-plt-props`; `decomp_name`/`props_data` metadata fields.
+- `tests/test_ref_compounds.py`.
+
+## [Unreleased] (YSI, DCN implement)
+
+### Added
+- `utils.logger` with `FLLogger`, `set_log_level`, and `ANSI` (for access to ANSI codes across files).
+  * `FLLogger` and `set_log_level` exported from `fuellib` and `fuellib.utils`.
+- `Fuel.YSI` and `Fuel.DCN` cached properties returning per-compound yield sooting indices (McEnally-Pfefferle Yale YSI Database, Vol. 2) and derived cetane numbers (ASTM D6890 IQT scale) from `refProperties.csv`; compounds without reference data are NaN.
+- `correlate.mixture.yield_sooting_index` (mole-fraction mixing rule; components without a YSI are excluded with a warning and the remaining mole fractions renormalized) and `correlate.mixture.derived_cetane_number` (liquid volume-fraction mixing rule; raises `ValueError` if any component lacks a DCN).
+- Baseline predictions for `YieldSootingIndex` and `DerivedCetaneNumber` (`generate_baseline.method_map`).
+- `YSI` and `DCN` reference values and ~70 additional reference compounds in `data/refCompounds.csv` and `data/refProperties.csv`.
+- `references.family_by_smiles` to look up the reference family of a compound from its SMILES.
+- `.scratch/` to `.gitignore`.
+
+### Changed
+- `gcm.boehm` uses the `Family` from `refCompounds.csv` for reference compounds (when `Fuel.use_references` is `True`) rather than always identifying it from the structure.
+- `references` CSV loading tolerates empty/unnamed spreadsheet columns and padded whitespace; `references.update_compounds_csv` quotes non-numeric fields (InChI strings contain commas) and `python -m fuellib.data.references` regenerates `refCompounds.csv`.
+- `references.properties_by_smiles` uses a cached index (rebuilt when the CSV files change) instead of reloading and revalidating the CSVs on every call.
+
 ## [Unreleased] (YSI, DCN prep)
 
 ### Added

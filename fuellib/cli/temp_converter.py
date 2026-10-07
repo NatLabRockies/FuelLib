@@ -2,7 +2,7 @@
 
 import argparse
 
-from .. import convert
+from ..utils import convert
 
 
 def c2k_main():

@@ -1,36 +1,31 @@
+from pathlib import Path
+
 import fuellib as fl
 
-# Load an embedded fuel
+# Load a fuel from the FuelLib database
 fuel = fl.Fuel("posf10264")
 
 print(f"Fuel: {fuel.name}")
-print(f"Fuel data directory: {fuel.fuelDataDir}")
-print(f"GC data directory: {fuel.fuelDataGcDir}")
-print(f"Decomposition directory: {fuel.fuelDataDecompDir}")
-print(f"Properties directory: {fuel.fuelDataPropsDir}")
+print(f"User database directory: {fuel.userDataDir}")
 print(f"Number of compounds: {fuel.num_compounds}")
 
-# To use a custom fuel, create a directory structure like:
-# customFuels/fuelData/
+# To use a custom fuel, create a user database mirroring fuellib/data:
+# customFuels/
 #   ├── gcData/
-#   │   └── myFuel_init.csv
-#   ├── groupDecompositionData/
-#   │   └── myFuel.csv
-#   └── propertiesData/  (optional)
+#   │   └── myFuel.csv            (Common_Name and/or SMILES, Weight %)
+#   ├── referenceCompounds/        (optional: compounds not in FuelLib)
+#   │   ├── compounds.csv
+#   │   └── gani.csv
+#   └── propertiesData/            (optional)
 #       └── myFuel.csv
 #
-# Then load it with:
-custom_fuel = fl.Fuel("hefa-S1", fuelDataDir="customFuels/fuelData")
+# A blank template with the CSV headers filled in can be created with:
+if not Path("customFuels").exists():
+    fl.data.write_template("customFuels", "myFuel")
 
-# After loading, the fuel object has the correct directory paths:
-custom_fuel.fuelDataDir
-custom_fuel.fuelDataGcDir
-custom_fuel.fuelDataDecompDir
-custom_fuel.fuelDataPropsDir
-
-print(f"\nFuel: {custom_fuel.name}")
-print(f"Fuel data directory: {custom_fuel.fuelDataDir}")
-print(f"GC data directory: {custom_fuel.fuelDataGcDir}")
-print(f"Decomposition directory: {custom_fuel.fuelDataDecompDir}")
-print(f"Properties directory: {custom_fuel.fuelDataPropsDir}")
-print(f"Number of compounds: {custom_fuel.num_compounds}")
+# After filling in the template, load the fuel with:
+# custom_fuel = fl.Fuel("myFuel", userDataDir="customFuels")
+#
+# Missing Family, Num_C, InChI, and GCM-predictable properties in
+# customFuels/referenceCompounds/compounds.csv are populated automatically
+# (and written back) when the fuel is loaded.
