@@ -15,8 +15,8 @@ except ImportError:
 
 # Import fuel class
 # Import submodules for namespacing
-from . import correlate, database
-from .database import Property
+from . import correlate, data
+from .data import Property
 from .fuel import Fuel
 from .utils import Units, constants, convert, set_log_level, utility
 
@@ -28,7 +28,7 @@ __all__ = [
     "constants",
     "convert",
     "correlate",
-    "database",
+    "data",
     "set_log_level",
     "utility",
 ]

@@ -97,7 +97,7 @@ packages = [
     "fuellib",
     "fuellib.cli",
     "fuellib.correlate",
-    "fuellib.database",
+    "fuellib.data",
     "fuellib.exporters",
     "fuellib.gcm",
     "fuellib.rdk",
@@ -106,8 +106,8 @@ packages = [
 
 [tool.setuptools.package-data]
 fuellib = [
-    "database/**/*.csv",
-    "database/*.yaml",
+    "data/**/*.csv",
+    "data/*.yaml",
     "gcm/*.csv",
 ]
 
@@ -130,7 +130,7 @@ layers = [
     "fuellib.exporters | fuellib.cli", # Not importable by any modules
     "fuellib.fuel",
     "fuellib.correlate",
-    "fuellib.database",
+    "fuellib.data",
     "fuellib.gcm",
     "fuellib.rdk",
     "fuellib.utils", # Importable by all modules

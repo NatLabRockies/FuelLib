@@ -9,7 +9,7 @@ import os
 import sys
 import warnings
 
-from fuellib.database.database import DEFAULT_DIR
+from fuellib.data.database import DEFAULT_DIR
 
 try:
     import yaml

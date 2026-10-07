@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
-from ..database.database import Property
+from ..data.database import Property
 from ..utils import FLLogger, Units, constants, types, utility
 from . import components, helpers
 

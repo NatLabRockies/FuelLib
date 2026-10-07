@@ -11,7 +11,7 @@ import pandas as pd
 from rdkit.Chem import Mol
 
 from . import correlate
-from .database.database import (
+from .data.database import (
     COMMON_NAME_COL,
     FAMILY_COL,
     INCHI_COL,
@@ -143,7 +143,7 @@ class Fuel:
     def families(self) -> list[str]:
         """Hydrocarbon family of each compound from the reference database.
 
-        See `fuellib.database.database.classify_family` for the list of families.
+        See `fuellib.data.database.classify_family` for the list of families.
         """
         return [str(family) for family in self.data[FAMILY_COL]]
 

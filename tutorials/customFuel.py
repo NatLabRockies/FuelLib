@@ -9,7 +9,7 @@ print(f"Fuel: {fuel.name}")
 print(f"User database directory: {fuel.userDataDir}")
 print(f"Number of compounds: {fuel.num_compounds}")
 
-# To use a custom fuel, create a user database mirroring fuellib/database:
+# To use a custom fuel, create a user database mirroring fuellib/data:
 # customFuels/
 #   ├── gcData/
 #   │   └── myFuel.csv            (Common_Name and/or SMILES, Weight %)
@@ -21,7 +21,7 @@ print(f"Number of compounds: {fuel.num_compounds}")
 #
 # A blank template with the CSV headers filled in can be created with:
 if not Path("customFuels").exists():
-    fl.database.write_template("customFuels", "myFuel")
+    fl.data.write_template("customFuels", "myFuel")
 
 # After filling in the template, load the fuel with:
 # custom_fuel = fl.Fuel("myFuel", userDataDir="customFuels")

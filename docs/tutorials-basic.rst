@@ -23,7 +23,7 @@ If you want to run the example scripts, you can either clone the repository or d
 Required Input Files
 ^^^^^^^^^^^^^^^^^^^^^
 
-FuelLib comes with a variety of built-in fuels with pre-populated input files in the `fuellib/database <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/database>`_ directory, but you can also add your own custom fuels by providing the required input files (see `Adding Custom Fuels <tutorials-custom-fuels.html>`_). Each fuel requires one input file:
+FuelLib comes with a variety of built-in fuels with pre-populated input files in the `fuellib/data <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data>`_ directory, but you can also add your own custom fuels by providing the required input files (see `Adding Custom Fuels <tutorials-custom-fuels.html>`_). Each fuel requires one input file:
 
 - ``gcData/<fuel_name>.csv``: the weight percentage composition of the fuel components (must include a "Weight %" column and a "SMILES" and/or "Common_Name" column)
 
@@ -69,7 +69,7 @@ the remaining branch with a single CH3 group bonded to a CH2 group is not define
     All group decompositions must follow the groups defined in `gcmTable`_, there are :math:`N_{g1} = 78` 
     first-order groups and :math:`N_{g2} = 43` second order groups. The second-order groups start with the 
     branching structure `(CH3)2CH`. Not all branching structures are defined in the `gcmTable`_. We recommend
-    starting with `fuellib/database/referenceCompounds/gani.csv` and adapting the decompositions for your compounds. 
+    starting with `fuellib/data/referenceCompounds/gani.csv` and adapting the decompositions for your compounds. 
 
 Basic Usage
 ^^^^^^^^^^^
@@ -77,7 +77,7 @@ Basic Usage
 To demonstrate the usage of FuelLib, we will use the fuel "heptane-decane", which is a 
 binary mixture of heptane and decane. The initial weight percentage composition is 73.75% 
 heptane and 26.25% decane, and the reference compound data is provided in the
-`referenceCompounds <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/database/referenceCompounds>`_ directory.
+`referenceCompounds <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data/referenceCompounds>`_ directory.
 The following tutorial is included in the `FuelLib/tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_
 as ``basic.py``. To begin, we will import the necessary modules and create a ``fuel`` object for the two component fuel "heptane-decane": 
 

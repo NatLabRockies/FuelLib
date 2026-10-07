@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 import fuellib as fl
-from fuellib.database.database import DEFAULT_DIR, NUM_C_COL
+from fuellib.data.database import DEFAULT_DIR, NUM_C_COL
 
 #: Expected `Fuel.hc_type` for each database family.
 FAMILY_TO_HC_TYPE = {

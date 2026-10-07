@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit
 
-from ..database.database import Property
+from ..data.database import Property
 from ..utils import Units, constants, types
 
 if TYPE_CHECKING:

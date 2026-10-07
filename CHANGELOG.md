@@ -8,7 +8,7 @@ used to parse and validate this file's entries against that format.
 ## [Unreleased] (Database)
 
 ### Added
-- `fuellib.database` package replacing `fuellib/data`: `referenceCompounds/compounds.csv` (identity columns plus value, units, err, and source columns for each property), `referenceCompounds/gani.csv` (Gani group decompositions keyed by InChI), `gcData/<fuel>.csv`, `propertiesData/<fuel>.csv`, and `fuel_metadata.yaml`.
+- `fuellib.data` package rewritten (replacing the legacy layout): `referenceCompounds/compounds.csv` (identity columns plus value, units, err, and source columns for each property), `referenceCompounds/gani.csv` (Gani group decompositions keyed by InChI), `gcData/<fuel>.csv`, `propertiesData/<fuel>.csv`, and `fuel_metadata.yaml`.
   * `database.Property` enumerates property columns (with `units`, `err`, and `source` companion column names); exported as `fuellib.Property`.
   * `database.load_reference_database` auto-populates missing `Family`, `Num_C`, `InChI`, and Gani-predictable properties (written back to `compounds.csv`), merges an optional user database, and adds software-only GCM properties and the RDKit molecular weight.
   * `database.load_gani_database`, `database.read_gc_data`, `database.match_gc_data` (by SMILES/InChI, else case-insensitive common name), and `database.write_template` (blank user database with CSV headers).
@@ -27,7 +27,7 @@ used to parse and validate this file's entries against that format.
 - `fuellib/utility.py`, `fuellib/constants.py`, and `fuellib/convert.py` moved to `fuellib/utils/`; still available as `fuellib.utility`, `fuellib.constants`, and `fuellib.convert`.
 
 ### Removed
-- `fuellib/data` (`references.py`, `refCompounds.csv`, `refProperties.csv`, `fuelData/`), `fuellib/_data_locator.py`, and the `get_data_dir`, `get_fueldata_*`, `get_gcmtable_dir`, and `get_metadata_*` exports.
+- Legacy `fuellib/data` files (`references.py`, `refCompounds.csv`, `refProperties.csv`, `fuelData/`), `fuellib/_data_locator.py`, and the `get_data_dir`, `get_fueldata_*`, `get_gcmtable_dir`, and `get_metadata_*` exports.
 - `Fuel` arguments `decompName`, `fuelDataDir`, and `use_references`; `Fuel.gcxgc_data`, `Fuel.use_references`, and the `Fuel.fuelData*Dir` and file-path attributes; `Fuel.get_property(method, property_name)` (use `Fuel.gcm_properties[method][property_name]`).
 - `-decomp` options of `fl-export-pele`, `fl-plt-comp`, and `fl-plt-props`; `decomp_name`/`props_data` metadata fields.
 - `tests/test_ref_compounds.py`.

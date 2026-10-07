@@ -1,4 +1,4 @@
-"""Tests for the reference compound database (`fuellib.database`)."""
+"""Tests for the reference compound database (`fuellib.data`)."""
 
 from pathlib import Path
 
@@ -7,8 +7,8 @@ import pandas as pd
 import pytest
 
 import fuellib as fl
-from fuellib.database import Property, database
-from fuellib.database.database import (
+from fuellib.data import Property, database
+from fuellib.data.database import (
     COMMON_NAME_COL,
     DEFAULT_DIR,
     FAMILY_COL,

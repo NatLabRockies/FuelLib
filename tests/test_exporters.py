@@ -9,7 +9,7 @@ import subprocess
 import sys
 import tempfile
 
-from fuellib.database.database import DEFAULT_DIR
+from fuellib.data.database import DEFAULT_DIR
 
 
 def run_export_command(cmd, output_dir=None, timeout=180):

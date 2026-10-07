@@ -13,7 +13,7 @@ alpha-olefins, alkylbenzenes, alkylnaphthalenes, monocycloparaffins,
 dicycloparaffins, cycloaromatics).
 
 Validation: compared against existing hand-decomposed data in
-FuelLib/fuellib/database/referenceCompounds/gani.csv
+FuelLib/fuellib/data/referenceCompounds/gani.csv
 """
 
 import csv
@@ -602,7 +602,7 @@ def _load_refcompounds():
     ref_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "fuellib",
-        "database",
+        "data",
         "referenceCompounds",
         "gani.csv",
     )

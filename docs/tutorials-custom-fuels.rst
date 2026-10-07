@@ -6,7 +6,7 @@ This tutorial explains how to add custom fuels to FuelLib. Custom fuels allow yo
 Directory Structure
 -------------------
 
-A user database mirrors the layout of the FuelLib database in ``fuellib/database``:
+A user database mirrors the layout of the FuelLib database in ``fuellib/data``:
 
 .. code-block:: text
 
@@ -21,7 +21,7 @@ A user database mirrors the layout of the FuelLib database in ``fuellib/database
     └── fuel_metadata.yaml         (optional)
 
 A blank template with the CSV headers filled in can be created with
-:func:`~fuellib.database.database.write_template`:
+:func:`~fuellib.data.database.write_template`:
 
 .. code-block:: python
 

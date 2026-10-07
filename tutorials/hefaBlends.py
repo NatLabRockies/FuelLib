@@ -10,7 +10,7 @@ import fuellib as fl
 # Calculate mixture properties from the group contribution properties
 # -----------------------------------------------------------------------------
 
-# HEFA fuels from various feedstocks (see fuellib/database/propertiesData for fuels)
+# HEFA fuels from various feedstocks (see fuellib/data/propertiesData for fuels)
 fuel_names = ["hefa-mfat", "hefa-came", "hefa-tall"]
 conv_fuel_name = "jet-a"
 blends = fl.Units.Quantity(
@@ -61,9 +61,7 @@ def getPredAndData(fuel_name, prop_name, blend):
     jetA = fl.Fuel(conv_fuel_name)
 
     data_file = "hefa-jet-a-blends.csv"
-    data_path = os.path.join(
-        fl.database.database.DEFAULT_DIR, "propertiesData", data_file
-    )
+    data_path = os.path.join(fl.data.database.DEFAULT_DIR, "propertiesData", data_file)
     data_units = pd.read_csv(data_path, nrows=1)
     data = pd.read_csv(data_path, skiprows=[1])
     col = f"{prop_name}_{fuel_name[5:].upper()}"

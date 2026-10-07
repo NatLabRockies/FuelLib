@@ -37,7 +37,7 @@ FuelLib File Organization
 
     - **database**: package containing the FuelLib database and its loaders
 
-        - ``database.py``: :class:`~fuellib.database.database.Property` column names, reading/validation, auto-population, and merging of the default and user databases
+        - ``database.py``: :class:`~fuellib.data.database.Property` column names, reading/validation, auto-population, and merging of the default and user databases
         - **referenceCompounds:**
             - ``compounds.csv``: reference compounds (identity columns and, for each property, value, units, uncertainty, and source)
             - ``gani.csv``: Constantinou-Gani group decomposition of each reference compound, keyed by InChI
@@ -68,7 +68,7 @@ FuelLib File Organization
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
-    - ``test_database.py``: unit test for the FuelLib database (``fuellib.database``) including validation, family classification, auto-population, user databases, and unit handling.
+    - ``test_database.py``: unit test for the FuelLib database (``fuellib.data``) including validation, family classification, auto-population, user databases, and unit handling.
     - ``get_pred_and_data.py``: helper function to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
@@ -103,7 +103,7 @@ Click on links below for the full auto-documentation of the API.
     fuellib.gcm.gani
     fuellib.gcm.boehm
     fuellib.rdk.mol
-    fuellib.database.database
+    fuellib.data.database
     fuellib.correlate.components
     fuellib.correlate.mixture
     fuellib.correlate.helpers

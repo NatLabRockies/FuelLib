@@ -703,14 +703,14 @@ It is difficult to identify individual components of complex multicomponent jet 
 which generally provides weight percentages of a given hydrocarbon family and carbon number within a sample (e.g., 5% C10 iso-alkane, 2% C13 cycloalkane, etc.).
 To address this challenge, FuelLib uses a set of reference compounds that represent the major hydrocarbon families and carbon numbers found in jet fuels.
 A comprehensive list of the reference compounds used in FuelLib can be found in the 
-`fuellib/database/referenceCompounds/compounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/database/referenceCompounds/compounds.csv>`_ file, 
-with associated functional group decompositions in `fuellib/database/referenceCompounds/gani.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/database/referenceCompounds/gani.csv>`_.
+`fuellib/data/referenceCompounds/compounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/referenceCompounds/compounds.csv>`_ file, 
+with associated functional group decompositions in `fuellib/data/referenceCompounds/gani.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/referenceCompounds/gani.csv>`_.
 
 For ease of reference, the reference compounds and keys corresponding to a PelePhysics mechanism `fuellib_posf_nonreacting <https://github.com/AMReX-Combustion/PelePhysics/tree/development/Mechanisms/fuellib_posf_nonreacting>`_ are provided in the table below.
 When provided, the PelePhysics keys can be used to link the compounds in FuelLib to species in PelePhysics simulations via ``Export4Pele.py`` as described in :ref:`Exporting to PelePhysics <sec-exporting-to-pelephysics>`.
 
 .. csv-table:: Reference compounds and corresponding PelePhysics keys, shown with the POSF10325 composition.
-   :file: ../fuellib/database/gcData/posf10325.csv
+   :file: ../fuellib/data/gcData/posf10325.csv
    :header-rows: 1
    :align: center
    :widths: auto
@@ -720,8 +720,8 @@ When provided, the PelePhysics keys can be used to link the compounds in FuelLib
 Reference Property Data
 -----------------------
 
-FuelLib stores pure-compound data in the ``fuellib/database`` directory, accessed through
-:mod:`fuellib.database.database`:
+FuelLib stores pure-compound data in the ``fuellib/data`` directory, accessed through
+:mod:`fuellib.data.database`:
 
 - ``referenceCompounds/compounds.csv``: ``Family``, ``Num_C``, ``Common_Name``, ``SMILES``,
   ``InChI``, and, for each property, the value and its ``_units``, ``_err``, and ``_source``
@@ -735,7 +735,7 @@ FuelLib stores pure-compound data in the ``fuellib/database`` directory, accesse
 
 The stored properties are ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``dH_f_stp``, ``dH_v_stp``,
 ``acentric``, ``Vm_stp``, ``YSI``, and ``DCN``, enumerated by
-:class:`~fuellib.database.database.Property`. Only ``Common_Name`` and ``SMILES`` are
+:class:`~fuellib.data.database.Property`. Only ``Common_Name`` and ``SMILES`` are
 required for each compound. When the database is loaded, missing ``Family``, ``Num_C``, and
 ``InChI`` values are derived from the SMILES, and missing properties that the
 Constantinou-Gani method can predict are filled in from ``gani.csv`` with the source

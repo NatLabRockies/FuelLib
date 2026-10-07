@@ -311,7 +311,7 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
     def test__fuel_module_api_call_persistence(self):
         """Test that the FuelLib.fuel module API persists across versions."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            fl.database.write_template(tmpdir)
+            fl.data.write_template(tmpdir)
             fuel_init = partial(fl.Fuel, name="heptane", userDataDir=tmpdir)
             fuel_init()  # Check that the Fuel object can be instantiated.
 

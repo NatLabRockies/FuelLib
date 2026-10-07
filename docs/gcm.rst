@@ -164,7 +164,7 @@ is used by :func:`~fuellib.correlate.mixture.freeze_point_boehm`.
 Each compound is assigned to a hydrocarbon family from the ``Family`` column of
 the FuelLib database (see :ref:`sec-reference-properties`). Blank families are
 identified from the compound's RDKit ``Mol`` object by
-:func:`~fuellib.database.database.classify_family` (see :mod:`fuellib.rdk.mol`,
+:func:`~fuellib.data.database.classify_family` (see :mod:`fuellib.rdk.mol`,
 including :func:`~fuellib.rdk.mol.has_fused_rings` and
 :func:`~fuellib.rdk.mol.count_aromatic_rings`). The families are ``n-alkane``,
 ``iso-alkane``, ``alkene``, ``monocyclic``, ``dicyclic``, ``tricyclic``,
@@ -245,7 +245,7 @@ registry:
   ``Fuel`` instance. These are pure GCM predictions that ignore literature
   values in the database.
 - :meth:`~fuellib.fuel.Fuel.get_property`: returns a
-  :class:`~fuellib.database.database.Property` from the database (literature
+  :class:`~fuellib.data.database.Property` from the database (literature
   values where available, GCM predictions otherwise), converting mixed units
   to a common unit and optionally to ``output_units``.
 
