@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import os
 from functools import cached_property
+from pathlib import Path
 from typing import Literal
 
 import numpy as np
@@ -11,164 +11,82 @@ import pandas as pd
 from rdkit.Chem import Mol
 
 from . import correlate
-from ._data_locator import (
-    get_fueldata_decomp_dir,
-    get_fueldata_dir,
-    get_fueldata_gc_dir,
-    get_fueldata_props_dir,
-    get_gcmtable_dir,
-    get_metadata_decomp_name,
+from .database.database import (
+    COMMON_NAME_COL,
+    FAMILY_COL,
+    INCHI_COL,
+    PELEPHYSICS_KEY_COL,
+    SMILES_COL,
+    Y_COL,
+    Property,
+    _find_data_file,
+    load_gani_database,
+    load_reference_database,
+    match_gc_data,
+    read_gc_data,
 )
-from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
-from .data import references
 from .gcm import GCMRegistry
 from .rdk import mol
-from .utils import Units, types
+from .utils import FLLogger, Units, types
+from .utils.constants import EpsilonByKB_gas, MW_gas, Sigma_gas
 
 
 class Fuel:
     """Class for handling calculations of thermodynamic and mixture properties."""
 
-    def __init__(
-        self,
-        name: str,
-        decompName: str | None = None,
-        fuelDataDir: str | None = None,
-        *,
-        use_references: bool = True,
-    ) -> None:
-        """Initialize Fuel object and pre-compute GCM properties.
+    def __init__(self, name: str, userDataDir: str | Path | None = None) -> None:
+        """Initialize a Fuel instance.
 
         Args:
-            name: Name of the mixture as it appears in its gcData file.
-            decompName: Name of the groupDecomposition file if different from name.
-                Defaults to None.
-            fuelDataDir: Directory where the fuel data is stored. If None, uses built-in
-                embedded data.
-            use_references: Whether to use reference data for property calculations.
-                Defaults to True.
+            name: The name of the fuel (gcData/<name>.csv).
+            userDataDir: Optional user database mirroring the default layout.
+
+        Raises:
+            NotADirectoryError: If `userDataDir` is not a directory.
+            FileNotFoundError: If no gcData file exists for `name`.
         """
+        if userDataDir is not None:
+            userDataDir = Path(userDataDir)
+            if not userDataDir.is_dir():
+                msg = f"{userDataDir} is not a valid directory."
+                raise NotADirectoryError(msg)
+
         self.name: str = name
-        """Name of the fuel/mixture."""
-        self.use_references: bool = use_references
-        """Whether to use reference data for property calculations."""
-        if decompName is None:
-            # Try to get decomposition name from metadata
-            decompName: str = get_metadata_decomp_name(name, fuelDataDir)
-            """Name of the group decomposition file."""
+        """The name of the fuel."""
+        self.userDataDir: Path | None = userDataDir
+        """The user database directory, if any."""
 
-        # Determine and set data directories for this fuel instance
-        if fuelDataDir is None:
-            # Use built-in embedded data
-            self.fuelDataDir: str = get_fueldata_dir()
-            """Directory containing the fuel data."""
-            self.fuelDataGcDir: str = get_fueldata_gc_dir()
-            """Directory containing the gas chromatography data."""
-            self.fuelDataDecompDir: str = get_fueldata_decomp_dir()
-            """Directory containing the group decomposition data."""
-            self.fuelDataPropsDir: str = get_fueldata_props_dir()
-            """Directory containing the fuel properties data."""
-        else:
-            # Validate and use custom fuel directory
-            from ._data_locator import (
-                _get_props_dir_for_fueldata,
-                _validate_fuel_data_dir,
-            )
+        gc_file = _find_data_file("gcData", name, userDataDir)
+        if gc_file is None:
+            msg = f"No gcData/{name}.csv found in the user or package database."
+            raise FileNotFoundError(msg)
 
-            _validate_fuel_data_dir(fuelDataDir)
-            self.fuelDataDir: str = fuelDataDir
-            """Directory containing the fuel data."""
-            self.fuelDataGcDir: str = os.path.join(fuelDataDir, "gcData")
-            """Directory containing the gas chromatography data."""
-            self.fuelDataDecompDir: str = os.path.join(
-                fuelDataDir, "groupDecompositionData"
-            )
-            """Directory containing the group decomposition data."""
-            self.fuelDataPropsDir: str = _get_props_dir_for_fueldata(fuelDataDir)
-            """Directory containing the fuel properties data."""
+        self.references: pd.DataFrame = load_reference_database(userDataDir)
+        """Merged reference compounds database."""
+        self.gc_data: pd.DataFrame = read_gc_data(gc_file)
+        """GC composition data, one row per compound in `data`."""
+        self.data: pd.DataFrame = match_gc_data(self.gc_data, self.references)
+        """Reference data for each GC component, with weight percent in "Y"."""
 
-        # Get GCM table directory (always from built-in data)
-        gcmtable_dir = get_gcmtable_dir()
-
-        self.groupDecompFile: str = os.path.join(
-            self.fuelDataDecompDir, f"{decompName}.csv"
+        props_file = _find_data_file("propertiesData", name, userDataDir)
+        self.properties_data: pd.DataFrame | None = (
+            pd.read_csv(props_file, header=0) if props_file is not None else None
         )
-        """File containing the group decomposition data for this fuel."""
-        self.gcxgcFile: str = os.path.join(self.fuelDataGcDir, f"{name}_init.csv")
-        """File containing the GCxGC compositional data for this fuel."""
-        self.gcmTableFile: str = os.path.join(gcmtable_dir, "gcmTable.csv")
-        """File containing the GCM table data."""
-
-        # --- Compute critical properties at standard temp (num_compounds,)
-        self.Tc: types.Quantity1D = self.get_property("gani", "Tc").to("K")
-        """Critical temperature in K."""
-        self.Pc: types.Quantity1D = self.get_property("gani", "Pc").to("Pa")
-        """Critical pressure in Pa."""
-        self.Vc: types.Quantity1D = self.get_property("gani", "Vc").to("m^3/mol")
-        """Critical volume in m^3/mol."""
-        self.Tb: types.Quantity1D = self.get_property("gani", "Tb").to("K")
-        """Boiling temperature in K."""
-        self.Hf: types.Quantity1D = self.get_property("gani", "Hf").to("J/mol")
-        """Enthalpy of formation in J/mol."""
-        self.Gf: types.Quantity1D = self.get_property("gani", "Gf").to("J/mol")
-        """Gibbs free energy in J/mol."""
-        self.Hv_stp: types.Quantity1D = self.get_property("gani", "Hv_stp").to("J/mol")
-        """Enthalpy of vaporization at 298 K in J/mol."""
-        self.omega: types.Quantity1D = self.get_property("gani", "omega")
-        """Accentric factor (dimensionless)."""
-        self.Vm_stp: types.Quantity1D = self.get_property("gani", "Vm_stp").to(
-            "m^3/mol"
-        )
-        """Molar liquid volume at 298 K in m^3/mol."""
-        self.Cp_stp: types.Quantity1D = self.get_property("gani", "Cp_stp").to(
-            "J/(mol*K)"
-        )
-        """Molar specific heat at 298 K in J/(mol*K)."""
-        self.Cp_B: types.Quantity1D = self.get_property("gani", "Cp_B").to("J/(mol*K)")
-        """Temperature-corrected specific heat (B) in J/(mol*K)."""
-        self.Cp_C: types.Quantity1D = self.get_property("gani", "Cp_C").to("J/(mol*K)")
-        """Temperature-corrected specific heat (C) in J/(mol*K)."""
-        # L_v,stp (latent heat of vaporization at 298 K)
-        self.Lv_stp: types.Quantity1D = (self.Hv_stp / self.MW).to("J/kg")
-        """Latent heat of vaporization at 298 K in J/kg."""
-
-        # Lennard-Jones parameters for diffusion calculations (Tee et al. 1966)
-        _lj_w = self.omega.magnitude
-        _lj_tc = self.Tc.to("K").magnitude
-        _lj_pc = self.Pc.to("atm").magnitude
-        _epsilon_by_kb = (0.7915 + 0.1693 * _lj_w) * _lj_tc
-        self.epsilonByKB: types.Quantity1D = Units.Quantity(_epsilon_by_kb, "K")
-        """Lennard-Jones well depth over Boltzmann constant in K."""
-
-        _sigma = (2.3551 - 0.0874 * _lj_w) * (_lj_tc / _lj_pc) ** (1.0 / 3)
-        self.sigma: types.Quantity1D = Units.Quantity(_sigma, "angstrom").to("m")
-        """Lennard-Jones collision diameter in m."""
+        """Temperature-dependent property data, if available."""
 
     # -------------------------------------------------------------------------
     # Parsing functions
     # -------------------------------------------------------------------------
-    @cached_property
-    def gcxgc_data(self) -> pd.DataFrame:
-        """GCxGC data in a pandas DataFrame.
-
-        Returns:
-            pandas DataFrame representing the GCxGC data.
-                Shape: (num_compounds, num_columns)
-        """
-        return pd.read_csv(self.gcxgcFile, header=0, index_col=0)
-
     @property
     def Y_0(self) -> types.Quantity1D:
         """List of initial mass fractions for the compounds in the fuel mixture."""
-        if "Weight %" not in self.gcxgc_data.columns:
-            return Units.Quantity([], "dimensionless")
-        Y_0 = self.gcxgc_data["Weight %"].to_numpy().flatten().astype(float)
+        Y_0 = self.data[Y_COL].to_numpy().flatten().astype(float)
         return Units.Quantity(Y_0 / np.sum(Y_0), "dimensionless")
 
     @property
     def compounds(self) -> list[str]:
         """List of compounds in the fuel mixture."""
-        return list(self.gcxgc_data.index)
+        return [name.strip() for name in self.data[COMMON_NAME_COL]]
 
     @property
     def num_compounds(self) -> int:
@@ -177,43 +95,21 @@ class Fuel:
 
     @property
     def smiles(self) -> list[str]:
-        """List of SMILES strings for the compounds in the fuel mixture.
-
-        Raises:
-            ValueError: If the SMILES column is missing from the GCxGC data.
-        """
-        if "SMILES" not in self.gcxgc_data.columns:
-            msg = "SMILES column is missing from the GCxGC data."
-            raise ValueError(msg)
-        return [smiles.strip() for smiles in self.gcxgc_data["SMILES"].to_list()]
+        """List of SMILES strings for the compounds in the fuel mixture."""
+        return [smiles.strip() for smiles in self.data[SMILES_COL]]
 
     @property
     def pelephysics_keys(self) -> list[str] | None:
-        """List of PelePhysics keys for the compounds in the fuel mixture."""
-        if "PelePhysics Key" not in self.gcxgc_data.columns:
+        """PelePhysics keys from the gcData, or None if unavailable for any compound."""
+        if PELEPHYSICS_KEY_COL not in self.gc_data.columns:
             return None
-        return [key.strip() for key in self.gcxgc_data["PelePhysics Key"].to_list()]
-
-    def gani_decomp(self) -> pd.DataFrame:
-        """Parse the Gani decomposition matrix into a DataFrame.
-
-        Returns:
-            A pandas DataFrame representing the Gani decomposition matrix.
-                Shape: (num_compounds, num_groups)
-
-        Raises:
-            ValueError: If any compounds in the fuel mixture are missing from the Gani
-                decomposition file.
-        """
-        df = pd.read_csv(self.groupDecompFile, header=0, index_col=0)
-        missing = set(self.compounds) - set(df.index)
-        if missing:
-            msg = (
-                f"Gani decomposition file ({self.groupDecompFile}) is missing compounds"
-                f" present in the fuel mixture: {sorted(missing)}."
+        keys = self.gc_data[PELEPHYSICS_KEY_COL]
+        if keys.isna().any() or (keys.astype(str).str.strip() == "").any():
+            FLLogger.warning(
+                f"PelePhysics keys are missing for some compounds in {self.name}."
             )
-            raise ValueError(msg)
-        return df.loc[self.compounds]
+            return None
+        return [str(key).strip() for key in keys]
 
     # -------------------------------------------------------------------------
     # Data initialization
@@ -231,7 +127,7 @@ class Fuel:
     @property
     def inchi(self) -> list[str]:
         """List of InChI strings for the compounds in the fuel mixture."""
-        return [mol.inchi(m) for m in self.rdkit_mols]
+        return [inchi.strip() for inchi in self.data[INCHI_COL]]
 
     @property
     def nC(self) -> list[int]:
@@ -244,11 +140,12 @@ class Fuel:
         return [mol.atom_counts(m).get("H", 0) for m in self.rdkit_mols]
 
     @property
-    def MW(self) -> types.Quantity1D:
-        """Molecular weights of the compounds in the fuel mixture in kg/mol."""
-        return Units.Q([mol.molecular_weight(m) for m in self.rdkit_mols], "g/mol").to(
-            "kg/mol"
-        )
+    def families(self) -> list[str]:
+        """Hydrocarbon family of each compound from the reference database.
+
+        See `fuellib.database.database.classify_family` for the list of families.
+        """
+        return [str(family) for family in self.data[FAMILY_COL]]
 
     @property
     def hc_type(self) -> list[str]:
@@ -306,109 +203,181 @@ class Fuel:
                 raise ValueError(msg)
         return np.array(fam_codes, dtype=int)
 
-    @cached_property
-    def gcm_properties(self) -> dict[str, dict[str, types.Quantity1D]]:
-        """Pre-computed GCM properties for the compounds.
+    def gani_decomp(self) -> pd.DataFrame:
+        """Gani group decomposition of each compound from the reference database.
 
         Returns:
-            A dictionary containing the pre-computed GCM properties for the compounds.
-            The keys are the GCM method names, and the values are dictionaries mapping
-            property names to 1D numpy arrays of the property values for each compound.
+            Group counts indexed by compound name.
+                Shape: (num_compounds, num_groups)
+
+        Raises:
+            ValueError: If any compound lacks a decomposition in
+                ``referenceCompounds/gani.csv``.
+        """
+        table = load_gani_database(self.userDataDir)
+        known = set() if table is None else set(table.index)
+        missing = [
+            name
+            for name, inchi in zip(self.compounds, self.inchi, strict=True)
+            if inchi not in known
+        ]
+        if table is None or missing:
+            msg = (
+                f"No Gani group decomposition for {missing}. "
+                "Add them to referenceCompounds/gani.csv."
+            )
+            raise ValueError(msg)
+        return (
+            table.loc[self.inchi].set_axis(self.compounds).rename_axis(COMMON_NAME_COL)
+        )
+
+    @cached_property
+    def gcm_properties(self) -> dict[str, dict[str, types.Quantity1D]]:
+        """Pure group-contribution predictions for the compounds.
+
+        Unlike `get_property`, these ignore literature values in the database.
+
+        Returns:
+            A dictionary mapping each GCM method name to a dictionary of (lowercase)
+            property names and their predictions for each compound.
         """
         props: dict[str, dict[str, types.Quantity1D]] = {}
         for gcm in GCMRegistry.methods:
             props.update(gcm.predict_all(self))
         return props
 
-    def get_property(self, method: str, property_name: str) -> types.Quantity1D:
-        """Get a specific property prediction from the GCM for each compound.
+    def get_property(
+        self, field: Property | str, *, output_units: str | None = None
+    ) -> types.Quantity1D:
+        """Get a property of each compound from the reference database.
+
+        Values are literature data where available and GCM predictions otherwise.
+        Values stored in different units are converted to the most common unit.
 
         Args:
-            method: The GCM method to use.
-            property_name: The name of the property to retrieve.
+            field: The property to retrieve.
+            output_units: The desired output units for the property.
 
         Returns:
-            Quantity vector of the requested predictions for each compound.
-
-        Raises:
-            KeyError: If the GCM method or property is not found.
+            Quantity vector of the property for each compound.
         """
-        method = method.lower()
-        if method not in self.gcm_properties:
-            msg = f"Method '{method}' not found in computed GCM properties."
-            raise KeyError(msg)
+        field = Property(field)
+        values = self.data[field].to_numpy(dtype=float, copy=True)
+        units = self.data[field.units].dropna().astype(str)
+        if units.empty:
+            majority = output_units if output_units is not None else "dimensionless"
+        else:
+            majority = units.value_counts().idxmax()
+        for i, unit in units.items():
+            if unit != majority:
+                values[i] = Units.Quantity(values[i], unit).to(majority).magnitude
 
-        property_name = property_name.lower()
-        if property_name not in self.gcm_properties[method]:
-            msg = f"Property '{property_name}' not found in computed GCM properties."
-            raise KeyError(msg)
-
-        return self.gcm_properties[method][property_name]
+        quantity = Units.Quantity(values, majority)
+        return quantity.to(output_units) if output_units is not None else quantity
 
     # -------------------------------------------------------------------------
-    # Property getters
+    # Component properties
     # -------------------------------------------------------------------------
     @cached_property
-    def Tm(self) -> types.Quantity1D:
-        """Melting temperatures in K.
+    def Tc(self) -> types.Quantity1D:
+        """Critical temperature in K."""
+        return self.get_property(Property.TC, output_units="K")
 
-        Uses reference data if `self.use_references` is True.
-        """
-        Tm = self.get_property("gani", "Tm")
-        if not self.use_references:
-            return Tm
-        values = np.array(Tm.to("K").magnitude, dtype=float)
-        for i, smiles in enumerate(self.smiles):
-            ref_props = references.properties_by_smiles(smiles)
-            if ref_props is None:
-                continue
-            ref_Tm = ref_props[ref_props["Property"] == "Tm"]
-            if ref_Tm.empty:
-                continue
-            row = ref_Tm.iloc[0]
-            units = row["Units"] if pd.notna(row["Units"]) else "K"
-            values[i] = Units.Quantity(float(row["Value"]), units).to("K").magnitude
-        return Units.Quantity(values, "K")
+    @cached_property
+    def Pc(self) -> types.Quantity1D:
+        """Critical pressure in Pa."""
+        return self.get_property(Property.PC, output_units="Pa")
+
+    @cached_property
+    def Vc(self) -> types.Quantity1D:
+        """Critical volume in m^3/mol."""
+        return self.get_property(Property.VC, output_units="m^3/mol")
+
+    @cached_property
+    def Tb(self) -> types.Quantity1D:
+        """Boiling temperature in K."""
+        return self.get_property(Property.TB, output_units="K")
+
+    @cached_property
+    def Tm(self) -> types.Quantity1D:
+        """Melting temperature in K."""
+        return self.get_property(Property.TM, output_units="K")
+
+    @cached_property
+    def Hf(self) -> types.Quantity1D:
+        """Enthalpy of formation in J/mol."""
+        return self.get_property(Property.DH_F_STP, output_units="J/mol")
+
+    @cached_property
+    def Gf(self) -> types.Quantity1D:
+        """Gibbs free energy in J/mol."""
+        return self.get_property(Property.GF, output_units="J/mol")
+
+    @cached_property
+    def Hv_stp(self) -> types.Quantity1D:
+        """Enthalpy of vaporization at 298 K in J/mol."""
+        return self.get_property(Property.DH_V_STP, output_units="J/mol")
+
+    @cached_property
+    def omega(self) -> types.Quantity1D:
+        """Acentric factor (dimensionless)."""
+        return self.get_property(Property.ACENTRIC, output_units="dimensionless")
+
+    @cached_property
+    def Vm_stp(self) -> types.Quantity1D:
+        """Molar liquid volume at 298 K in m^3/mol."""
+        return self.get_property(Property.VM_STP, output_units="m^3/mol")
+
+    @cached_property
+    def Cp_stp(self) -> types.Quantity1D:
+        """Molar specific heat at 298 K in J/(mol*K)."""
+        return self.get_property(Property.CP_STP, output_units="J/(mol*K)")
+
+    @cached_property
+    def Cp_B(self) -> types.Quantity1D:
+        """Temperature-corrected specific heat (B) in J/(mol*K)."""
+        return self.get_property(Property.CP_B, output_units="J/(mol*K)")
+
+    @cached_property
+    def Cp_C(self) -> types.Quantity1D:
+        """Temperature-corrected specific heat (C) in J/(mol*K)."""
+        return self.get_property(Property.CP_C, output_units="J/(mol*K)")
+
+    @cached_property
+    def MW(self) -> types.Quantity1D:
+        """Molecular weights of the compounds in kg/mol."""
+        return self.get_property(Property.MW, output_units="kg/mol")
+
+    @cached_property
+    def Lv_stp(self) -> types.Quantity1D:
+        """Latent heat of vaporization at 298 K in J/kg."""
+        return (self.Hv_stp / self.MW).to("J/kg")
+
+    @cached_property
+    def epsilonByKB(self) -> types.Quantity1D:
+        """Lennard-Jones well depth over Boltzmann constant in K (Tee et al. 1966)."""
+        omega = self.omega.magnitude
+        Tc = self.Tc.to("K").magnitude
+        return Units.Quantity((0.7915 + 0.1693 * omega) * Tc, "K")
+
+    @cached_property
+    def sigma(self) -> types.Quantity1D:
+        """Lennard-Jones collision diameter in m (Tee et al. 1966)."""
+        omega = self.omega.magnitude
+        Tc = self.Tc.to("K").magnitude
+        Pc = self.Pc.to("atm").magnitude
+        sigma = (2.3551 - 0.0874 * omega) * (Tc / Pc) ** (1.0 / 3)
+        return Units.Quantity(sigma, "angstrom").to("m")
 
     @cached_property
     def YSI(self) -> types.Quantity1D:
-        """Yield Sooting Indices.
-
-        Uses McEnally-Pfefferle Yale YSI Database (Vol. 2) data pulled from
-        `refProperties.csv` for reference compounds. Compounds not found in references
-        will receive a NaN value.
-        """  # ruff: ignore[property-docstring-starts-with-verb]
-        values = np.full(len(self.smiles), np.nan, dtype=float)
-        for i, smiles in enumerate(self.smiles):
-            ref_props = references.properties_by_smiles(smiles)
-            if ref_props is None:
-                continue
-            ref_YSI = ref_props[ref_props["Property"] == "YSI"]
-            if ref_YSI.empty:
-                continue
-            row = ref_YSI.iloc[0]
-            values[i] = row["Value"]
-        return Units.Quantity(values, "")
+        """Yield sooting indices (NaN where unavailable)."""  # ruff: ignore[property-docstring-starts-with-verb]
+        return self.get_property(Property.YSI, output_units="dimensionless")
 
     @cached_property
     def DCN(self) -> types.Quantity1D:
-        """Derived cetane numbers (DCN) of the compounds.
-
-        Uses values pulled from `refProperties.csv` for reference compounds on
-        the ASTM D6890 IQT scale. Compounds not found in references will receive
-        a NaN value.
-        """
-        values = np.full(len(self.smiles), np.nan, dtype=float)
-        for i, smiles in enumerate(self.smiles):
-            ref_props = references.properties_by_smiles(smiles)
-            if ref_props is None:
-                continue
-            ref_DCN = ref_props[ref_props["Property"] == "DCN"]
-            if ref_DCN.empty:
-                continue
-            row = ref_DCN.iloc[0]
-            values[i] = row["Value"]
-        return Units.Quantity(values, "")
+        """Derived cetane numbers (ASTM D6890 IQT scale; NaN where unavailable)."""
+        return self.get_property(Property.DCN, output_units="dimensionless")
 
     # -------------------------------------------------------------------------
     # Member functions

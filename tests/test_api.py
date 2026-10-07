@@ -1,6 +1,6 @@
+import tempfile
 import unittest
 from functools import partial
-from pathlib import Path
 
 import numpy as np
 
@@ -269,10 +269,11 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
         """Test that the Fuel class attributes persist across versions."""
         fuel = fl.Fuel("heptane")
         attributes = [
-            "fuelDataDir",
-            "fuelDataGcDir",
-            "fuelDataDecompDir",
-            "fuelDataPropsDir",
+            "userDataDir",
+            "references",
+            "gc_data",
+            "data",
+            "properties_data",
             "name",
             "compounds",
             "formulas",
@@ -295,6 +296,9 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
             "epsilonByKB",
             "hc_type",
             "fam",
+            "families",
+            "YSI",
+            "DCN",
             "nC",
             "nH",
             "pelephysics_keys",
@@ -306,11 +310,10 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
 
     def test__fuel_module_api_call_persistence(self):
         """Test that the FuelLib.fuel module API persists across versions."""
-        fuelDataDir = Path(__file__).parent.parent / "fuellib/data/fuelData"
-        fuel_init = partial(
-            fl.Fuel, name="heptane", decompName="heptane", fuelDataDir=str(fuelDataDir)
-        )
-        fuel_init()  # Check that the Fuel object can be instantiated.
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fl.database.write_template(tmpdir)
+            fuel_init = partial(fl.Fuel, name="heptane", userDataDir=tmpdir)
+            fuel_init()  # Check that the Fuel object can be instantiated.
 
         fuel = fl.Fuel(name="heptane")
 

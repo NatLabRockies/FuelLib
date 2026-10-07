@@ -23,16 +23,15 @@ If you want to run the example scripts, you can either clone the repository or d
 Required Input Files
 ^^^^^^^^^^^^^^^^^^^^^
 
-FuelLib comes with a variety of built-in fuels with pre-populated input files, but you can also add your own custom fuels by providing the required input files. Each fuel requires two input files:
+FuelLib comes with a variety of built-in fuels with pre-populated input files in the `fuellib/database <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/database>`_ directory, but you can also add your own custom fuels by providing the required input files (see `Adding Custom Fuels <tutorials-custom-fuels.html>`_). Each fuel requires one input file:
 
-- ``fuellib/data/fuelData/gcData/<fuel_name>_init.csv``: the initial weight percentage composition of the fuel components (must include columns "Compound" and "Weight %")
-- ``fuellib/data/fuelData/groupDecompositionData/<fuel_name>.csv``: the fundamental group decomposition for each component of the fuel (must have columns for groups in the same order as `gcmTable <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/gcmTableData/gcmTable.csv>`_)
+- ``gcData/<fuel_name>.csv``: the weight percentage composition of the fuel components (must include a "Weight %" column and a "SMILES" and/or "Common_Name" column)
 
-These two required files must have the same number of rows and the same order of components. Many examples can be found in the `fuellib/data/fuelData <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data/fuelData>`_ directory in the repository. When working with an installed package, prefer ``fuellib.get_fueldata_dir()`` to discover the local fuel-data directory instead of hard-coding package paths.
+Each component is matched to a reference compound in ``referenceCompounds/compounds.csv`` by its SMILES (or by its common name if no SMILES is given). The reference compounds store the properties of each compound, and ``referenceCompounds/gani.csv`` stores the fundamental group decomposition of each compound (with columns for groups in the same order as `gcmTable <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/gani.csv>`_), which is used to predict any properties not provided in ``compounds.csv``.
 
 **Fuel Metadata**
 
-A ``fuel_metadata.yaml`` file is required to define decomposition name mappings. This allows you to map multiple fuel variants to a shared group decomposition file. See the `Adding Custom Fuels <tutorials-custom-fuels.html>`_ tutorial for details on the metadata file format and structure.
+An optional ``fuel_metadata.yaml`` file documents the source of each fuel and is used by ``fl-fuels``. See the `Adding Custom Fuels <tutorials-custom-fuels.html>`_ tutorial for details on the metadata file format and structure.
 
 Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -67,18 +66,18 @@ the remaining branch with a single CH3 group bonded to a CH2 group is not define
     +--------------------------------+-------+-------+-------+-----+----------+-----------------+
 
 .. note::
-    All group decomposition files must follow the groups defined in `gcmTable`_, there are :math:`N_{g1} = 78` 
+    All group decompositions must follow the groups defined in `gcmTable`_, there are :math:`N_{g1} = 78` 
     first-order groups and :math:`N_{g2} = 43` second order groups. The second-order groups start with the 
     branching structure `(CH3)2CH`. Not all branching structures are defined in the `gcmTable`_. We recommend
-    starting with `fuellib/data/fuelData/groupDecompositionData/refCompounds.csv` and adapting the decompositions and compounds for your fuel. 
+    starting with `fuellib/database/referenceCompounds/gani.csv` and adapting the decompositions for your compounds. 
 
 Basic Usage
 ^^^^^^^^^^^
 
 To demonstrate the usage of FuelLib, we will use the fuel "heptane-decane", which is a 
 binary mixture of heptane and decane. The initial weight percentage composition is 73.75% 
-heptane and 26.25% decane, and the group decomposition data is provided in the
-`groupDecompositionData <https://github.com/NatLabRockies/FuelLib/tree/main/fuelData/groupDecompositionData>`_ directory.
+heptane and 26.25% decane, and the reference compound data is provided in the
+`referenceCompounds <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/database/referenceCompounds>`_ directory.
 The following tutorial is included in the `FuelLib/tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_
 as ``basic.py``. To begin, we will import the necessary modules and create a ``fuel`` object for the two component fuel "heptane-decane": 
 
@@ -89,9 +88,9 @@ as ``basic.py``. To begin, we will import the necessary modules and create a ``f
     # Create a fuel object for the fuel "heptane-decane"
     fuel = fl.Fuel("heptane-decane")
 
-Upon initialization, the ``fuel`` object will read the initial weight 
-percentage composition and group decomposition data from the specified files. The object stores
-vectors (pint quantities for unit checking) of the calculated fundamental properties at standard conditions for each component of the fuel as described in :ref:`eq-GCM-properties`. 
+Upon initialization, the ``fuel`` object will read the weight 
+percentage composition and match each component to its reference compound data. The object provides
+vectors (pint quantities for unit checking) of the fundamental properties at standard conditions for each component of the fuel as described in :ref:`eq-GCM-properties`. 
 For example, we can display the fuel name, the components in the fuel, the initial composition, and the critical temperature for each component: 
 
 .. code-block:: python
@@ -105,7 +104,7 @@ For example, we can display the fuel name, the components in the fuel, the initi
 .. code-block:: none
 
     >> Fuel name: heptane-decane
-    >> Fuel components: ['NC7H16', 'NC10H22']
+    >> Fuel components: ['n-heptane', 'n-decane']
     >> Initial composition: [0.7375 0.2625]
     >> Critical temperature: [549.8559805147336 623.6905158181833] kelvin
 

@@ -23,7 +23,6 @@ def plot_composition(
     fuel_data_dir=None,
     output_dir=None,
     title=None,
-    decomp_name=None,
     save=True,
     display=False,
 ):
@@ -31,14 +30,12 @@ def plot_composition(
 
     :param fuel_name: Name of the fuel to plot.
     :type fuel_name: str
-    :param fuel_data_dir: Directory where fuel data files are located (optional).
+    :param fuel_data_dir: User database directory (optional).
     :type fuel_data_dir: str, optional
     :param output_dir: Directory to save the plot (optional, default: current directory).
     :type output_dir: str, optional
     :param title: Title for the plots (optional, default: fuel_name, or "none"/"None" to disable).
     :type title: str, optional
-    :param decomp_name: Name of the decomposition file to use (optional, default: fuel_name).
-    :type decomp_name: str, optional
     :param save: Whether to save the plot to a file (optional, default: True).
     :type save: bool, optional
     :param display: Whether to display the plot with plt.show() (optional, default: False).
@@ -54,14 +51,11 @@ def plot_composition(
     elif title.lower() != "none":
         plot_title = title
 
-    if fuel_data_dir is None:
-        fuel_data_dir = fl.get_fueldata_dir()
-
     if save and not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # Load the fuel
-    fuel = fl.Fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, userDataDir=fuel_data_dir)
 
     # Create DataFrame with compound data and carbon numbers from fuel object
     df = pd.DataFrame({
@@ -225,7 +219,6 @@ def plot_mixture_properties(
     fuel_data_dir=None,
     output_dir=None,
     title=None,
-    decomp_name=None,
     save=True,
     display=False,
 ):
@@ -235,14 +228,12 @@ def plot_mixture_properties(
     :type fuel_names: str or list[str]
     :param property_names: Properties to plot (optional, defaults to standard set).
     :type property_names: list[str], optional
-    :param fuel_data_dir: Directory where fuel data files are located (optional).
+    :param fuel_data_dir: User database directory (optional).
     :type fuel_data_dir: str, optional
     :param output_dir: Directory to save the plot (optional, default: current directory).
     :type output_dir: str, optional
     :param title: Title for the plot (optional, default: None).
     :type title: str, optional
-    :param decomp_name: Name of the decomposition file to use (optional, default: fuel_name).
-    :type decomp_name: str, optional
     :param save: Whether to save the plot to a file (optional, default: True).
     :type save: bool, optional
     :param display: Whether to display the plot with plt.show() (optional, default: False).
@@ -250,9 +241,6 @@ def plot_mixture_properties(
     """
     if output_dir is None:
         output_dir = os.getcwd()
-
-    if fuel_data_dir is None:
-        fuel_data_dir = fl.get_fueldata_dir()
 
     if save and not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -384,38 +372,30 @@ def plot_mixture_properties(
         When ``output_units`` is provided, convert all returned property values to
         those units.
         """
-        fuel = fl.Fuel(fuel_name, decompName=decomp_name, fuelDataDir=fuel_data_dir)
-
-        # Try to load experimental data
-        props_dir = fuel.fuelDataPropsDir
+        fuel = fl.Fuel(fuel_name, userDataDir=fuel_data_dir)
 
         T_data = Units.Quantity([], "celsius")
         prop_units = default_units_by_property.get(prop_name, "dimensionless")
         prop_data = Units.Quantity([], prop_units)
 
-        if props_dir and os.path.exists(props_dir):
-            # Check if metadata specifies a different props_data filename
-            props_data_name = fl.get_metadata_props_data(fuel_name, fuel_data_dir)
-            data_filename = props_data_name if props_data_name else fuel_name
-
-            data_file = os.path.join(props_dir, f"{data_filename}.csv")
-            if os.path.exists(data_file):
-                try:
-                    data = pd.read_csv(data_file)
-                    data = data[
-                        (data["Property"] == prop_name)
-                        & data["Temp"].notna()
-                        & data["Property_Value"].notna()
-                    ]
-                    if len(data) > 0:
-                        temp_units = data["Temp_Units"].iloc[0]
-                        prop_units = data["Property_Units"].iloc[0]
-                        T_data = Units.Quantity(data["Temp"].to_numpy(), temp_units)
-                        prop_data = Units.Quantity(
-                            data["Property_Value"].to_numpy(), prop_units
-                        )
-                except (OSError, KeyError, ValueError):
-                    pass
+        # Use experimental data if available
+        if fuel.properties_data is not None:
+            try:
+                data = fuel.properties_data
+                data = data[
+                    (data["Property"] == prop_name)
+                    & data["Temp"].notna()
+                    & data["Property_Value"].notna()
+                ]
+                if len(data) > 0:
+                    temp_units = data["Temp_Units"].iloc[0]
+                    prop_units = data["Property_Units"].iloc[0]
+                    T_data = Units.Quantity(data["Temp"].to_numpy(), temp_units)
+                    prop_data = Units.Quantity(
+                        data["Property_Value"].to_numpy(), prop_units
+                    )
+            except (KeyError, ValueError):
+                pass
 
         # Generate predictions over temperature range
         # First check if experimental data exists - use its range if available
@@ -503,14 +483,11 @@ def plot_mixture_properties(
 
             # Plot experimental data if available
             if len(prop_data) > 0:
-                # Get props_data name for the legend
-                props_data_name = fl.get_metadata_props_data(fuel_name, fuel_data_dir)
-                data_label = props_data_name if props_data_name else fuel_name
                 ax[i].scatter(
                     T_data,
                     prop_data,
                     marker=marker_style,
-                    label=f"Data: {get_legend_label(data_label)}",
+                    label=f"Data: {get_legend_label(fuel_name)}",
                     facecolors=line_color,
                     s=75,
                     zorder=5,
@@ -581,13 +558,6 @@ def comp_main():
         help="Title for the plots (optional, default: fuel_name, or 'none' to disable).",
     )
     parser.add_argument(
-        "-decomp",
-        "--decomp_name",
-        default=None,
-        metavar="NAME",
-        help="Name of the decomposition file to use (optional, default: fuel_name).",
-    )
-    parser.add_argument(
         "-d",
         "--display",
         type=lambda x: str(x).lower() not in ["false", "0"],
@@ -610,7 +580,6 @@ def comp_main():
             fuel_data_dir=args.fuel_data_dir,
             output_dir=args.output_dir,
             title=args.title,
-            decomp_name=args.decomp_name,
             save=args.save,
             display=args.display,
         )
@@ -663,13 +632,6 @@ def props_main():
         help="Title for the plot (optional).",
     )
     parser.add_argument(
-        "-decomp",
-        "--decomp_name",
-        default=None,
-        metavar="NAME",
-        help="Name of the decomposition file to use (optional, default: fuel_name).",
-    )
-    parser.add_argument(
         "-d",
         "--display",
         type=lambda x: str(x).lower() not in ["false", "0"],
@@ -693,7 +655,6 @@ def props_main():
             fuel_data_dir=args.fuel_data_dir,
             output_dir=args.output_dir,
             title=args.title,
-            decomp_name=args.decomp_name,
             save=args.save,
             display=args.display,
         )

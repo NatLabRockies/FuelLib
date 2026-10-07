@@ -9,7 +9,7 @@ import subprocess
 import sys
 import tempfile
 
-import fuellib as fl
+from fuellib.database.database import DEFAULT_DIR
 
 
 def run_export_command(cmd, output_dir=None, timeout=180):
@@ -55,7 +55,7 @@ def test_pele_individual_component():
 def test_pele_default_deposition_species():
     """Test that deposition species default to the emitted fuel species."""
     for options, expected_species in [
-        ([], "n-C07 n-C10"),
+        ([], "n-heptane n-decane"),
         (["-pp"], "NC7H16 NC10H22"),
     ]:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -144,13 +144,12 @@ def test_converge_mixture():
 
 
 def test_pele_custom_fuel_data_dir():
-    """Test fl-export-pele with custom fuel data directory (not embedded data)."""
+    """Test fl-export-pele with a user database directory."""
     # Create temporary directories for fuel data and output
     with tempfile.TemporaryDirectory() as tmpdir:
-        # Copy the embedded fuelData to a temp location
-        embedded_fueldata = fl.get_fueldata_dir()
-        custom_fueldata = os.path.join(tmpdir, "fuelData")
-        shutil.copytree(embedded_fueldata, custom_fueldata)
+        # Copy the packaged gcData to a user database
+        custom_fueldata = os.path.join(tmpdir, "userDatabase")
+        shutil.copytree(DEFAULT_DIR / "gcData", os.path.join(custom_fueldata, "gcData"))
 
         # Export from custom location to temp output directory
         output_dir = os.path.join(tmpdir, "output")
@@ -163,13 +162,12 @@ def test_pele_custom_fuel_data_dir():
 
 
 def test_converge_custom_fuel_data_dir():
-    """Test fl-export-converge with custom fuel data directory (not embedded data)."""
+    """Test fl-export-converge with a user database directory."""
     # Create temporary directories for fuel data and output
     with tempfile.TemporaryDirectory() as tmpdir:
-        # Copy the embedded fuelData to a temp location
-        embedded_fueldata = fl.get_fueldata_dir()
-        custom_fueldata = os.path.join(tmpdir, "fuelData")
-        shutil.copytree(embedded_fueldata, custom_fueldata)
+        # Copy the packaged gcData to a user database
+        custom_fueldata = os.path.join(tmpdir, "userDatabase")
+        shutil.copytree(DEFAULT_DIR / "gcData", os.path.join(custom_fueldata, "gcData"))
 
         # Export from custom location to temp output directory
         output_dir = os.path.join(tmpdir, "output")

@@ -6,14 +6,14 @@ Reference: Constantinou & Gani, AIChE J. 40(10), 1994.
 
 This tool decomposes a SMILES string into first-order and second-order CG groups.
 The output is a count vector matching the 121-group column ordering used by
-FuelLib/gcmTableData/gcmTable.csv.
+FuelLib/fuellib/gcm/gani.csv.
 
 Scope: aliphatic + aromatic hydrocarbons (n-paraffins, iso-paraffins, terminal
 alpha-olefins, alkylbenzenes, alkylnaphthalenes, monocycloparaffins,
 dicycloparaffins, cycloaromatics).
 
 Validation: compared against existing hand-decomposed data in
-FuelLib/fuelData/groupDecompositionData/refCompounds.csv
+FuelLib/fuellib/database/referenceCompounds/gani.csv
 """
 
 import csv
@@ -596,16 +596,15 @@ def verify_formula(smiles, counts):
 
 
 def _load_refcompounds():
-    """Load refCompounds.csv from FuelLib
-    Returns dict: compound_name → list of 121 int counts.
+    """Load the reference Gani decompositions (gani.csv) from FuelLib
+    Returns dict: InChI → list of 121 int counts.
     """
     ref_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "fuellib",
-        "data",
-        "fuelData",
-        "groupDecompositionData",
-        "refCompounds.csv",
+        "database",
+        "referenceCompounds",
+        "gani.csv",
     )
     if not os.path.exists(ref_path):
         return None
@@ -627,7 +626,7 @@ def _load_refcompounds():
 
 
 def compare_with_fuellib(name, computed_vector, ref_data):
-    """Compare computed decomposition vector against FuelLib refCompounds.
+    """Compare computed decomposition vector against the FuelLib gani.csv entry.
     Returns (match, diff_report).
     """
     if ref_data is None or name not in ref_data:
@@ -685,9 +684,9 @@ if __name__ == "__main__":
     # Load FuelLib reference data
     ref_data = _load_refcompounds()
     if ref_data:
-        print(f"Loaded {len(ref_data)} compounds from FuelLib refCompounds.csv")
+        print(f"Loaded {len(ref_data)} compounds from FuelLib gani.csv")
     else:
-        print("WARNING: Could not load FuelLib refCompounds.csv for comparison")
+        print("WARNING: Could not load FuelLib gani.csv for comparison")
     print()
 
     print(f"{'Name':<22} {'SMILES':<28} {'Formula':12} {'FO Groups':<40} {'SO Groups'}")
@@ -723,7 +722,9 @@ if __name__ == "__main__":
             # Compare with FuelLib
             if ref_name and ref_data:
                 vec = to_vector(d)
-                match, report = compare_with_fuellib(ref_name, vec, ref_data)
+                match, report = compare_with_fuellib(
+                    Chem.MolToInchi(Chem.MolFromSmiles(smi)), vec, ref_data
+                )
                 if match is True:
                     n_pass += 1
                     print("    → FuelLib comparison: PASS")

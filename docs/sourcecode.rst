@@ -9,20 +9,15 @@ FuelLib File Organization
 -------------------------
 
 - **docs:** directory containing the documentation source files
-- **gcmTableData:** directory that contains the pre-tabulated group contributions
 - **fuellib:** main package directory containing:
 
     - ``fuel.py``: core :class:`~fuellib.fuel.Fuel` class for Group Contribution Method calculations
-    - ``constants.py``: physical constants (Boltzmann, Avogadro)
-    - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
-    - ``utility.py``: utility functions for mixture properties and droplet calculations
-    - ``_data_locator.py``: internal module for locating and validating fuel data directories
 
     - **gcm**: subpackage implementing the Group Contribution Method (GCM) abstraction
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
-        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM, including hydrocarbon family identification
+        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM, using the database hydrocarbon families
         - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
 
     - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
@@ -33,20 +28,22 @@ FuelLib File Organization
     - **utils**: subpackage with shared utilities
         - ``types.py``: type aliases and the ``Units`` quantity registry
         - ``logger.py``: ``FLLogger`` (the ``fuellib`` logger), ``set_log_level``, and ANSI color codes for terminal output
+        - ``utility.py``: utility functions for mixture properties and droplet calculations
+        - ``constants.py``: physical constants (Boltzmann, Avogadro)
+        - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
 
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
 
-    - **data**: package containing fuel data, metadata, and reference data
+    - **database**: package containing the FuelLib database and its loaders
 
-        - ``references.py``: loading, validation, and lookup of reference compounds and their measured properties
-        - ``refCompounds.csv``: reference compounds (``Common_Name``, ``InChI``, ``SMILES``, ``Num_C``, ``Family``)
-        - ``refProperties.csv``: measured reference properties (``Common_Name``, ``Property``, ``Units``, ``Value``, ``Error``, ``Source``)
-        - **fuelData:** 
-            - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
-            - **groupDecompositionData:** directory containing a collection of functional group decompositions
-            - **propertiesData:** directory containing measurement or predicted data used for validation
-            - ``fuel_metadata.yaml``: YAML file that maps fuel names to their decomposition files and optional metadata fields
+        - ``database.py``: :class:`~fuellib.database.database.Property` column names, reading/validation, auto-population, and merging of the default and user databases
+        - **referenceCompounds:**
+            - ``compounds.csv``: reference compounds (identity columns and, for each property, value, units, uncertainty, and source)
+            - ``gani.csv``: Constantinou-Gani group decomposition of each reference compound, keyed by InChI
+        - **gcData:** directory containing GCxGC compositional data by weight percentage (``<fuel>.csv``)
+        - **propertiesData:** directory containing measurement or predicted data used for validation
+        - ``fuel_metadata.yaml``: YAML file with source information for each fuel
     
     - **exporters:** subpackage with CLI exporters for generating fuel properties
     
@@ -71,12 +68,13 @@ FuelLib File Organization
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
-    - ``test_ref_compounds.py``: unit test for the reference data (``data.references``) including validation, family classification, and population of missing values.
-    - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
+    - ``test_database.py``: unit test for the FuelLib database (``fuellib.database``) including validation, family classification, auto-population, user databases, and unit handling.
+    - ``get_pred_and_data.py``: helper function to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 
     - ``basic.py``: example script that demonstrates basic usage of FuelLib
+    - ``customFuel.py``: example script that creates a user database template
     - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
 
 Public API
@@ -96,16 +94,16 @@ Click on links below for the full auto-documentation of the API.
     :toctree: generated
 
     fuellib.fuel
-    fuellib.constants
-    fuellib.convert
-    fuellib.utility
     fuellib.utils.types
     fuellib.utils.logger
+    fuellib.utils.utility
+    fuellib.utils.constants
+    fuellib.utils.convert
     fuellib.gcm.core
     fuellib.gcm.gani
     fuellib.gcm.boehm
     fuellib.rdk.mol
-    fuellib.data.references
+    fuellib.database.database
     fuellib.correlate.components
     fuellib.correlate.mixture
     fuellib.correlate.helpers

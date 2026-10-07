@@ -703,14 +703,14 @@ It is difficult to identify individual components of complex multicomponent jet 
 which generally provides weight percentages of a given hydrocarbon family and carbon number within a sample (e.g., 5% C10 iso-alkane, 2% C13 cycloalkane, etc.).
 To address this challenge, FuelLib uses a set of reference compounds that represent the major hydrocarbon families and carbon numbers found in jet fuels.
 A comprehensive list of the reference compounds used in FuelLib can be found in the 
-`fuelData/refCompounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuelData/refCompounds.csv>`_ file, 
-with associated functional group decompositions in `fuelData/groupDecompositionData/refCompounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuelData/groupDecompositionData/refCompounds.csv>`_.
+`fuellib/database/referenceCompounds/compounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/database/referenceCompounds/compounds.csv>`_ file, 
+with associated functional group decompositions in `fuellib/database/referenceCompounds/gani.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/database/referenceCompounds/gani.csv>`_.
 
 For ease of reference, the reference compounds and keys corresponding to a PelePhysics mechanism `fuellib_posf_nonreacting <https://github.com/AMReX-Combustion/PelePhysics/tree/development/Mechanisms/fuellib_posf_nonreacting>`_ are provided in the table below.
 When provided, the PelePhysics keys can be used to link the compounds in FuelLib to species in PelePhysics simulations via ``Export4Pele.py`` as described in :ref:`Exporting to PelePhysics <sec-exporting-to-pelephysics>`.
 
-.. csv-table:: Reference compounds, chemical formulas, and corresponding PelePhysics keys by GCxGC bin.
-   :file: ../fuellib/data/fuelData/refCompounds.csv
+.. csv-table:: Reference compounds and corresponding PelePhysics keys, shown with the POSF10325 composition.
+   :file: ../fuellib/database/gcData/posf10325.csv
    :header-rows: 1
    :align: center
    :widths: auto
@@ -720,49 +720,49 @@ When provided, the PelePhysics keys can be used to link the compounds in FuelLib
 Reference Property Data
 -----------------------
 
-Measured properties of pure compounds can replace group-contribution predictions.
-These data are stored in two CSV files in ``fuellib/data`` and accessed through
-:mod:`fuellib.data.references`:
+FuelLib stores pure-compound data in the ``fuellib/database`` directory, accessed through
+:mod:`fuellib.database.database`:
 
-- ``refCompounds.csv``: ``Common_Name``, ``InChI``, ``SMILES``, ``Num_C``, ``Family``.
-- ``refProperties.csv``: ``Common_Name``, ``Property``, ``Units``, ``Value``, ``Error``, ``Source``.
+- ``referenceCompounds/compounds.csv``: ``Family``, ``Num_C``, ``Common_Name``, ``SMILES``,
+  ``InChI``, and, for each property, the value and its ``_units``, ``_err``, and ``_source``
+  columns (e.g. ``Tc``, ``Tc_units``, ``Tc_err``, ``Tc_source``).
+- ``referenceCompounds/gani.csv``: the Constantinou-Gani group decomposition of each
+  compound, keyed by ``InChI``.
+- ``gcData/<fuel>.csv``: the composition of each fuel (``Common_Name`` and/or ``SMILES``,
+  ``Weight %``, and optionally ``PelePhysics_Key``). Compounds are matched to the reference
+  compounds by SMILES (via InChI) or, if no SMILES is given, by common name.
+- ``propertiesData/<fuel>.csv``: measured fuel properties used for validation.
 
-Only ``Common_Name`` and ``SMILES`` are required for each compound. Missing ``InChI``,
-``Num_C``, and ``Family`` values are derived from the SMILES when the data are loaded
-(:func:`~fuellib.data.references.populate_missing`); the files are only modified by
-calling :func:`~fuellib.data.references.update_compounds_csv`. ``Family`` is one of
-``n-alkane``, ``iso-alkane``, ``alkene``, ``monocyclic``, ``dicyclic``, ``tricyclic``,
-``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. ``Property`` is one of ``DCN``,
-``YSI``, ``Tc``, ``Pc``, ``Vc``, ``Tm``, or ``Tb``, and ``Error`` is optional.
+The stored properties are ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``dH_f_stp``, ``dH_v_stp``,
+``acentric``, ``Vm_stp``, ``YSI``, and ``DCN``, enumerated by
+:class:`~fuellib.database.database.Property`. Only ``Common_Name`` and ``SMILES`` are
+required for each compound. When the database is loaded, missing ``Family``, ``Num_C``, and
+``InChI`` values are derived from the SMILES, and missing properties that the
+Constantinou-Gani method can predict are filled in from ``gani.csv`` with the source
+``Constantinou-Gani GCM (FuelLib)``; the populated values are written back to
+``compounds.csv``. ``Family`` is one of ``n-alkane``, ``iso-alkane``, ``alkene``,
+``monocyclic``, ``dicyclic``, ``tricyclic``, ``alkylbenzene``, ``cycloaromatic``, or
+``diaromatic``. The remaining GCM properties (e.g. ``Gf``, ``Cp_stp``, ``dS_fus``) and the
+RDKit molecular weight are computed on load and never written to the CSV.
 
-:func:`~fuellib.data.references.validate` checks both tables for consistency (exact headers,
-unique names/InChI/SMILES, known families and properties, ``InChI`` and ``Num_C`` that
-match the SMILES, numeric values, and properties that refer to listed compounds) and is
-called by the loaders, so malformed data raise a ``ValueError`` listing every problem.
-A compound's properties can be retrieved from a SMILES string with
-:func:`~fuellib.data.references.properties_by_smiles`.
+The database values are used as follows:
 
-A compound's ``Family`` can be retrieved from a SMILES string with
-:func:`~fuellib.data.references.family_by_smiles`. The reference tables are cached and
-reloaded automatically when the CSV files change. When editing the CSVs in a spreadsheet,
-empty unnamed columns and padded whitespace are ignored on load, and running
-``python -m fuellib.data.references`` writes the populated ``InChI``, ``Num_C``, and
-``Family`` values back to ``refCompounds.csv``.
-
-The reference data are used as follows:
-
-- :attr:`~fuellib.fuel.Fuel.Tm` uses the reference melting point of each compound
-  found in the tables and the Constantinou-Gani prediction for all others.
-- The ``boehm`` GCM (see :doc:`gcm`) uses the reference ``Family`` of a compound, when
-  available, instead of identifying the family from its structure.
+- The component properties of :class:`~fuellib.fuel.Fuel` (e.g.
+  :attr:`~fuellib.fuel.Fuel.Tc`, :attr:`~fuellib.fuel.Fuel.Tm`) and
+  :meth:`~fuellib.fuel.Fuel.get_property` use the database values, so literature data take
+  precedence over group-contribution predictions. Values stored in different units are
+  converted automatically.
+- The ``boehm`` GCM (see :doc:`gcm`) uses the database ``Family`` of each compound.
 - :attr:`~fuellib.fuel.Fuel.YSI` and :attr:`~fuellib.fuel.Fuel.DCN` are available only
-  for compounds with a ``YSI`` or ``DCN`` entry; all others are NaN. The ``YSI`` values
+  for compounds with a ``YSI`` or ``DCN`` value; all others are NaN. The ``YSI`` values
   are from the McEnally-Pfefferle Yale YSI Database (Vol. 2) and the ``DCN`` values are
   on the ASTM D6890 IQT scale.
 
-Pass ``use_references=False`` to :class:`~fuellib.fuel.Fuel` to use only the
-group-contribution prediction and structure-based family identification for
-:attr:`~fuellib.fuel.Fuel.Tm` and the ``boehm`` GCM.
+Pure group-contribution predictions remain available through
+:attr:`~fuellib.fuel.Fuel.gcm_properties`.
+
+A user database with the same layout can be passed to :class:`~fuellib.fuel.Fuel` with
+``userDataDir`` (see :doc:`tutorials-custom-fuels`).
 
 Validation
 ----------

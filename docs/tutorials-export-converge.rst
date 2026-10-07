@@ -50,7 +50,7 @@ Additional Options
 
 There are several additional options that can be specified when running the ``fl-export-converge`` command:
 
-- ``-dir, --fuel_data_dir PATH``: Directory containing the fuel data files. Default: ``FuelLib/fuelData``.
+- ``-dir, --fuel_data_dir PATH``: User database directory (see :doc:`tutorials-custom-fuels`). Default: the FuelLib database.
 - ``-t, --temp_min K``: Minimum temperature for property calculations. Default: ``0``.
 - ``-T, --temp_max K``: Maximum temperature for property calculations. Default: ``1000``.
 - ``-s, --temp_step K``: Step size for temperature. Default: ``10``.

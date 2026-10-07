@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
-from fuellib import constants
-
-from ..utils import FLLogger, Units, types
+from ..database.database import Property
+from ..utils import FLLogger, Units, constants, types, utility
 from . import components, helpers
 
 if TYPE_CHECKING:
@@ -27,18 +26,7 @@ def arithmetic(
     Returns:
         Mixture property value.
     """
-    values = var_n.magnitude
-    mag_X = X.to("dimensionless").magnitude
-
-    num_comps = len(values)
-    var_mix = 0.0
-    for i in range(num_comps):
-        for j in range(num_comps):
-            # Use arithmetic definition for the pseudo property
-            var_ij = (values[i] + values[j]) / 2
-            var_mix += mag_X[i] * mag_X[j] * var_ij
-
-    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+    return utility.mixing_rule(var_n, X, pseudo_prop="arithmetic")
 
 
 def geometric(
@@ -54,18 +42,7 @@ def geometric(
     Returns:
         Mixture property value.
     """
-    values = var_n.magnitude
-    mag_X = X.to("dimensionless").magnitude
-
-    num_comps = len(values)
-    var_mix = 0.0
-    for i in range(num_comps):
-        for j in range(num_comps):
-            # Use geometric definition for the pseudo property
-            var_ij = (values[i] * values[j]) ** 0.5
-            var_mix += mag_X[i] * mag_X[j] * var_ij
-
-    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+    return utility.mixing_rule(var_n, X, pseudo_prop="geometric")
 
 
 def mean_molecular_weight(
@@ -397,7 +374,7 @@ def freeze_point_boehm(
 
     R = constants.gas_constant.to("J/(mol*K)")
     Tm = fuel.Tm.to("K")
-    dS_fus = fuel.get_property("boehm", "dS_fus").to("J/(mol*K)")
+    dS_fus = fuel.get_property(Property.DS_FUS, output_units="J/(mol*K)")
     dH_fus = Tm * dS_fus
     dCp = (
         -0.35
@@ -687,7 +664,7 @@ def yield_sooting_index(
             "Yield sooting index is unavailable for components:\n"
             f"{', '.join(np.array(fuel.compounds)[~valid])}"
             "\nThese are excluded and the remaining mole fractions renormalized.\n"
-            "Consider adding data to `refCompounds.csv` and/or `refProperties.csv`."
+            "Consider adding data to `referenceCompounds/compounds.csv`."
         )
         FLLogger.warning(msg)
     if not np.any(valid):

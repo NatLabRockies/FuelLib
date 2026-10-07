@@ -2,7 +2,7 @@
 
 import pytest
 
-from fuellib import Fuel, Units
+from fuellib import Fuel, Property, Units
 
 import numpy as np
 
@@ -14,10 +14,11 @@ class TestParsing:
         "fuel_name, num_compounds",
         [("decane", 1), ("posf10325", 67)],
     )
-    def test_gcxgc_data_loading(self, fuel_name: str, num_compounds: int) -> None:
-        """Test that the GCxGC data is correctly loaded for each compound in the fuel mixture."""
+    def test_gc_data_loading(self, fuel_name: str, num_compounds: int) -> None:
+        """Test that the GC data is correctly loaded for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert fuel.gcxgc_data.shape[0] == num_compounds
+        assert fuel.gc_data.shape[0] == num_compounds
+        assert fuel.data.shape[0] == num_compounds
 
     @pytest.mark.parametrize(
         "fuel_name, num_compounds",
@@ -125,9 +126,10 @@ class TestRDKitProperties:
         [("decane", 1), ("posf10325", 67)],
     )
     def test_num_atoms(self, fuel_name: str, num_compounds: int) -> None:
-        """Test the number of carbon and hydrogen atoms for each compound in the fuel mixture."""
+        """Test that property vectors have one entry per compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert len(fuel.get_property("gani", "Tc")) == num_compounds
+        assert len(fuel.get_property(Property.TC)) == num_compounds
+        assert len(fuel.gcm_properties["gani"]["tc"]) == num_compounds
 
 
 class TestMemberFunctions:

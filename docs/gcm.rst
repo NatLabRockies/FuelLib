@@ -52,10 +52,12 @@ it registers a ``"gani"`` :class:`~fuellib.gcm.core.GCM` with
 :class:`~fuellib.gcm.core.GCMRegistry` and populates it with property
 functions for ``MW``, ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``Hf``,
 ``Gf``, ``Hv_stp``, ``omega``, ``Vm_stp``, ``Cp_stp``, ``Cp_B``, ``Cp_C``,
-``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Note that
-:attr:`~fuellib.fuel.Fuel.Tm` is not the raw ``gani`` prediction: it uses
-reference melting points from :mod:`fuellib.data.references` when available
-(see :ref:`sec-reference-properties`) and falls back to ``gani`` otherwise.
+``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. These predictions are
+used to auto-populate missing values in the FuelLib database (see
+:ref:`sec-reference-properties`); :class:`~fuellib.fuel.Fuel` properties
+such as :attr:`~fuellib.fuel.Fuel.Tc` and :attr:`~fuellib.fuel.Fuel.Tm` come
+from the database, so literature values take precedence over ``gani``
+predictions when available.
 Group-contribution
 coefficients are read from ``fuellib/gcm/gani.csv`` into a module-level
 table indexed by property name, with one column per first- or
@@ -159,12 +161,11 @@ The ``boehm`` method
 (2022). It currently registers a single property, ``dS_fus`` (J/mol/K), which
 is used by :func:`~fuellib.correlate.mixture.freeze_point_boehm`.
 
-Each compound is first assigned to a hydrocarbon family. When
-``fuel.use_references`` is ``True`` and the compound is listed in
-``refCompounds.csv`` (see :ref:`sec-reference-properties`), its reference
-``Family`` is used; otherwise the family is identified from its RDKit
-``Mol`` object (see :mod:`fuellib.rdk.mol`, including
-:func:`~fuellib.rdk.mol.has_fused_rings` and
+Each compound is assigned to a hydrocarbon family from the ``Family`` column of
+the FuelLib database (see :ref:`sec-reference-properties`). Blank families are
+identified from the compound's RDKit ``Mol`` object by
+:func:`~fuellib.database.database.classify_family` (see :mod:`fuellib.rdk.mol`,
+including :func:`~fuellib.rdk.mol.has_fused_rings` and
 :func:`~fuellib.rdk.mol.count_aromatic_rings`). The families are ``n-alkane``,
 ``iso-alkane``, ``alkene``, ``monocyclic``, ``dicyclic``, ``tricyclic``,
 ``alkylbenzene``, ``cycloaromatic``, and ``diaromatic``. The fusion entropy is
@@ -181,7 +182,8 @@ of 56.5 J/mol/K.
 
 .. code-block:: python
 
-   fuel.get_property("boehm", "dS_fus")   # Quantity1D in J/(mol*K)
+   fuel.get_property(Property.DS_FUS)     # Quantity1D in J/(mol*K)
+   boehm_gcm.predict("dS_fus", fuel)      # same values, evaluated directly
 
 Registering a new property
 ---------------------------
@@ -208,7 +210,7 @@ function must accept a :class:`~fuellib.fuel.Fuel` and return a
 
 The function is registered under its (lowercased) ``__name__``, so it
 immediately becomes available via ``gani_gcm.predict("my_new_property",
-fuel)`` and through ``fuel.get_property("gani", "my_new_property")`` once
+fuel)`` and through ``fuel.gcm_properties["gani"]["my_new_property"]`` once
 a new :class:`~fuellib.fuel.Fuel` (or its cached
 :attr:`~fuellib.fuel.Fuel.gcm_properties`) is evaluated.
 
@@ -232,31 +234,34 @@ A completely new method can likewise be registered with
 :class:`~fuellib.fuel.Fuel` exposes three members that tie into the
 registry:
 
-- :meth:`~fuellib.fuel.Fuel.gani_decomp`: reads the fuel's group
-  decomposition file and returns it restricted to ``fuel.compounds``,
-  raising a ``ValueError`` if any compound in the mixture is missing from
-  the file.
+- :meth:`~fuellib.fuel.Fuel.gani_decomp`: returns the group decomposition of
+  each compound in ``fuel.compounds`` from
+  ``referenceCompounds/gani.csv`` (merged with the user database, if any),
+  raising a ``ValueError`` if any compound has no decomposition.
 - :attr:`~fuellib.fuel.Fuel.gcm_properties` (a cached property):
   evaluates every registered GCM method against the fuel and returns a
   nested mapping ``{method_name: {property_name: Quantity1D}}``. Because it
   is cached, each method/property pair is only computed once per
-  ``Fuel`` instance.
-- :meth:`~fuellib.fuel.Fuel.get_property`: a case-insensitive lookup into
-  ``gcm_properties``, raising ``KeyError`` if either the method or the
-  property name is not present.
+  ``Fuel`` instance. These are pure GCM predictions that ignore literature
+  values in the database.
+- :meth:`~fuellib.fuel.Fuel.get_property`: returns a
+  :class:`~fuellib.database.database.Property` from the database (literature
+  values where available, GCM predictions otherwise), converting mixed units
+  to a common unit and optionally to ``output_units``.
 
 .. code-block:: python
+
+   from fuellib import Fuel, Property
 
    fuel = Fuel("decane")
 
    fuel.gani_decomp()                       # DataFrame, one row per compound
-   fuel.gcm_properties["gani"]["tc"]        # Quantity1D of critical temperatures
-   fuel.get_property("gani", "Tc")          # same values, case-insensitive lookup
+   fuel.gcm_properties["gani"]["tc"]        # Quantity1D of GCM critical temperatures
+   fuel.get_property(Property.TC)           # database critical temperatures
 
-``Fuel.__init__`` itself now calls ``self.get_property("gani", ...)`` to
-populate its critical-property attributes (``Tc``, ``Pc``, ``Vc``, etc.)
-instead of duplicating the group-contribution formulas inline, so those
-attributes and the registry stay in sync automatically.
+The component attributes of :class:`~fuellib.fuel.Fuel` (``Tc``, ``Pc``,
+``Vc``, etc.) are read from the database with
+:meth:`~fuellib.fuel.Fuel.get_property` and converted to SI units.
 
 See also
 --------

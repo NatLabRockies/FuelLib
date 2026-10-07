@@ -14,7 +14,7 @@ The plotting CLI provides quick visualization of fuel composition and properties
     fl-plt-comp -f FUEL_NAME [OPTIONS]      # Plot composition
     fl-plt-props -f FUEL_NAME [OPTIONS]     # Plot properties vs temperature
 
-If experimental data is available for the fuel and it is properly linked in the ``fuel_metadata.yaml`` file, it will be included in the plots for comparison with GCM predictions.
+If experimental data is available for the fuel in ``propertiesData/<fuel_name>.csv``, it will be included in the plots for comparison with GCM predictions.
 
 Examples:
 
@@ -22,7 +22,7 @@ Examples:
 
     fl-plt-comp -f posf10325
     fl-plt-props -f posf10264 posf10325 posf10289
-    fl-plt-props -f my-fuel -dir customFuels/fuelData -p Density Viscosity
+    fl-plt-props -f my-fuel -dir customFuels -p Density Viscosity
 
 The first two commands provide the following plots for the specified fuels, while the third command plots only the density and viscosity of a custom fuel:
 

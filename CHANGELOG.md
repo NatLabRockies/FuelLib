@@ -5,6 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
+## [Unreleased] (Database)
+
+### Added
+- `fuellib.database` package replacing `fuellib/data`: `referenceCompounds/compounds.csv` (identity columns plus value, units, err, and source columns for each property), `referenceCompounds/gani.csv` (Gani group decompositions keyed by InChI), `gcData/<fuel>.csv`, `propertiesData/<fuel>.csv`, and `fuel_metadata.yaml`.
+  * `database.Property` enumerates property columns (with `units`, `err`, and `source` companion column names); exported as `fuellib.Property`.
+  * `database.load_reference_database` auto-populates missing `Family`, `Num_C`, `InChI`, and Gani-predictable properties (written back to `compounds.csv`), merges an optional user database, and adds software-only GCM properties and the RDKit molecular weight.
+  * `database.load_gani_database`, `database.read_gc_data`, `database.match_gc_data` (by SMILES/InChI, else case-insensitive common name), and `database.write_template` (blank user database with CSV headers).
+- `Fuel(name, userDataDir=None)`, with `Fuel.references`, `Fuel.gc_data`, `Fuel.data`, `Fuel.properties_data`, `Fuel.userDataDir`, and `Fuel.families`.
+- `Fuel.get_property(field, *, output_units=None)` returns database values, converting mixed units to the most common unit.
+- `1-dodecene`, `1-hexadecene`, and `2-methyltricosane` reference compounds (POSF11498).
+- `tests/test_database.py`.
+
+### Changed
+- `Fuel` component properties (`Tc`, `Pc`, `Vc`, `Tb`, `Tm`, `Hf`, `Gf`, `Hv_stp`, `omega`, `Vm_stp`, `Cp_stp`, `Cp_B`, `Cp_C`, `MW`, `Lv_stp`, `epsilonByKB`, `sigma`, `YSI`, `DCN`) are cached properties read from the database, so literature values take precedence over GCM predictions.
+- `Fuel.compounds` returns reference compound names (e.g. `ethyl benzene` instead of `C2-Benzene`).
+- `Fuel.gani_decomp` reads `referenceCompounds/gani.csv`; `Fuel.gcm_properties` remains available for pure GCM predictions.
+- `gcm.boehm` uses the database `Family` of each compound.
+- `fl-export-pele` replaces spaces in compound names with `-`; `-dir` in the exporters and plotting CLIs is a user database directory.
+- YSI and DCN reference values moved into `compounds.csv`.
+- `fuellib/utility.py`, `fuellib/constants.py`, and `fuellib/convert.py` moved to `fuellib/utils/`; still available as `fuellib.utility`, `fuellib.constants`, and `fuellib.convert`.
+
+### Removed
+- `fuellib/data` (`references.py`, `refCompounds.csv`, `refProperties.csv`, `fuelData/`), `fuellib/_data_locator.py`, and the `get_data_dir`, `get_fueldata_*`, `get_gcmtable_dir`, and `get_metadata_*` exports.
+- `Fuel` arguments `decompName`, `fuelDataDir`, and `use_references`; `Fuel.gcxgc_data`, `Fuel.use_references`, and the `Fuel.fuelData*Dir` and file-path attributes; `Fuel.get_property(method, property_name)` (use `Fuel.gcm_properties[method][property_name]`).
+- `-decomp` options of `fl-export-pele`, `fl-plt-comp`, and `fl-plt-props`; `decomp_name`/`props_data` metadata fields.
+- `tests/test_ref_compounds.py`.
+
 ## [Unreleased] (YSI, DCN implement)
 
 ### Added

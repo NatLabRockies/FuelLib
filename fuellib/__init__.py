@@ -15,37 +15,20 @@ except ImportError:
 
 # Import fuel class
 # Import submodules for namespacing
-from . import constants, convert, correlate, utility
-
-# Import data locator functions
-from ._data_locator import (
-    get_data_dir,
-    get_fueldata_decomp_dir,
-    get_fueldata_dir,
-    get_fueldata_gc_dir,
-    get_fueldata_props_dir,
-    get_gcmtable_dir,
-    get_metadata_decomp_name,
-    get_metadata_props_data,
-)
+from . import correlate, database
+from .database import Property
 from .fuel import Fuel
-from .utils import FLLogger, Units, set_log_level
+from .utils import Units, constants, convert, set_log_level, utility
 
 __all__ = [
     "FLLogger",
     "Fuel",
+    "Property",
     "Units",
     "constants",
     "convert",
     "correlate",
-    "get_data_dir",
-    "get_fueldata_decomp_dir",
-    "get_fueldata_dir",
-    "get_fueldata_gc_dir",
-    "get_fueldata_props_dir",
-    "get_gcmtable_dir",
-    "get_metadata_decomp_name",
-    "get_metadata_props_data",
+    "database",
     "set_log_level",
     "utility",
 ]

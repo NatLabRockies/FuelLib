@@ -9,7 +9,7 @@ import os
 import sys
 import warnings
 
-import fuellib as fl
+from fuellib.database.database import DEFAULT_DIR
 
 try:
     import yaml
@@ -22,9 +22,8 @@ except ImportError:
 def load_fuel_metadata(fuel_data_dir=None):
     """Load fuel metadata from YAML file if available.
 
-    :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/,
-                         groupDecompositionData/, and fuel_metadata.yaml).
-                         If None, loads from embedded FuelLib data.
+    :param fuel_data_dir: Optional user database directory (containing gcData/ and
+                         fuel_metadata.yaml). If None, loads from the FuelLib database.
     :type fuel_data_dir: str, optional
     :return: Dictionary of fuel metadata or empty dict if not available
     :rtype: dict
@@ -34,8 +33,8 @@ def load_fuel_metadata(fuel_data_dir=None):
 
     # Determine which metadata file to load
     if fuel_data_dir is None:
-        # Load from embedded data
-        metadata_file = os.path.join(fl.get_fueldata_dir(), "fuel_metadata.yaml")
+        # Load from the FuelLib database
+        metadata_file = os.path.join(DEFAULT_DIR, "fuel_metadata.yaml")
     else:
         # Load from custom directory
         metadata_file = os.path.join(fuel_data_dir, "fuel_metadata.yaml")
@@ -68,8 +67,8 @@ def list_fuels_main():
         "--fuel_data_dir",
         default=None,
         metavar="PATH",
-        help="Directory containing fuel data (with gcData/, groupDecompositionData/, and fuel_metadata.yaml). "
-        "If not specified, uses embedded FuelLib data.",
+        help="User database directory (with gcData/ and fuel_metadata.yaml). "
+        "If not specified, uses the FuelLib database.",
     )
     parser.add_argument(
         "-v",
@@ -81,8 +80,8 @@ def list_fuels_main():
     args = parser.parse_args()
 
     if args.fuel_data_dir is None:
-        fuel_data_dir = fl.get_fueldata_gc_dir()
-        metadata_dir = None  # Use embedded metadata
+        fuel_data_dir = os.path.join(DEFAULT_DIR, "gcData")
+        metadata_dir = None  # Use FuelLib metadata
     else:
         fuel_data_dir = os.path.join(args.fuel_data_dir, "gcData")
         metadata_dir = args.fuel_data_dir  # Load metadata from same custom directory
@@ -93,9 +92,9 @@ def list_fuels_main():
             print(f"Error: Fuel data directory not found: {fuel_data_dir}")
             sys.exit(1)
 
-        # Extract fuel names from *_init.csv files
-        fuel_files = [f for f in os.listdir(fuel_data_dir) if f.endswith("_init.csv")]
-        fuel_names = sorted([f.replace("_init.csv", "") for f in fuel_files])
+        # Extract fuel names from *.csv files
+        fuel_files = [f for f in os.listdir(fuel_data_dir) if f.endswith(".csv")]
+        fuel_names = sorted([f.removesuffix(".csv") for f in fuel_files])
 
         if not fuel_names:
             print("No fuels found in the specified directory.")

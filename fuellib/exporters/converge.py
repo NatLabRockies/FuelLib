@@ -8,8 +8,6 @@ import fuellib as fl
 
 from ..utils import Units
 
-# Default data directory - use fuellib's embedded data
-FUELDATA_DIR = fl.get_fueldata_dir()
 
 """
 Script that exports mixture properties over large temperature range for use in
@@ -479,8 +477,8 @@ def main():
     :param --fuel_name: Name of the fuel (mandatory).
     :type --fuel_name: str
 
-    :param --fuel_data_dir: Directory where fuel data files are located.
-    :type --fuel_data_dir: str, optional (default: FuelLib/fuelData)
+    :param --fuel_data_dir: User database directory.
+    :type --fuel_data_dir: str, optional (default: FuelLib database)
 
     :param --temp_min: Minimum temperature (K) for the property calculations.
     :type --temp_min: float, optional (default: 0 K)
@@ -513,13 +511,13 @@ def main():
         help="Name of the fuel (mandatory).",
     )
 
-    # Optional argument for fuel data directory
+    # Optional argument for user database directory
     parser.add_argument(
         "-dir",
         "--fuel_data_dir",
-        default=FUELDATA_DIR,
+        default=None,
         metavar="PATH",
-        help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
+        help="User database directory (optional, default: FuelLib database).",
     )
 
     # Optional argument for minimum temperature
@@ -591,14 +589,10 @@ def main():
     print(f"    Maximum temperature: {temp_max} K")
     print(f"    Temperature step size: {temp_step} K")
     print(f"    Export directory: {export_dir}")
-    print(f"    Fuel data directory: {fuel_data_dir}")
-
-    # Get decomposition name from metadata (required)
-    # Note: decomp_name not currently used, but kept for API consistency
-    _ = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
+    print(f"    Fuel data directory: {fuel_data_dir or 'FuelLib database'}")
 
     # Create the fuel object
-    fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, userDataDir=fuel_data_dir)
 
     # Export properties for Converge
     export_converge(
