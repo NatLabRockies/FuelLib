@@ -9,10 +9,9 @@ FuelLib File Organization
 -------------------------
 
 - **docs:** directory containing the documentation source files
-- **gcmTableData:** directory that contains the pre-tabulated group contributions
 - **fuellib:** main package directory containing:
 
-    - ``fuel.py``: core :class:`~fuellib.fuel.Fuel` class for Group Contribution Method calculations
+    - ``fuel.py``: core :class:`~fuellib.fuel.Fuel` class for Group Contribution Method calculations, including loading of GCxGC data and matching of compounds to the reference data tables
     - ``constants.py``: physical constants (Boltzmann, Avogadro)
     - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
     - ``utility.py``: utility functions for mixture properties and droplet calculations
@@ -22,7 +21,7 @@ FuelLib File Organization
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
-        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM, including hydrocarbon family identification
+        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM; hydrocarbon families are read from ``refCompounds.csv`` via the fuel's ``compoundsData``
         - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
 
     - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
@@ -33,16 +32,13 @@ FuelLib File Organization
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
 
-    - **data**: package containing fuel data, metadata, and reference data
+    - **data**: directory containing fuel data and reference data
 
-        - ``references.py``: loading, validation, and lookup of reference compounds and their measured properties
-        - ``refCompounds.csv``: reference compounds (``Common_Name``, ``InChI``, ``SMILES``, ``Num_C``, ``Family``)
-        - ``refProperties.csv``: measured reference properties (``Common_Name``, ``Property``, ``Units``, ``Value``, ``Error``, ``Source``)
-        - **fuelData:** 
-            - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages
-            - **groupDecompositionData:** directory containing a collection of functional group decompositions
-            - **propertiesData:** directory containing measurement or predicted data used for validation
-            - ``fuel_metadata.yaml``: YAML file that maps fuel names to their decomposition files and optional metadata fields
+        - ``refCompounds.csv``: reference compounds (``Family``, ``Carbon Number``, ``Reference Compound``, ``SMILES``) and their optional measured properties (``{Property}_Value``, ``_Error``, ``_Units``, ``_Source``, ``_Notes``)
+        - ``refGani.csv``: functional group decompositions of the reference compounds
+        - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages (``{fuel_name}.csv``)
+        - **propertiesData:** directory containing measurement or predicted data used for validation
+        - ``fuel_metadata.yaml``: YAML file with source information and other optional metadata for each fuel
     
     - **exporters:** subpackage with CLI exporters for generating fuel properties
     
@@ -67,8 +63,6 @@ FuelLib File Organization
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
-    - ``test_ref_compounds.py``: unit test for the reference data (``data.references``) including validation, family classification, and population of missing values.
-    - ``get_pred_and_data.py``: helper function used by ``test_accuracy.py`` and ``baselinePredictions/generate_baseline.py`` to compute predictions and load validation data.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 
@@ -100,7 +94,6 @@ Click on links below for the full auto-documentation of the API.
     fuellib.gcm.gani
     fuellib.gcm.boehm
     fuellib.rdk.mol
-    fuellib.data.references
     fuellib.correlate.components
     fuellib.correlate.mixture
     fuellib.correlate.helpers

@@ -20,13 +20,9 @@ from . import constants, convert, correlate, utility
 # Import data locator functions
 from ._data_locator import (
     get_data_dir,
-    get_fueldata_decomp_dir,
     get_fueldata_dir,
     get_fueldata_gc_dir,
     get_fueldata_props_dir,
-    get_gcmtable_dir,
-    get_metadata_decomp_name,
-    get_metadata_props_data,
 )
 from .fuel import Fuel
 from .utils import Units
@@ -38,12 +34,8 @@ __all__ = [
     "convert",
     "correlate",
     "get_data_dir",
-    "get_fueldata_decomp_dir",
     "get_fueldata_dir",
     "get_fueldata_gc_dir",
     "get_fueldata_props_dir",
-    "get_gcmtable_dir",
-    "get_metadata_decomp_name",
-    "get_metadata_props_data",
     "utility",
 ]

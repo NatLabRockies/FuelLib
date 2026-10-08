@@ -53,9 +53,9 @@ it registers a ``"gani"`` :class:`~fuellib.gcm.core.GCM` with
 functions for ``MW``, ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``Hf``,
 ``Gf``, ``Hv_stp``, ``omega``, ``Vm_stp``, ``Cp_stp``, ``Cp_B``, ``Cp_C``,
 ``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Note that
-:attr:`~fuellib.fuel.Fuel.Tm` is not the raw ``gani`` prediction: it uses
-reference melting points from :mod:`fuellib.data.references` when available
-(see :ref:`sec-reference-properties`) and falls back to ``gani`` otherwise.
+properties such as :attr:`~fuellib.fuel.Fuel.Tm` are not the raw ``gani`` predictions: they use
+reference values from ``refCompounds.csv`` when available
+(see :ref:`sec-reference-properties`) and fall back to ``gani`` otherwise.
 Group-contribution
 coefficients are read from ``fuellib/gcm/gani.csv`` into a module-level
 table indexed by property name, with one column per first- or
@@ -159,12 +159,10 @@ The ``boehm`` method
 (2022). It currently registers a single property, ``dS_fus`` (J/mol/K), which
 is used by :func:`~fuellib.correlate.mixture.freeze_point_boehm`.
 
-Each compound is first assigned to a hydrocarbon family from its RDKit
-``Mol`` object (see :mod:`fuellib.rdk.mol`, including
-:func:`~fuellib.rdk.mol.has_fused_rings` and
-:func:`~fuellib.rdk.mol.count_aromatic_rings`). The families are ``n-alkane``,
-``iso-alkane``, ``alkene``, ``monocyclic``, ``dicyclic``, ``tricyclic``,
-``alkylbenzene``, ``cycloaromatic``, and ``diaromatic``. The fusion entropy is
+Each compound's hydrocarbon family is read from the ``Family`` column of
+``refCompounds.csv`` (available as ``fuel.compoundsData["Family"]``). The families
+are ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``,
+``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, and ``diaromatic``. The fusion entropy is
 then a linear function of the carbon number :math:`n_{C,i}`, with parameters
 :math:`A_f`, :math:`B_f`, and :math:`C_{\textit{ref},f}` for family :math:`f`
 read from ``fuellib/gcm/boehm.csv``:
@@ -178,7 +176,7 @@ of 56.5 J/mol/K.
 
 .. code-block:: python
 
-   fuel.get_property("boehm", "dS_fus")   # Quantity1D in J/(mol*K)
+   fuel.dS_fus   # Quantity1D in J/(mol*K), evaluated via boehm_gcm.predict("dS_fus", fuel)
 
 Registering a new property
 ---------------------------
@@ -198,16 +196,15 @@ function must accept a :class:`~fuellib.fuel.Fuel` and return a
    @gani_gcm.register_property
    def my_new_property(fuel: "Fuel") -> types.Quantity1D:
        """Predict some new property from the Gani decomposition."""
-       nij = fuel.gani_decomp().to_numpy()
+       nij = fuel.ganiDecomp.to_numpy()
        coeffs = ...  # derive coefficients, e.g. from a new table row
        value = ...  # apply the correlation
        return Units.Quantity(value, "K")
 
 The function is registered under its (lowercased) ``__name__``, so it
 immediately becomes available via ``gani_gcm.predict("my_new_property",
-fuel)`` and through ``fuel.get_property("gani", "my_new_property")`` once
-a new :class:`~fuellib.fuel.Fuel` (or its cached
-:attr:`~fuellib.fuel.Fuel.gcm_properties`) is evaluated.
+fuel)`` and, once a corresponding cached property is added to
+:class:`~fuellib.fuel.Fuel`, as an attribute of the fuel object.
 
 A completely new method can likewise be registered with
 :meth:`~fuellib.gcm.core.GCMRegistry.register`:
@@ -226,34 +223,38 @@ A completely new method can likewise be registered with
 ``Fuel`` integration
 ---------------------
 
-:class:`~fuellib.fuel.Fuel` exposes three members that tie into the
-registry:
+:class:`~fuellib.fuel.Fuel` ties into the registry through the following members:
 
-- :meth:`~fuellib.fuel.Fuel.gani_decomp`: reads the fuel's group
-  decomposition file and returns it restricted to ``fuel.compounds``,
-  raising a ``ValueError`` if any compound in the mixture is missing from
-  the file.
-- :attr:`~fuellib.fuel.Fuel.gcm_properties` (a cached property):
-  evaluates every registered GCM method against the fuel and returns a
-  nested mapping ``{method_name: {property_name: Quantity1D}}``. Because it
-  is cached, each method/property pair is only computed once per
-  ``Fuel`` instance.
-- :meth:`~fuellib.fuel.Fuel.get_property`: a case-insensitive lookup into
-  ``gcm_properties``, raising ``KeyError`` if either the method or the
-  property name is not present.
+- :attr:`~fuellib.fuel.Fuel.ganiDecomp`: the group decomposition (from
+  ``refGani.csv``) of each compound in the mixture, in the same order as
+  ``fuel.compounds``. Each compound in the GCxGC data must be present in the
+  reference tables, otherwise a ``ValueError`` is raised when the ``Fuel`` is
+  created.
+- :attr:`~fuellib.fuel.Fuel.compoundsData`: the rows of ``refCompounds.csv``
+  matched to the GCxGC data, including the hydrocarbon ``Family`` used by the
+  ``boehm`` method.
+- Cached properties such as :attr:`~fuellib.fuel.Fuel.Tc`,
+  :attr:`~fuellib.fuel.Fuel.Pc`, :attr:`~fuellib.fuel.Fuel.Tb`,
+  :attr:`~fuellib.fuel.Fuel.Cp_stp`, :attr:`~fuellib.fuel.Fuel.dS_fus`,
+  :attr:`~fuellib.fuel.Fuel.RD_coeffs`, and :attr:`~fuellib.fuel.Fuel.phi`
+  that evaluate the corresponding registered property with
+  ``gani_gcm.predict(...)`` or ``boehm_gcm.predict(...)`` the first time they are
+  accessed. Properties that can be measured (``Tc``, ``Pc``, ``Vc``, ``Tm``,
+  ``Tb``, ``Hf_stp``, ``Hv_stp``, ``Vm_stp``, ``omega``) take reference values
+  from ``refCompounds.csv`` where available unless ``useRefProperties=False``.
 
 .. code-block:: python
 
    fuel = Fuel("decane")
 
-   fuel.gani_decomp()                       # DataFrame, one row per compound
-   fuel.gcm_properties["gani"]["tc"]        # Quantity1D of critical temperatures
-   fuel.get_property("gani", "Tc")          # same values, case-insensitive lookup
+   fuel.ganiDecomp      # DataFrame, one row per compound
+   fuel.compoundsData   # DataFrame of matched reference compounds
+   fuel.Tc              # Quantity1D of critical temperatures
+   fuel.dS_fus          # Quantity1D of fusion entropies (boehm)
 
-``Fuel.__init__`` itself now calls ``self.get_property("gani", ...)`` to
-populate its critical-property attributes (``Tc``, ``Pc``, ``Vc``, etc.)
-instead of duplicating the group-contribution formulas inline, so those
-attributes and the registry stay in sync automatically.
+Previously, ``Fuel.get_property``, ``Fuel.gcm_properties``, and ``Fuel.gani_decomp``
+were used to access these values. They have been replaced by the attributes above, so
+the attributes and the registry stay in sync through a single ``predict`` call.
 
 See also
 --------

@@ -5,32 +5,25 @@ fuel = fl.Fuel("posf10264")
 
 print(f"Fuel: {fuel.name}")
 print(f"Fuel data directory: {fuel.fuelDataDir}")
-print(f"GC data directory: {fuel.fuelDataGcDir}")
-print(f"Decomposition directory: {fuel.fuelDataDecompDir}")
-print(f"Properties directory: {fuel.fuelDataPropsDir}")
+print(f"Properties data available: {fuel.propData is not None}")
 print(f"Number of compounds: {fuel.num_compounds}")
 
 # To use a custom fuel, create a directory structure like:
 # customFuels/fuelData/
 #   ├── gcData/
-#   │   └── myFuel_init.csv
-#   ├── groupDecompositionData/
 #   │   └── myFuel.csv
-#   └── propertiesData/  (optional)
-#       └── myFuel.csv
+#   ├── propertiesData/  (optional)
+#   │   └── myFuel.csv
+#   ├── refCompounds.csv  (optional, defaults to fuellib/data/refCompounds.csv)
+#   └── refGani.csv  (optional, defaults to fuellib/data/refGani.csv)
 #
 # Then load it with:
 custom_fuel = fl.Fuel("hefa-S1", fuelDataDir="customFuels/fuelData")
 
-# After loading, the fuel object has the correct directory paths:
+# After loading, the fuel object has the correct directory path:
 custom_fuel.fuelDataDir
-custom_fuel.fuelDataGcDir
-custom_fuel.fuelDataDecompDir
-custom_fuel.fuelDataPropsDir
 
 print(f"\nFuel: {custom_fuel.name}")
 print(f"Fuel data directory: {custom_fuel.fuelDataDir}")
-print(f"GC data directory: {custom_fuel.fuelDataGcDir}")
-print(f"Decomposition directory: {custom_fuel.fuelDataDecompDir}")
-print(f"Properties directory: {custom_fuel.fuelDataPropsDir}")
+print(f"Properties data available: {custom_fuel.propData is not None}")
 print(f"Number of compounds: {custom_fuel.num_compounds}")
