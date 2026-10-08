@@ -397,7 +397,7 @@ def freeze_point_boehm(
 
     R = constants.gas_constant.to("J/(mol*K)")
     Tm = fuel.Tm.to("K")
-    dS_fus = fuel.get_property("boehm", "dS_fus").to("J/(mol*K)")
+    dS_fus = fuel.dS_fus.to("J/(mol*K)")
     dH_fus = Tm * dS_fus
     dCp = (
         -0.35

@@ -17,7 +17,7 @@ class TestParsing:
     def test_gcxgc_data_loading(self, fuel_name: str, num_compounds: int) -> None:
         """Test that the GCxGC data is correctly loaded for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert fuel.gcxgc_data.shape[0] == num_compounds
+        assert fuel.gcData.shape[0] == num_compounds
 
     @pytest.mark.parametrize(
         "fuel_name, num_compounds",
@@ -51,33 +51,6 @@ class TestRDKitProperties:
         fuel = Fuel(fuel_name)
         assert len(fuel.rdkit_mols) == fuel.num_compounds
         assert all(mol is not None for mol in fuel.rdkit_mols)
-
-    @pytest.mark.parametrize(
-        "fuel_name, expected_formulas",
-        [("decane", ["C10H22"]), ("heptane-decane", ["C7H16", "C10H22"])],
-    )
-    def test_formulas(self, fuel_name: str, expected_formulas: list[str]) -> None:
-        """Test that the chemical formulas are correctly generated for each compound in the fuel mixture."""
-        fuel = Fuel(fuel_name)
-        assert fuel.formulas == expected_formulas
-
-    @pytest.mark.parametrize(
-        "fuel_name, expected_inchi",
-        [
-            ("decane", ["InChI=1S/C10H22/c1-3-5-7-9-10-8-6-4-2/h3-10H2,1-2H3"]),
-            (
-                "heptane-decane",
-                [
-                    "InChI=1S/C7H16/c1-3-5-7-6-4-2/h3-7H2,1-2H3",
-                    "InChI=1S/C10H22/c1-3-5-7-9-10-8-6-4-2/h3-10H2,1-2H3",
-                ],
-            ),
-        ],
-    )
-    def test_inchi(self, fuel_name: str, expected_inchi: list[str]) -> None:
-        """Test that the InChI strings are correctly generated for each compound in the fuel mixture."""
-        fuel = Fuel(fuel_name)
-        assert fuel.inchi == expected_inchi
 
     @pytest.mark.parametrize(
         "fuel_name, expected_nC, expected_nH",
@@ -127,7 +100,7 @@ class TestRDKitProperties:
     def test_num_atoms(self, fuel_name: str, num_compounds: int) -> None:
         """Test the number of carbon and hydrogen atoms for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert len(fuel.get_property("gani", "Tc")) == num_compounds
+        assert len(fuel.Tc) == num_compounds
 
 
 class TestMemberFunctions:

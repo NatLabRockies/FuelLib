@@ -224,42 +224,6 @@ class GaniHelperFunctionTestCase(unittest.TestCase):
         self.assertIsInstance(decomp, np.ndarray)
         self.assertEqual(decomp.shape, (fuel.num_compounds, len(TABLE.columns)))
 
-    def test_get_decomp_resorts_columns_to_match_table(self):
-        """_get_decomp should reorder decomp columns to match TABLE.columns order."""
-        from fuellib.gcm.gani import TABLE, _get_decomp
-
-        cols = list(TABLE.columns)
-        values = {col: idx for idx, col in enumerate(cols)}
-        shuffled_cols = cols[::-1]
-        decomp_df = pd.DataFrame(
-            [[values[col] for col in shuffled_cols]],
-            columns=shuffled_cols,
-            index=["compoundA"],
-        )
-        fake_fuel = cast(Fuel, SimpleNamespace(gani_decomp=lambda: decomp_df))
-
-        result = _get_decomp(fake_fuel)
-
-        expected = np.array([[values[col] for col in cols]])
-        np.testing.assert_array_equal(result, expected)
-
-    def test_get_decomp_allows_partial_group_coverage(self):
-        """_get_decomp should fill missing group columns with 0, not require all groups."""
-        from fuellib.gcm.gani import TABLE, _get_decomp
-
-        cols = list(TABLE.columns)
-        subset_cols = cols[:3]
-        decomp_df = pd.DataFrame(
-            [[5.0, 6.0, 7.0]], columns=subset_cols, index=["compoundB"]
-        )
-        fake_fuel = cast(Fuel, SimpleNamespace(gani_decomp=lambda: decomp_df))
-
-        result = _get_decomp(fake_fuel)
-
-        expected = np.zeros((1, len(cols)))
-        expected[0, :3] = [5.0, 6.0, 7.0]
-        np.testing.assert_array_equal(result, expected)
-
 
 if __name__ == "__main__":
     unittest.main()

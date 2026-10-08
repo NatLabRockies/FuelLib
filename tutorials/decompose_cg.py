@@ -13,7 +13,7 @@ alpha-olefins, alkylbenzenes, alkylnaphthalenes, monocycloparaffins,
 dicycloparaffins, cycloaromatics).
 
 Validation: compared against existing hand-decomposed data in
-FuelLib/fuelData/groupDecompositionData/refCompounds.csv
+FuelLib/fuellib/data/refGani.csv
 """
 
 import csv
@@ -596,16 +596,14 @@ def verify_formula(smiles, counts):
 
 
 def _load_refcompounds():
-    """Load refCompounds.csv from FuelLib
+    """Load refGani.csv from FuelLib
     Returns dict: compound_name → list of 121 int counts.
     """
     ref_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "fuellib",
         "data",
-        "fuelData",
-        "groupDecompositionData",
-        "refCompounds.csv",
+        "refGani.csv",
     )
     if not os.path.exists(ref_path):
         return None

@@ -119,10 +119,8 @@ def molar_specific_heat_capacity_ruzicka(
         Molar specific heat capacity in J/mol/K.
     """
     Tr = T.to("K") / 100.0
-    rd_a = fuel.get_property("gani", "rd_A").to("")
-    rd_b = fuel.get_property("gani", "rd_B").to("K^-1")
-    rd_d = fuel.get_property("gani", "rd_D").to("K^-2")
-    cp_molar = constants.gas_constant * (rd_a + rd_b * Tr + rd_d * Tr**2)
+    rd_A, rd_B, rd_D = fuel.RD_coeffs
+    cp_molar = constants.gas_constant * (rd_A + rd_B * Tr + rd_D * Tr**2)
     return cp_molar.to("J/(mol*K)")
 
 
@@ -544,8 +542,7 @@ def flash_point_alqaheem(fuel: "Fuel") -> types.Quantity1D:
     Returns:
         Component flash points in K.
     """
-    Tb = fuel.get_property("gani", "Tb").to("K")
-    return 0.70 * Tb
+    return 0.70 * fuel.Tb
 
 
 def flash_point_alibashki(fuel: "Fuel") -> types.Quantity1D:
@@ -566,9 +563,7 @@ def flash_point_alibashki(fuel: "Fuel") -> types.Quantity1D:
     Returns:
         Component flash points in K.
     """
-    Tb = fuel.get_property("gani", "Tb").to("K")
-    phi = fuel.get_property("gani", "alibakhshi_phi").to("K")
-    return Units.Quantity(12.14, "K") + 0.73 * Tb + phi
+    return Units.Quantity(12.14, "K") + 0.73 * fuel.Tb + fuel.phi
 
 
 def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
@@ -602,9 +597,7 @@ def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
     """
     dH_form_co2 = Units.Quantity(-393.51, "kJ/mol")  # At 298.15 K
     dH_form_h2o = Units.Quantity(-241.83, "kJ/mol")  # At 298.15 K
-    Hf = fuel.get_property("gani", "Hf").to("J/mol")
-    Hv_stp = fuel.get_property("gani", "Hv_stp").to("J/mol")
-    Hf_liq = Hf - Hv_stp
+    Hf_liq = (fuel.Hf_stp - fuel.Hv_stp).to("J/mol")
     nC = np.array(fuel.nC)
     nH = np.array(fuel.nH)
     return -(nC * dH_form_co2 + 0.5 * nH * dH_form_h2o - Hf_liq) / fuel.MW

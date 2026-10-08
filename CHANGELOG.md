@@ -5,51 +5,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is a dependency
 used to parse and validate this file's entries against that format.
 
-## [Unreleased] (YSI, DCN prep)
+## [Unreleased]
 
 ### Added
-- `data.references` module for loading, validating, and querying reference compounds with measured properties.
-  * `data/refCompounds.csv` (`Common_Name`, `InChI`, `SMILES`, `Num_C`, `Family`) and `data/refProperties.csv` (`Common_Name`, `Property`, `Units`, `Value`, `Error`, `Source`) store the data; initial entries provide the n-heptane melting point (`Tm`).
-  * `references.load_compounds`, `references.load_properties`, and `references.properties_by_smiles` (matches by InChI derived from the SMILES).
-  * `references.populate_missing` fills missing `InChI`, `Num_C`, and `Family` values from the SMILES (only `Common_Name` and `SMILES` are required); `references.update_compounds_csv` writes the populated values back to the CSV.
-  * `references.classify_family` assigns one of `references.FAMILIES` (`n-alkane`, `iso-alkane`, `alkene`, `monocyclic`, `dicyclic`, `tricyclic`, `alkylbenzene`, `cycloaromatic`, `diaromatic`) to a hydrocarbon.
-  * `references.validate` collects and reports all header, duplicate, family, `Num_C`, `InChI`/SMILES consistency, property name, and numeric `Value`/`Error` problems; the loaders call it automatically.
-- `Fuel.use_references` (keyword-only `use_references` argument to `Fuel.__init__`, default `True`) to toggle use of reference data in property calculations.
-- `tests/test_ref_compounds.py` covering the shipped reference data, `validate`, `classify_family`, and `populate_missing`.
-
-### Changed
-- `Fuel.Tm` is a cached property that uses reference `Tm` values (converted to K) for compounds found in `refProperties.csv`, falling back to the Gani prediction otherwise or when `use_references=False`.
-- `correlate.mixture.freeze_point_boehm` uses `fuel.Tm` rather than exclusively the Gani prediction.
-- Heptane `FreezePoint` in `propertiesData/heptane.csv` updated from -91.0 to -91.61 celsius.
-- `fuellib.data` imports `references` and may import `fuellib.rdk` and `fuellib.utils`; `[tool.importlinter]` layers updated accordingly (`fuellib.data` now sits above `fuellib.rdk`).
-
-### Fixed
-- `test_accuracy::MixtureTestCase` reconstructs the known property value as `Baseline_Value - Baseline_Error` (`Baseline_Error` is prediction minus known), which previously caused improved predictions (e.g., heptane FreezePoint) to be reported as regressions.
-
-## [Unreleased] (freeze point, flash point, heat of combustion)
-
-### Added
-- `gcm.boehm` with accompanying `boehm.csv` for parsing Boehm (2022) `dS_fus` parameters.
-- `rdk.mol.has_fused_rings` and `rdk.mol.count_aromatic_rings` for assigning Boehm groups.
+- `gcm.boehm` with accompanying `boehm.csv` for Boehm (2022) fusion entropy (`dS_fus`) parameters by hydrocarbon family (`n-alkane`, `isoalkane`, `alkene`, `monocycloalkane`, `dicycloalkane`, `tricycloalkane`, `alkylbenzene`, `cycloaromatic`, `diaromatic`).
+- `rdk.mol.has_fused_rings` and `rdk.mol.count_aromatic_rings` for structural analysis of molecules.
 - `flash_point_alqaheem`, `flash_point_alibashki`, and `lower_heating_value` to `correlate.components`.
 - `freeze_point_boehm`, `flash_point_alqaheem`, `flash_point_alibashki`, and `heat_of_combustion` to `correlate.mixture`.
 - Baseline values for FreezePoint, FlashPoint, and HeatOfCombustion.
 - `constants.gas_constant` (ideal gas constant, R = 8.31446 J/(mol*K)).
-
-### Fixed
-- `test_accuracy::MixtureTestCase` pulls `method_map` from `baselinePredictions.generate_baseline` to ensure the same methods are being used in generating vs. testing predictions.
-- `import-linter` contract allows `fuellib.rdk` to import `fuellib.utils`.
-
-
-## [Unreleased] (props and accuracy tests)
+- `Fuel.YSI` and `Fuel.DCN` cached properties returning reference Yield Sooting Index and derived cetane number values; a `ValueError` listing the compounds is raised if any value is missing.
+- `Fuel.propData` (a `DataFrame` of `propertiesData/{name}.csv`, or `None` if no file exists), `Fuel.gcData`, `Fuel.compoundsData` (matched `refCompounds.csv` rows), and `Fuel.ganiDecomp` (matched `refGani.csv` rows).
+- `refCompoundsPath` and `refGaniPath` arguments to `Fuel.__init__` for supplying custom reference tables. If a file is not found in `fuelDataDir`, a message is printed and the default file in `fuellib/data` is used.
+- Cached properties `Fuel.Gf_stp`, `Fuel.dS_fus`, `Fuel.RD_coeffs` (tuple of `rd_A`, `rd_B`, `rd_D`), and `Fuel.phi`, replacing `Fuel.get_property` lookups.
+- `.scratch/` added to `.gitignore`.
+- `ruff` rules `F401` and `F841` to prevent unused imports and variables; existing violations were fixed automatically.
+- Documentation and references (`fuelprops.rst`, `gcm.rst`, `refs.bib`) for the new freeze point, flash point, and heat of combustion correlations and for the reference data.
 
 ### Changed
 - `propertiesData` .csv files store Temperature vs. Value entries in individual rows rather than in a matrix format to enable non-Temperature dependent properties to be stored (e.g., "FreezePoint", "FlashPoint", ...) by setting Temp to "NaN".
-  * `test_accuracy.py` and `generate_baseline.py` updated to respect this change.
+  * `test_accuracy.py` and `generate_baseline.py` updated to respect this change; `test_accuracy.py` imports `method_map` from `baselinePredictions.generate_baseline` so that the same methods are used to generate and test predictions, and reads known values as `Baseline_Value - Baseline_Error` (`Baseline_Error` is prediction minus known).
   * Baseline predictions stored in `tests/baselinePredictions/mixture_baseline.csv` rather than individual per-fuel files.
+- **Breaking:** the fuel data layout was flattened. `fuellib/data` now directly contains `gcData/`, `propertiesData/`, `refCompounds.csv`, `refGani.csv`, and `fuel_metadata.yaml` (previously nested in `data/fuelData/` and `data/fuelData/groupDecompositionData/`).
+  * `gcData/{name}_init.csv` renamed to `gcData/{name}.csv`; GCxGC files require a `Weight %` column and a `Reference Compound` and/or `SMILES` column (`GC-Bin` and `PelePhysics Key` are optional).
+  * `refCompounds.csv` is now a single wide table (`Family`, `Carbon Number`, `Reference Compound`, `SMILES`, then `{Property}_Value`, `_Error`, `_Units`, `_Source`, `_Notes` for `Tc`, `Pc`, `Vc`, `Tm`, `Tb`, `Hf_STP`, `Hv_STP`, `Vm_STP`, `Omega`, `YSI`, and `DCN`) replacing `fuelData/refCompounds.csv` (compound names, SMILES, and PelePhysics keys).
+  * `groupDecompositionData/refCompounds.csv` renamed to `refGani.csv`; per-fuel decomposition files were removed. Each GCxGC row is matched to `refCompounds.csv` and `refGani.csv` by `Reference Compound` name (case-insensitive), then by the InChI of its `SMILES`. A `ValueError` listing unmatched rows is raised otherwise.
+- **Breaking:** `Fuel.__init__(name, fuelDataDir=None, refCompoundsPath=None, refGaniPath=None, *, useRefProperties=True)`; `decompName` was removed, the keyword-only `useRefProperties` argument (default `True`) toggles the use of reference data, and `fuelDataDir` accepts `str | Path` and defaults to `fuellib/data`; `Fuel.fuelDataDir` is now a `Path`. `fuel_metadata.yaml` is no longer read by `Fuel`.
+- **Breaking:** `Fuel.Tc`, `Pc`, `Vc`, `Tm`, `Tb`, `Hf_stp` (was `Hf`), `Hv_stp`, `Vm_stp`, and `omega` use reference values from `refCompounds.csv` (converted to the property's units) where available and fall back to the Gani prediction otherwise or when `useRefProperties=False`. These properties, along with `Gf_stp` (was `Gf`), `Cp_stp`, `Cp_B`, `Cp_C`, `Lv_stp`, `epsilonByKB`, and `sigma`, are now lazily evaluated cached properties instead of being computed in `__init__`.
+- `Fuel.Y_0`, `Fuel.compounds`, `Fuel.smiles`, and `Fuel.pelephysics_keys` are attributes set at initialization; `Fuel.compounds` now contains the matched reference compound names (e.g., `n-heptane`) instead of the GCxGC labels.
+- `gcm.boehm.dS_fus` reads the hydrocarbon family from `fuel.compoundsData["Family"]` instead of classifying molecules with RDKit.
+- `correlate.components` and `correlate.mixture` use `Fuel` attributes (`Tb`, `phi`, `Hf_stp`, `Hv_stp`, `RD_coeffs`, `dS_fus`) rather than `Fuel.get_property`.
+- `fl-plt-comp` and `fl-plt-props` read measured data from `Fuel.propData`; the exporters use the `GC-Bin` column for compound names when it is present.
+- `fl-fuels` lists fuels from `gcData/{name}.csv` (previously `*_init.csv`); `fuel_metadata.yaml` is optional and only used for source information (`decomp_name` and `props_data` entries were removed).
+- `tests/test_hc_identification.py` and `tutorials/hefaBlends.py` updated for the new data layout and `Fuel` signature.
+- `fuellib.get_fueldata_dir()` and the exporters' default data directory now point to `fuellib/data`.
+- `fuellib.data` is no longer a Python package; it is a plain data directory, and its layer was removed from the `[tool.importlinter]` contract.
+- Documentation (`tutorials-basic`, `tutorials-custom-fuels`, `fuelprops`, `gcm`, `sourcecode`, exporter and CLI tutorials) and the `customFuel.py` and `decompose_cg.py` tutorials updated for the new data layout and `Fuel` API.
+
+### Removed
+- `Fuel.get_property`, `Fuel.gcm_properties`, `Fuel.gani_decomp`, `Fuel.gcxgc_data`, `Fuel.inchi`, and the `Fuel.fuelDataGcDir`, `fuelDataDecompDir`, `fuelDataPropsDir`, `groupDecompFile`, `gcxgcFile`, and `gcmTableFile` attributes.
+- `fuellib.get_gcmtable_dir` and the `gcmTableData` directory (Gani coefficients are read from `fuellib/gcm/gani.csv`).
+- `fuellib.get_fueldata_decomp_dir`, `fuellib.get_metadata_decomp_name`, `fuellib.get_metadata_props_data`, and the `-decomp/--fuel_decomp_name` (`fl-export-pele`) and `-decomp/--decomp_name` (`fl-plt-comp`, `fl-plt-props`) options, along with the `decomp_name` argument of `plot_composition` and `plot_mixture_properties`.
+- `tests/get_pred_and_data.py`; the accuracy tests and baseline generator read `Fuel.propData` directly.
 
 ### Fixed
-- Added `ruff` rules `F401` and `F841` to prevent unused imports and variables; allowed `ruff` to automatically fix existing violations.
+- `import-linter` contract allows `fuellib.rdk` to import `fuellib.utils`.
 
 ## [3.0.6] - 2026-09-30
 
