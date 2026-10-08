@@ -9,18 +9,19 @@ import fuellib as fl
 def _normalize_signature(sig):
     """Normalize path-like defaults so signatures are stable across machines."""
 
-    parts = []
+    parameters = []
     for name, param in sig.parameters.items():
-        text = str(param)
         if (
             name == "path"
             and param.default is not inspect.Parameter.empty
             and isinstance(param.default, str)
             and param.default.endswith("exportData")
         ):
-            text = "path='<EXPORTDATA_PATH>'"
-        parts.append(text)
-    return f"({', '.join(parts)})"
+            param = param.replace(default="<EXPORTDATA_PATH>")
+        parameters.append(param)
+    return str(
+        sig.replace(parameters=parameters, return_annotation=inspect.Signature.empty)
+    )
 
 
 def _public_module_functions(module):
@@ -157,8 +158,8 @@ class ApiContractTestCase(unittest.TestCase):
             "mass2Y": "(self, mass)",
             "mean_molecular_weight": "(self, Yi)",
             "mixture_density": "(self, Yi, T)",
-            "mixture_dynamic_viscosity": "(self, Yi, T, correlation='Kendall-Monroe')",
-            "mixture_kinematic_viscosity": "(self, Yi, T, correlation='Kendall-Monroe')",
+            "mixture_dynamic_viscosity": "(self, Yi, T, correlation='Kendall-Monroe', *, model='Dutt')",
+            "mixture_kinematic_viscosity": "(self, Yi, T, correlation='Kendall-Monroe', *, model='Dutt')",
             "mixture_surface_tension": "(self, Yi, T, correlation='Brock-Bird')",
             "mixture_thermal_conductivity": "(self, Yi, T)",
             "mixture_vapor_pressure": "(self, Yi, T, correlation='Lee-Kesler')",
@@ -168,8 +169,8 @@ class ApiContractTestCase(unittest.TestCase):
             "psat_antoine_coeffs": "(self, Tvals=None, units='mks', correlation='Lee-Kesler')",
             "surface_tension": "(self, T, comp_idx=None, correlation='Brock-Bird')",
             "thermal_conductivity": "(self, T, comp_idx=None)",
-            "viscosity_dynamic": "(self, T, comp_idx=None)",
-            "viscosity_kinematic": "(self, T, comp_idx=None)",
+            "viscosity_dynamic": "(self, T, comp_idx=None, *, model='Dutt')",
+            "viscosity_kinematic": "(self, T, comp_idx=None, *, model='Dutt')",
         }
 
         actual = _public_class_methods(fl.fuel)

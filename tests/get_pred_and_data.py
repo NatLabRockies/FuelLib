@@ -9,7 +9,7 @@ from fuellib._data_locator import get_fueldata_props_dir
 FUELDATA_PROPS_DIR = get_fueldata_props_dir()
 
 
-def get_pred_and_data(fuel_name, prop_name):
+def get_pred_and_data(fuel_name, prop_name, *, viscosity_model="Dutt"):
     # Get the fuel properties based on the GCM
     fuel = fl.fuel(fuel_name)
 
@@ -42,7 +42,9 @@ def get_pred_and_data(fuel_name, prop_name):
             pred[i] *= 1.0e-03
 
         if prop_name == "Viscosity":
-            pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T_pred[i])
+            pred[i] = fuel.mixture_kinematic_viscosity(
+                Y_li, T_pred[i], model=viscosity_model
+            )
             # Convert viscosity to mm^2/s
             pred[i] *= 1.0e06
 

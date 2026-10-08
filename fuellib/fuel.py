@@ -14,6 +14,11 @@ from ._data_locator import (
     get_gcmtable_dir,
     get_metadata_decomp_name,
 )
+from ._viscosity import (
+    cg_to_nannoolal_groups,
+    nannoolal_dynamic_viscosity,
+    nannoolal_parameters,
+)
 from .convert import K2C
 from .utility import mixing_rule
 
@@ -177,6 +182,8 @@ class fuel:
         self.Nij = df_Nij.iloc[:, 1:].to_numpy()
         self.num_compounds = self.Nij.shape[0]
         self.num_groups = self.Nij.shape[1]
+        self._viscosity_group_names = tuple(df_Nij.columns[1:])
+        self._nannoolal_cache = {}
 
         # Classify hydrocarbon by family (used in thermal conductivity)
         # 0: saturated hydrocarbons
@@ -496,20 +503,65 @@ class fuel:
         rho = MW / Vm  # kg/m^3
         return rho
 
-    def viscosity_kinematic(self, T, comp_idx=None):
-        """
-        Calculate the viscosity using Dutt's equation.
+    def _nannoolal_viscosity(self, T, comp_idx=None):
+        """Return component dynamic viscosities using cached Nannoolal parameters."""
+        indices = range(self.num_compounds) if comp_idx is None else [comp_idx]
+        parameters = []
+        for index in indices:
+            if index not in self._nannoolal_cache:
+                groups = dict(
+                    zip(
+                        self._viscosity_group_names[: self.N_g1],
+                        self.Nij[index, : self.N_g1],
+                    )
+                )
+                groups.update(
+                    (name, count)
+                    for name, count in zip(self._viscosity_group_names, self.Nij[index])
+                    if name.endswith("membered ring")
+                )
+                try:
+                    mapped, n_atoms = cg_to_nannoolal_groups(groups)
+                    self._nannoolal_cache[index] = nannoolal_parameters(
+                        mapped, n_atoms, self.Tb[index]
+                    )
+                except ValueError as error:
+                    raise ValueError(
+                        f"Nannoolal viscosity for {self.compounds[index]!r}: {error}"
+                    ) from error
+            parameters.append(self._nannoolal_cache[index])
+        dbv, tv = np.asarray(parameters).T
+        viscosity = nannoolal_dynamic_viscosity(T, dbv, tv)
+        return viscosity if comp_idx is None else viscosity[0]
 
-        :meta private: This uses Dutt's equation (4.23) from "Viscosity of Liquids".
-        :meta private: The equation predicts viscosity in mm^2/s and is converted to SI units.
+    def viscosity_kinematic(self, T, comp_idx=None, *, model="Dutt"):
+        """
+        Calculate component kinematic viscosity using the selected model.
+
+        :meta private: Dutt is the default. Nannoolal dynamic viscosity is divided by FuelLib density.
 
         :param T: Temperature in Kelvin.
         :type T: float
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
+        :param model: Component viscosity model ("Dutt" or "Nannoolal"), case-insensitive.
+        :type model: str, optional
         :return: Viscosity of each component in m^2/s.
         :rtype: np.ndarray
+        :raises ValueError: If the model, Nannoolal input, or decomposition is unsupported.
         """
+        if not isinstance(model, str) or model.casefold() not in ("dutt", "nannoolal"):
+            raise ValueError(
+                f"Unknown viscosity model: {model!r}. Choose 'Dutt' or 'Nannoolal'."
+            )
+        if model.casefold() == "nannoolal":
+            mu_i = self._nannoolal_viscosity(T, comp_idx=comp_idx)
+            rho_i = self.density(T, comp_idx=comp_idx)
+            if not np.isfinite(rho_i).all() or (np.asarray(rho_i) <= 0).any():
+                raise ValueError(
+                    "Nannoolal kinematic viscosity requires positive finite liquid density."
+                )
+            return mu_i / rho_i
 
         # Convert temperature to Celsius
         T_cels = K2C(T)
@@ -527,21 +579,30 @@ class fuel:
 
         return nu_i
 
-    def viscosity_dynamic(self, T, comp_idx=None):
+    def viscosity_dynamic(self, T, comp_idx=None, *, model="Dutt"):
         """
-        Calculate liquid dynamic viscosity based on droplet temperature and density.
+        Calculate component dynamic viscosity using the selected model.
 
-        :meta private: Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
+        :meta private: Nannoolal predicts dynamic viscosity directly; Dutt uses kinematic viscosity and density.
 
         :param T: Temperature in Kelvin.
         :type T: float
         :param comp_idx: Index of compound to calculate property for.
         :type comp_idx: int, optional
+        :param model: Component viscosity model ("Dutt" or "Nannoolal"), case-insensitive.
+        :type model: str, optional
         :return: Dynamic viscosity in Pa*s.
         :rtype: np.ndarray
+        :raises ValueError: If the model, Nannoolal input, or decomposition is unsupported.
         """
+        if not isinstance(model, str) or model.casefold() not in ("dutt", "nannoolal"):
+            raise ValueError(
+                f"Unknown viscosity model: {model!r}. Choose 'Dutt' or 'Nannoolal'."
+            )
+        if model.casefold() == "nannoolal":
+            return self._nannoolal_viscosity(T, comp_idx=comp_idx)
 
-        nu_i = self.viscosity_kinematic(T, comp_idx=comp_idx)  # m^2/s
+        nu_i = self.viscosity_kinematic(T, comp_idx=comp_idx, model=model)  # m^2/s
         rho_i = self.density(T, comp_idx=comp_idx)  # kg/m^3
         mu_i = nu_i * rho_i  # Pa*s
         return mu_i
@@ -983,7 +1044,9 @@ class fuel:
 
         return rho
 
-    def mixture_kinematic_viscosity(self, Yi, T, correlation="Kendall-Monroe"):
+    def mixture_kinematic_viscosity(
+        self, Yi, T, correlation="Kendall-Monroe", *, model="Dutt"
+    ):
         """
         Calculate kinematic viscosity of the mixture.
 
@@ -995,10 +1058,14 @@ class fuel:
         :type T: float
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
         :type correlation: str, optional
+        :param model: Component viscosity model ("Dutt" or "Nannoolal"), case-insensitive.
+        :type model: str, optional
         :return: Mixture kinematic viscosity in m^2/s.
         :rtype: float
         """
-        nu_i = self.viscosity_kinematic(T)  # Viscosities of individual components
+        nu_i = self.viscosity_kinematic(
+            T, model=model
+        )  # Viscosities of individual components
 
         # Calculate mole fractions for each species
         Xi = self.Y2X(Yi)
@@ -1012,7 +1079,9 @@ class fuel:
 
         return nu
 
-    def mixture_dynamic_viscosity(self, Yi, T, correlation="Kendall-Monroe"):
+    def mixture_dynamic_viscosity(
+        self, Yi, T, correlation="Kendall-Monroe", *, model="Dutt"
+    ):
         """
         Calculate dynamic viscosity of the mixture.
 
@@ -1022,11 +1091,15 @@ class fuel:
         :type T: float
         :param correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
         :type correlation: str, optional
+        :param model: Component viscosity model ("Dutt" or "Nannoolal"), case-insensitive.
+        :type model: str, optional
         :return: Mixture dynamic viscosity in Pa*s.
         :rtype: float
         """
 
-        nu = self.mixture_kinematic_viscosity(Yi, T, correlation=correlation)
+        nu = self.mixture_kinematic_viscosity(
+            Yi, T, correlation=correlation, model=model
+        )
         rho = self.mixture_density(Yi, T)
 
         return rho * nu

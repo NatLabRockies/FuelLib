@@ -8,6 +8,8 @@ used to parse and validate this file's entries against that format.
 ## [Unreleased]
 
 ### Added
+- Optional all-family Nannoolal hydrocarbon viscosity predictions selected with `model="Nannoolal"` on component and mixture viscosity methods. Dutt remains the default, and the mixture correlation is selected independently.
+- Published Nannoolal contribution data, equation and family-mapping tests, and accuracy snapshots against the packaged pure-component and POSF measurements.
 - Pixi task automation (`fmt`, `lint`, `types`, `imports`, `test`, `pre-commit`, `docs-build`, `docs-clean`) so common dev workflows run via `pixi run <task>`.
 - New dev dependencies: `ruff`, `ty`, `pytest-cov`, `lefthook`, `import-linter`, and `uv` for a faster local pip/venv workflow.
 - `keepachangelog` dependency for maintaining this `CHANGELOG.md` in the Keep a Changelog format.

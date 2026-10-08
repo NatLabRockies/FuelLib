@@ -147,13 +147,123 @@ The kinematic viscosity of the *i-th* compound of the fuel,
    
    \nu_i = \frac{\mu_i}{\rho_i}, 
 
-is calculated from Dutt's equation (Eq. 4.23 in Viscosity of 
+is calculated by default from Dutt's equation (Eq. 4.23 in Viscosity of
 Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{\circ}` C:
 
 .. math::
 
    \nu_i = 10^{-6} \times \exp \bigg\{-3.0171 + \frac{442.78 + 1.6452 \,T_{b,i}}{T + 239 - 0.19 \,T_{b,i}} \bigg\}.
 
+The public API always accepts temperature in Kelvin; the Celsius conversion
+above is internal to Dutt's correlation. Select the optional Nannoolal
+model\ :footcite:p:`nannoolal_viscosity_2009` using the keyword-only ``model``
+argument. Model names are case-insensitive:
+
+.. code-block:: python
+
+    import fuellib as fl
+
+    fuel = fl.fuel("posf10325")
+    temperature = 233.15
+    mu = fuel.viscosity_dynamic(temperature, model="Nannoolal")  # Pa*s
+    nu = fuel.viscosity_kinematic(temperature, model="Nannoolal")  # m^2/s
+    nu_component = fuel.viscosity_kinematic(
+          temperature, comp_idx=0, model="Nannoolal"
+    )
+    nu_mix = fuel.mixture_kinematic_viscosity(
+          fuel.Y_0, temperature, correlation="Kendall-Monroe", model="Nannoolal"
+    )
+
+Nannoolal predicts dynamic viscosity directly. With :math:`T` and
+:math:`T_b` in Kelvin, equations 6--8 are implemented as:
+
+.. math::
+
+    S_B &= \sum_j N_j C(dB_v)_j, \qquad S_T = \sum_j N_j C(T_v)_j, \\
+    dB_v &= \frac{S_B}{n^{-2.5635} + 0.0685} + 3.7777, \\
+    T_v &= 21.8444\sqrt{T_b} + \frac{S_T^{0.9315}}{n^{0.6577} + 4.9259} - 231.1361, \\
+    \mu &= 1.3\times10^{-3}\exp\left[-dB_v\frac{T-T_v}{T-T_v/16}\right], \\
+    \nu &= \frac{\mu}{\rho}.
+
+Here :math:`n` is the non-hydrogen atom count, equal to the carbon count for
+the supported hydrocarbons. The reference viscosity is 1.3 mPa*s, converted
+to Pa*s in the implementation. Contribution values are taken from the original
+supplement's ``dBv_contr`` and ``Tv_contr`` sheets and packaged in
+``fuellib/data/gcmTableData/nannoolal_viscosity.csv``. Group mapping and
+temperature-independent parameters are calculated lazily for each requested
+component. Existing boiling points and density predictions are reused; the
+fuel decomposition files and Dutt prediction baselines are not modified.
+
+The supported CG templates cover normal and branched alkanes, mono-, di-, and
+tricycloparaffins, alkylbenzenes, fused diaromatics, cycloaromatics, and isolated
+chain alkenes. Every supported family uses Nannoolal when selected, with no
+family-dependent alternative model. Terminal and internal double bonds use
+groups 61 and 58, each representing two carbons. Ring corrections 125 and 126
+are counted once per qualifying three/four- and five-membered ring.
+
+This CG-to-Nannoolal mapping is not a general molecular-topology parser.
+Saturated polycycles assume pairwise fused rings sharing two atoms; ring CH
+and quaternary C counts are assumed to belong to the rings. Fused diaromatics
+require a ten-carbon aromatic skeleton with two fused aromatic carbons.
+Cycloaromatics require one saturated ring fused to a six-carbon aromatic
+skeleton, with the aromatic attachment atoms represented by ``ACCH2``.
+Spiro/bridged alternatives and branched ring substituents require additional
+structural information and are outside this mapping's assumptions. Heteroatom
+groups, cumulated double bonds, and ambiguous conjugated, cyclic, or
+aromatic-adjacent unsaturation are rejected rather than assigned an invented
+contribution or silently routed to Dutt.
+
+Use the correlation for liquid-phase temperatures. The numerical evaluator
+rejects non-positive/non-finite inputs, :math:`T \leq T_v/16`, and non-physical
+outputs, but does not perform a phase-equilibrium or freezing check. Very cold
+predictions should therefore be checked against experimental measurements.
+CLI plotting and exporters retain their existing default Dutt behavior;
+selection in this change is through the Python API.
+
+For the packaged viscosity measurements, the default Kendall-Monroe mixture
+rule gives the following MAPE. The POSF results have only four measured
+temperatures each (-40, -20, 40, and 100 degrees Celsius), not a continuously
+validated temperature range:
+
+.. list-table:: Viscosity accuracy against packaged measurements
+    :header-rows: 1
+
+    * - Fuel
+       - Measurements
+       - Dutt MAPE (%)
+       - Nannoolal MAPE (%)
+    * - Heptane
+       - 13
+       - 11.6360
+       - 24.1210
+    * - Decane
+       - 12
+       - 3.5932
+       - 10.8095
+    * - Dodecane
+       - 12
+       - 3.3197
+       - 3.6747
+    * - POSF-10264
+       - 4
+       - 7.7281
+       - 8.1133
+    * - POSF-10289
+       - 4
+       - 25.6712
+       - 14.6999
+    * - POSF-10325
+       - 4
+       - 14.1002
+       - 8.6454
+
+Nannoolal improves two of these POSF fuels but is not uniformly more accurate
+than Dutt. Reproduce the measured MAPE, bias, and RMSE without a research
+checkout or external spreadsheet:
+
+.. code-block:: console
+
+    pixi run -e dev pytest tests/test_viscosity.py -k reference_accuracy -s --no-cov
 
 
 Latent heat of vaporization
@@ -448,6 +558,10 @@ The Arrhenius rule is:
 
    \ln \nu_{Arr} = \sum_{i=1}^{N_c} X_i\ln\nu_i .
 
+The ``model`` argument selects the component viscosity correlation independently
+of these empirical mixture rules. ``mixture_dynamic_viscosity`` multiplies
+the selected mixture kinematic viscosity by FuelLib's mixture density.
+Neither mixture rule is part of the original pure-component Nannoolal method.
 
 
 Mixture vapor pressure
