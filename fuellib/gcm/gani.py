@@ -44,7 +44,7 @@ def _get_decomp(fuel: "Fuel") -> types.Array2D:
     Returns:
         The decomposition matrix as a 2D numpy array.
     """
-    decomp = fuel.gani_decomp().reindex(columns=TABLE.columns, fill_value=0)
+    decomp = fuel.ganiDecomp.reindex(columns=TABLE.columns, fill_value=0)
     return decomp.to_numpy()
 
 

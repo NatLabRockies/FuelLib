@@ -270,12 +270,9 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
         fuel = fl.Fuel("heptane")
         attributes = [
             "fuelDataDir",
-            "fuelDataGcDir",
-            "fuelDataDecompDir",
-            "fuelDataPropsDir",
+            "propData",
             "name",
             "compounds",
-            "formulas",
             "Y_0",
             "num_compounds",
             "MW",
@@ -284,8 +281,8 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
             "Vc",
             "Tb",
             "Tm",
-            "Hf",
-            "Gf",
+            "Hf_stp",
+            "Gf_stp",
             "Hv_stp",
             "Lv_stp",
             "Cp_stp",
@@ -306,10 +303,8 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
 
     def test__fuel_module_api_call_persistence(self):
         """Test that the FuelLib.fuel module API persists across versions."""
-        fuelDataDir = Path(__file__).parent.parent / "fuellib/data/fuelData"
-        fuel_init = partial(
-            fl.Fuel, name="heptane", decompName="heptane", fuelDataDir=str(fuelDataDir)
-        )
+        fuelDataDir = Path(__file__).parent.parent / "fuellib/data"
+        fuel_init = partial(fl.Fuel, name="heptane", fuelDataDir=str(fuelDataDir))
         fuel_init()  # Check that the Fuel object can be instantiated.
 
         fuel = fl.Fuel(name="heptane")

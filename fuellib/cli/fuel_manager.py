@@ -22,8 +22,8 @@ except ImportError:
 def load_fuel_metadata(fuel_data_dir=None):
     """Load fuel metadata from YAML file if available.
 
-    :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/,
-                         groupDecompositionData/, and fuel_metadata.yaml).
+    :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/
+                         and fuel_metadata.yaml).
                          If None, loads from embedded FuelLib data.
     :type fuel_data_dir: str, optional
     :return: Dictionary of fuel metadata or empty dict if not available
@@ -68,7 +68,7 @@ def list_fuels_main():
         "--fuel_data_dir",
         default=None,
         metavar="PATH",
-        help="Directory containing fuel data (with gcData/, groupDecompositionData/, and fuel_metadata.yaml). "
+        help="Directory containing fuel data (with gcData/ and, optionally, fuel_metadata.yaml). "
         "If not specified, uses embedded FuelLib data.",
     )
     parser.add_argument(
@@ -93,9 +93,9 @@ def list_fuels_main():
             print(f"Error: Fuel data directory not found: {fuel_data_dir}")
             sys.exit(1)
 
-        # Extract fuel names from *_init.csv files
-        fuel_files = [f for f in os.listdir(fuel_data_dir) if f.endswith("_init.csv")]
-        fuel_names = sorted([f.replace("_init.csv", "") for f in fuel_files])
+        # Extract fuel names from the *.csv files
+        fuel_files = [f for f in os.listdir(fuel_data_dir) if f.endswith(".csv")]
+        fuel_names = sorted([f[: -len(".csv")] for f in fuel_files])
 
         if not fuel_names:
             print("No fuels found in the specified directory.")

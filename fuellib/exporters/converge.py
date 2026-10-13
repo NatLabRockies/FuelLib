@@ -1,5 +1,6 @@
 import argparse
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -9,7 +10,7 @@ import fuellib as fl
 from ..utils import Units
 
 # Default data directory - use fuellib's embedded data
-FUELDATA_DIR = fl.get_fueldata_dir()
+FUELDATA_DIR = Path(__file__).parent.parent / "data"
 
 """
 Script that exports mixture properties over large temperature range for use in
@@ -480,7 +481,7 @@ def main():
     :type --fuel_name: str
 
     :param --fuel_data_dir: Directory where fuel data files are located.
-    :type --fuel_data_dir: str, optional (default: FuelLib/fuelData)
+    :type --fuel_data_dir: str, optional (default: fuellib/data)
 
     :param --temp_min: Minimum temperature (K) for the property calculations.
     :type --temp_min: float, optional (default: 0 K)
@@ -519,7 +520,7 @@ def main():
         "--fuel_data_dir",
         default=FUELDATA_DIR,
         metavar="PATH",
-        help="Directory where fuel data files are located (optional, default: FuelLib/fuelData).",
+        help="Directory where fuel data files are located (optional, default: fuellib/data).",
     )
 
     # Optional argument for minimum temperature
@@ -592,10 +593,6 @@ def main():
     print(f"    Temperature step size: {temp_step} K")
     print(f"    Export directory: {export_dir}")
     print(f"    Fuel data directory: {fuel_data_dir}")
-
-    # Get decomposition name from metadata (required)
-    # Note: decomp_name not currently used, but kept for API consistency
-    _ = fl.get_metadata_decomp_name(fuel_name, fuel_data_dir)
 
     # Create the fuel object
     fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)

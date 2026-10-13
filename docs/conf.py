@@ -2,6 +2,7 @@
 
 # -- Path setup --------------------------------------------------------------
 
+import csv
 import os
 import sys
 
@@ -74,6 +75,36 @@ typehints_defaults = "braces"  # "param (type, (default: value)) -- description"
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False  # Turn off NumPy if you only use Google
 napoleon_include_init_with_doc = True
+
+
+# -- Generated tables --------------------------------------------------------
+
+REF_COMPOUND_COLUMNS = ["Family", "Carbon Number", "Reference Compound", "SMILES"]
+
+
+def write_ref_compounds_table(app):
+    """Write a trimmed copy of refCompounds.csv for display in the docs."""
+    source = os.path.join(PROJECT_ROOT, "fuellib", "data", "refCompounds.csv")
+    out_dir = os.path.join(DOCS_DIR, "generated")
+    os.makedirs(out_dir, exist_ok=True)
+    with (
+        open(source, newline="", encoding="utf-8-sig") as f_in,
+        open(
+            os.path.join(out_dir, "refCompounds_table.csv"),
+            "w",
+            newline="",
+            encoding="utf-8",
+        ) as f_out,
+    ):
+        reader = csv.DictReader(f_in)
+        writer = csv.writer(f_out)
+        writer.writerow(REF_COMPOUND_COLUMNS)
+        for row in reader:
+            writer.writerow([row[col] for col in REF_COMPOUND_COLUMNS])
+
+
+def setup(app):
+    app.connect("builder-inited", write_ref_compounds_table)
 
 
 # -- Options for HTML output -------------------------------------------------

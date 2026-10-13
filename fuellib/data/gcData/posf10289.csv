@@ -1,4 +1,4 @@
-Bin,Reference Compound,SMILES,PelePhysics Key,Weight %
+GC-Bin,Reference Compound,SMILES,PelePhysics Key,Weight %
 Toluene,toluene,CC1=CC=CC=C1,C6H5CH3,0.03
 C2-Benzene,ethyl benzene,CCC1=CC=CC=C1,C6H5C2H5,0.41
 C3-Benzene,propyl benzene,CCCC1=CC=CC=C1,C6H5C3H7,1.32

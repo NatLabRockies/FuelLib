@@ -37,7 +37,7 @@ class MixtureTestCase(unittest.TestCase):
         total_checks = 0
 
         for fuel_name in self.base_data["Fuel"].unique():
-            fuel = Fuel(fuel_name)
+            fuel = Fuel(fuel_name, useRefProperties=False)
             fuel_data = self.base_data[self.base_data["Fuel"] == fuel_name]
 
             print(

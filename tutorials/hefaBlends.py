@@ -10,7 +10,7 @@ import fuellib as fl
 # Calculate mixture properties from the group contribution properties
 # -----------------------------------------------------------------------------
 
-# HEFA fuels from various feedstocks (see fuelData/propertiesData for fuels)
+# HEFA fuels from various feedstocks (see data/propertiesData for fuels)
 fuel_names = ["hefa-mfat", "hefa-came", "hefa-tall"]
 conv_fuel_name = "jet-a"
 blends = fl.Units.Quantity(
@@ -57,7 +57,7 @@ def getPredAndData(fuel_name, prop_name, blend):
     blend = blend.to_base_units()  # Convert percent to mass fraction
 
     # Get the fuel properties based on the GCM
-    fuel = fl.Fuel(fuel_name, "hefa")
+    fuel = fl.Fuel(fuel_name)
     jetA = fl.Fuel(conv_fuel_name)
 
     data_file = "hefa-jet-a-blends.csv"

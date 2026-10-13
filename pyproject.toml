@@ -121,7 +121,6 @@ layers = [
     "fuellib.fuel",
     "fuellib.correlate",
     "fuellib.gcm",
-    "fuellib.data", # May import rdk and utils
     "fuellib.rdk",
     "fuellib.utils", # Importable by all modules
 ]

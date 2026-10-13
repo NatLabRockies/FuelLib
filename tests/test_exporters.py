@@ -3,6 +3,8 @@
 This test module verifies that the export CLI commands work correctly.
 """
 
+from pathlib import Path
+
 import os
 import shutil
 import subprocess
@@ -75,7 +77,6 @@ def test_pele_default_deposition_species():
                 for line in lines
                 if line.startswith("particles.dep_fuel_species =")
             )
-
             assert fuel_species.rstrip().endswith(expected_species)
             assert dep_fuel_species.rstrip().endswith(expected_species)
 
@@ -148,9 +149,9 @@ def test_pele_custom_fuel_data_dir():
     # Create temporary directories for fuel data and output
     with tempfile.TemporaryDirectory() as tmpdir:
         # Copy the embedded fuelData to a temp location
-        embedded_fueldata = fl.get_fueldata_dir()
+        embedded_fueldata = Path(__file__).parent.parent / "fuellib" / "data"
         custom_fueldata = os.path.join(tmpdir, "fuelData")
-        shutil.copytree(embedded_fueldata, custom_fueldata)
+        shutil.copytree(str(embedded_fueldata), custom_fueldata)
 
         # Export from custom location to temp output directory
         output_dir = os.path.join(tmpdir, "output")
@@ -167,9 +168,9 @@ def test_converge_custom_fuel_data_dir():
     # Create temporary directories for fuel data and output
     with tempfile.TemporaryDirectory() as tmpdir:
         # Copy the embedded fuelData to a temp location
-        embedded_fueldata = fl.get_fueldata_dir()
+        embedded_fueldata = Path(__file__).parent.parent / "fuellib" / "data"
         custom_fueldata = os.path.join(tmpdir, "fuelData")
-        shutil.copytree(embedded_fueldata, custom_fueldata)
+        shutil.copytree(str(embedded_fueldata), custom_fueldata)
 
         # Export from custom location to temp output directory
         output_dir = os.path.join(tmpdir, "output")

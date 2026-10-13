@@ -3,11 +3,13 @@
 from collections import Counter
 
 import numpy as np
-from rdkit import Chem
+from rdkit import Chem, RDLogger
 from rdkit.Chem import Descriptors, Mol
 from scipy.sparse.csgraph import connected_components
 
 from ..utils import types
+
+RDLogger.DisableLog("rdApp.warning")  # Disable non-critical RDKit warnings  # ty: ignore[unresolved-attribute]
 
 
 # Instantiation functions

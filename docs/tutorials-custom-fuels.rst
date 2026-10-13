@@ -12,79 +12,64 @@ Create a fuel data directory with this structure:
 
     customFuels/
     ├── gcData/
-    │   └── your_fuel_name_init.csv
-    ├── groupDecompositionData/
     │   └── your_fuel_name.csv
-    └── fuel_metadata.yaml
+    ├── propertiesData/          (optional)
+    │   └── your_fuel_name.csv
+    ├── refCompounds.csv         (optional)
+    ├── refGani.csv              (optional)
+    └── fuel_metadata.yaml       (optional)
 
-**Required subdirectories:**
+**Required:**
 
-- ``gcData/``: Contains GC×GC composition data (one file per fuel)
-- ``groupDecompositionData/``: Contains functional group decomposition data (one file per fuel)
+- ``gcData/{fuel_name}.csv``: GC×GC composition data (one file per fuel).
 
-**Required metadata:**
+**Optional:**
 
-- ``fuel_metadata.yaml``: Configuration file that maps fuel names to their decomposition files
+- ``propertiesData/{fuel_name}.csv``: measured property data (one file per fuel) loaded into ``Fuel.propData``.
+- ``refCompounds.csv`` and ``refGani.csv``: custom reference compound and group decomposition tables. If either file is not found in the directory, FuelLib prints a message and falls back to the built-in file in ``fuellib/data``.
+- ``fuel_metadata.yaml``: display name, source, and other documentation for each fuel (used by ``fl-fuel-manager``). The :class:`~fuellib.fuel.Fuel` class does not read this file.
 
-Metadata Configuration
-----------------------
-
-Each custom fuel directory must have a ``fuel_metadata.yaml`` file at the root of the directory. This file defines the mapping from fuel names to their group decomposition files.
-At a minimum, each fuel entry must include the ``decomp_name`` field that specifies the name of the decomposition file (without the ``.csv`` extension) in the ``groupDecompositionData/`` directory as shown below.
-
-.. code-block:: yaml
-
-    fuels:
-      your_fuel:
-        decomp_name: your_fuel
-
-Additional metadata can be included for documentation purposes, but is not required for FuelLib to function. The following fields are available for each fuel:
-
-.. code-block:: yaml
-
-    fuels:
-      your_fuel:
-        name: Display Name for Your Fuel
-        category: Conventional|SATF|Simple
-        source: Citation or origin of fuel data
-        reference: URL to source paper
-        description: Brief description of the fuel
-        decomp_name: name_of_decomposition_file in ``groupDecompositionData/`` (without ``.csv`` extension)
-        props_data: Name of any related properties data file in ``propertiesData/`` (without ``.csv`` extension)
-
-
-Note that you can assign the same decomposition to multiple fuel variants if they have identical bulk composition.
+Fuel variants with identical compounds but different weight percentages simply use separate ``gcData`` files that refer to the same reference compounds.
 
 GCxGC Composition Data
 ----------------------
 
-Create a file named ``{fuel_name}_init.csv`` in the ``gcData/`` directory with fuel composition data.
+Create a file named ``{fuel_name}.csv`` in the ``gcData/`` directory with fuel composition data.
 
 **Required columns:**
 
-- ``Compound``: Name of each component
-- ``Weight %``: Weight percentage of each component
+- ``Weight %``: Weight percentage of each component (normalized automatically).
+- ``Reference Compound`` and/or ``SMILES``: Identifies the compound. Each row is matched to ``refCompounds.csv`` by ``Reference Compound`` name (case-insensitive) first, then by the InChI derived from ``SMILES``.
+
+**Optional columns:**
+
+- ``GC-Bin``: Name of the GCxGC bin, used as the compound name by the exporters when PelePhysics keys are not used.
+- ``PelePhysics Key``: Species name of the compound in a PelePhysics mechanism.
 
 **Example:**
 
 .. code-block:: text
 
-    Compound,Weight %
-    n-Decane,60
-    n-Dodecane,40
+    GC-Bin,SMILES,PelePhysics Key,Weight %
+    n-C10,CCCCCCCCCC,NC10H22,60
+    n-C12,CCCCCCCCCCCC,NC12H26,40
 
-Group Decomposition Data
-------------------------
+A ``ValueError`` is raised if a row cannot be matched to a reference compound.
 
-Create a file named ``{decomp_name}.csv`` in the ``groupDecompositionData/`` directory with functional group decompositions for each compound.
+Reference Compounds and Group Decompositions
+--------------------------------------------
+
+Every compound in a fuel must appear in both reference tables. To add a new compound, add a row to each:
+
+- ``refCompounds.csv``: ``Family``, ``Carbon Number``, ``Reference Compound``, and ``SMILES`` are required. ``Family`` must be one of ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``, ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. Measured properties are optional; see :ref:`sec-reference-properties`.
+- ``refGani.csv``: the functional group decomposition of the compound, with ``Common_Name`` equal to the ``Reference Compound`` in ``refCompounds.csv``. Groups that are omitted or blank are treated as zero.
 
 See the `Basic Usage tutorial <tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups>`_ for detailed information on group decompositions.
-
 
 Using Custom Fuels
 ------------------
 
-Once your custom fuel directory is set up, you can use it like any built-in fuel by specifying the ``fuelDataDir`` when creating a fuel object:
+Once your custom fuel directory is set up, you can use it like any built-in fuel by specifying the ``fuelDataDir`` when creating a fuel object. Custom reference tables can also be supplied directly with ``refCompoundsPath`` and ``refGaniPath``:
 
 .. code-block:: python
 
@@ -98,6 +83,14 @@ Once your custom fuel directory is set up, you can use it like any built-in fuel
     p_sat_i = fuel.psat(T)
     p_sat_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
 
+    # Use custom reference tables stored outside of the fuel data directory
+    fuel = fl.Fuel(
+        "new-saf",
+        fuelDataDir="/path/to/customFuels",
+        refCompoundsPath="/path/to/refCompounds.csv",
+        refGaniPath="/path/to/refGani.csv",
+    )
+
 Tips and Best Practices
 -----------------------
 
@@ -105,13 +98,4 @@ Tips and Best Practices
 
 2. **Group Decomposition Accuracy**: Predictions depend heavily on decomposition quality. When possible you should validate individual compound properties against measured properties or NIST WebBook.
 
-3. **Fuel Variants**: Use ``decomp_name`` to map multiple fuel variants to the same decomposition file when they have identical compounds but different weight percentages.
-
-   .. code-block:: yaml
-
-       fuels:
-         fuel_1:
-           decomp_name: fuel_decomp_1_and_2
-         
-         fuel_2:
-           decomp_name: fuel_decomp_1_and_2
+3. **Fuel Variants**: Create one ``gcData`` file per variant. Variants that share compounds also share the same reference table rows, so no additional decomposition data is needed.

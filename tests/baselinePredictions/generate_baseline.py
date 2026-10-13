@@ -38,12 +38,11 @@ def update_baseline() -> None:
     """Update the baseline predictions in the mixture data."""
     for fuel_name in fuel_names:
         fuel = Fuel(fuel_name)
-        props_file = Path(fuel.fuelDataPropsDir) / f"{fuel_name}.csv"
+        if fuel.propData is None:
+            msg = f"No property data found for fuel '{fuel_name}'."
+            raise ValueError(msg)
 
-        if not props_file.exists():
-            raise FileNotFoundError(f"Fuel data file not found: {props_file}")
-
-        props_data = pd.read_csv(props_file)
+        props_data = fuel.propData
         for prop_name in props_data["Property"].unique():
             prop_data = props_data[props_data["Property"] == prop_name]
             method = method_map.get(prop_name.replace(" ", "").strip().lower(), None)
