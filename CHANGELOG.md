@@ -41,6 +41,7 @@ used to parse and validate this file's entries against that format.
 - `fuellib.get_fueldata_dir()` and the exporters' default data directory now point to `fuellib/data`.
 - `fuellib.data` is no longer a Python package; it is a plain data directory, and its layer was removed from the `[tool.importlinter]` contract.
 - Documentation (`tutorials-basic`, `tutorials-custom-fuels`, `fuelprops`, `gcm`, `sourcecode`, exporter and CLI tutorials) and the `customFuel.py` and `decompose_cg.py` tutorials updated for the new data layout and `Fuel` API.
+- Suppress non-critical `RDKit` warnings.
 
 ### Removed
 - `Fuel.get_property`, `Fuel.gcm_properties`, `Fuel.gani_decomp`, `Fuel.gcxgc_data`, `Fuel.inchi`, and the `Fuel.fuelDataGcDir`, `fuelDataDecompDir`, `fuelDataPropsDir`, `groupDecompFile`, `gcxgcFile`, and `gcmTableFile` attributes.

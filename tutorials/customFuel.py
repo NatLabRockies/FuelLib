@@ -18,7 +18,7 @@ print(f"Number of compounds: {fuel.num_compounds}")
 #   └── refGani.csv  (optional, defaults to fuellib/data/refGani.csv)
 #
 # Then load it with:
-custom_fuel = fl.Fuel("hefa-S1", fuelDataDir="customFuels/fuelData")
+custom_fuel = fl.Fuel("myFuel", fuelDataDir="customFuels/fuelData")
 
 # After loading, the fuel object has the correct directory path:
 custom_fuel.fuelDataDir
