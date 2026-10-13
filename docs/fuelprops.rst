@@ -696,6 +696,12 @@ component liquid density evaluated at a reference temperature ``T_ref`` (default
 temperature, ``constants.T_stp``). A ``ValueError`` listing the compounds is
 raised if the reference data are missing for any component.
 
+Linear volume-fraction blending is a first-order approximation. Cetane number can
+blend nonlinearly for certain mixtures, depending on the chemical structures of the
+components\ :footcite:p:`kim_designing_2023`, so the mixture :math:`DCN` should be treated as an estimate.
+The graph neural network models of Kim et al. for predicting cetane numbers are available at
+`BioE-KimLab/CNpred <https://github.com/BioE-KimLab/CNpred>`_.
+
 Reference Compounds for Jet Fuels
 ---------------------------------
 
