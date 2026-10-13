@@ -26,7 +26,7 @@ FuelLib File Organization
 
     - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
         - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity, flash point, lower heating value)
-        - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion)
+        - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion, yield sooting index, derived cetane number)
         - ``helpers.py``: shared helper functions for mixing rules and mass/mole fraction conversions
 
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
