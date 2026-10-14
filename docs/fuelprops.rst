@@ -701,7 +701,9 @@ are not predicted by FuelLib, so they are always taken from the reference data.
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
 from its ``SMILES``; the matched rows are available as :attr:`~fuellib.fuel.Fuel.compoundsData`, and the
 group decompositions from ``refGani.csv`` as :attr:`~fuellib.fuel.Fuel.ganiDecomp`. Custom tables can be
-provided with the ``refCompoundsPath`` and ``refGaniPath`` arguments of :class:`~fuellib.fuel.Fuel`.
+provided with the ``refCompoundsPath`` and ``refGaniPath`` arguments of :class:`~fuellib.fuel.Fuel`. They
+supplement the bundled tables: custom compounds replace bundled compounds with the same InChI, and custom
+Gani decompositions replace bundled rows with the same ``Common_Name``.
 
 Validation
 ----------

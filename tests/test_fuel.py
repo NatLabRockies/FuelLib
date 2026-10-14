@@ -1,8 +1,12 @@
 """Test suite for the Fuel class in the fuellib package."""
 
+from pathlib import Path
+
+import pandas as pd
 import pytest
 
 from fuellib import Fuel, Units
+from fuellib.fuel import DEFAULT_DATA_DIR
 
 import numpy as np
 
@@ -37,6 +41,35 @@ class TestParsing:
         assert fuel.pelephysics_keys is not None
         assert len(fuel.pelephysics_keys) == fuel.num_compounds
         assert all(isinstance(key, str) for key in fuel.pelephysics_keys)
+
+    def test_custom_ref_compounds_extend_and_override_bundled_data(
+        self, tmp_path: Path
+    ) -> None:
+        """Custom rows override bundled rows by InChI without dropping bundled rows."""
+        (tmp_path / "gcData").mkdir()
+        pd.read_csv(DEFAULT_DATA_DIR / "gcData" / "heptane-decane.csv").to_csv(
+            tmp_path / "gcData" / "heptane-decane.csv", index=False
+        )
+
+        customRef = pd.read_csv(DEFAULT_DATA_DIR / "refCompounds.csv")
+        customRef = customRef.loc[
+            customRef["Reference Compound"].eq("n-decane")
+        ].copy()
+        customRef.loc[:, "SMILES"] = "C(C)CCCCCCCC"
+        customRef.loc[:, "DCN_Value"] = 999.0
+        customRef.to_csv(tmp_path / "refCompounds.csv", index=False)
+
+        customGani = pd.read_csv(DEFAULT_DATA_DIR / "refGani.csv")
+        customGani = customGani.loc[customGani["Common_Name"].eq("n-decane")].copy()
+        customGani.loc[:, "CH3"] = 99
+        customGani.to_csv(tmp_path / "refGani.csv", index=False)
+
+        fuel = Fuel("heptane-decane", fuelDataDir=tmp_path)
+
+        assert fuel.compounds == ["n-heptane", "n-decane"]
+        assert fuel.refCompounds["Reference Compound"].eq("n-decane").sum() == 1
+        assert fuel.compoundsData.loc[1, "DCN_Value"] == 999.0
+        assert fuel.ganiDecomp.loc[1, "CH3"] == 99
 
 
 class TestRDKitProperties:

@@ -44,6 +44,73 @@ def _resolve_ref_path(path: str | Path | None, dataDir: Path, fileName: str) -> 
     return refPath
 
 
+def _smiles_to_inchi(smiles: Series) -> Series:
+    """Convert non-empty SMILES strings to InChI identifiers."""
+    return smiles.astype("string").str.strip().map(
+        lambda s: mol.inchi(mol.from_smiles(s)) if not pd.isna(s) and s else pd.NA
+    )
+
+
+def _load_ref_compounds(
+    path: str | Path | None, dataDir: Path
+) -> DataFrame:
+    """Load bundled reference compounds and apply custom overrides.
+
+    A custom ``refCompounds.csv`` augments the bundled table. Custom rows replace
+    bundled rows when their SMILES strings resolve to the same InChI, allowing
+    alternative valid SMILES representations for the same compound.
+    """
+    defaultPath = DEFAULT_DATA_DIR / "refCompounds.csv"
+    customPath = _resolve_ref_path(path, dataDir, "refCompounds.csv")
+    defaultData = pd.read_csv(defaultPath)
+
+    if customPath.resolve() == defaultPath.resolve():
+        return defaultData
+
+    customData = pd.read_csv(customPath)
+    if "SMILES" not in customData.columns:
+        return pd.concat([defaultData, customData], ignore_index=True, sort=False)
+
+    customInchi = _smiles_to_inchi(customData["SMILES"])
+    customWithInchi = customData.assign(_InChI=customInchi)
+    customWithInchi = pd.concat(
+        [
+            customWithInchi[customWithInchi["_InChI"].isna()],
+            customWithInchi[customWithInchi["_InChI"].notna()].drop_duplicates(
+                "_InChI", keep="last"
+            ),
+        ]
+    )
+    customInchis = customWithInchi["_InChI"].dropna()
+    defaultInchi = _smiles_to_inchi(defaultData["SMILES"])
+    bundledRows = defaultData.loc[~defaultInchi.isin(customInchis)]
+
+    return pd.concat(
+        [bundledRows, customWithInchi.drop(columns="_InChI")],
+        ignore_index=True,
+        sort=False,
+    )
+
+
+def _load_ref_gani(path: str | Path | None, dataDir: Path) -> DataFrame:
+    """Load bundled Gani decompositions and apply custom name-based overrides."""
+    defaultPath = DEFAULT_DATA_DIR / "refGani.csv"
+    customPath = _resolve_ref_path(path, dataDir, "refGani.csv")
+    defaultData = pd.read_csv(defaultPath)
+
+    if customPath.resolve() == defaultPath.resolve():
+        return defaultData
+
+    customData = pd.read_csv(customPath)
+    if "Common_Name" not in customData.columns:
+        return pd.concat([defaultData, customData], ignore_index=True, sort=False)
+
+    bundledRows = defaultData.loc[
+        ~defaultData["Common_Name"].isin(customData["Common_Name"])
+    ]
+    return pd.concat([bundledRows, customData], ignore_index=True, sort=False)
+
+
 def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> DataFrame:
     """Match GCxGC data to a reference data table.
 
@@ -66,18 +133,6 @@ def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> Dat
 
     def _normalize_names(names: Series) -> Series:
         return names.astype("string").str.strip().str.lower()
-
-    def _smiles_to_inchi(smiles: Series) -> Series:
-        return (
-            smiles
-            .astype("string")
-            .str.strip()
-            .map(
-                lambda s: (
-                    mol.inchi(mol.from_smiles(s)) if not pd.isna(s) and s else pd.NA
-                )
-            )
-        )
 
     if "Reference Compound" in gcData.columns:
         refNames = _normalize_names(refData["Reference Compound"]).dropna()
@@ -123,9 +178,13 @@ class Fuel:
             fuelDataDir: Directory containing fuel data.
                 Defaults to `fuelLib/data`.
             refCompoundsPath: Path to the reference compounds CSV file.
-                Defaults to `fuellib/data/referenceCompounds.csv`.
+                Defaults to `fuellib/data/refCompounds.csv`. A custom table in
+                `fuelDataDir`, when present, is appended to the bundled table and
+                replaces rows with the same InChI.
             refGaniPath: Path to the reference Gani decomposition CSV file.
-                Defaults to `fuellib/data/referenceGani.csv`.
+                Defaults to `fuellib/data/refGani.csv`. A custom table in
+                `fuelDataDir`, when present, is appended to the bundled table and
+                replaces rows with the same `Common_Name`.
             useRefProperties: Whether to use reference compound properties for
                 calculations. Defaults to `True`.
 
@@ -174,12 +233,12 @@ class Fuel:
         )
         """Initial weight fractions from the GCxGC data."""
 
-        self.refCompounds: DataFrame = pd.read_csv(
-            _resolve_ref_path(refCompoundsPath, self.fuelDataDir, "refCompounds.csv")
+        self.refCompounds: DataFrame = _load_ref_compounds(
+            refCompoundsPath, self.fuelDataDir
         )
         """Reference compounds and their properties."""
-        self.refGani: DataFrame = pd.read_csv(
-            _resolve_ref_path(refGaniPath, self.fuelDataDir, "refGani.csv")
+        self.refGani: DataFrame = _load_ref_gani(
+            refGaniPath, self.fuelDataDir
         ).rename(columns={"Common_Name": "Reference Compound"})
         """Reference Gani group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(

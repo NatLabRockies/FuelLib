@@ -26,7 +26,7 @@ Create a fuel data directory with this structure:
 **Optional:**
 
 - ``propertiesData/{fuel_name}.csv``: measured property data (one file per fuel) loaded into ``Fuel.propData``.
-- ``refCompounds.csv`` and ``refGani.csv``: custom reference compound and group decomposition tables. If either file is not found in the directory, FuelLib prints a message and falls back to the built-in file in ``fuellib/data``.
+- ``refCompounds.csv`` and ``refGani.csv``: custom reference compound and group decomposition tables. When present, each table supplements FuelLib's built-in table; it does not replace it. If either file is absent, FuelLib uses the built-in table in ``fuellib/data``.
 - ``fuel_metadata.yaml``: display name, source, and other documentation for each fuel (used by ``fl-fuel-manager``). The :class:`~fuellib.fuel.Fuel` class does not read this file.
 
 Fuel variants with identical compounds but different weight percentages simply use separate ``gcData`` files that refer to the same reference compounds.
@@ -59,10 +59,10 @@ A ``ValueError`` is raised if a row cannot be matched to a reference compound.
 Reference Compounds and Group Decompositions
 --------------------------------------------
 
-Every compound in a fuel must appear in both reference tables. To add a new compound, add a row to each:
+Every compound in a fuel must appear in both effective reference tables. To add a new compound, add a row to each custom table:
 
-- ``refCompounds.csv``: ``Family``, ``Carbon Number``, ``Reference Compound``, and ``SMILES`` are required. ``Family`` must be one of ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``, ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. Measured properties are optional; see :ref:`sec-reference-properties`.
-- ``refGani.csv``: the functional group decomposition of the compound, with ``Common_Name`` equal to the ``Reference Compound`` in ``refCompounds.csv``. Groups that are omitted or blank are treated as zero.
+- ``refCompounds.csv``: ``Family``, ``Carbon Number``, ``Reference Compound``, and ``SMILES`` are required. ``Family`` must be one of ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``, ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. Measured properties are optional; see :ref:`sec-reference-properties`. A custom row replaces a built-in row when the two SMILES values resolve to the same InChI, so use this to override built-in properties even when the valid SMILES representation differs.
+- ``refGani.csv``: the functional group decomposition of the compound, with ``Common_Name`` equal to the ``Reference Compound`` in ``refCompounds.csv``. A custom row with the same ``Common_Name`` replaces the built-in decomposition. Groups that are omitted or blank are treated as zero.
 
 See the `Basic Usage tutorial <tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups>`_ for detailed information on group decompositions.
 
