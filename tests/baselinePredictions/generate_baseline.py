@@ -31,13 +31,14 @@ method_map = {
     "freezepoint": correlate.mixture.freeze_point_boehm,
     "flashpoint": correlate.mixture.flash_point_alibashki,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
+    "derivedcetanenumber": correlate.mixture.derived_cetane_number,
 }
 
 
 def update_baseline() -> None:
     """Update the baseline predictions in the mixture data."""
     for fuel_name in fuel_names:
-        fuel = Fuel(fuel_name)
+        fuel = Fuel(fuel_name, useRefProperties=False)
         if fuel.propData is None:
             msg = f"No property data found for fuel '{fuel_name}'."
             raise ValueError(msg)
