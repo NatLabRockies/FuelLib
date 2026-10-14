@@ -7,6 +7,8 @@ used to parse and validate this file's entries against that format.
 
 ## [Unreleased]
 
+## [3.0.7] - 2026-10-14
+
 ### Added
 - `gcm.boehm` with accompanying `boehm.csv` for Boehm (2022) fusion entropy (`dS_fus`) parameters by hydrocarbon family (`n-alkane`, `isoalkane`, `alkene`, `monocycloalkane`, `dicycloalkane`, `tricycloalkane`, `alkylbenzene`, `cycloaromatic`, `diaromatic`).
 - `rdk.mol.has_fused_rings` and `rdk.mol.count_aromatic_rings` for structural analysis of molecules.
