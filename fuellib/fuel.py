@@ -45,7 +45,14 @@ def _resolve_ref_path(path: str | Path | None, dataDir: Path, fileName: str) -> 
 
 
 def _smiles_to_inchi(smiles: Series) -> Series:
-    """Convert non-empty SMILES strings to InChI identifiers."""
+    """Convert non-empty SMILES strings to InChI identifiers.
+
+    Args:
+        smiles: SMILES strings to convert.
+
+    Returns:
+        InChI identifiers, with missing values for blank SMILES strings.
+    """
     return (
         smiles
         .astype("string")
@@ -60,6 +67,13 @@ def _load_ref_compounds(path: str | Path | None, dataDir: Path) -> DataFrame:
     A custom ``refCompounds.csv`` augments the bundled table. Custom rows replace
     bundled rows when their SMILES strings resolve to the same InChI, allowing
     alternative valid SMILES representations for the same compound.
+
+    Args:
+        path: Explicit custom reference-compound file, if provided.
+        dataDir: Directory containing custom fuel data.
+
+    Returns:
+        The bundled reference-compound table with custom additions and overrides.
     """
     defaultPath = DEFAULT_DATA_DIR / "refCompounds.csv"
     customPath = _resolve_ref_path(path, dataDir, "refCompounds.csv")
@@ -92,7 +106,15 @@ def _load_ref_compounds(path: str | Path | None, dataDir: Path) -> DataFrame:
 
 
 def _load_ref_gani(path: str | Path | None, dataDir: Path) -> DataFrame:
-    """Load bundled Gani decompositions and apply custom name-based overrides."""
+    """Load bundled Gani decompositions and apply custom name-based overrides.
+
+    Args:
+        path: Explicit custom Gani decomposition file, if provided.
+        dataDir: Directory containing custom fuel data.
+
+    Returns:
+        The bundled Gani decomposition table with custom additions and overrides.
+    """
     defaultPath = DEFAULT_DATA_DIR / "refGani.csv"
     customPath = _resolve_ref_path(path, dataDir, "refGani.csv")
     defaultData = pd.read_csv(defaultPath)
