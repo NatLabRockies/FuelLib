@@ -1,0 +1,174 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+# A release must be explicitly dispatched from the protected main branch. The
+# publish job receives an OIDC token instead of a long-lived PyPI API token.
+concurrency:
+  group: pypi-release
+  cancel-in-progress: false
+
+jobs:
+  validate-release:
+    name: Validate release metadata
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Read and validate version
+        id: version
+        run: |
+          python -m pip install --upgrade pip packaging
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          from packaging.version import InvalidVersion, Version
+
+          project = tomllib.loads(Path("pyproject.toml").read_text())
+          version = project["project"]["version"]
+          try:
+              Version(version)
+          except InvalidVersion as error:
+              raise SystemExit(f"Invalid PEP 440 project version: {version}") from error
+
+          print(f"version={version}")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
+              print(f"version={version}", file=output)
+          PY
+
+      - name: Verify changelog is consolidated for this version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          version = os.environ["VERSION"]
+          changelog = Path("CHANGELOG.md").read_text()
+          unreleased = re.search(
+              r"^## \[Unreleased\]\s*$([\s\S]*?)(?=^## |\Z)",
+              changelog,
+              flags=re.MULTILINE,
+          )
+          if unreleased is None:
+              raise SystemExit("CHANGELOG.md has no [Unreleased] section")
+          if unreleased.group(1).strip():
+              raise SystemExit(
+                  "Consolidate CHANGELOG.md before releasing: "
+                  "[Unreleased] must be empty."
+              )
+
+          heading = rf"^## \[{re.escape(version)}\] - \d{{4}}-\d{{2}}-\d{{2}}\s*$"
+          if not re.search(heading, changelog, flags=re.MULTILINE):
+              raise SystemExit(
+                  f"CHANGELOG.md needs a dated ## [{version}] entry matching pyproject.toml"
+              )
+          PY
+
+      - name: Validate changelog format
+        run: |
+          python -m pip install --upgrade pip keepachangelog
+          python -m keepachangelog validate CHANGELOG.md
+
+      - name: Ensure the release tag does not exist
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if git rev-parse --verify --quiet "refs/tags/v${VERSION}"; then
+            echo "Tag v${VERSION} already exists."
+            exit 1
+          fi
+
+  test-and-build:
+    name: Test and build distribution
+    needs: validate-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install release checks
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+          python -m pip install -e '.[dev]'
+
+      - name: Run test suite
+        run: python -m pytest -v -s
+
+      - name: Build and validate distribution
+        run: |
+          python -m build
+          python -m twine check --strict dist/*
+
+      - name: Verify the wheel installs
+        run: |
+          python -m venv /tmp/fuellib-install-check
+          /tmp/fuellib-install-check/bin/python -m pip install dist/*.whl
+          /tmp/fuellib-install-check/bin/python -c 'import fuellib; print(fuellib.__version__)'
+
+      - name: Upload distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+          if-no-files-found: error
+
+  publish-to-pypi:
+    name: Publish to PyPI
+    needs: [validate-release, test-and-build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/fuellib
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+
+  create-github-release:
+    name: Create GitHub release
+    needs: [validate-release, publish-to-pypi]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.validate-release.outputs.version }}
+        run: |
+          gh release create "v${VERSION}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --target "${GITHUB_SHA}" \
+            --title "FuelLib ${VERSION}" \
+            --generate-notes
