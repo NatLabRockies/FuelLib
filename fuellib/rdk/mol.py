@@ -76,6 +76,18 @@ def inchi(mol: Mol) -> str:
     return Chem.inchi.MolBlockToInchi(Chem.rdmolfiles.MolToMolBlock(mol))
 
 
+def smiles_to_inchi(smiles: str) -> str:
+    """Convert a SMILES string to an InChI identifier.
+
+    Args:
+        smiles: SMILES string to convert.
+
+    Returns:
+        InChI identifier for the molecule.
+    """
+    return inchi(from_smiles(smiles))
+
+
 def hill_formula(mol: Mol) -> str:
     """Get the Hill formula representation of `mol`.
 

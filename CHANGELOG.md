@@ -17,6 +17,7 @@ used to parse and validate this file's entries against that format.
 - `Fuel.YSI` and `Fuel.DCN` cached properties returning reference Yield Sooting Index and derived cetane number values; a `ValueError` listing the compounds is raised if any value is missing.
 - `Fuel.propData` (a `DataFrame` of `propertiesData/{name}.csv`, or `None` if no file exists), `Fuel.gcData`, `Fuel.compoundsData` (matched `refCompounds.csv` rows), and `Fuel.ganiDecomp` (matched `refGani.csv` rows).
 - `refCompoundsPath` and `refGaniPath` arguments to `Fuel.__init__` for supplying custom reference tables. If a file is not found in `fuelDataDir`, a message is printed and the default file in `fuellib/data` is used.
+- Private `fuellib._reference_data` loaders that resolve reference-table paths and merge bundled and custom compound/Gani reference data.
 - Cached properties `Fuel.Gf_stp`, `Fuel.dS_fus`, `Fuel.RD_coeffs` (tuple of `rd_A`, `rd_B`, `rd_D`), and `Fuel.phi`, replacing `Fuel.get_property` lookups.
 - `.scratch/` added to `.gitignore`.
 - `ruff` rules `F401` and `F841` to prevent unused imports and variables; existing violations were fixed automatically.

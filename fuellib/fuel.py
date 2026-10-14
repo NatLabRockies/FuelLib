@@ -12,124 +12,16 @@ from pandas import DataFrame, Series
 from rdkit.Chem import Mol
 
 from . import correlate
+from ._reference_data import (
+    DEFAULT_DATA_DIR,
+    load_ref_compounds,
+    load_ref_gani,
+    smiles_series_to_inchi,
+)
 from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
 from .gcm import boehm_gcm, gani_gcm
 from .rdk import mol
 from .utils import Units, types
-
-DEFAULT_DATA_DIR = Path(__file__).parent / "data"
-
-
-def _resolve_ref_path(path: str | Path | None, dataDir: Path, fileName: str) -> Path:
-    """Resolve the path to a reference data file, falling back to the default.
-
-    Args:
-        path: User-specified path to the file, or None.
-        dataDir: Fuel data directory to look in when `path` is None.
-        fileName: Name of the reference file.
-
-    Returns:
-        Path to an existing reference data file.
-
-    Raises:
-        FileNotFoundError: If neither the requested nor default file exists.
-    """
-    refPath = Path(path) if path is not None else dataDir / fileName
-    if not refPath.exists():
-        print(f"Reference file not found at {refPath}, using default location.")
-        refPath = DEFAULT_DATA_DIR / fileName
-        if not refPath.exists():
-            msg = f"Default reference file not found: {refPath}"
-            raise FileNotFoundError(msg)
-    return refPath
-
-
-def _smiles_to_inchi(smiles: Series) -> Series:
-    """Convert non-empty SMILES strings to InChI identifiers.
-
-    Args:
-        smiles: SMILES strings to convert.
-
-    Returns:
-        InChI identifiers, with missing values for blank SMILES strings.
-    """
-    return (
-        smiles
-        .astype("string")
-        .str.strip()
-        .map(lambda s: mol.inchi(mol.from_smiles(s)) if not pd.isna(s) and s else pd.NA)
-    )
-
-
-def _load_ref_compounds(path: str | Path | None, dataDir: Path) -> DataFrame:
-    """Load bundled reference compounds and apply custom overrides.
-
-    A custom ``refCompounds.csv`` augments the bundled table. Custom rows replace
-    bundled rows when their SMILES strings resolve to the same InChI, allowing
-    alternative valid SMILES representations for the same compound.
-
-    Args:
-        path: Explicit custom reference-compound file, if provided.
-        dataDir: Directory containing custom fuel data.
-
-    Returns:
-        The bundled reference-compound table with custom additions and overrides.
-    """
-    defaultPath = DEFAULT_DATA_DIR / "refCompounds.csv"
-    customPath = _resolve_ref_path(path, dataDir, "refCompounds.csv")
-    defaultData = pd.read_csv(defaultPath)
-
-    if customPath.resolve() == defaultPath.resolve():
-        return defaultData
-
-    customData = pd.read_csv(customPath)
-    if "SMILES" not in customData.columns:
-        return pd.concat([defaultData, customData], ignore_index=True, sort=False)
-
-    customInchi = _smiles_to_inchi(customData["SMILES"])
-    customWithInchi = customData.assign(_InChI=customInchi)
-    customWithInchi = pd.concat([
-        customWithInchi[customWithInchi["_InChI"].isna()],
-        customWithInchi[customWithInchi["_InChI"].notna()].drop_duplicates(
-            "_InChI", keep="last"
-        ),
-    ])
-    customInchis = customWithInchi["_InChI"].dropna()
-    defaultInchi = _smiles_to_inchi(defaultData["SMILES"])
-    bundledRows = defaultData.loc[~defaultInchi.isin(customInchis)]
-
-    return pd.concat(
-        [bundledRows, customWithInchi.drop(columns="_InChI")],
-        ignore_index=True,
-        sort=False,
-    )
-
-
-def _load_ref_gani(path: str | Path | None, dataDir: Path) -> DataFrame:
-    """Load bundled Gani decompositions and apply custom name-based overrides.
-
-    Args:
-        path: Explicit custom Gani decomposition file, if provided.
-        dataDir: Directory containing custom fuel data.
-
-    Returns:
-        The bundled Gani decomposition table with custom additions and overrides.
-    """
-    defaultPath = DEFAULT_DATA_DIR / "refGani.csv"
-    customPath = _resolve_ref_path(path, dataDir, "refGani.csv")
-    defaultData = pd.read_csv(defaultPath)
-
-    if customPath.resolve() == defaultPath.resolve():
-        return defaultData
-
-    customData = pd.read_csv(customPath)
-    if "Common_Name" not in customData.columns:
-        return pd.concat([defaultData, customData], ignore_index=True, sort=False)
-
-    bundledRows = defaultData.loc[
-        ~defaultData["Common_Name"].isin(customData["Common_Name"])
-    ]
-    return pd.concat([bundledRows, customData], ignore_index=True, sort=False)
 
 
 def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> DataFrame:
@@ -162,9 +54,9 @@ def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> Dat
 
     unmatched = refIdx.isna()
     if unmatched.any() and "SMILES" in gcData.columns and "SMILES" in refData.columns:
-        refInchi = _smiles_to_inchi(refData["SMILES"]).dropna()
+        refInchi = smiles_series_to_inchi(refData["SMILES"]).dropna()
         inchiLookup = dict(zip(refInchi, refInchi.index))
-        refIdx[unmatched] = _smiles_to_inchi(gcData.loc[unmatched, "SMILES"]).map(
+        refIdx[unmatched] = smiles_series_to_inchi(gcData.loc[unmatched, "SMILES"]).map(
             inchiLookup
         )
 
@@ -254,11 +146,11 @@ class Fuel:
         )
         """Initial weight fractions from the GCxGC data."""
 
-        self.refCompounds: DataFrame = _load_ref_compounds(
+        self.refCompounds: DataFrame = load_ref_compounds(
             refCompoundsPath, self.fuelDataDir
         )
         """Reference compounds and their properties."""
-        self.refGani: DataFrame = _load_ref_gani(refGaniPath, self.fuelDataDir).rename(
+        self.refGani: DataFrame = load_ref_gani(refGaniPath, self.fuelDataDir).rename(
             columns={"Common_Name": "Reference Compound"}
         )
         """Reference Gani group decompositions."""
