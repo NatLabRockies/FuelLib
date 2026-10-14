@@ -52,9 +52,7 @@ class TestParsing:
         )
 
         customRef = pd.read_csv(DEFAULT_DATA_DIR / "refCompounds.csv")
-        customRef = customRef.loc[
-            customRef["Reference Compound"].eq("n-decane")
-        ].copy()
+        customRef = customRef.loc[customRef["Reference Compound"].eq("n-decane")].copy()
         customRef.loc[:, "SMILES"] = "C(C)CCCCCCCC"
         customRef.loc[:, "DCN_Value"] = 999.0
         customRef.to_csv(tmp_path / "refCompounds.csv", index=False)

@@ -46,14 +46,15 @@ def _resolve_ref_path(path: str | Path | None, dataDir: Path, fileName: str) -> 
 
 def _smiles_to_inchi(smiles: Series) -> Series:
     """Convert non-empty SMILES strings to InChI identifiers."""
-    return smiles.astype("string").str.strip().map(
-        lambda s: mol.inchi(mol.from_smiles(s)) if not pd.isna(s) and s else pd.NA
+    return (
+        smiles
+        .astype("string")
+        .str.strip()
+        .map(lambda s: mol.inchi(mol.from_smiles(s)) if not pd.isna(s) and s else pd.NA)
     )
 
 
-def _load_ref_compounds(
-    path: str | Path | None, dataDir: Path
-) -> DataFrame:
+def _load_ref_compounds(path: str | Path | None, dataDir: Path) -> DataFrame:
     """Load bundled reference compounds and apply custom overrides.
 
     A custom ``refCompounds.csv`` augments the bundled table. Custom rows replace
@@ -73,14 +74,12 @@ def _load_ref_compounds(
 
     customInchi = _smiles_to_inchi(customData["SMILES"])
     customWithInchi = customData.assign(_InChI=customInchi)
-    customWithInchi = pd.concat(
-        [
-            customWithInchi[customWithInchi["_InChI"].isna()],
-            customWithInchi[customWithInchi["_InChI"].notna()].drop_duplicates(
-                "_InChI", keep="last"
-            ),
-        ]
-    )
+    customWithInchi = pd.concat([
+        customWithInchi[customWithInchi["_InChI"].isna()],
+        customWithInchi[customWithInchi["_InChI"].notna()].drop_duplicates(
+            "_InChI", keep="last"
+        ),
+    ])
     customInchis = customWithInchi["_InChI"].dropna()
     defaultInchi = _smiles_to_inchi(defaultData["SMILES"])
     bundledRows = defaultData.loc[~defaultInchi.isin(customInchis)]
@@ -237,9 +236,9 @@ class Fuel:
             refCompoundsPath, self.fuelDataDir
         )
         """Reference compounds and their properties."""
-        self.refGani: DataFrame = _load_ref_gani(
-            refGaniPath, self.fuelDataDir
-        ).rename(columns={"Common_Name": "Reference Compound"})
+        self.refGani: DataFrame = _load_ref_gani(refGaniPath, self.fuelDataDir).rename(
+            columns={"Common_Name": "Reference Compound"}
+        )
         """Reference Gani group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(
             self.gcData, self.refCompounds, "referenceCompounds"
