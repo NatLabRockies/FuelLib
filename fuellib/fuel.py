@@ -12,36 +12,16 @@ from pandas import DataFrame, Series
 from rdkit.Chem import Mol
 
 from . import correlate
+from ._reference_data import (
+    DEFAULT_DATA_DIR,
+    load_ref_compounds,
+    load_ref_gani,
+    smiles_series_to_inchi,
+)
 from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
 from .gcm import boehm_gcm, gani_gcm
 from .rdk import mol
 from .utils import Units, types
-
-DEFAULT_DATA_DIR = Path(__file__).parent / "data"
-
-
-def _resolve_ref_path(path: str | Path | None, dataDir: Path, fileName: str) -> Path:
-    """Resolve the path to a reference data file, falling back to the default.
-
-    Args:
-        path: User-specified path to the file, or None.
-        dataDir: Fuel data directory to look in when `path` is None.
-        fileName: Name of the reference file.
-
-    Returns:
-        Path to an existing reference data file.
-
-    Raises:
-        FileNotFoundError: If neither the requested nor default file exists.
-    """
-    refPath = Path(path) if path is not None else dataDir / fileName
-    if not refPath.exists():
-        print(f"Reference file not found at {refPath}, using default location.")
-        refPath = DEFAULT_DATA_DIR / fileName
-        if not refPath.exists():
-            msg = f"Default reference file not found: {refPath}"
-            raise FileNotFoundError(msg)
-    return refPath
 
 
 def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> DataFrame:
@@ -67,18 +47,6 @@ def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> Dat
     def _normalize_names(names: Series) -> Series:
         return names.astype("string").str.strip().str.lower()
 
-    def _smiles_to_inchi(smiles: Series) -> Series:
-        return (
-            smiles
-            .astype("string")
-            .str.strip()
-            .map(
-                lambda s: (
-                    mol.inchi(mol.from_smiles(s)) if not pd.isna(s) and s else pd.NA
-                )
-            )
-        )
-
     if "Reference Compound" in gcData.columns:
         refNames = _normalize_names(refData["Reference Compound"]).dropna()
         nameLookup = dict(zip(refNames, refNames.index))
@@ -86,9 +54,9 @@ def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> Dat
 
     unmatched = refIdx.isna()
     if unmatched.any() and "SMILES" in gcData.columns and "SMILES" in refData.columns:
-        refInchi = _smiles_to_inchi(refData["SMILES"]).dropna()
+        refInchi = smiles_series_to_inchi(refData["SMILES"]).dropna()
         inchiLookup = dict(zip(refInchi, refInchi.index))
-        refIdx[unmatched] = _smiles_to_inchi(gcData.loc[unmatched, "SMILES"]).map(
+        refIdx[unmatched] = smiles_series_to_inchi(gcData.loc[unmatched, "SMILES"]).map(
             inchiLookup
         )
 
@@ -123,9 +91,13 @@ class Fuel:
             fuelDataDir: Directory containing fuel data.
                 Defaults to `fuelLib/data`.
             refCompoundsPath: Path to the reference compounds CSV file.
-                Defaults to `fuellib/data/referenceCompounds.csv`.
+                Defaults to `fuellib/data/refCompounds.csv`. A custom table in
+                `fuelDataDir`, when present, is appended to the bundled table and
+                replaces rows with the same InChI.
             refGaniPath: Path to the reference Gani decomposition CSV file.
-                Defaults to `fuellib/data/referenceGani.csv`.
+                Defaults to `fuellib/data/refGani.csv`. A custom table in
+                `fuelDataDir`, when present, is appended to the bundled table and
+                replaces rows with the same `Common_Name`.
             useRefProperties: Whether to use reference compound properties for
                 calculations. Defaults to `True`.
 
@@ -174,13 +146,13 @@ class Fuel:
         )
         """Initial weight fractions from the GCxGC data."""
 
-        self.refCompounds: DataFrame = pd.read_csv(
-            _resolve_ref_path(refCompoundsPath, self.fuelDataDir, "refCompounds.csv")
+        self.refCompounds: DataFrame = load_ref_compounds(
+            refCompoundsPath, self.fuelDataDir
         )
         """Reference compounds and their properties."""
-        self.refGani: DataFrame = pd.read_csv(
-            _resolve_ref_path(refGaniPath, self.fuelDataDir, "refGani.csv")
-        ).rename(columns={"Common_Name": "Reference Compound"})
+        self.refGani: DataFrame = load_ref_gani(refGaniPath, self.fuelDataDir).rename(
+            columns={"Common_Name": "Reference Compound"}
+        )
         """Reference Gani group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(
             self.gcData, self.refCompounds, "referenceCompounds"

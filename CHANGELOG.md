@@ -18,12 +18,17 @@ used to parse and validate this file's entries against that format.
 - `yield_sooting_index` and `derived_cetane_number` mixture correlations.
 - `Fuel.propData` (a `DataFrame` of `propertiesData/{name}.csv`, or `None` if no file exists), `Fuel.gcData`, `Fuel.compoundsData` (matched `refCompounds.csv` rows), and `Fuel.ganiDecomp` (matched `refGani.csv` rows).
 - `refCompoundsPath` and `refGaniPath` arguments to `Fuel.__init__` for supplying custom reference tables. If a file is not found in `fuelDataDir`, a message is printed and the default file in `fuellib/data` is used.
+- Private `fuellib._reference_data` loaders that resolve reference-table paths and merge bundled and custom compound/Gani reference data.
 - Cached properties `Fuel.Gf_stp`, `Fuel.dS_fus`, `Fuel.RD_coeffs` (tuple of `rd_A`, `rd_B`, `rd_D`), and `Fuel.phi`, replacing `Fuel.get_property` lookups.
 - `.scratch/` added to `.gitignore`.
 - `ruff` rules `F401` and `F841` to prevent unused imports and variables; existing violations were fixed automatically.
 - Documentation and references (`fuelprops.rst`, `gcm.rst`, `refs.bib`) for the new freeze point, flash point, heat of combustion, yield sooting index, and derived cetane number correlations and for the reference data.
 
 ### Changed
+- Custom ``refCompounds.csv`` and ``refGani.csv`` files now augment the bundled
+  reference tables rather than replace them. Custom compound rows override bundled
+  rows with the same InChI; custom Gani rows override bundled rows with the same
+  ``Common_Name``.
 - `propertiesData` .csv files store Temperature vs. Value entries in individual rows rather than in a matrix format to enable non-Temperature dependent properties to be stored (e.g., "FreezePoint", "FlashPoint", ...) by setting Temp to "NaN".
   * `test_accuracy.py` and `generate_baseline.py` updated to respect this change; `test_accuracy.py` imports `method_map` from `baselinePredictions.generate_baseline` so that the same methods are used to generate and test predictions, and reads known values as `Baseline_Value - Baseline_Error` (`Baseline_Error` is prediction minus known).
   * Baseline predictions stored in `tests/baselinePredictions/mixture_baseline.csv` rather than individual per-fuel files.
@@ -51,6 +56,8 @@ used to parse and validate this file's entries against that format.
 - `tests/get_pred_and_data.py`; the accuracy tests and baseline generator read `Fuel.propData` directly.
 
 ### Fixed
+- `fl-plt-comp` passes numeric weight-fraction magnitudes to Pandas, avoiding a
+  `UnitStrippedWarning` when building composition plots.
 - `import-linter` contract allows `fuellib.rdk` to import `fuellib.utils`.
 - Updated `mixture_baseline.csv` to include `derived cetane number`.
 

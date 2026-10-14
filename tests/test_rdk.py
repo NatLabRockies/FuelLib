@@ -28,6 +28,10 @@ class TestMol:
         round_trip_inchi = mol.inchi(result)
         assert round_trip_inchi == original_inchi
 
+    def test_smiles_to_inchi(self) -> None:
+        """Test that a SMILES string is converted directly to an InChI string."""
+        assert mol.smiles_to_inchi("C") == "InChI=1S/CH4/h1H4"
+
     def test_invalid_inchi(self) -> None:
         """Test that an invalid InChI string raises a ValueError."""
         with pytest.raises(ValueError):
