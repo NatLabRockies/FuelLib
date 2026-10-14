@@ -63,7 +63,7 @@ def plot_composition(
     # Create DataFrame with compound data and carbon numbers from fuel object
     df = pd.DataFrame({
         "Compound": fuel.compounds,
-        "Weight %": fuel.Y_0 * 100,
+        "Weight %": fuel.Y_0.magnitude * 100,
         "Family": fuel.hc_type,
         "nC": fuel.nC,
     })
