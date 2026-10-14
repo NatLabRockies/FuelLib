@@ -164,3 +164,36 @@ To clean the build artifacts:
 .. code-block:: bash
 
    fl-clean-docs
+
+
+Releasing
+---------
+
+Releases are maintainer-gated. A maintainer first opens a release
+pull request that manually sets a new PEP 440 version in ``[project].version``
+in ``pyproject.toml`` and moves all release entries from ``## [Unreleased]`` into
+a dated ``## [<version>] - YYYY-MM-DD`` section. Review and merge this pull
+request only after the normal CI checks pass. The ``[Unreleased]`` section must
+be empty when the release workflow runs.
+
+An authorized maintainer then opens the repository's **Actions** tab, selects the
+``Release`` workflow, chooses the protected ``main`` branch, and dispatches it. The
+workflow validates the version and changelog, reruns the test suite, builds and
+checks the source distribution and wheel, verifies that the wheel installs, and
+publishes the tested artifacts. After a successful PyPI upload it creates the
+``v<version>`` tag and GitHub release.
+
+Release security setup (repository administrator)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Configure PyPI `trusted publishing <https://docs.pypi.org/trusted-publishers/>`_
+for the ``fuellib`` project with this repository, the ``release.yml`` workflow, and
+the ``pypi`` environment. *Do not create or store a PyPI API token in repository
+secrets; the workflow uses a short-lived OpenID Connect token instead*.
+
+In GitHub, create a ``pypi`` environment and require approval from one or more
+release maintainers. Keep ``main`` protected: require pull requests and successful
+CI checks, restrict who can push, and restrict who can run or approve deployments.
+The workflow only runs its release jobs when dispatched from ``main``; its PyPI
+credential is scoped to the protected environment, and its GitHub write permission
+is scoped to the final tag-and-release job.

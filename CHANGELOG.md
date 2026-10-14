@@ -7,6 +7,14 @@ used to parse and validate this file's entries against that format.
 
 ## [Unreleased]
 
+## [3.0.8a] - 2026-10-14
+
+### Added
+- A maintainer-dispatched GitHub Actions release workflow (`release.yml`) that validates the version and changelog, reruns tests, builds and verifies package artifacts, publishes to PyPI using trusted publishing, and creates the corresponding Git tag and GitHub release.
+
+### Changed
+- Documented the maintainer-gated release process, including manual release PR preparation and the required GitHub and PyPI security configuration.
+
 ## [3.0.7] - 2026-10-14
 
 ### Added
