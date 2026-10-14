@@ -12,9 +12,6 @@ used to parse and validate this file's entries against that format.
 ### Added
 - A maintainer-dispatched GitHub Actions release workflow (`release.yml`) that validates the version and changelog, reruns tests, builds and verifies package artifacts, publishes to PyPI using trusted publishing, and creates the corresponding Git tag and GitHub release.
 
-### Fixed
-
-
 ### Changed
 - Documented the maintainer-gated release process, including manual release PR preparation and the required GitHub and PyPI security configuration.
 
