@@ -445,6 +445,8 @@ are used throughout this section.
    :math:`T_{fr}`            K                Freeze point
    :math:`T_{fp}`            K                Flash point
    :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
+   :math:`YSI`               --               Yield sooting index
+   :math:`DCN`               --               Derived cetane number
    ========================  ===============  =====================
 
 .. _tab-mass-mole-fracs:
@@ -654,6 +656,51 @@ from the molar enthalpy of combustion :math:`\Delta H_{c,i}` of a single compoun
 
 This is a net heating value assuming gaseous water products, and is an engineering
 estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter test.
+
+Mixture yield sooting index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.mixture.yield_sooting_index
+   :noindex:
+
+The yield sooting index :math:`YSI` is a dimensionless measure of a fuel's tendency to soot.
+The component values :math:`YSI_i` are reference data from ``refCompounds.csv``, primarily
+from the Yield Sooting Index Database of McEnally et al.\ :footcite:p:`mcenally_yield_2017`, and are
+available as :attr:`~fuellib.fuel.Fuel.YSI` (see :ref:`sec-reference-properties`); they are
+not predicted by FuelLib. The mixture value is the mole-fraction weighted average
+
+.. math::
+   YSI = \sum_{i=1}^{N_c} X_i \, YSI_i.
+
+A ``ValueError`` listing the compounds is raised if the reference data are missing for any
+component. Mass fractions are converted to mole fractions using the component molecular weights.
+
+Mixture derived cetane number
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: fuellib.correlate.mixture.derived_cetane_number
+   :noindex:
+
+The derived cetane number :math:`DCN` is a dimensionless measure of ignition quality.
+The component values :math:`DCN_i` are reference data from ``refCompounds.csv`` and are
+available as :attr:`~fuellib.fuel.Fuel.DCN` (see :ref:`sec-reference-properties`); they are
+not predicted by FuelLib. The mixture value is computed with a linear liquid volume-fraction
+mixing rule,
+
+.. math::
+   DCN = \sum_{i=1}^{N_c} \phi_i \, DCN_i, \qquad
+   \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
+
+where :math:`\phi_i` is the liquid volume fraction of compound *i* and :math:`\rho_i` is the
+component liquid density evaluated at a reference temperature ``T_ref`` (default: standard
+temperature, ``constants.T_stp``). A ``ValueError`` listing the compounds is
+raised if the reference data are missing for any component.
+
+Linear volume-fraction blending is a first-order approximation. Cetane number can
+blend nonlinearly for certain mixtures, depending on the chemical structures of the
+components\ :footcite:p:`kim_designing_2023`, so the mixture :math:`DCN` should be treated as an estimate.
+The graph neural network models of Kim et al. for predicting cetane numbers are available at
+`BioE-KimLab/CNpred <https://github.com/BioE-KimLab/CNpred>`_.
 
 Reference Compounds for Jet Fuels
 ---------------------------------

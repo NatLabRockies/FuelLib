@@ -15,13 +15,14 @@ used to parse and validate this file's entries against that format.
 - Baseline values for FreezePoint, FlashPoint, and HeatOfCombustion.
 - `constants.gas_constant` (ideal gas constant, R = 8.31446 J/(mol*K)).
 - `Fuel.YSI` and `Fuel.DCN` cached properties returning reference Yield Sooting Index and derived cetane number values; a `ValueError` listing the compounds is raised if any value is missing.
+- `yield_sooting_index` and `derived_cetane_number` mixture correlations.
 - `Fuel.propData` (a `DataFrame` of `propertiesData/{name}.csv`, or `None` if no file exists), `Fuel.gcData`, `Fuel.compoundsData` (matched `refCompounds.csv` rows), and `Fuel.ganiDecomp` (matched `refGani.csv` rows).
 - `refCompoundsPath` and `refGaniPath` arguments to `Fuel.__init__` for supplying custom reference tables. If a file is not found in `fuelDataDir`, a message is printed and the default file in `fuellib/data` is used.
 - Private `fuellib._reference_data` loaders that resolve reference-table paths and merge bundled and custom compound/Gani reference data.
 - Cached properties `Fuel.Gf_stp`, `Fuel.dS_fus`, `Fuel.RD_coeffs` (tuple of `rd_A`, `rd_B`, `rd_D`), and `Fuel.phi`, replacing `Fuel.get_property` lookups.
 - `.scratch/` added to `.gitignore`.
 - `ruff` rules `F401` and `F841` to prevent unused imports and variables; existing violations were fixed automatically.
-- Documentation and references (`fuelprops.rst`, `gcm.rst`, `refs.bib`) for the new freeze point, flash point, and heat of combustion correlations and for the reference data.
+- Documentation and references (`fuelprops.rst`, `gcm.rst`, `refs.bib`) for the new freeze point, flash point, heat of combustion, yield sooting index, and derived cetane number correlations and for the reference data.
 
 ### Changed
 - Custom ``refCompounds.csv`` and ``refGani.csv`` files now augment the bundled
@@ -58,6 +59,7 @@ used to parse and validate this file's entries against that format.
 - `fl-plt-comp` passes numeric weight-fraction magnitudes to Pandas, avoiding a
   `UnitStrippedWarning` when building composition plots.
 - `import-linter` contract allows `fuellib.rdk` to import `fuellib.utils`.
+- Updated `mixture_baseline.csv` to include `derived cetane number`.
 
 ## [3.0.6] - 2026-09-30
 
