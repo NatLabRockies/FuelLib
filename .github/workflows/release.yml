@@ -81,10 +81,12 @@ jobs:
               )
           PY
 
-      - name: Validate changelog format
+      - name: Parse changelog release entry
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           python -m pip install --upgrade pip keepachangelog
-          python -m keepachangelog validate CHANGELOG.md
+          python -m keepachangelog show "$VERSION" CHANGELOG.md > /dev/null
 
       - name: Ensure the release tag does not exist
         env:
