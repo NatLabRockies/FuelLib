@@ -172,5 +172,5 @@ jobs:
           gh release create "v${VERSION}" \
             --repo "${GITHUB_REPOSITORY}" \
             --target "${GITHUB_SHA}" \
-            --title "FuelLib ${VERSION}" \
+            --title "v${VERSION}" \
             --generate-notes
