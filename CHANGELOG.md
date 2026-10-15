@@ -7,6 +7,8 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [3.0.8a3] - 2026-10-15
+
 ### Added
 - `Fuel.flash_point` for component flash points, selecting the Alqaheem or Alibakhshi correlation via `correlation` (default `"Alibakhshi"`).
 - `Fuel.mixture_freeze_point`, `Fuel.mixture_flash_point`, `Fuel.mixture_heat_of_combustion`, `Fuel.mixture_yield_sooting_index`, and `Fuel.mixture_derived_cetane_number` wrappers around the corresponding `correlate.mixture` functions. `Fuel.mixture_flash_point` selects the correlation via `correlation` (default `"Alibakhshi"`) and the mixing rule via `mixing_rule` (default `"Liaw"`).
