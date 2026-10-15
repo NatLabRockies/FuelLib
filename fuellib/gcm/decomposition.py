@@ -18,7 +18,6 @@ def decompose(smiles: str, method: str) -> dict[str, int]:
 
     Raises:
         ValueError: If the method is unsupported or the SMILES is invalid.
-        UnsupportedGroupError: If the molecule is outside a method's supported scope.
     """
     if method.lower() == "gani":
         return decompose_gani(smiles)
@@ -42,12 +41,19 @@ def group_names(method: str) -> list[str]:
 
 
 def format_decomposition(counts: dict[str, int], method: str) -> str:
-    """Format non-zero group counts in a method's group-column order."""
-    return ", ".join(
-        f"({counts[group]}x) {group}"
-        for group in group_names(method)
-        if counts.get(group, 0)
-    ) or "No groups assigned"
+    """Format non-zero group counts in a method's group-column order.
+
+    Returns:
+        Comma-separated, non-zero group counts or ``"No groups assigned"``.
+    """
+    return (
+        ", ".join(
+            f"({counts[group]}x) {group}"
+            for group in group_names(method)
+            if counts.get(group, 0)
+        )
+        or "No groups assigned"
+    )
 
 
 def write_decompositions_csv(
@@ -71,12 +77,10 @@ def write_decompositions_csv(
         )
         writer.writeheader()
         for compound_name, _smiles, counts in decompositions:
-            writer.writerow(
-                {
-                    "Common_Name": compound_name,
-                    **{group: counts.get(group, 0) for group in method_group_names},
-                }
-            )
+            writer.writerow({
+                "Common_Name": compound_name,
+                **{group: counts.get(group, 0) for group in method_group_names},
+            })
 
 
 def read_decomposition_input(input_path: Path) -> list[tuple[str, str]]:
@@ -85,9 +89,11 @@ def read_decomposition_input(input_path: Path) -> list[tuple[str, str]]:
     The file must have a ``SMILES`` column. ``Reference Compound`` is optional and
     defaults to an empty string. Rows with an empty SMILES value are ignored.
 
+    Returns:
+        Tuples of reference compound name and SMILES for every non-empty row.
+
     Raises:
         ValueError: If the file does not contain a ``SMILES`` column.
-        OSError: If the file cannot be read.
     """
     with input_path.open(newline="") as input_file:
         reader = csv.DictReader(input_file)

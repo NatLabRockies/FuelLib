@@ -1,5 +1,6 @@
 """Test cases for the Group Contribution Method (GCM) module in FuelLib."""
 
+import csv
 import unittest
 from types import SimpleNamespace
 from typing import cast
@@ -11,7 +12,13 @@ import pytest
 import fuellib as fl
 from fuellib.fuel import Fuel
 from fuellib.gcm import GCMRegistry, gani_gcm
-from fuellib.gcm.decomposition import decompose
+from fuellib.gcm.decomposition import (
+    decompose,
+    format_decomposition,
+    group_names,
+    read_decomposition_input,
+    write_decompositions_csv,
+)
 from fuellib.gcm.gani import (
     Cp_B,
     Cp_C,
@@ -287,6 +294,58 @@ class GaniReferenceDecompositionTestCase(unittest.TestCase):
                     f"Differences:\n{difference_report}"
                 )
             print(f"{compound['Common_Name']}: RDKit decomposition matches refGani.csv")
+
+
+def test_decomposition_helpers_support_gani_and_reject_unknown_methods():
+    """Gani helpers should use its group ordering and reject unknown methods."""
+    counts = decompose("CCCCCCC", method="GANI")
+
+    assert "CH3" in group_names("gani")
+    assert "(2x) CH3" in format_decomposition(counts, method="gani")
+    assert format_decomposition({}, method="gani") == "No groups assigned"
+
+    with pytest.raises(ValueError, match="Unsupported group-contribution method"):
+        decompose("CCCCCCC", method="unknown")
+    with pytest.raises(ValueError, match="Unsupported group-contribution method"):
+        group_names("unknown")
+
+
+def test_decomposition_csv_helpers_round_trip(tmp_path):
+    """CSV helpers should retain input names and write refGani-compatible columns."""
+    input_path = tmp_path / "compounds.csv"
+    input_path.write_text(
+        "Reference Compound,SMILES\nethylbenzene,CCc1ccccc1\n,CCCCCCC\n,\n"
+    )
+
+    compounds = read_decomposition_input(input_path)
+    assert compounds == [("ethylbenzene", "CCc1ccccc1"), ("", "CCCCCCC")]
+
+    output_path = tmp_path / "gani.csv"
+    decompositions = [
+        (name, smiles, decompose(smiles, method="gani")) for name, smiles in compounds
+    ]
+    write_decompositions_csv(output_path, decompositions, method="gani")
+
+    with output_path.open(newline="") as output_file:
+        rows = list(csv.DictReader(output_file))
+
+    assert "Common_Name" in rows[0]
+    assert "SMILES" not in rows[0]
+    assert rows[0]["Common_Name"] == "ethylbenzene"
+    assert rows[1]["Common_Name"] == ""
+    assert rows[0]["ACCH2"] == "1"
+    assert rows[1]["CH2"] == "5"
+
+
+def test_read_decomposition_input_rejects_invalid_files(tmp_path):
+    """Input CSVs must exist and include a SMILES column."""
+    with pytest.raises(FileNotFoundError):
+        read_decomposition_input(tmp_path / "missing.csv")
+
+    input_path = tmp_path / "missing-smiles.csv"
+    input_path.write_text("Reference Compound\nethylbenzene\n")
+    with pytest.raises(ValueError, match="SMILES"):
+        read_decomposition_input(input_path)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """RDKit-based Constantinou-Gani hydrocarbon group decomposition."""
 
 from rdkit import Chem
-from rdkit.Chem import Mol
+from rdkit.Chem import Atom, Mol
 
 
 class UnsupportedGroupError(ValueError):
@@ -21,7 +21,9 @@ def _find_terminal_vinyls(mol: Mol) -> tuple[int, set[int]]:
         second_is_head = second.GetTotalNumHs() == 1 and second.GetDegree() == 2
         second_is_tail = second.GetTotalNumHs() == 2 and second.GetDegree() == 1
         first_is_head = first.GetTotalNumHs() == 1 and first.GetDegree() == 2
-        if not ((first_is_tail and second_is_head) or (second_is_tail and first_is_head)):
+        if not (
+            (first_is_tail and second_is_head) or (second_is_tail and first_is_head)
+        ):
             raise UnsupportedGroupError("C=C bond is not a terminal alpha-olefin.")
         covered.update((first.GetIdx(), second.GetIdx()))
         count += 1
@@ -44,23 +46,29 @@ def _find_aromatic_substituents(
         if not aromatic_neighbors:
             continue
         if len(aromatic_neighbors) != 1:
-            raise UnsupportedGroupError("Aliphatic carbon has multiple aromatic neighbors.")
+            raise UnsupportedGroupError(
+                "Aliphatic carbon has multiple aromatic neighbors."
+            )
         aromatic_atom = aromatic_neighbors[0]
         if aromatic_atom.GetIdx() in consumed_aromatic:
-            raise UnsupportedGroupError("Aromatic carbon has multiple aliphatic neighbors.")
+            raise UnsupportedGroupError(
+                "Aromatic carbon has multiple aliphatic neighbors."
+            )
         consumed_aromatic.add(aromatic_atom.GetIdx())
         aliphatic_neighbors = sum(
             neighbor.GetSymbol() == "C" and not neighbor.GetIsAromatic()
             for neighbor in atom.GetNeighbors()
         )
         try:
-            groups[atom.GetIdx()] = {0: "ACCH3", 1: "ACCH2", 2: "ACCH"}[aliphatic_neighbors]
+            groups[atom.GetIdx()] = {0: "ACCH3", 1: "ACCH2", 2: "ACCH"}[
+                aliphatic_neighbors
+            ]
         except KeyError as error:
             raise UnsupportedGroupError("Unsupported aromatic substituent.") from error
     return groups, consumed_aromatic
 
 
-def _classify_aliphatic_atom(atom) -> str:
+def _classify_aliphatic_atom(atom: Atom) -> str:
     if atom.GetSymbol() != "C":
         raise UnsupportedGroupError(f"Non-carbon atom: {atom.GetSymbol()}.")
     if any(bond.GetBondTypeAsDouble() not in (1.0, 1.5) for bond in atom.GetBonds()):
@@ -98,15 +106,15 @@ def _first_order_decomposition(mol: Mol) -> dict[str, int]:
     return counts
 
 
-def _is_aliphatic_carbon(atom) -> bool:
+def _is_aliphatic_carbon(atom: Atom) -> bool:
     return atom.GetSymbol() == "C" and not atom.GetIsAromatic()
 
 
-def _aliphatic_carbon_degree(atom) -> int:
+def _aliphatic_carbon_degree(atom: Atom) -> int:
     return sum(_is_aliphatic_carbon(neighbor) for neighbor in atom.GetNeighbors())
 
 
-def _methyl_neighbors(atom) -> int:
+def _methyl_neighbors(atom: Atom) -> int:
     return sum(
         _is_aliphatic_carbon(neighbor)
         and neighbor.GetTotalNumHs() == 3
@@ -117,16 +125,21 @@ def _methyl_neighbors(atom) -> int:
 
 def _detect_branching_groups(mol: Mol) -> dict[str, int]:
     counts: dict[str, int] = {}
-    is_ch = lambda atom: (
-        _is_aliphatic_carbon(atom)
-        and atom.GetTotalNumHs() == 1
-        and _aliphatic_carbon_degree(atom) == 3
-    )
-    is_quaternary = lambda atom: (
-        _is_aliphatic_carbon(atom)
-        and atom.GetTotalNumHs() == 0
-        and _aliphatic_carbon_degree(atom) == 4
-    )
+
+    def is_ch(atom: Atom) -> bool:
+        return (
+            _is_aliphatic_carbon(atom)
+            and atom.GetTotalNumHs() == 1
+            and _aliphatic_carbon_degree(atom) == 3
+        )
+
+    def is_quaternary(atom: Atom) -> bool:
+        return (
+            _is_aliphatic_carbon(atom)
+            and atom.GetTotalNumHs() == 0
+            and _aliphatic_carbon_degree(atom) == 4
+        )
+
     two_methyl_ch = {
         atom.GetIdx()
         for atom in mol.GetAtoms()
@@ -149,15 +162,33 @@ def _detect_branching_groups(mol: Mol) -> dict[str, int]:
         first, second = bond.GetBeginAtom(), bond.GetEndAtom()
         if not (_is_aliphatic_carbon(first) and _is_aliphatic_carbon(second)):
             continue
-        pair = tuple(sorted((first.GetIdx(), second.GetIdx())))
-        if is_ch(first) and is_ch(second) and _methyl_neighbors(first) and _methyl_neighbors(second):
+        first_index, second_index = first.GetIdx(), second.GetIdx()
+        pair = (min(first_index, second_index), max(first_index, second_index))
+        if (
+            is_ch(first)
+            and is_ch(second)
+            and _methyl_neighbors(first)
+            and _methyl_neighbors(second)
+        ):
             ch_ch_pairs.add(pair)
         if (
-            (is_ch(first) and is_quaternary(second) and _methyl_neighbors(first) >= 1 and _methyl_neighbors(second) >= 2)
-            or (is_ch(second) and is_quaternary(first) and _methyl_neighbors(second) >= 1 and _methyl_neighbors(first) >= 2)
+            is_ch(first)
+            and is_quaternary(second)
+            and _methyl_neighbors(first) >= 1
+            and _methyl_neighbors(second) >= 2
+        ) or (
+            is_ch(second)
+            and is_quaternary(first)
+            and _methyl_neighbors(second) >= 1
+            and _methyl_neighbors(first) >= 2
         ):
             ch_c_pairs.add(pair)
-        if is_quaternary(first) and is_quaternary(second) and _methyl_neighbors(first) >= 2 and _methyl_neighbors(second) >= 2:
+        if (
+            is_quaternary(first)
+            and is_quaternary(second)
+            and _methyl_neighbors(first) >= 2
+            and _methyl_neighbors(second) >= 2
+        ):
             c_c_pairs.add(pair)
     if ch_ch_pairs:
         counts["CH(CH3)CH(CH3)"] = len(ch_ch_pairs)
@@ -205,6 +236,12 @@ def decompose_gani(smiles: str) -> dict[str, int]:
 
     The returned mapping contains only groups with non-zero counts. The group names
     match the columns in FuelLib's ``refGani.csv`` reference table.
+
+    Returns:
+        Mapping of Gani group names to their non-zero counts.
+
+    Raises:
+        ValueError: If RDKit cannot parse the supplied SMILES string.
     """
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:

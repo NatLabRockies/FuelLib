@@ -47,13 +47,13 @@ functional-group counts. ``gani`` is currently the supported method and default.
 .. code-block:: bash
 
     fl-decomp-smiles "CCc1ccccc1"
-    fl-decomp-smiles "CCc1ccccc1" --name n-ethylbenzene --output gani.csv
+    fl-decomp-smiles "CCc1ccccc1" --name ethylbenzene --output gani.csv
 
 Use ``--name`` to label one SMILES and ``-o`` to write its decomposition to CSV:
 
 .. code-block:: bash
 
-    fl-decomp-smiles "CCc1ccccc1" -n n-ethylbenzene -o gani.csv
+    fl-decomp-smiles "CCc1ccccc1" -n ethylbenzene -o gani.csv
 
 For batch processing, ``-i`` accepts a CSV with a required ``SMILES`` column
 and an optional ``Reference Compound`` column:
@@ -61,7 +61,7 @@ and an optional ``Reference Compound`` column:
 .. code-block:: text
 
     Reference Compound,SMILES
-    n-ethylbenzene,CCc1ccccc1
+    ethylbenzene,CCc1ccccc1
     n-heptane,CCCCCCC
 
 .. code-block:: bash

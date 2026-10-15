@@ -18,7 +18,7 @@ def main() -> int:
         description="Decompose SMILES strings into functional-group counts.",
         epilog="""Examples:
   %(prog)s "CCc1ccccc1"
-  %(prog)s "CCc1ccccc1" -n n-ethylbenzene -o gani.csv
+  %(prog)s "CCc1ccccc1" -n ethylbenzene -o gani.csv
   %(prog)s -i fuel.csv -m gani -o gani.csv
 
 Input CSV files require a SMILES column. An optional Reference Compound column is
@@ -86,7 +86,9 @@ written as Common_Name in the output CSV.""",
         print(f"{label}: {format_decomposition(counts, method=arguments.method)}")
 
     if arguments.output is not None:
-        write_decompositions_csv(arguments.output, decompositions, method=arguments.method)
+        write_decompositions_csv(
+            arguments.output, decompositions, method=arguments.method
+        )
         print(f"Wrote {len(decompositions)} decomposition(s) to {arguments.output}")
     return 0
 
