@@ -7,6 +7,18 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Added
+- `fuellib.gcm.decomposition` provides method-dispatched SMILES decomposition,
+  method-specific group-column lookup, and CSV input/output helpers. The initial
+  supported method is Constantinou-Gani (`gani`).
+- `fl-decomp-smiles` decomposes one or more SMILES strings, or a CSV input file,
+  into group counts and can write a `refGani.csv`-compatible CSV output.
+- CLI documentation and regression tests for SMILES decomposition.
+
+### Changed
+- The RDKit-based Constantinou-Gani decomposition implementation now resides in
+  `fuellib.gcm.ganiDecomposition`.
+
 ### Fixed 
 - Documentation builds now use Python 3.12 and retry package downloads, preventing failures caused by transient package-index connection resets.
 
