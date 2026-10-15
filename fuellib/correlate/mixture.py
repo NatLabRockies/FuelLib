@@ -437,7 +437,7 @@ def freeze_point_boehm(
             + Xi_safe * dCp_mag * np.log(T_safe / Tm_mag)
             + alpha * dS_mix_mag
         )
-        rhs = dH_fus_mag + Xi_safe * dCp_mag * (Tm_mag - T_safe)
+        rhs = dH_fus_mag + Xi_safe * dCp_mag * (T_safe - Tm_mag)
         return lhs - rhs
 
     sol = root(residual, Tm_mag)
