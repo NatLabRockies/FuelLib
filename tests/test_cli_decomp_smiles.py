@@ -8,8 +8,8 @@ import pytest
 from fuellib.cli.decomp_smiles import main
 
 
-def test_writes_named_decomposition(monkeypatch, capsys, tmp_path):
-    """The CLI should decompose a named SMILES and export its group counts."""
+def test_writes_named_decompositions(monkeypatch, capsys, tmp_path):
+    """The CLI should assign one supplied name to each SMILES and export the counts."""
     output_path = tmp_path / "gani.csv"
     monkeypatch.setattr(
         sys,
@@ -17,8 +17,10 @@ def test_writes_named_decomposition(monkeypatch, capsys, tmp_path):
         [
             "fl-decomp-smiles",
             "CCc1ccccc1",
+            "CCCCCCC",
             "--name",
             "ethylbenzene",
+            "n-heptane",
             "--method",
             "gani",
             "--output-file",
@@ -27,12 +29,16 @@ def test_writes_named_decomposition(monkeypatch, capsys, tmp_path):
     )
 
     assert main() == 0
-    assert "ethylbenzene (CCc1ccccc1):" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "ethylbenzene (CCc1ccccc1):" in output
+    assert "n-heptane (CCCCCCC):" in output
 
     with output_path.open(newline="") as output_file:
-        row = next(csv.DictReader(output_file))
-    assert row["Common_Name"] == "ethylbenzene"
-    assert row["ACH"] == "5"
+        rows = list(csv.DictReader(output_file))
+    assert rows[0]["Common_Name"] == "ethylbenzene"
+    assert rows[0]["ACH"] == "5"
+    assert rows[1]["Common_Name"] == "n-heptane"
+    assert rows[1]["CH2"] == "5"
 
 
 def test_reads_input_file(monkeypatch, capsys, tmp_path):
@@ -49,7 +55,7 @@ def test_reads_input_file(monkeypatch, capsys, tmp_path):
     "arguments",
     [
         [],
-        ["CCCCCCC", "CCc1ccccc1", "--name", "two-names"],
+        ["CCCCCCC", "CCc1ccccc1", "--name", "one-name"],
         ["CCCCCCC", "--method", "unknown"],
     ],
 )

@@ -19,6 +19,7 @@ def main() -> int:
         epilog="""Examples:
   %(prog)s "CCc1ccccc1"
   %(prog)s "CCc1ccccc1" -n ethylbenzene -o gani.csv
+    %(prog)s "CCc1ccccc1" "CCCCCCC" -n ethylbenzene n-heptane -o gani.csv
   %(prog)s -i fuel.csv -m gani -o gani.csv
 
 Input CSV files require a SMILES column. An optional Reference Compound column is
@@ -34,8 +35,9 @@ written as Common_Name in the output CSV.""",
     parser.add_argument(
         "-n",
         "--name",
+        nargs="+",
         metavar="NAME",
-        help="Optional name for one command-line SMILES.",
+        help="Optional names corresponding to the command-line SMILES strings.",
     )
     parser.add_argument(
         "-i",
@@ -61,12 +63,13 @@ written as Common_Name in the output CSV.""",
     )
     arguments = parser.parse_args()
 
-    if arguments.name is not None and len(arguments.smiles) != 1:
-        parser.error("--name requires exactly one command-line SMILES string.")
+    if arguments.name is not None and len(arguments.name) != len(arguments.smiles):
+        parser.error("--name requires one name for each command-line SMILES string.")
     if arguments.name is not None and arguments.input_file is not None:
         parser.error("--name cannot be used with --input-file.")
 
-    compounds = [(arguments.name or "", smiles) for smiles in arguments.smiles]
+    names = arguments.name or [""] * len(arguments.smiles)
+    compounds = list(zip(names, arguments.smiles))
     if arguments.input_file is not None:
         try:
             compounds.extend(read_decomposition_input(arguments.input_file))
