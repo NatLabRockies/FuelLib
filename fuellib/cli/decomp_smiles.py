@@ -1,20 +1,9 @@
-"""Decompose SMILES strings into functional group counts for a given method.
-
-Examples:
-    python tutorials/decomposeGani.py "CCc1ccccc1"
-    python tutorials/decomposeGani.py "CCc1ccccc1" -n n-ethylbenzene
-    python tutorials/decomposeGani.py "CCc1ccccc1" "CCCCCCC" -o gani.csv
-    python tutorials/decomposeGani.py -i fuel.csv --output-file gani.csv
-    python tutorials/decomposeGani.py "CCc1ccccc1" --method gani
-
-Input CSV files require a "SMILES" column. An optional "Reference Compound" column
-is written as "Common_Name" in the output CSV.
-"""
+"""Command-line SMILES decomposition for FuelLib group-contribution methods."""
 
 import argparse
 from pathlib import Path
 
-from fuellib.gcm.decomposition import (
+from ..gcm.decomposition import (
     UnsupportedGroupError,
     decompose,
     format_decomposition,
@@ -24,20 +13,23 @@ from fuellib.gcm.decomposition import (
 
 
 def main() -> int:
-    """Parse input SMILES strings, display their Gani decomposition, and optionally export CSV."""
+    """Decompose supplied SMILES strings and optionally write group counts to CSV."""
     parser = argparse.ArgumentParser(
         description="Decompose SMILES strings into functional-group counts.",
         epilog="""Examples:
   %(prog)s "CCc1ccccc1"
   %(prog)s "CCc1ccccc1" -n n-ethylbenzene -o gani.csv
-  %(prog)s -i fuel.csv --method gani --output-file gani.csv
+  %(prog)s -i fuel.csv -m gani -o gani.csv
 
 Input CSV files require a SMILES column. An optional Reference Compound column is
 written as Common_Name in the output CSV.""",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "smiles", nargs="*", metavar="SMILES", help="One or more SMILES strings to decompose."
+        "smiles",
+        nargs="*",
+        metavar="SMILES",
+        help="One or more SMILES strings to decompose.",
     )
     parser.add_argument(
         "-n",
@@ -46,7 +38,11 @@ written as Common_Name in the output CSV.""",
         help="Optional name for one command-line SMILES.",
     )
     parser.add_argument(
-        "-i", "--input-file", type=Path, metavar="CSV", help="CSV file containing SMILES."
+        "-i",
+        "--input-file",
+        type=Path,
+        metavar="CSV",
+        help="CSV file containing SMILES.",
     )
     parser.add_argument(
         "-m",

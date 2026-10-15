@@ -3,7 +3,7 @@
 import csv
 from pathlib import Path
 
-from .gani_decomposition import UnsupportedGroupError, decompose_gani
+from .ganiDecomposition import UnsupportedGroupError, decompose_gani
 
 
 def decompose(smiles: str, method: str) -> dict[str, int]:
