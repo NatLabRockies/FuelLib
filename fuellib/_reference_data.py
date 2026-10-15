@@ -1,7 +1,5 @@
 """Reference-compound and GCM decomposition data loading."""
 
-from typing import Literal
-
 from pathlib import Path
 from typing import Literal
 
