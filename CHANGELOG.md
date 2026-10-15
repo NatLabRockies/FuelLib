@@ -7,6 +7,9 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Fixed 
+- Documentation builds now use Python 3.12 and retry package downloads, preventing failures caused by transient package-index connection resets.
+
 ## [3.0.8a2] - 2026-10-14
 
 ### Fixed
