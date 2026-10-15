@@ -574,40 +574,63 @@ class Fuel:
         return rho_i[comp_idx] if comp_idx is not None else rho_i
 
     def viscosity_kinematic(
-        self, T: types.Quantity0D, comp_idx: int | None = None
+        self,
+        T: types.Quantity0D,
+        comp_idx: int | None = None,
+        *,
+        model: str = "Dutt",
     ) -> types.Quantity1D:
-        """Calculate the viscosity using Dutt's equation.
-
-        Uses Dutt's equation (4.23) from "Viscosity of Liquids". The equation
-        predicts viscosity in mm^2/s and is converted to SI units.
+        """Calculate component kinematic viscosity.
 
         Args:
             T: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
+            model: Viscosity model, either ``"Dutt"`` (default) or
+                ``"Nannoolal"``. Unsupported Nannoolal components use Dutt.
 
         Returns:
             Viscosity of each component in m^2/s.
+
+        Raises:
+            ValueError: If `model` is not Dutt or Nannoolal.
         """
-        nu_i = correlate.components.kinematic_viscosity_dutt(self, T)
+        if model.casefold() == "dutt":
+            nu_i = correlate.components.kinematic_viscosity_dutt(self, T)
+        elif model.casefold() == "nannoolal":
+            nu_i = correlate.components.kinematic_viscosity_nannoolal(self, T)
+        else:
+            raise ValueError(f"Unknown viscosity model: {model!r}")
         return nu_i[comp_idx] if comp_idx is not None else nu_i
 
     def viscosity_dynamic(
-        self, T: types.Quantity0D, comp_idx: int | None = None
+        self,
+        T: types.Quantity0D,
+        comp_idx: int | None = None,
+        *,
+        model: str = "Dutt",
     ) -> types.Quantity1D:
-        """Calculate liquid dynamic viscosity based on droplet temperature and density.
-
-        Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
+        """Calculate component dynamic viscosity.
 
         Args:
             T: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
+            model: Viscosity model, either ``"Dutt"`` (default) or
+                ``"Nannoolal"``. Unsupported Nannoolal components use Dutt.
 
         Returns:
             Dynamic viscosity in Pa*s.
+
+        Raises:
+            ValueError: If `model` is not Dutt or Nannoolal.
         """
-        mu_i = correlate.components.dynamic_viscosity_dutt(self, T)
+        if model.casefold() == "dutt":
+            mu_i = correlate.components.dynamic_viscosity_dutt(self, T)
+        elif model.casefold() == "nannoolal":
+            mu_i = correlate.components.dynamic_viscosity_nannoolal(self, T)
+        else:
+            raise ValueError(f"Unknown viscosity model: {model!r}")
         return mu_i[comp_idx] if comp_idx is not None else mu_i
 
     def Cp(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
@@ -824,6 +847,8 @@ class Fuel:
         Yi: types.Quantity1D,
         T: types.Quantity0D,
         correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+        *,
+        model: str = "Dutt",
     ) -> types.Quantity0D:
         """Calculate kinematic viscosity of the mixture.
 
@@ -834,19 +859,32 @@ class Fuel:
             T: Temperature to compute property.
             correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
                 Defaults to "Kendall-Monroe".
+            model: Component-viscosity model, either ``"Dutt"`` (default) or
+                ``"Nannoolal"``.
 
         Returns:
             Mixture kinematic viscosity in m^2/s.
+
+        Raises:
+            ValueError: If `model` is not Dutt or Nannoolal.
         """
-        return correlate.mixture.kinematic_viscosity_dutt(
-            self, T, Yi, correlation=correlation
-        )
+        if model.casefold() == "dutt":
+            return correlate.mixture.kinematic_viscosity_dutt(
+                self, T, Yi, correlation=correlation
+            )
+        if model.casefold() == "nannoolal":
+            return correlate.mixture.kinematic_viscosity_nannoolal(
+                self, T, Yi, correlation=correlation
+            )
+        raise ValueError(f"Unknown viscosity model: {model!r}")
 
     def mixture_dynamic_viscosity(
         self,
         Yi: types.Quantity1D,
         T: types.Quantity0D,
         correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+        *,
+        model: str = "Dutt",
     ) -> types.Quantity0D:
         """Calculate dynamic viscosity of the mixture.
 
@@ -854,13 +892,24 @@ class Fuel:
             Yi: Mass fractions of each compound.
             T: Temperature to compute property.
             correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+            model: Component-viscosity model, either ``"Dutt"`` (default) or
+                ``"Nannoolal"``.
 
         Returns:
             Mixture dynamic viscosity in Pa*s.
+
+        Raises:
+            ValueError: If `model` is not Dutt or Nannoolal.
         """
-        return correlate.mixture.dynamic_viscosity_dutt(
-            self, T, Yi, correlation=correlation
-        )
+        if model.casefold() == "dutt":
+            return correlate.mixture.dynamic_viscosity_dutt(
+                self, T, Yi, correlation=correlation
+            )
+        if model.casefold() == "nannoolal":
+            return correlate.mixture.dynamic_viscosity_nannoolal(
+                self, T, Yi, correlation=correlation
+            )
+        raise ValueError(f"Unknown viscosity model: {model!r}")
 
     def mixture_vapor_pressure(
         self,

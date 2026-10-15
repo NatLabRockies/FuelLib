@@ -156,6 +156,19 @@ Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{
 
    \nu_i = 10^{-6} \times \exp \bigg\{-3.0171 + \frac{442.78 + 1.6452 \,T_{b,i}}{T + 239 - 0.19 \,T_{b,i}} \bigg\}.
 
+Pass ``model="Nannoolal"`` to :meth:`~fuellib.fuel.Fuel.viscosity_kinematic`,
+:meth:`~fuellib.fuel.Fuel.viscosity_dynamic`, or either mixture-viscosity
+method to select the Nannoolal group-contribution model\ :footcite:p:`nannoolal_viscosity_2009`.
+For supported hydrocarbons, it evaluates
+
+.. math::
+
+   \mu_i = 1.3\times10^{-3}\exp\left[-dBv_i\frac{T-Tv_i}{T-Tv_i/16}\right],
+
+then obtains :math:`\nu_i = \mu_i / \rho_i`. Components outside the supported
+Nannoolal decomposition scope retain the default Dutt prediction, so mixed
+fuels can be evaluated without replacing usable results.
+
 
 
 Latent heat of vaporization

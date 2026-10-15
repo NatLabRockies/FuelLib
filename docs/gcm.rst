@@ -29,7 +29,7 @@ Three pieces make up the abstraction, all defined in
    from fuellib.gcm import GCMRegistry
 
    GCMRegistry.list_methods()
-   # ['boehm', 'gani']
+   # ['boehm', 'gani', 'nannoolal']
 
    gani = GCMRegistry.get_gcm("gani")
    gani.list_property_fns()
@@ -177,6 +177,23 @@ of 56.5 J/mol/K.
 .. code-block:: python
 
    fuel.dS_fus   # Quantity1D in J/(mol*K), evaluated via boehm_gcm.predict("dS_fus", fuel)
+
+The ``nannoolal`` method
+------------------------
+
+:mod:`fuellib.gcm.nannoolal` registers the ``"nannoolal"`` method for the
+saturated-liquid viscosity model of Nannoolal, Rarey, and Ramjugernath
+(2009)\ :footcite:p:`nannoolal_viscosity_2009`. It exposes the dimensionless
+``dBv`` and ``Tv`` (K) parameters. Its SMILES decomposition builds on the
+RDKit Constantinou-Gani decomposition, then maps supported hydrocarbon groups
+to Nannoolal group IDs. Unsupported structural topologies raise ``ValueError``
+when directly decomposed.
+
+.. code-block:: python
+
+   nannoolal = GCMRegistry.get_gcm("nannoolal")
+   nannoolal.predict("dBv", fuel)
+   nannoolal.predict("Tv", fuel)
 
 Registering a new property
 ---------------------------

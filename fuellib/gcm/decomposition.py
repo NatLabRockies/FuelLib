@@ -4,6 +4,7 @@ import csv
 from pathlib import Path
 
 from .ganiDecomposition import UnsupportedGroupError, decompose_gani
+from .nannoolalDecomposition import decompose_nannoolal
 
 
 def decompose(smiles: str, method: str) -> dict[str, int]:
@@ -21,6 +22,8 @@ def decompose(smiles: str, method: str) -> dict[str, int]:
     """
     if method.lower() == "gani":
         return decompose_gani(smiles)
+    if method.lower() == "nannoolal":
+        return decompose_nannoolal(smiles)
     raise ValueError(f"Unsupported group-contribution method: {method!r}")
 
 
@@ -37,6 +40,10 @@ def group_names(method: str) -> list[str]:
         from .gani import TABLE
 
         return TABLE.columns.tolist()
+    if method.lower() == "nannoolal":
+        from .nannoolal import TABLE
+
+        return TABLE.index.astype(str).tolist()
     raise ValueError(f"Unsupported group-contribution method: {method!r}")
 
 
@@ -110,6 +117,7 @@ __all__ = [
     "UnsupportedGroupError",
     "decompose",
     "decompose_gani",
+    "decompose_nannoolal",
     "format_decomposition",
     "group_names",
     "read_decomposition_input",

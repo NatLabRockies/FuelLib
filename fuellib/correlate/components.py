@@ -88,6 +88,58 @@ def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1
     return (nu_i * rho_i).to("Pa*s")
 
 
+def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate component dynamic viscosity using Nannoolal's model.
+
+    Nannoolal predictions are used where their hydrocarbon decomposition is
+    supported; components outside that scope retain the established Dutt result.
+
+    Args:
+        fuel: Fuel whose component viscosities will be calculated.
+        T: Temperature to compute property.
+
+    Returns:
+        Dynamic viscosity of every component in Pa*s.
+    """
+    from ..gcm.nannoolal import dynamic_viscosity as nannoolal_dynamic_viscosity
+    from ..gcm.nannoolal import parameters as nannoolal_parameters
+
+    dbv, tv, errors = nannoolal_parameters(fuel, strict=False)
+    result = dynamic_viscosity_dutt(fuel, T).to("Pa*s").magnitude
+    supported = np.asarray([error is None for error in errors])
+    if supported.any():
+        temperature = T.to("K").magnitude
+        result[supported] = nannoolal_dynamic_viscosity(
+            temperature, dbv[supported], tv[supported]
+        )
+    return Units.Quantity(result, "Pa*s")
+
+
+def kinematic_viscosity_nannoolal(
+    fuel: "Fuel", T: types.Quantity0D
+) -> types.Quantity1D:
+    """Calculate component kinematic viscosity using Nannoolal's model.
+
+    Args:
+        fuel: Fuel whose component viscosities will be calculated.
+        T: Temperature to compute property.
+
+    Returns:
+        Kinematic viscosity of every component in m^2/s.
+
+    Raises:
+        ValueError: If a Nannoolal dynamic viscosity cannot be converted with a
+            finite, positive liquid-density prediction.
+    """
+    mu_i = dynamic_viscosity_nannoolal(fuel, T)
+    rho_i = density(fuel, T).to("kg/m^3")
+    if not np.isfinite(rho_i.magnitude).all() or (rho_i.magnitude <= 0).any():
+        raise ValueError(
+            "Nannoolal kinematic viscosity requires a positive liquid density."
+        )
+    return (mu_i / rho_i).to("m^2/s")
+
+
 def molar_specific_heat_capacity(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Compute molar specific heat capacity at a given temperature.
 

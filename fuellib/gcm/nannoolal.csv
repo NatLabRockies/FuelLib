@@ -1,0 +1,18 @@
+Group,Description,dBv,Tv
+1,Non-aromatic CH3,0.01391331,89.08027
+3,CH3 attached to aromatic carbon,-0.01106602,80.96984
+4,Chain CH2,0.002172728,60.33155
+5,Chain CH,0.004587783,24.26366
+6,Chain quaternary C,0.03702961,244.4643
+8,Chain carbon attached to aromatic carbon,0.005945245,-16.52118
+9,Saturated ring CH2,0.01087992,174.1316
+10,Saturated ring CH,-0.007220202,-37.75835
+11,Saturated ring quaternary C,0.1421976,252.0190
+14,Saturated ring carbon attached to aromatic carbon,-0.0123456,294.3323
+15,Aromatic CH,-0.002783983,113.9028
+16,Substituted aromatic C,0.04594031,-26.61952
+18,Fused aromatic C with three aromatic bonds,0.03741241,128.4739
+58,Internal chain double bond,0.009580939,-23.98007
+61,Terminal chain double bond,0.02145595,74.44888
+125,Three- or four-membered non-aromatic ring correction,-0.05737893,-96.75439
+126,Five-membered non-aromatic ring correction,-0.02122038,-153.8442
