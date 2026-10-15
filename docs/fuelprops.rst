@@ -359,10 +359,7 @@ and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
 Flash point
 ^^^^^^^^^^^
 
-.. autofunction:: fuellib.correlate.components.flash_point_alqaheem
-   :noindex:
-
-.. autofunction:: fuellib.correlate.components.flash_point_alibashki
+.. automethod:: fuellib.fuel.Fuel.flash_point
    :noindex:
 
 Two correlations are available for the flash point :math:`T_{fp,i}` of each compound,
@@ -588,7 +585,7 @@ Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 Mixture freeze point
 ^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: fuellib.correlate.mixture.freeze_point_boehm
+.. automethod:: fuellib.fuel.Fuel.mixture_freeze_point
    :noindex:
 
 The freeze point of the mixture is estimated with the solid-liquid equilibrium model
@@ -619,10 +616,7 @@ does not capture cooling rate, supercooling, or solid-phase nonideality.
 Mixture flash point
 ^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: fuellib.correlate.mixture.flash_point_alqaheem
-   :noindex:
-
-.. autofunction:: fuellib.correlate.mixture.flash_point_alibashki
+.. automethod:: fuellib.fuel.Fuel.mixture_flash_point
    :noindex:
 
 The mixture flash point is computed from the component flash points :math:`T_{fp,i}`
@@ -642,7 +636,7 @@ mixing rule does not model nonideal liquid activity coefficients.
 Mixture heat of combustion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: fuellib.correlate.mixture.heat_of_combustion
+.. automethod:: fuellib.fuel.Fuel.mixture_heat_of_combustion
    :noindex:
 
 The mixture heat of combustion :math:`\Delta H^\circ_c` is reported per unit mass as the
@@ -660,7 +654,7 @@ estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter te
 Mixture yield sooting index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: fuellib.correlate.mixture.yield_sooting_index
+.. automethod:: fuellib.fuel.Fuel.mixture_yield_sooting_index
    :noindex:
 
 The yield sooting index :math:`YSI` is a dimensionless measure of a fuel's tendency to soot.
@@ -678,7 +672,7 @@ component. Mass fractions are converted to mole fractions using the component mo
 Mixture derived cetane number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: fuellib.correlate.mixture.derived_cetane_number
+.. automethod:: fuellib.fuel.Fuel.mixture_derived_cetane_number
    :noindex:
 
 The derived cetane number :math:`DCN` is a dimensionless measure of ignition quality.

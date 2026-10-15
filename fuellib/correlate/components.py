@@ -545,7 +545,7 @@ def flash_point_alqaheem(fuel: "Fuel") -> types.Quantity1D:
     return 0.70 * fuel.Tb
 
 
-def flash_point_alibashki(fuel: "Fuel") -> types.Quantity1D:
+def flash_point_alibakhshi(fuel: "Fuel") -> types.Quantity1D:
     """Calculate component flash points using the Alibakhshi et al. correlation.
 
     Uses the modified group-contribution correlation of Alibakhshi et al.

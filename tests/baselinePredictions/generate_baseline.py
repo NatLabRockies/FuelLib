@@ -29,7 +29,7 @@ method_map = {
     "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
     "cp": correlate.components.molar_specific_heat_capacity,
     "freezepoint": correlate.mixture.freeze_point_boehm,
-    "flashpoint": correlate.mixture.flash_point_alibashki,
+    "flashpoint": correlate.mixture.flash_point_alibakhshi,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
     "derivedcetanenumber": correlate.mixture.derived_cetane_number,
 }

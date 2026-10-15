@@ -18,7 +18,7 @@ from ._reference_data import (
     load_ref_gani,
     smiles_series_to_inchi,
 )
-from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas
+from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas, T_stp
 from .gcm import boehm_gcm, gani_gcm
 from .rdk import mol
 from .utils import Units, types
@@ -802,6 +802,28 @@ class Fuel:
         tc = correlate.components.thermal_conductivity_latini(self, T)
         return tc[comp_idx] if comp_idx is not None else tc
 
+    def flash_point(
+        self,
+        comp_idx: int | None = None,
+        correlation: Literal["Alqaheem", "Alibakhshi"] = "Alibakhshi",
+    ) -> types.Quantity1D:
+        """Calculate flash point of each compound.
+
+        Args:
+            comp_idx: Index of compound to calculate property for.
+                Defaults to None (all compounds).
+            correlation: Correlation method ("Alqaheem" or "Alibakhshi").
+                Defaults to "Alibakhshi".
+
+        Returns:
+            Flash point in K.
+        """
+        if correlation.casefold() == "alqaheem":
+            fp = correlate.components.flash_point_alqaheem(self)
+        else:
+            fp = correlate.components.flash_point_alibakhshi(self)
+        return fp[comp_idx] if comp_idx is not None else fp
+
     # --- Mixture functions ---
     # NOTE: Cannot make Yi optional in mixture functions because switching the order of
     # Yi and T would break the original function signatures.
@@ -944,6 +966,87 @@ class Fuel:
             Thermal conductivity in W/m/K.
         """
         return correlate.mixture.thermal_conductivity_latini(self, T, Yi)
+
+    def mixture_freeze_point(
+        self, Yi: types.Quantity1D, *, alpha: float = 1.0
+    ) -> types.Quantity0D:
+        """Calculate freeze point of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            alpha: Scaling applied to the ideal mixing-entropy term.
+                Defaults to 1.0.
+
+        Returns:
+            Mixture freeze point in K.
+        """
+        return correlate.mixture.freeze_point_boehm(self, Yi, alpha=alpha)
+
+    def mixture_flash_point(
+        self,
+        Yi: types.Quantity1D,
+        *,
+        correlation: Literal["Alqaheem", "Alibakhshi"] = "Alibakhshi",
+        mixing_rule: Literal["linear", "Liaw"] = "Liaw",
+    ) -> types.Quantity0D:
+        """Calculate flash point of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            correlation: Correlation method ("Alqaheem" or "Alibakhshi").
+                Defaults to "Alibakhshi".
+            mixing_rule: Mixing rule to apply ("linear" or "Liaw"). See documentation
+                for details. Defaults to "Liaw".
+
+        Returns:
+            Mixture flash point in K.
+        """
+        if correlation.casefold() == "alqaheem":
+            return correlate.mixture.flash_point_alqaheem(
+                self, Yi, mixing_rule=mixing_rule
+            )
+        return correlate.mixture.flash_point_alibakhshi(
+            self, Yi, mixing_rule=mixing_rule
+        )
+
+    def mixture_heat_of_combustion(self, Yi: types.Quantity1D) -> types.Quantity0D:
+        """Calculate heat of combustion of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+
+        Returns:
+            Mixture heat of combustion in J/kg.
+        """
+        return correlate.mixture.heat_of_combustion(self, Yi)
+
+    def mixture_yield_sooting_index(self, Yi: types.Quantity1D) -> types.Quantity1D:
+        """Calculate yield sooting index of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+
+        Returns:
+            Mixture yield sooting index.
+        """
+        return correlate.mixture.yield_sooting_index(self, Yi)
+
+    def mixture_derived_cetane_number(
+        self,
+        Yi: types.Quantity1D,
+        *,
+        T_ref: types.Quantity0D = T_stp,
+    ) -> types.Quantity1D:
+        """Calculate derived cetane number of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            T_ref: Reference temperature for liquid densities.
+
+        Returns:
+            Mixture derived cetane number.
+        """
+        return correlate.mixture.derived_cetane_number(self, Yi, T_ref=T_ref)
 
 
 __all__ = ["Fuel"]
