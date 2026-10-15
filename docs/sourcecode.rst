@@ -19,7 +19,9 @@ FuelLib File Organization
 
     - **gcm**: subpackage implementing the Group Contribution Method (GCM) abstraction
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
+        - ``decomposition.py``: method-dispatched SMILES decomposition and CSV input/output helpers
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
+        - ``ganiDecomposition.py``: RDKit-based decomposition of supported hydrocarbons into Constantinou-Gani groups
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
         - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM; hydrocarbon families are read from ``refCompounds.csv`` via the fuel's ``compoundsData``
         - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
@@ -54,6 +56,7 @@ FuelLib File Organization
         - ``build_docs.py``: documentation builder utility
         - ``clean_docs.py``: documentation cleaner utility
         - ``format_code.py``: code formatter utility
+        - ``decomp_smiles.py``: SMILES decomposition command-line tool (CLI: ``fl-decomp-smiles``)
 
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     
@@ -62,6 +65,8 @@ FuelLib File Organization
     - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
+    - ``test_cli_decomp_smiles.py``: unit tests for the ``fl-decomp-smiles`` command-line tool.
+    - ``test_gcm_gani.py``: unit tests for GCM registration, Gani property calculations, and Gani SMILES decomposition.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
@@ -91,7 +96,9 @@ Click on links below for the full auto-documentation of the API.
     fuellib.utility
     fuellib.utils.types
     fuellib.gcm.core
+    fuellib.gcm.decomposition
     fuellib.gcm.gani
+    fuellib.gcm.ganiDecomposition
     fuellib.gcm.boehm
     fuellib.rdk.mol
     fuellib.correlate.components
