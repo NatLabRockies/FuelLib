@@ -11,6 +11,7 @@ import pytest
 import fuellib as fl
 from fuellib.fuel import Fuel
 from fuellib.gcm import GCMRegistry, gani_gcm
+from fuellib.gcm.decomposition import decompose
 from fuellib.gcm.gani import (
     Cp_B,
     Cp_C,
@@ -223,6 +224,69 @@ class GaniHelperFunctionTestCase(unittest.TestCase):
         decomp = _get_decomp(fuel)
         self.assertIsInstance(decomp, np.ndarray)
         self.assertEqual(decomp.shape, (fuel.num_compounds, len(TABLE.columns)))
+
+
+class GaniReferenceDecompositionTestCase(unittest.TestCase):
+    """Verify RDKit CG decompositions against the bundled reference data."""
+
+    def test_rdkit_decompositions_match_ref_gani(self):
+        """Compare every reference compound's SMILES decomposition to refGani."""
+        data_dir = fl.get_data_dir()
+        compounds = pd.read_csv(
+            f"{data_dir}/refCompounds.csv",
+            usecols=["Reference Compound", "SMILES"],
+        )
+        gani = pd.read_csv(f"{data_dir}/refGani.csv")
+        group_names = gani.columns.drop("Common_Name").tolist()
+        reference = gani.merge(
+            compounds,
+            left_on="Common_Name",
+            right_on="Reference Compound",
+            how="left",
+            validate="one_to_one",
+        )
+
+        missing_smiles = reference.loc[reference["SMILES"].isna(), "Common_Name"]
+        self.assertTrue(
+            missing_smiles.empty,
+            f"Missing SMILES for: {', '.join(missing_smiles)}",
+        )
+
+        for _, compound in reference.iterrows():
+            counts = decompose(compound["SMILES"], method="gani")
+            actual = [counts.get(group, 0) for group in group_names]
+            expected = compound[group_names].astype(int).tolist()
+            ref_decomposition = ", ".join(
+                f"({count}x) {group}"
+                for group, count in zip(group_names, expected)
+                if count
+            )
+            rdkit_decomposition = ", ".join(
+                f"({count}x) {group}"
+                for group, count in zip(group_names, actual)
+                if count
+            )
+            differences = {
+                group: {"expected": expected_count, "actual": actual_count}
+                for group, expected_count, actual_count in zip(
+                    group_names, expected, actual
+                )
+                if expected_count != actual_count
+            }
+            if differences:
+                difference_report = "\n".join(
+                    f"  {group}: expected {values['expected']}, actual {values['actual']}"
+                    for group, values in differences.items()
+                )
+                self.fail(
+                    "RDKit decomposition does not match refGani.csv\n"
+                    f"Compound: {compound['Common_Name']}\n"
+                    f"SMILES: {compound['SMILES']}\n"
+                    f"refGani: {ref_decomposition}\n"
+                    f"RDKit:   {rdkit_decomposition}\n"
+                    f"Differences:\n{difference_report}"
+                )
+            print(f"{compound['Common_Name']}: RDKit decomposition matches refGani.csv")
 
 
 if __name__ == "__main__":
