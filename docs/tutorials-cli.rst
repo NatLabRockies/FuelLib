@@ -1,7 +1,7 @@
 Command-Line Interface (CLI) Tools
 ===================================
 
-FuelLib provides command-line tools for plotting, unit conversion, and exporting fuel data.
+FuelLib provides command-line tools for plotting, SMILES group decomposition, unit conversion, and exporting fuel data.
 For detailed usage of each tool, use the ``--help`` or ``-h`` flag with the command (e.g., ``fl-plt-comp --help``).
 
 Plotting
@@ -37,6 +37,38 @@ The first two commands provide the following plots for the specified fuels, whil
    :align: center
 
    Properties of conventional jet fuels JP-8 (POSF10264), Jet A (POSF10325), and JP-5 (POSF10289) against data from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`. Note that the data sets for thermal conductivity are very inconsistent, but they typically show linear decreases in thermal conductivity with temperature. 
+
+SMILES Decomposition
+~~~~~~~~~~~~~~~~~~~~
+
+Use ``fl-decomp-smiles`` to decompose one or more SMILES strings into the
+functional-group counts. ``gani`` is currently the supported method and default.
+
+.. code-block:: bash
+
+    fl-decomp-smiles "CCc1ccccc1"
+    fl-decomp-smiles "CCc1ccccc1" --name n-ethylbenzene --output gani.csv
+
+Use ``--name`` to label one SMILES and ``-o`` to write its decomposition to CSV:
+
+.. code-block:: bash
+
+    fl-decomp-smiles "CCc1ccccc1" -n n-ethylbenzene -o gani.csv
+
+For batch processing, ``-i`` accepts a CSV with a required ``SMILES`` column
+and an optional ``Reference Compound`` column:
+
+.. code-block:: text
+
+    Reference Compound,SMILES
+    n-ethylbenzene,CCc1ccccc1
+    n-heptane,CCCCCCC
+
+.. code-block:: bash
+
+    fl-decomp-smiles -i compounds.csv -o gani.csv
+
+The output uses the ``refGani.csv`` group columns and a ``Common_Name`` column.
 
 Unit Conversion Tools
 ~~~~~~~~~~~~~~~~~~~~~~
