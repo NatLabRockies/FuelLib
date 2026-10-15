@@ -7,8 +7,16 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Added
+- `Fuel.flash_point` for component flash points, selecting the Alqaheem or Alibashki correlation via `correlation` (default `"Alibashki"`).
+- `Fuel.mixture_freeze_point`, `Fuel.mixture_flash_point`, `Fuel.mixture_heat_of_combustion`, `Fuel.mixture_yield_sooting_index`, and `Fuel.mixture_derived_cetane_number` wrappers around the corresponding `correlate.mixture` functions. `Fuel.mixture_flash_point` selects the correlation via `correlation` (default `"Alqaheem"`) and the mixing rule via `mixing_rule` (default `"Liaw"`).
+
+### Changed
+- `fuelprops.rst` documents the new `Fuel` flash point, freeze point, heat of combustion, yield sooting index, and derived cetane number methods.
+
 ### Fixed 
 - Documentation builds now use Python 3.12 and retry package downloads, preventing failures caused by transient package-index connection resets.
+- `correlate.mixture.heat_of_combustion` now converts component lower heating values to J/kg so the mixture result is returned in J/kg as documented; its return type is now annotated as a scalar quantity.
 
 ## [3.0.8a2] - 2026-10-14
 

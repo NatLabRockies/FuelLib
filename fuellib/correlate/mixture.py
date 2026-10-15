@@ -636,7 +636,7 @@ def flash_point_alibashki(
 
 def heat_of_combustion(
     fuel: "Fuel", Yi: types.Quantity1D | None = None
-) -> types.Quantity1D:
+) -> types.Quantity0D:
     """Calculate the heat of combustion of the fuel using a Hess cycle.
 
     Combines each component's lower heating value
@@ -656,7 +656,7 @@ def heat_of_combustion(
         Heat of combustion of the mixture in J/kg.
     """
     Yi = Yi if Yi is not None else fuel.Y_0
-    lhv_i = components.lower_heating_value(fuel)
+    lhv_i = components.lower_heating_value(fuel).to("J/kg")
     return np.sum(Yi * lhv_i)
 
 
