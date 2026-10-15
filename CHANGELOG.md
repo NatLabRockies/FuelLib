@@ -8,10 +8,11 @@ release workflow to parse release entries in this file.
 ## [Unreleased]
 
 ### Added
-- `Fuel.flash_point` for component flash points, selecting the Alqaheem or Alibashki correlation via `correlation` (default `"Alibashki"`).
-- `Fuel.mixture_freeze_point`, `Fuel.mixture_flash_point`, `Fuel.mixture_heat_of_combustion`, `Fuel.mixture_yield_sooting_index`, and `Fuel.mixture_derived_cetane_number` wrappers around the corresponding `correlate.mixture` functions. `Fuel.mixture_flash_point` selects the correlation via `correlation` (default `"Alqaheem"`) and the mixing rule via `mixing_rule` (default `"Liaw"`).
+- `Fuel.flash_point` for component flash points, selecting the Alqaheem or Alibakhshi correlation via `correlation` (default `"Alibakhshi"`).
+- `Fuel.mixture_freeze_point`, `Fuel.mixture_flash_point`, `Fuel.mixture_heat_of_combustion`, `Fuel.mixture_yield_sooting_index`, and `Fuel.mixture_derived_cetane_number` wrappers around the corresponding `correlate.mixture` functions. `Fuel.mixture_flash_point` selects the correlation via `correlation` (default `"Alibakhshi"`) and the mixing rule via `mixing_rule` (default `"Liaw"`).
 
 ### Changed
+- **Breaking:** `correlate.components.flash_point_alibashki` and `correlate.mixture.flash_point_alibashki` were renamed to `flash_point_alibakhshi` to correct the spelling of Alibakhshi.
 - `fuelprops.rst` documents the new `Fuel` flash point, freeze point, heat of combustion, yield sooting index, and derived cetane number methods.
 
 ### Fixed 

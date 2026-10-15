@@ -805,15 +805,15 @@ class Fuel:
     def flash_point(
         self,
         comp_idx: int | None = None,
-        correlation: Literal["Alqaheem", "Alibashki"] = "Alibashki",
+        correlation: Literal["Alqaheem", "Alibakhshi"] = "Alibakhshi",
     ) -> types.Quantity1D:
         """Calculate flash point of each compound.
 
         Args:
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
-            correlation: Correlation method ("Alqaheem" or "Alibashki").
-                Defaults to "Alibashki".
+            correlation: Correlation method ("Alqaheem" or "Alibakhshi").
+                Defaults to "Alibakhshi".
 
         Returns:
             Flash point in K.
@@ -821,7 +821,7 @@ class Fuel:
         if correlation.casefold() == "alqaheem":
             fp = correlate.components.flash_point_alqaheem(self)
         else:
-            fp = correlate.components.flash_point_alibashki(self)
+            fp = correlate.components.flash_point_alibakhshi(self)
         return fp[comp_idx] if comp_idx is not None else fp
 
     # --- Mixture functions ---
@@ -986,15 +986,15 @@ class Fuel:
         self,
         Yi: types.Quantity1D,
         *,
-        correlation: Literal["Alqaheem", "Alibashki"] = "Alqaheem",
+        correlation: Literal["Alqaheem", "Alibakhshi"] = "Alibakhshi",
         mixing_rule: Literal["linear", "Liaw"] = "Liaw",
     ) -> types.Quantity0D:
         """Calculate flash point of the mixture.
 
         Args:
             Yi: Mass fractions of each compound in the mixture.
-            correlation: Correlation method ("Alqaheem" or "Alibashki").
-                Defaults to "Alqaheem".
+            correlation: Correlation method ("Alqaheem" or "Alibakhshi").
+                Defaults to "Alibakhshi".
             mixing_rule: Mixing rule to apply ("linear" or "Liaw"). See documentation
                 for details. Defaults to "Liaw".
 
@@ -1005,7 +1005,7 @@ class Fuel:
             return correlate.mixture.flash_point_alqaheem(
                 self, Yi, mixing_rule=mixing_rule
             )
-        return correlate.mixture.flash_point_alibashki(
+        return correlate.mixture.flash_point_alibakhshi(
             self, Yi, mixing_rule=mixing_rule
         )
 

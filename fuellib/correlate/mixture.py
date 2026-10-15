@@ -543,7 +543,7 @@ def flash_point_alqaheem(
 
     Uses the Alqaheem-Riazi pure-component correlation
     (`components.flash_point_alqaheem`) combined with either the Liaw-Chiu
-    (default) or linear mixing rule; see `flash_point_alibashki` for the
+    (default) or linear mixing rule; see `flash_point_alibakhshi` for the
     Liaw-Chiu mixture-rule formulation shared by both methods.
 
     Args:
@@ -576,16 +576,16 @@ def flash_point_alqaheem(
     return Units.Quantity(T_flash, "K")
 
 
-def flash_point_alibashki(
+def flash_point_alibakhshi(
     fuel: "Fuel",
     Yi: types.Quantity1D | None = None,
     *,
     mixing_rule: Literal["linear", "Liaw"] = "Liaw",
 ) -> types.Quantity0D:
-    """Calculate the flash point of the mixture using the Alibashki method.
+    """Calculate the flash point of the mixture using the Alibakhshi method.
 
     Uses the Alibakhshi et al. pure-component correlation
-    (`components.flash_point_alibashki`) combined with either the Liaw-Chiu
+    (`components.flash_point_alibakhshi`) combined with either the Liaw-Chiu
     (default) or linear mixing rule.
 
     For `mixing_rule="linear"`, the mixture flash point is the mass-fraction
@@ -615,7 +615,7 @@ def flash_point_alibashki(
         Mixture flash point in K.
     """
     Yi = Yi if Yi is not None else fuel.Y_0
-    T_fpi = components.flash_point_alibashki(fuel)
+    T_fpi = components.flash_point_alibakhshi(fuel)
     if mixing_rule.casefold() == "linear".casefold():
         return np.sum(Yi * T_fpi)
 
