@@ -649,3 +649,45 @@ def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
     nC = np.array(fuel.nC)
     nH = np.array(fuel.nH)
     return -(nC * dH_form_co2 + 0.5 * nH * dH_form_h2o - Hf_liq) / fuel.MW
+
+
+def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate component dynamic viscosities using the Nannoolal GCM.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+
+    Returns:
+        Component dynamic viscosities in Pa*s.
+    """
+    T_mag = T.to("kelvin").magnitude
+    Tb_mag = fuel.Tb.to("kelvin").magnitude
+    dBvi = nannoolal_gcm.predict("dBv", fuel).magnitude
+    Tvi = nannoolal_gcm.predict("Tv", fuel).magnitude
+    ni = np.array([
+        sum(n for atom, n in mol.atom_counts(m).items() if atom != "H")
+        for m in fuel.rdkit_mols
+    ])
+    dBvi = dBvi / (ni**-2.5635 + 0.0685) + 3.7777
+    Tvi = 21.8444 * np.sqrt(Tb_mag) + Tvi**0.9315 / (ni**0.6577 + 4.9259) - 231.1361
+    denom = T_mag - Tvi / 16.0
+    eta = 1.3e-3 * np.exp(-dBvi * (T_mag - Tvi) / denom)
+    return Units.Quantity(eta, "Pa*s")
+
+
+def kinematic_viscosity_nannoolal(
+    fuel: "Fuel", T: types.Quantity0D
+) -> types.Quantity1D:
+    """Calculate component kinematic viscosities using the Nannoolal GCM.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to calculate the kinematic viscosities.
+
+    Returns:
+        Component kinematic viscosities in m^2/s.
+    """
+    eta = dynamic_viscosity_nannoolal(fuel, T)
+    rho = density(fuel, T)
+    return (eta / rho).to("m^2/s")

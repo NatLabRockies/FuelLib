@@ -183,6 +183,14 @@ class Fuel:
             .fillna(0)
         )
         """Gani group decompositions for each matched compound."""
+        self.nannoolalDecomp: DataFrame = (
+            _match_gc_to_ref(
+                self.compoundsData, self.refNannoolal, "referenceNannoolal"
+            )
+            .drop("Reference Compound", axis=1)
+            .fillna(0)
+        )
+        """Nannoolal group decompositions for each matched compound."""
 
         self.nannoolalDecomp: DataFrame = (
             _match_gc_to_ref(

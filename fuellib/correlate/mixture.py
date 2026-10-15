@@ -828,3 +828,65 @@ def derived_cetane_number(
     tot_vol = np.sum(Yi / rho_i)
     vol_frac = (Yi / rho_i) / tot_vol
     return Units.Quantity(np.sum(vol_frac * dcn_i.magnitude), "")
+
+
+def kinematic_viscosity_nannoolal(
+    fuel: "Fuel",
+    T: types.Quantity0D,
+    Yi: types.Quantity1D | None = None,
+    *,
+    correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+) -> types.Quantity0D:
+    """Calculate kinematic viscosity of the mixture.
+
+    Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+        Yi: Mass fractions of each compound.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+            Defaults to "Kendall-Monroe".
+
+    Returns:
+        Mixture kinematic viscosity in m^2/s.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    nu_i = components.kinematic_viscosity_nannoolal(fuel, T).to("m^2/s").magnitude
+    # Calculate mole fractions for each species
+    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi).magnitude
+    if correlation.casefold() == "Arrhenius".casefold():
+        # Arrhenius mixing correlation
+        nu = np.exp(np.sum(Xi * np.log(nu_i)))
+    else:
+        # Default: Kendall-Monroe mixing correlation
+        nu = np.sum(Xi * (nu_i ** (1.0 / 3.0))) ** 3.0
+
+    return Units.Quantity(nu, "m^2/s")
+
+
+def dynamic_viscosity_nannoolal(
+    fuel: "Fuel",
+    T: types.Quantity0D,
+    Yi: types.Quantity1D | None = None,
+    *,
+    correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+) -> types.Quantity0D:
+    """Calculate dynamic viscosity of the mixture.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+        Yi: Mass fractions of each compound.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+            Defaults to "Kendall-Monroe".
+
+    Returns:
+        Mixture dynamic viscosity in Pa*s.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    nu = kinematic_viscosity_nannoolal(fuel, T, Yi, correlation=correlation)
+    rho = density(fuel, T, Yi)
+    return (rho * nu).to("Pa*s")
