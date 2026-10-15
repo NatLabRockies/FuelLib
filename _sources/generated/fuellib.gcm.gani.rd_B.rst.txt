@@ -1,0 +1,6 @@
+fuellib.gcm.gani.rd\_B
+======================
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autofunction:: rd_B

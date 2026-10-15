@@ -1,0 +1,6 @@
+fuellib.utility.mixing\_rule
+============================
+
+.. currentmodule:: fuellib.utility
+
+.. autofunction:: mixing_rule

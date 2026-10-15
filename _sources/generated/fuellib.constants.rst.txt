@@ -1,0 +1,16 @@
+﻿fuellib.constants
+=================
+
+.. automodule:: fuellib.constants
+   :no-members:
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      k_B
+      N_A
+      T_stp
+      Sigma_gas
+   

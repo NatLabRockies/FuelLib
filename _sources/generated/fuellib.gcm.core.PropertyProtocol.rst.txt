@@ -1,0 +1,22 @@
+fuellib.gcm.core.PropertyProtocol
+=================================
+
+.. currentmodule:: fuellib.gcm.core
+
+.. autoclass:: PropertyProtocol
+   :members:
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   

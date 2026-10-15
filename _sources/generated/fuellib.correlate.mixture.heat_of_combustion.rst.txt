@@ -1,0 +1,6 @@
+fuellib.correlate.mixture.heat\_of\_combustion
+==============================================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: heat_of_combustion

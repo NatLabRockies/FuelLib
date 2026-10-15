@@ -1,0 +1,6 @@
+fuellib.correlate.components.density
+====================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: density
