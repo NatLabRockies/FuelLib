@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fuellib"
-version = "3.0.8a"
+version = "3.0.8a1"
 description = "FuelLib: A Python library for Group Contribution Method (GCM) calculations of fuel properties"
 readme = "README.md"
 license = {text = "BSD-3-Clause"}
@@ -31,7 +31,6 @@ dependencies = [
     "pyyaml>=5.0",
     "matplotlib>=3.0",
     "rdkit>=2022.3.1",
-    "importlib-resources>=5.0; python_version < '3.9'",
     "pint>=0.26.1",
     "pydantic>=2.13.5",
     "uncertainties>=3.2.3",
@@ -92,14 +91,15 @@ Repository = "https://github.com/NatLabRockies/FuelLib"
 Issues = "https://github.com/NatLabRockies/FuelLib/issues"
 Documentation = "https://NatLabRockies.github.io/FuelLib"
 
-[tool.setuptools]
-packages = ["fuellib", "fuellib.exporters", "fuellib.cli"]
+[tool.setuptools.packages.find]
+include = ["fuellib*"]
 
 [tool.setuptools.package-data]
 fuellib = [
     "data/**/*.csv",
     "data/**/*.yaml",
 ]
+"fuellib.gcm" = ["*.csv"]
 
 # Ty configurations
 [tool.ty.src]
