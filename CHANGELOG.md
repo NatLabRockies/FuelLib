@@ -7,6 +7,15 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [3.0.8a2] - 2026-10-14
+
+### Fixed
+- `release.yml` now validates that the release version exists in `CHANGELOG.md` before proceeding with the release workflow.
+
+### Changed
+- Actions updated to new versions to avoid deprecation warnings
+- GitHub Releases created by `release.yml` now use the `v{version}` title format, matching their generated tags.
+
 ## [3.0.8a1] - 2026-10-14
 
 ### Added
