@@ -244,6 +244,8 @@ def decompose_gani(smiles: str) -> dict[str, int]:
 
     Raises:
         ValueError: If RDKit cannot parse the supplied SMILES string.
+        UnsupportedGroupError: If the molecule contains unsupported atoms,
+            bonds, or groups.
     """
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
