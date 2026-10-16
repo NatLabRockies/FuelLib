@@ -165,9 +165,10 @@ For supported hydrocarbons, it evaluates
 
    \mu_i = 1.3\times10^{-3}\exp\left[-dBv_i\frac{T-Tv_i}{T-Tv_i/16}\right],
 
-then obtains :math:`\nu_i = \mu_i / \rho_i`. Components outside the supported
-Nannoolal decomposition scope retain the default Dutt prediction, so mixed
-fuels can be evaluated without replacing usable results.
+then obtains :math:`\nu_i = \mu_i / \rho_i`. The Nannoolal model raises a
+``ValueError`` when a component cannot be decomposed into supported groups.
+Use ``model="Hybrid"`` to retain Dutt predictions for normal alkanes while
+using Nannoolal for all other components.
 
 
 

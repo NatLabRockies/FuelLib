@@ -178,9 +178,6 @@ def kinematic_viscosity_nannoolal(
 ) -> types.Quantity0D:
     """Calculate mixture kinematic viscosity using Nannoolal components.
 
-    Components outside Nannoolal's supported decomposition scope use their Dutt
-    prediction before the selected mixture rule is applied.
-
     Args:
         fuel: Fuel whose mixture viscosity will be calculated.
         T: Temperature to compute property.
@@ -192,6 +189,34 @@ def kinematic_viscosity_nannoolal(
     """
     Yi = Yi if Yi is not None else fuel.Y_0
     nu_i = components.kinematic_viscosity_nannoolal(fuel, T).to("m^2/s").magnitude
+    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi).magnitude
+    if correlation.casefold() == "Arrhenius".casefold():
+        nu = np.exp(np.sum(Xi * np.log(nu_i)))
+    else:
+        nu = np.sum(Xi * (nu_i ** (1.0 / 3.0))) ** 3.0
+    return Units.Quantity(nu, "m^2/s")
+
+
+def kinematic_viscosity_hybrid(
+    fuel: "Fuel",
+    T: types.Quantity0D,
+    Yi: types.Quantity1D | None = None,
+    *,
+    correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+) -> types.Quantity0D:
+    """Calculate mixture kinematic viscosity using Hybrid components.
+
+    Args:
+        fuel: Fuel whose mixture viscosity will be calculated.
+        T: Temperature to compute property.
+        Yi: Component mass fractions. Defaults to `fuel.Y_0`.
+        correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+
+    Returns:
+        Mixture kinematic viscosity in m^2/s.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    nu_i = components.kinematic_viscosity_hybrid(fuel, T).to("m^2/s").magnitude
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi).magnitude
     if correlation.casefold() == "Arrhenius".casefold():
         nu = np.exp(np.sum(Xi * np.log(nu_i)))
@@ -220,6 +245,30 @@ def dynamic_viscosity_nannoolal(
     """
     Yi = Yi if Yi is not None else fuel.Y_0
     nu = kinematic_viscosity_nannoolal(fuel, T, Yi, correlation=correlation)
+    rho = density(fuel, T, Yi)
+    return (rho * nu).to("Pa*s")
+
+
+def dynamic_viscosity_hybrid(
+    fuel: "Fuel",
+    T: types.Quantity0D,
+    Yi: types.Quantity1D | None = None,
+    *,
+    correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+) -> types.Quantity0D:
+    """Calculate mixture dynamic viscosity using Hybrid components.
+
+    Args:
+        fuel: Fuel whose mixture viscosity will be calculated.
+        T: Temperature to compute property.
+        Yi: Component mass fractions. Defaults to `fuel.Y_0`.
+        correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+
+    Returns:
+        Mixture dynamic viscosity in Pa*s.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    nu = kinematic_viscosity_hybrid(fuel, T, Yi, correlation=correlation)
     rho = density(fuel, T, Yi)
     return (rho * nu).to("Pa*s")
 

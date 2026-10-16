@@ -22,9 +22,14 @@ Examples:
 
     fl-plt-comp -f posf10325
     fl-plt-props -f posf10264 posf10325 posf10289
-    fl-plt-props -f my-fuel -dir customFuels -p Density Viscosity
+    fl-plt-props -f my-fuel -dir customFuels -p Density Viscosity --viscosity-model Nannoolal
 
 The first two commands provide the following plots for the specified fuels, while the third command plots only the density and viscosity of a custom fuel:
+
+Viscosity plots use the strict Nannoolal model by default; it requires every
+component to have a valid Nannoolal decomposition. Pass ``--viscosity-model
+Dutt`` to select the established Dutt correlation, or ``--viscosity-model
+Hybrid`` to use Dutt for normal alkanes and Nannoolal for all other components.
 
 .. figure:: /figures/composition_posf10325.png
    :width: 600pt

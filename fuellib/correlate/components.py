@@ -91,8 +91,7 @@ def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1
 def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Calculate component dynamic viscosity using Nannoolal's model.
 
-    Nannoolal predictions are used where their hydrocarbon decomposition is
-    supported; components outside that scope retain the established Dutt result.
+    Every component must have a valid Nannoolal hydrocarbon decomposition.
 
     Args:
         fuel: Fuel whose component viscosities will be calculated.
@@ -104,9 +103,31 @@ def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quan
     from ..gcm.nannoolal import dynamic_viscosity as nannoolal_dynamic_viscosity
     from ..gcm.nannoolal import parameters as nannoolal_parameters
 
-    dbv, tv, errors = nannoolal_parameters(fuel, strict=False)
+    dbv, tv, _errors = nannoolal_parameters(fuel)
+    temperature = T.to("K").magnitude
+    result = nannoolal_dynamic_viscosity(temperature, dbv, tv)
+    return Units.Quantity(result, "Pa*s")
+
+
+def dynamic_viscosity_hybrid(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate viscosity with Dutt for normal alkanes and Nannoolal otherwise.
+
+    Non-normal-alkane components must have a valid Nannoolal hydrocarbon
+    decomposition.
+
+    Args:
+        fuel: Fuel whose component viscosities will be calculated.
+        T: Temperature to compute property.
+
+    Returns:
+        Dynamic viscosity of every component in Pa*s.
+    """
+    from ..gcm.nannoolal import dynamic_viscosity as nannoolal_dynamic_viscosity
+    from ..gcm.nannoolal import parameters as nannoolal_parameters
+
+    dbv, tv, _errors = nannoolal_parameters(fuel)
     result = dynamic_viscosity_dutt(fuel, T).to("Pa*s").magnitude
-    supported = np.asarray([error is None for error in errors])
+    supported = np.asarray([family != "n-alkane" for family in fuel.hc_type])
     if supported.any():
         temperature = T.to("K").magnitude
         result[supported] = nannoolal_dynamic_viscosity(
@@ -136,6 +157,29 @@ def kinematic_viscosity_nannoolal(
     if not np.isfinite(rho_i.magnitude).all() or (rho_i.magnitude <= 0).any():
         raise ValueError(
             "Nannoolal kinematic viscosity requires a positive liquid density."
+        )
+    return (mu_i / rho_i).to("m^2/s")
+
+
+def kinematic_viscosity_hybrid(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate kinematic viscosity using the normal-alkane Hybrid correlation.
+
+    Args:
+        fuel: Fuel whose component viscosities will be calculated.
+        T: Temperature to compute property.
+
+    Returns:
+        Kinematic viscosity of every component in m^2/s.
+
+    Raises:
+        ValueError: If a dynamic viscosity cannot be converted with a finite,
+            positive liquid-density prediction.
+    """
+    mu_i = dynamic_viscosity_hybrid(fuel, T)
+    rho_i = density(fuel, T).to("kg/m^3")
+    if not np.isfinite(rho_i.magnitude).all() or (rho_i.magnitude <= 0).any():
+        raise ValueError(
+            "Hybrid kinematic viscosity requires a positive liquid density."
         )
     return (mu_i / rho_i).to("m^2/s")
 

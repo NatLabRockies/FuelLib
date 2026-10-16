@@ -219,6 +219,7 @@ def plot_composition(
 def plot_mixture_properties(
     fuel_names,
     property_names=None,
+    viscosity_model="Nannoolal",
     fuel_data_dir=None,
     output_dir=None,
     title=None,
@@ -231,6 +232,8 @@ def plot_mixture_properties(
     :type fuel_names: str or list[str]
     :param property_names: Properties to plot (optional, defaults to standard set).
     :type property_names: list[str], optional
+    :param viscosity_model: Component correlation used for viscosity plots.
+    :type viscosity_model: {"Dutt", "Nannoolal", "Hybrid"}
     :param fuel_data_dir: Directory where fuel data files are located (optional).
     :type fuel_data_dir: str, optional
     :param output_dir: Directory to save the plot (optional, default: current directory).
@@ -439,7 +442,9 @@ def plot_mixture_properties(
                 elif prop_name == "VaporPressure":
                     pred[i] = fuel.mixture_vapor_pressure(Y_li, T).to(prop_units)
                 elif prop_name == "Viscosity":
-                    pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T).to(prop_units)
+                    pred[i] = fuel.mixture_kinematic_viscosity(
+                        Y_li, T, model=viscosity_model
+                    ).to(prop_units)
                 elif prop_name == "SurfaceTension":
                     pred[i] = fuel.mixture_surface_tension(Y_li, T).to(prop_units)
                 elif prop_name == "ThermalConductivity":
@@ -618,6 +623,13 @@ def props_main():
         help="Properties to plot (optional). Options: Density, Viscosity, VaporPressure, SurfaceTension, ThermalConductivity",
     )
     parser.add_argument(
+        "-nu",
+        "--viscosity-model",
+        choices=["Dutt", "Nannoolal", "Hybrid"],
+        default="Hybrid",
+        help="Correlation for viscosity plots (default: Nannoolal).",
+    )
+    parser.add_argument(
         "-dir",
         "--fuel_data_dir",
         default=None,
@@ -659,6 +671,7 @@ def props_main():
         plot_mixture_properties(
             args.fuel_names,
             property_names=args.property_names,
+            viscosity_model=args.viscosity_model,
             fuel_data_dir=args.fuel_data_dir,
             output_dir=args.output_dir,
             title=args.title,
@@ -736,6 +749,13 @@ def main():
         help="Properties to plot (optional). Options: Density, Viscosity, VaporPressure, SurfaceTension, ThermalConductivity",
     )
     props_parser.add_argument(
+        "-nu",
+        "--viscosity-model",
+        choices=["Dutt", "Nannoolal", "Hybrid"],
+        default="Nannoolal",
+        help="Correlation for viscosity plots (default: Nannoolal).",
+    )
+    props_parser.add_argument(
         "-dir",
         "--fuel_data_dir",
         default=None,
@@ -776,6 +796,7 @@ def main():
             plot_mixture_properties(
                 args.fuel_names,
                 property_names=args.property_names,
+                viscosity_model=args.viscosity_model,
                 fuel_data_dir=args.fuel_data_dir,
                 output_dir=args.output_dir,
                 title=args.title,

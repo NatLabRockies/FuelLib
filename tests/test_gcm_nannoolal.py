@@ -1,11 +1,12 @@
 """Tests for the Nannoolal liquid-viscosity group-contribution method."""
 
+from types import SimpleNamespace
+
 import numpy as np
 import pytest
-
 import fuellib as fl
 from fuellib.gcm import GCMRegistry, decompose, nannoolal_gcm
-from fuellib.gcm.nannoolal import dynamic_viscosity
+from fuellib.gcm.nannoolal import dynamic_viscosity, parameters
 from fuellib.gcm.nannoolalDecomposition import map_gani_to_nannoolal_groups
 from fuellib.utils import Units
 
@@ -51,6 +52,35 @@ def test_nannoolal_component_and_mixture_viscosities():
         fuel.Y_0, temperature, model="Nannoolal"
     )
     assert mixture.magnitude > 0
+
+
+def test_hybrid_selection_keeps_dutt_for_normal_alkanes():
+    """Hybrid does not replace the Dutt normal-alkane correlation."""
+    fuel = fl.Fuel("heptane-decane")
+    temperature = Units.Quantity(298.15, "K")
+
+    np.testing.assert_allclose(
+        fuel.viscosity_dynamic(temperature, model="Hybrid").magnitude,
+        fuel.viscosity_dynamic(temperature, model="Dutt").magnitude,
+    )
+    np.testing.assert_allclose(
+        fuel.mixture_kinematic_viscosity(
+            fuel.Y_0, temperature, model="Hybrid"
+        ).magnitude,
+        fuel.mixture_kinematic_viscosity(fuel.Y_0, temperature, model="Dutt").magnitude,
+    )
+
+
+def test_nannoolal_requires_valid_decompositions():
+    """Nannoolal raises rather than silently falling back for invalid components."""
+    invalid_fuel = SimpleNamespace(
+        Tb=Units.Quantity([373.15], "K"),
+        num_compounds=1,
+        compounds=["water"],
+        smiles=["O"],
+    )
+    with pytest.raises(ValueError, match="water"):
+        parameters(invalid_fuel)
 
 
 @pytest.mark.parametrize("model", ["unknown", "hybrid"])

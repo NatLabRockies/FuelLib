@@ -586,19 +586,22 @@ class Fuel:
             T: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
-            model: Viscosity model, either ``"Dutt"`` (default) or
-                ``"Nannoolal"``. Unsupported Nannoolal components use Dutt.
+            model: Viscosity model: ``"Dutt"`` (default), ``"Nannoolal"``,
+                or ``"Hybrid"``. Hybrid uses Dutt for normal alkanes.
 
         Returns:
             Viscosity of each component in m^2/s.
 
         Raises:
-            ValueError: If `model` is not Dutt or Nannoolal.
+            ValueError: If `model` is unsupported or a Nannoolal decomposition
+                is invalid.
         """
         if model.casefold() == "dutt":
             nu_i = correlate.components.kinematic_viscosity_dutt(self, T)
         elif model.casefold() == "nannoolal":
             nu_i = correlate.components.kinematic_viscosity_nannoolal(self, T)
+        elif model.casefold() == "hybrid":
+            nu_i = correlate.components.kinematic_viscosity_hybrid(self, T)
         else:
             raise ValueError(f"Unknown viscosity model: {model!r}")
         return nu_i[comp_idx] if comp_idx is not None else nu_i
@@ -616,19 +619,22 @@ class Fuel:
             T: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
-            model: Viscosity model, either ``"Dutt"`` (default) or
-                ``"Nannoolal"``. Unsupported Nannoolal components use Dutt.
+            model: Viscosity model: ``"Dutt"`` (default), ``"Nannoolal"``,
+                or ``"Hybrid"``. Hybrid uses Dutt for normal alkanes.
 
         Returns:
             Dynamic viscosity in Pa*s.
 
         Raises:
-            ValueError: If `model` is not Dutt or Nannoolal.
+            ValueError: If `model` is unsupported or a Nannoolal decomposition
+                is invalid.
         """
         if model.casefold() == "dutt":
             mu_i = correlate.components.dynamic_viscosity_dutt(self, T)
         elif model.casefold() == "nannoolal":
             mu_i = correlate.components.dynamic_viscosity_nannoolal(self, T)
+        elif model.casefold() == "hybrid":
+            mu_i = correlate.components.dynamic_viscosity_hybrid(self, T)
         else:
             raise ValueError(f"Unknown viscosity model: {model!r}")
         return mu_i[comp_idx] if comp_idx is not None else mu_i
@@ -859,14 +865,15 @@ class Fuel:
             T: Temperature to compute property.
             correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
                 Defaults to "Kendall-Monroe".
-            model: Component-viscosity model, either ``"Dutt"`` (default) or
-                ``"Nannoolal"``.
+            model: Component-viscosity model: ``"Dutt"`` (default),
+                ``"Nannoolal"``, or ``"Hybrid"``.
 
         Returns:
             Mixture kinematic viscosity in m^2/s.
 
         Raises:
-            ValueError: If `model` is not Dutt or Nannoolal.
+            ValueError: If `model` is unsupported or a Nannoolal decomposition
+                is invalid.
         """
         if model.casefold() == "dutt":
             return correlate.mixture.kinematic_viscosity_dutt(
@@ -874,6 +881,10 @@ class Fuel:
             )
         if model.casefold() == "nannoolal":
             return correlate.mixture.kinematic_viscosity_nannoolal(
+                self, T, Yi, correlation=correlation
+            )
+        if model.casefold() == "hybrid":
+            return correlate.mixture.kinematic_viscosity_hybrid(
                 self, T, Yi, correlation=correlation
             )
         raise ValueError(f"Unknown viscosity model: {model!r}")
@@ -892,14 +903,15 @@ class Fuel:
             Yi: Mass fractions of each compound.
             T: Temperature to compute property.
             correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
-            model: Component-viscosity model, either ``"Dutt"`` (default) or
-                ``"Nannoolal"``.
+            model: Component-viscosity model: ``"Dutt"`` (default),
+                ``"Nannoolal"``, or ``"Hybrid"``.
 
         Returns:
             Mixture dynamic viscosity in Pa*s.
 
         Raises:
-            ValueError: If `model` is not Dutt or Nannoolal.
+            ValueError: If `model` is unsupported or a Nannoolal decomposition
+                is invalid.
         """
         if model.casefold() == "dutt":
             return correlate.mixture.dynamic_viscosity_dutt(
@@ -907,6 +919,10 @@ class Fuel:
             )
         if model.casefold() == "nannoolal":
             return correlate.mixture.dynamic_viscosity_nannoolal(
+                self, T, Yi, correlation=correlation
+            )
+        if model.casefold() == "hybrid":
+            return correlate.mixture.dynamic_viscosity_hybrid(
                 self, T, Yi, correlation=correlation
             )
         raise ValueError(f"Unknown viscosity model: {model!r}")
