@@ -7,6 +7,8 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [3.0.8a3] - 2026-10-15
+
 ### Added
 - `fuellib.gcm.decomposition` provides method-dispatched SMILES decomposition,
   method-specific group-column lookup, and CSV input/output helpers. The initial
