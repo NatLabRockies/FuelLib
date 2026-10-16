@@ -59,6 +59,8 @@ def _find_aromatic_substituents(
             neighbor.GetSymbol() == "C" and not neighbor.GetIsAromatic()
             for neighbor in atom.GetNeighbors()
         )
+        if any(bond.GetBondTypeAsDouble() != 1.0 for bond in atom.GetBonds()):
+            raise UnsupportedGroupError("Unsupported unsaturated aromatic substituent.")
         try:
             groups[atom.GetIdx()] = {0: "ACCH3", 1: "ACCH2", 2: "ACCH"}[
                 aliphatic_neighbors
@@ -246,6 +248,11 @@ def decompose_gani(smiles: str) -> dict[str, int]:
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         raise ValueError(f"RDKit could not parse SMILES: {smiles!r}")
+    if any(
+        atom.GetFormalCharge() or atom.GetNumRadicalElectrons()
+        for atom in mol.GetAtoms()
+    ):
+        raise UnsupportedGroupError("Charged and radical molecules are unsupported.")
     counts = _first_order_decomposition(mol)
     counts.update(_second_order_decomposition(mol))
     return counts

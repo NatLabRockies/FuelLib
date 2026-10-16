@@ -71,7 +71,7 @@ def write_decompositions_csv(
         method: Name of the group-contribution method that produced the counts.
     """
     method_group_names = group_names(method)
-    with output_path.open("w", newline="") as output_file:
+    with output_path.open("w", newline="", encoding="utf-8") as output_file:
         writer = csv.DictWriter(
             output_file, fieldnames=["Common_Name", *method_group_names]
         )
