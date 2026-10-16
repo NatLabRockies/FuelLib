@@ -10,10 +10,18 @@ release workflow to parse release entries in this file.
 ## [3.0.8a3] - 2026-10-15
 
 ### Added
-- `Fuel.flash_point` for component flash points, selecting the Alqaheem or Alibakhshi correlation via `correlation` (default `"Alibakhshi"`).
-- `Fuel.mixture_freeze_point`, `Fuel.mixture_flash_point`, `Fuel.mixture_heat_of_combustion`, `Fuel.mixture_yield_sooting_index`, and `Fuel.mixture_derived_cetane_number` wrappers around the corresponding `correlate.mixture` functions. `Fuel.mixture_flash_point` selects the correlation via `correlation` (default `"Alibakhshi"`) and the mixing rule via `mixing_rule` (default `"Liaw"`).
+- `fuellib.gcm.decomposition` provides method-dispatched SMILES decomposition,
+  method-specific group-column lookup, and CSV input/output helpers. The initial
+  supported method is Constantinou-Gani (`gani`).
+- `fl-decomp-smiles` decomposes one or more SMILES strings, or a CSV input file,
+  into group counts and can write a `refGani.csv`-compatible CSV output.
+- CLI documentation and regression tests for SMILES decomposition.
 
 ### Changed
+- The RDKit-based Constantinou-Gani decomposition implementation now resides in
+  `fuellib.gcm.ganiDecomposition`.
+- `Fuel.flash_point` for component flash points, selecting the Alqaheem or Alibakhshi correlation via `correlation` (default `"Alibakhshi"`).
+- `Fuel.mixture_freeze_point`, `Fuel.mixture_flash_point`, `Fuel.mixture_heat_of_combustion`, `Fuel.mixture_yield_sooting_index`, and `Fuel.mixture_derived_cetane_number` wrappers around the corresponding `correlate.mixture` functions. `Fuel.mixture_flash_point` selects the correlation via `correlation` (default `"Alibakhshi"`) and the mixing rule via `mixing_rule` (default `"Liaw"`).
 - **Breaking:** `correlate.components.flash_point_alibashki` and `correlate.mixture.flash_point_alibashki` were renamed to `flash_point_alibakhshi` to correct the spelling of Alibakhshi.
 - `fuelprops.rst` documents the new `Fuel` flash point, freeze point, heat of combustion, yield sooting index, and derived cetane number methods.
 
