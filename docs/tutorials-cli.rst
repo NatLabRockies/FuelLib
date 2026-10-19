@@ -74,12 +74,14 @@ SMILES Decomposition
 ~~~~~~~~~~~~~~~~~~~~
 
 Decompose SMILES strings into the Constantinou-Gani groups used in
-``refGani.csv``:
+``refGani.csv`` (default) or the Nannoolal groups used in
+``refNannoolal.csv``:
 
 .. code-block:: bash
 
     fl-decomp-smiles -s CCc1ccccc1 CCCCCCC -n ethylbenzene n-heptane
     fl-decomp-smiles -i compounds.csv -o decomposition.csv
+    fl-decomp-smiles -s CCc1ccccc1 -n ethylbenzene -m nannoolal
 
 Options:
 
@@ -88,14 +90,15 @@ Options:
   SMILES string given with ``--smiles``.
 - ``-i``/``--input``: CSV file with a ``SMILES`` column and an optional
   ``Reference Compound`` column.
-- ``-m``/``--method``: group-contribution method (default and currently only
-  option: ``gani``).
+- ``-m``/``--method``: group-contribution method, ``gani`` (default) or
+  ``nannoolal`` (case-insensitive).
 - ``-o``/``--out``: CSV file for the counts. Without it, the nonzero group
   counts are printed.
 
 .. warning::
-    Verify the decompositions before use. A known shortcoming is indene, where
-    the non-aromatic C=C bond is categorized as a ``CH`` group.
+    Verify the decompositions before use. A known shortcoming of the ``gani``
+    method is indene, where the non-aromatic C=C bond is categorized as a
+    ``CH`` group.
 
 Export for CFD
 ~~~~~~~~~~~~~~

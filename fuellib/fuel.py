@@ -15,7 +15,7 @@ from . import correlate
 from ._reference_data import (
     DEFAULT_DATA_DIR,
     load_ref_compounds,
-    load_ref_gani,
+    load_ref_decomp,
     smiles_series_to_inchi,
 )
 from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas, T_stp
@@ -81,6 +81,7 @@ class Fuel:
         fuelDataDir: str | Path | None = None,
         refCompoundsPath: str | Path | None = None,
         refGaniPath: str | Path | None = None,
+        refNannoolalPath: str | Path | None = None,
         *,
         useRefProperties: bool = True,
     ) -> None:
@@ -96,6 +97,10 @@ class Fuel:
                 replaces rows with the same InChI.
             refGaniPath: Path to the reference Gani decomposition CSV file.
                 Defaults to `fuellib/data/refGani.csv`. A custom table in
+                `fuelDataDir`, when present, is appended to the bundled table and
+                replaces rows with the same `Reference Compound`.
+            refNannoolalPath: Path to the reference Nannoolal decomposition CSV file.
+                Defaults to `fuellib/data/refNannoolal.csv`. A custom table in
                 `fuelDataDir`, when present, is appended to the bundled table and
                 replaces rows with the same `Reference Compound`.
             useRefProperties: Whether to use reference compound properties for
@@ -150,8 +155,14 @@ class Fuel:
             refCompoundsPath, self.fuelDataDir
         )
         """Reference compounds and their properties."""
-        self.refGani: DataFrame = load_ref_gani(refGaniPath, self.fuelDataDir)
+        self.refGani: DataFrame = load_ref_decomp(
+            refGaniPath, self.fuelDataDir, method="Gani"
+        )
         """Reference Gani group decompositions."""
+        self.refNannoolal: DataFrame = load_ref_decomp(
+            refNannoolalPath, self.fuelDataDir, method="Nannoolal"
+        )
+        """Reference Nannoolal group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(
             self.gcData, self.refCompounds, "referenceCompounds"
         )
@@ -172,6 +183,15 @@ class Fuel:
             .fillna(0)
         )
         """Gani group decompositions for each matched compound."""
+
+        self.nannoolalDecomp: DataFrame = (
+            _match_gc_to_ref(
+                self.compoundsData, self.refNannoolal, "referenceNannoolal"
+            )
+            .drop("Reference Compound", axis=1)
+            .fillna(0)
+        )
+        """Nannoolal group decompositions for each matched compound."""
 
         propFilePath = self.fuelDataDir / "propertiesData" / f"{name}.csv"
         self.propData: DataFrame | None = (

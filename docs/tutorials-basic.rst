@@ -31,6 +31,7 @@ Each row of the GCxGC file is matched to a compound in the reference data tables
 
 - ``fuellib/data/refCompounds.csv``: reference compounds with their family, carbon number, SMILES, and (optionally) measured properties.
 - ``fuellib/data/refGani.csv``: the fundamental group decomposition of each reference compound (must have columns for the groups defined in `gani.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/gani.csv>`_).
+- ``fuellib/data/refNannoolal.csv``: the Nannoolal group decomposition of each reference compound, used for the Nannoolal viscosity correlations (columns must be groups defined in `nannoolal.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/nannoolal.csv>`_).
 
 Rows are matched by ``Reference Compound`` name first (case-insensitive) and then by the InChI derived from ``SMILES``. A ``ValueError`` listing the unmatched rows is raised if any GCxGC compound is missing from the reference tables, so new compounds must first be added to the reference tables (see the `Adding Custom Fuels <tutorials-custom-fuels.html>`_ tutorial). Many examples can be found in the `fuellib/data <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data>`_ directory in the repository.
 
@@ -41,6 +42,7 @@ Decomposing Fuel Components into Fundamental Groups
 
 The decomposition process requires knowledge of the chemical structure of each component in the fuel. 
 A starting decomposition can be generated automatically from SMILES strings with :func:`fuellib.gcm.gani.decompose` or the ``fl-decomp-smiles`` command (see :doc:`tutorials-cli`), but the results should be checked against the `Gani table`_.
+Nannoolal decompositions for ``refNannoolal.csv`` can be generated in the same way with :func:`fuellib.gcm.nannoolal.decompose` or ``fl-decomp-smiles --method nannoolal``.
 
 .. warning::
     Automated decompositions must be verified. A known shortcoming is indene, where the non-aromatic C=C bond is categorized as a ``CH`` group.
