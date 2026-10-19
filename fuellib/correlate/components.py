@@ -127,12 +127,11 @@ def dynamic_viscosity_hybrid(fuel: "Fuel", T: types.Quantity0D) -> types.Quantit
 
     dbv, tv, _errors = nannoolal_parameters(fuel)
     result = dynamic_viscosity_dutt(fuel, T).to("Pa*s").magnitude
-    supported = np.asarray([family != "n-alkane" for family in fuel.hc_type])
-    if supported.any():
-        temperature = T.to("K").magnitude
-        result[supported] = nannoolal_dynamic_viscosity(
-            temperature, dbv[supported], tv[supported]
-        )
+    temperature = T.to("K").magnitude
+    nannoolal_result = nannoolal_dynamic_viscosity(temperature, dbv, tv)
+    for index, family in enumerate(fuel.hc_type):
+        if family != "n-alkane":
+            result[index] = nannoolal_result[index]
     return Units.Quantity(result, "Pa*s")
 
 

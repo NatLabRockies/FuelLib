@@ -10,8 +10,8 @@ release workflow to parse release entries in this file.
 ### Added
 - Registered the Nannoolal liquid-viscosity GCM with RDKit/Gani-derived SMILES
   decomposition, bundled contribution parameters, and selectable component and
-  mixture viscosity predictions. Unsupported Nannoolal components fall back to
-  the existing Dutt correlation.
+  mixture viscosity predictions. Nannoolal requires a valid decomposition;
+  the Hybrid option uses Dutt for normal alkanes and Nannoolal otherwise.
 - `fuellib.gcm.decomposition` provides method-dispatched SMILES decomposition,
   method-specific group-column lookup, and CSV input/output helpers. The initial
   supported method is Constantinou-Gani (`gani`).

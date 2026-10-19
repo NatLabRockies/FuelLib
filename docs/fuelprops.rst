@@ -163,12 +163,25 @@ For supported hydrocarbons, it evaluates
 
 .. math::
 
-   \mu_i = 1.3\times10^{-3}\exp\left[-dBv_i\frac{T-Tv_i}{T-Tv_i/16}\right],
+   \mu_i = 1.3\times10^{-3}\exp\left[-dBv_i\frac{T-T_{v,i}}{T-(T_{v,i}/16)}\right],
 
-then obtains :math:`\nu_i = \mu_i / \rho_i`. The Nannoolal model raises a
-``ValueError`` when a component cannot be decomposed into supported groups.
-Use ``model="Hybrid"`` to retain Dutt predictions for normal alkanes while
-using Nannoolal for all other components.
+then obtains :math:`\nu_i = \mu_i / \rho_i`. The tabulated group-contribution
+coefficients are :math:`\widetilde{dBv}_k` and :math:`\widetilde{T}_{v,k}`, whereas
+:math:`dBv_i` and :math:`T_{v,i}` are component parameters calculated from the
+group sums and normal boiling temperature:
+
+.. math::
+
+   dBv_i &= \frac{\sum_k N_{ik} \widetilde{dBv}_k}
+      {n_i^{-2.5635} + 0.0685} + 3.7777, \\
+   T_{v,i} &= 21.8444\sqrt{T_{b,i}}
+      + \frac{\left(\sum_k N_{ik} \widetilde{T}_{v,k}\right)^{0.9315}}
+      {n_i^{0.6577} + 4.9259} - 231.1361,
+
+where :math:`n_i` is the component's non-hydrogen atom count. The Nannoolal
+model raises a ``ValueError`` when a component cannot be decomposed into
+supported groups. Use ``model="Hybrid"`` to retain Dutt predictions for normal
+alkanes while using Nannoolal for all other components.
 
 
 

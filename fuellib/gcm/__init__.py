@@ -7,9 +7,9 @@ from .gani import gani_gcm
 from .nannoolal import nannoolal_gcm
 
 __all__ = [
-	"GCMRegistry",
-	"boehm_gcm",
-	"decompose",
-	"gani_gcm",
-	"nannoolal_gcm",
+    "GCMRegistry",
+    "boehm_gcm",
+    "decompose",
+    "gani_gcm",
+    "nannoolal_gcm",
 ]

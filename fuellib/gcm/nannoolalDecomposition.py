@@ -75,16 +75,16 @@ def map_gani_to_nannoolal_groups(
         )
     if aromatic_atoms == 10 and (ring_count or counts["AC"] != 2):
         raise ValueError("Fused-aromatic mapping requires two fused aromatic carbons.")
-    if aromatic_atoms and ring_count and (
-        ring_count != 1 or counts["ACCH3"] or counts["ACCH"]
+    if (
+        aromatic_atoms
+        and ring_count
+        and (ring_count != 1 or counts["ACCH3"] or counts["ACCH"])
     ):
         raise ValueError(
             "Cycloaromatic mapping requires one unsubstituted fused saturated ring."
         )
 
-    ring_atoms = sum(
-        size * counts[f"{size} membered ring"] for size in range(3, 8)
-    )
+    ring_atoms = sum(size * counts[f"{size} membered ring"] for size in range(3, 8))
     if ring_count:
         ring_atoms -= 2 if aromatic_atoms else 2 * (ring_count - 1)
         ring_ch2 = ring_atoms - counts["CH"] - counts["C"]

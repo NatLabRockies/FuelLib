@@ -1,10 +1,12 @@
 """Tests for the Nannoolal liquid-viscosity group-contribution method."""
 
 from types import SimpleNamespace
+from typing import cast
 
 import numpy as np
 import pytest
 import fuellib as fl
+from fuellib.fuel import Fuel
 from fuellib.gcm import GCMRegistry, decompose, nannoolal_gcm
 from fuellib.gcm.nannoolal import dynamic_viscosity, parameters
 from fuellib.gcm.nannoolalDecomposition import map_gani_to_nannoolal_groups
@@ -48,17 +50,19 @@ def test_nannoolal_component_and_mixture_viscosities():
         dynamic.to("Pa*s").magnitude,
         (kinematic * fuel.density(temperature)).to("Pa*s").magnitude,
     )
-    mixture = fuel.mixture_kinematic_viscosity(
-        fuel.Y_0, temperature, model="Nannoolal"
-    )
+    mixture = fuel.mixture_kinematic_viscosity(fuel.Y_0, temperature, model="Nannoolal")
     assert mixture.magnitude > 0
 
 
 def test_hybrid_selection_keeps_dutt_for_normal_alkanes():
-    """Hybrid does not replace the Dutt normal-alkane correlation."""
+    """Hybrid retains Dutt for normal alkanes while strict Nannoolal evaluates them."""
     fuel = fl.Fuel("heptane-decane")
     temperature = Units.Quantity(298.15, "K")
 
+    assert not np.allclose(
+        fuel.viscosity_dynamic(temperature, model="Nannoolal").magnitude,
+        fuel.viscosity_dynamic(temperature, model="Dutt").magnitude,
+    )
     np.testing.assert_allclose(
         fuel.viscosity_dynamic(temperature, model="Hybrid").magnitude,
         fuel.viscosity_dynamic(temperature, model="Dutt").magnitude,
@@ -80,10 +84,10 @@ def test_nannoolal_requires_valid_decompositions():
         smiles=["O"],
     )
     with pytest.raises(ValueError, match="water"):
-        parameters(invalid_fuel)
+        parameters(cast(Fuel, invalid_fuel))
 
 
-@pytest.mark.parametrize("model", ["unknown", "hybrid"])
+@pytest.mark.parametrize("model", ["unknown", "unsupported"])
 def test_unknown_viscosity_model_is_rejected(model):
     """Viscosity entry points reject models outside the supported choices."""
     fuel = fl.Fuel("decane")
