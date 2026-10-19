@@ -97,7 +97,7 @@ class Fuel:
             refGaniPath: Path to the reference Gani decomposition CSV file.
                 Defaults to `fuellib/data/refGani.csv`. A custom table in
                 `fuelDataDir`, when present, is appended to the bundled table and
-                replaces rows with the same `Common_Name`.
+                replaces rows with the same `Reference Compound`.
             useRefProperties: Whether to use reference compound properties for
                 calculations. Defaults to `True`.
 
@@ -150,16 +150,14 @@ class Fuel:
             refCompoundsPath, self.fuelDataDir
         )
         """Reference compounds and their properties."""
-        self.refGani: DataFrame = load_ref_gani(refGaniPath, self.fuelDataDir).rename(
-            columns={"Common_Name": "Reference Compound"}
-        )
+        self.refGani: DataFrame = load_ref_gani(refGaniPath, self.fuelDataDir)
         """Reference Gani group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(
             self.gcData, self.refCompounds, "referenceCompounds"
         )
         """Matched GCxGC data to reference compounds."""
         self.compounds = self.compoundsData["Reference Compound"].to_list()
-        """List of common names for each matched compound."""
+        """List of reference compound names for each matched compound."""
         self.smiles = self.compoundsData["SMILES"].to_list()
         """List of SMILES strings for each matched compound."""
         self.pelephysics_keys: list[str] | None = (

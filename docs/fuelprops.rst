@@ -745,7 +745,7 @@ group decompositions from ``refGani.csv`` as :attr:`~fuellib.fuel.Fuel.ganiDecom
 ``refCompoundsPath`` and ``refGaniPath`` arguments of :class:`~fuellib.fuel.Fuel`. Each custom table is merged
 with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
 the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
-bundled compound; a Gani decomposition duplicate is identified by its ``Common_Name``.
+bundled compound; a Gani decomposition duplicate is identified by its ``Reference Compound``.
 
 Validation
 ----------

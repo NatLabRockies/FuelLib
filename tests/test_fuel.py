@@ -58,7 +58,9 @@ class TestParsing:
         customRef.to_csv(tmp_path / "refCompounds.csv", index=False)
 
         customGani = pd.read_csv(DEFAULT_DATA_DIR / "refGani.csv")
-        customGani = customGani.loc[customGani["Common_Name"].eq("n-decane")].copy()
+        customGani = customGani.loc[
+            customGani["Reference Compound"].eq("n-decane")
+        ].copy()
         customGani.loc[:, "CH3"] = 99
         customGani.to_csv(tmp_path / "refGani.csv", index=False)
 
