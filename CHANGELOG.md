@@ -7,6 +7,9 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Changed
+- Updated naming consistencies in `data/`.
+
 ## [3.0.8a3] - 2026-10-15
 
 ### Added
