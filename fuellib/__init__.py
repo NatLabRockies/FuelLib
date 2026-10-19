@@ -24,10 +24,12 @@ from ._data_locator import (
     get_fueldata_gc_dir,
     get_fueldata_props_dir,
 )
+from ._reference_data import DEFAULT_DATA_DIR
 from .fuel import Fuel
 from .utils import Units
 
 __all__ = [
+    "DEFAULT_DATA_DIR",
     "Fuel",
     "Units",
     "constants",

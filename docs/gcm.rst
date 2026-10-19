@@ -61,6 +61,26 @@ coefficients are read from ``fuellib/gcm/gani.csv`` into a module-level
 table indexed by property name, with one column per first- or
 second-order group.
 
+:func:`fuellib.gcm.gani.decompose` builds a group decomposition from a SMILES
+string using RDKit SMARTS patterns. It returns a single-row
+:class:`pandas.DataFrame`, indexed by the SMILES string, with a column for every
+group in the table:
+
+.. code-block:: python
+
+   from fuellib.gcm.gani import decompose
+
+   counts = decompose("CCc1ccccc1")
+   counts.loc[:, (counts != 0).any()]
+
+A :class:`ValueError` is raised if the SMILES cannot be parsed or an atom is not
+matched to a first-order group. The same functionality is available from the
+command line as ``fl-decomp-smiles`` (see :doc:`tutorials-cli`).
+
+.. warning::
+   Automated decompositions must be verified. A known shortcoming is indene,
+   where the non-aromatic C=C bond is categorized as a ``CH`` group.
+
 .. _tab-GCM-properties-gcm:
 
 Table of GCM properties
