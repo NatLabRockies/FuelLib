@@ -267,17 +267,18 @@ class GaniReferenceDecompositionTestCase(unittest.TestCase):
 
         diff = df_new.loc[common] - df_gani.loc[common].astype(int)
         mismatched = diff.index[(diff != 0).any(axis=1)]
-        print(f"{len(common) - len(mismatched)}/{len(common)} compounds match refGani.")
+        lines = [f"{len(mismatched)}/{len(common)} compounds do not match refGani."]
         for name in mismatched:
             cols = diff.columns[diff.loc[name] != 0]
-            print(
-                f"\n{name} ({df_refs.set_index('Reference Compound').loc[name, 'SMILES']}):"
+            lines.append(
+                f"{name} ({df_refs.set_index('Reference Compound').loc[name, 'SMILES']}):"
             )
             for col in cols:
-                print(
+                lines.append(
                     f"  {col}: computed={df_new.loc[name, col]}, "
                     f"tabulated={df_gani.loc[name, col]}"
                 )
+        self.assertTrue(mismatched.empty, "\n".join(lines))
 
 
 if __name__ == "__main__":

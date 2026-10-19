@@ -5,7 +5,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from fuellib import gcm
+from fuellib.gcm import gani, nannoolal
+
+DECOMPOSERS = {
+    "gani": gani.decompose,
+    "nannoolal": nannoolal.decompose,
+}
 
 
 def decompose_smiles() -> None:
@@ -40,7 +45,8 @@ def decompose_smiles() -> None:
         "-m",
         "--method",
         default="gani",
-        metavar="METHOD",
+        type=str.casefold,
+        choices=DECOMPOSERS,
         help="Group-contribution method to use (default: gani).",
     )
     parser.add_argument(
@@ -58,10 +64,7 @@ def decompose_smiles() -> None:
     if args.name and (not args.smiles or len(args.name) != len(args.smiles)):
         parser.error("Provide exactly one --name for each --smiles string.")
 
-    if args.method.casefold() == "gani":
-        decompose = gcm.gani.decompose
-    else:
-        parser.error(f"Unsupported method: {args.method}")
+    decompose = DECOMPOSERS[args.method]
 
     labels: list[str] = []
     smiles_list: list[str] = []

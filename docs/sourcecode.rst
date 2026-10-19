@@ -23,6 +23,8 @@ FuelLib File Organization
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
         - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM; hydrocarbon families are read from ``refCompounds.csv`` via the fuel's ``compoundsData``
         - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
+        - ``nannoolal.py``: Nannoolal et al. (2009) viscosity group contributions (``dBv``, ``Tv``) registered against the ``nannoolal`` GCM, and automated SMILES decomposition into Nannoolal groups
+        - ``nannoolal.csv``: group-contribution coefficient table used by ``nannoolal.py``
 
     - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
         - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity, flash point, lower heating value)
@@ -36,6 +38,7 @@ FuelLib File Organization
 
         - ``refCompounds.csv``: reference compounds (``Family``, ``Carbon Number``, ``Reference Compound``, ``SMILES``) and their optional measured properties (``{Property}_Value``, ``_Error``, ``_Units``, ``_Source``, ``_Notes``)
         - ``refGani.csv``: functional group decompositions of the reference compounds
+        - ``refNannoolal.csv``: Nannoolal group decompositions of the reference compounds
         - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages (``{fuel_name}.csv``)
         - **propertiesData:** directory containing measurement or predicted data used for validation
         - ``fuel_metadata.yaml``: YAML file with source information and other optional metadata for each fuel
@@ -65,6 +68,7 @@ FuelLib File Organization
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
     - ``test_gcm_gani.py``: unit tests for the ``gani`` GCM, including comparison of RDKit SMILES decompositions with ``refGani.csv``.
+    - ``test_gcm_nannoolal.py``: unit tests for the ``nannoolal`` GCM, including comparison of RDKit SMILES decompositions with ``refNannoolal.csv`` and the Nannoolal viscosity correlations.
     - ``test_cli_decomp_smiles.py``: unit tests for the ``fl-decomp-smiles`` command.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
@@ -96,6 +100,7 @@ Click on links below for the full auto-documentation of the API.
     fuellib.gcm.core
     fuellib.gcm.gani
     fuellib.gcm.boehm
+    fuellib.gcm.nannoolal
     fuellib.rdk.mol
     fuellib.correlate.components
     fuellib.correlate.mixture

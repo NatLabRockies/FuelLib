@@ -52,6 +52,18 @@ def test_reads_input_file(monkeypatch, capsys, tmp_path):
     assert lines[-1].split() == ["n-heptane", "2", "5"]
 
 
+def test_nannoolal_method(monkeypatch, capsys):
+    """The CLI should decompose with the Nannoolal method when requested."""
+    monkeypatch.setattr(
+        sys, "argv", ["fl-decomp-smiles", "-s", "CCCCCC", "-m", "nannoolal"]
+    )
+
+    decompose_smiles()
+    lines = capsys.readouterr().out.splitlines()
+    assert lines[0].split() == ["CH3-(ne)", "-C(c)H2-"]
+    assert lines[-1].split() == ["CCCCCC", "2", "4"]
+
+
 @pytest.mark.parametrize(
     "arguments",
     [
