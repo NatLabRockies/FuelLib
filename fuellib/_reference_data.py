@@ -113,11 +113,11 @@ def load_ref_gani(path: str | Path | None, data_dir: Path) -> DataFrame:
         return default_data
 
     custom_data = pd.read_csv(custom_path)
-    if "Common_Name" not in custom_data.columns:
+    if "Reference Compound" not in custom_data.columns:
         return pd.concat([default_data, custom_data], ignore_index=True, sort=False)
 
     bundled_rows = default_data.loc[
-        ~default_data["Common_Name"].isin(custom_data["Common_Name"])
+        ~default_data["Reference Compound"].isin(custom_data["Reference Compound"])
     ]
     return pd.concat([bundled_rows, custom_data], ignore_index=True, sort=False)
 

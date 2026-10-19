@@ -7,6 +7,9 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Changed
+- Updated naming consistencies in `data/`.
+
 ## [3.0.8a3] - 2026-10-15
 
 ### Added
@@ -64,7 +67,8 @@ release workflow to parse release entries in this file.
 - Custom ``refCompounds.csv`` and ``refGani.csv`` files now augment the bundled
   reference tables rather than replace them. Custom compound rows override bundled
   rows with the same InChI; custom Gani rows override bundled rows with the same
-  ``Common_Name``.
+  ``Reference Compound``. The ``Common_Name`` column in ``refGani.csv`` was renamed
+  to ``Reference Compound``.
 - `propertiesData` .csv files store Temperature vs. Value entries in individual rows rather than in a matrix format to enable non-Temperature dependent properties to be stored (e.g., "FreezePoint", "FlashPoint", ...) by setting Temp to "NaN".
   * `test_accuracy.py` and `generate_baseline.py` updated to respect this change; `test_accuracy.py` imports `method_map` from `baselinePredictions.generate_baseline` so that the same methods are used to generate and test predictions, and reads known values as `Baseline_Value - Baseline_Error` (`Baseline_Error` is prediction minus known).
   * Baseline predictions stored in `tests/baselinePredictions/mixture_baseline.csv` rather than individual per-fuel files.

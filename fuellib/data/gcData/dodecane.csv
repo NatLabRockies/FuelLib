@@ -1,2 +1,2 @@
-GC-Bin,SMILES,Weight %
-n-C12,CCCCCCCCCCCC,100
+GC-Bin,Reference Compound,SMILES,Weight %
+n-C12,n-dodecane,CCCCCCCCCCCC,100

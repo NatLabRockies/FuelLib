@@ -62,7 +62,7 @@ Reference Compounds and Group Decompositions
 Every compound in a fuel must appear in both effective reference tables. To add a new compound, add a row to each custom table:
 
 - ``refCompounds.csv``: ``Family``, ``Carbon Number``, ``Reference Compound``, and ``SMILES`` are required. ``Family`` must be one of ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``, ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. Measured properties are optional; see :ref:`sec-reference-properties`. A custom row replaces a built-in row when the two SMILES values resolve to the same InChI, so use this to override built-in properties even when the valid SMILES representation differs.
-- ``refGani.csv``: the functional group decomposition of the compound, with ``Common_Name`` equal to the ``Reference Compound`` in ``refCompounds.csv``. A custom row with the same ``Common_Name`` replaces the built-in decomposition. Groups that are omitted or blank are treated as zero.
+- ``refGani.csv``: the functional group decomposition of the compound, with a ``Reference Compound`` column matching ``refCompounds.csv``. A custom row with the same ``Reference Compound`` replaces the built-in decomposition. Groups that are omitted or blank are treated as zero.
 
 See the `Basic Usage tutorial <tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups>`_ for detailed information on group decompositions.
 
