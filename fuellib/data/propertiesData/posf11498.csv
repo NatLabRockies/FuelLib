@@ -1,44 +1,58 @@
-Temp,Temp_Units,Property,Property_Units,Property_Value
-5,celsius,Density,g/cm^3,0.7662
-15,celsius,Density,g/cm^3,0.7597
-25,celsius,Density,g/cm^3,0.7525
-35,celsius,Density,g/cm^3,0.7454
-45,celsius,Density,g/cm^3,0.7381
-55,celsius,Density,g/cm^3,0.7309
-65,celsius,Density,g/cm^3,0.7236
-75,celsius,Density,g/cm^3,0.7162
-85,celsius,Density,g/cm^3,0.7089
-0,celsius,VaporPressure,psi,0.01
-20,celsius,VaporPressure,psi,0.07
-40,celsius,VaporPressure,psi,0.1
-60,celsius,VaporPressure,psi,0.37
-80,celsius,VaporPressure,psi,0.73
-100,celsius,VaporPressure,psi,1.43
-120,celsius,VaporPressure,psi,2.75
--40,celsius,Viscosity,mm^2/s,9.89
--20,celsius,Viscosity,mm^2/s,5
-25,celsius,Viscosity,mm^2/s,1.9
-40,celsius,Viscosity,mm^2/s,1.53
--10,celsius,SurfaceTension,dynes/cm,24.7
-22,celsius,SurfaceTension,dynes/cm,23.4
-40,celsius,SurfaceTension,dynes/cm,21
--10,celsius,HeatCapacity,kJ/kg/K,1.84
-0,celsius,HeatCapacity,kJ/kg/K,2.88
-10,celsius,HeatCapacity,kJ/kg/K,1.92
-20,celsius,HeatCapacity,kJ/kg/K,1.96
-30,celsius,HeatCapacity,kJ/kg/K,1.99
-40,celsius,HeatCapacity,kJ/kg/K,2.03
-50,celsius,HeatCapacity,kJ/kg/K,2.07
-60,celsius,HeatCapacity,kJ/kg/K,2.11
-70,celsius,HeatCapacity,kJ/kg/K,2.15
-80,celsius,HeatCapacity,kJ/kg/K,2.27
-90,celsius,HeatCapacity,kJ/kg/K,2.31
-100,celsius,HeatCapacity,kJ/kg/K,2.35
-110,celsius,HeatCapacity,kJ/kg/K,2.39
-120,celsius,HeatCapacity,kJ/kg/K,2.43
-130,celsius,HeatCapacity,kJ/kg/K,2.47
-140,celsius,HeatCapacity,kJ/kg/K,2.52
-NaN,celsius,DerivedCetaneNumber,dimensionless,17.1
-NaN,celsius,FlashPoint,celsius,49.5
-NaN,celsius,SmokePoint,mm,34.5
-NaN,celsius,HeatOfCombustion,MJ/kg,43.823
+Temp,Temp_Units,Property,Property_Units,Property_Value,
+5,celsius,Density,g/cm^3,0.7662,NJFCP (SwRI)
+15,celsius,Density,g/cm^3,0.7597,NJFCP (SwRI)
+25,celsius,Density,g/cm^3,0.7525,NJFCP (SwRI)
+35,celsius,Density,g/cm^3,0.7454,NJFCP (SwRI)
+45,celsius,Density,g/cm^3,0.7381,NJFCP (SwRI)
+55,celsius,Density,g/cm^3,0.7309,NJFCP (SwRI)
+65,celsius,Density,g/cm^3,0.7236,NJFCP (SwRI)
+75,celsius,Density,g/cm^3,0.7162,NJFCP (SwRI)
+85,celsius,Density,g/cm^3,0.7089,NJFCP (SwRI)
+0,celsius,VaporPressure,psi,0.01,NJFCP (SwRI)
+20,celsius,VaporPressure,psi,0.07,NJFCP (SwRI)
+40,celsius,VaporPressure,psi,0.1,NJFCP (SwRI)
+60,celsius,VaporPressure,psi,0.37,NJFCP (SwRI)
+80,celsius,VaporPressure,psi,0.73,NJFCP (SwRI)
+100,celsius,VaporPressure,psi,1.43,NJFCP (SwRI)
+120,celsius,VaporPressure,psi,2.75,NJFCP (SwRI)
+-40,celsius,Viscosity,mm^2/s,9.89,NJFCP (SwRI)
+-20,celsius,Viscosity,mm^2/s,5,NJFCP (SwRI)
+25,celsius,Viscosity,mm^2/s,1.9,NJFCP (SwRI)
+40,celsius,Viscosity,mm^2/s,1.53,NJFCP (SwRI)
+-10,celsius,SurfaceTension,dynes/cm,24.7,NJFCP (SwRI)
+22,celsius,SurfaceTension,dynes/cm,23.4,NJFCP (SwRI)
+40,celsius,SurfaceTension,dynes/cm,21,NJFCP (SwRI)
+-10,celsius,HeatCapacity,kJ/kg/K,1.84,NJFCP (SwRI)
+0,celsius,HeatCapacity,kJ/kg/K,2.88,NJFCP (SwRI)
+10,celsius,HeatCapacity,kJ/kg/K,1.92,NJFCP (SwRI)
+20,celsius,HeatCapacity,kJ/kg/K,1.96,NJFCP (SwRI)
+30,celsius,HeatCapacity,kJ/kg/K,1.99,NJFCP (SwRI)
+40,celsius,HeatCapacity,kJ/kg/K,2.03,NJFCP (SwRI)
+50,celsius,HeatCapacity,kJ/kg/K,2.07,NJFCP (SwRI)
+60,celsius,HeatCapacity,kJ/kg/K,2.11,NJFCP (SwRI)
+70,celsius,HeatCapacity,kJ/kg/K,2.15,NJFCP (SwRI)
+80,celsius,HeatCapacity,kJ/kg/K,2.27,NJFCP (SwRI)
+90,celsius,HeatCapacity,kJ/kg/K,2.31,NJFCP (SwRI)
+100,celsius,HeatCapacity,kJ/kg/K,2.35,NJFCP (SwRI)
+110,celsius,HeatCapacity,kJ/kg/K,2.39,NJFCP (SwRI)
+120,celsius,HeatCapacity,kJ/kg/K,2.43,NJFCP (SwRI)
+130,celsius,HeatCapacity,kJ/kg/K,2.47,NJFCP (SwRI)
+140,celsius,HeatCapacity,kJ/kg/K,2.52,NJFCP (SwRI)
+NaN,celsius,DerivedCetaneNumber,dimensionless,17.1,NJFCP (SwRI)
+NaN,celsius,FlashPoint,celsius,49.5,NJFCP (SwRI)
+NaN,celsius,SmokePoint,mm,34.5,NJFCP (SwRI)
+NaN,celsius,HeatOfCombustion,MJ/kg,43.823,NJFCP (SwRI)
+174.3,celsius,Distillation,percentage,0,NJFCP (SwRI)
+178.1,celsius,Distillation,percentage,5,NJFCP (SwRI)
+178.9,celsius,Distillation,percentage,10,NJFCP (SwRI)
+179,celsius,Distillation,percentage,15,NJFCP (SwRI)
+179.3,celsius,Distillation,percentage,20,NJFCP (SwRI)
+180.4,celsius,Distillation,percentage,30,NJFCP (SwRI)
+181.2,celsius,Distillation,percentage,40,NJFCP (SwRI)
+183.3,celsius,Distillation,percentage,50,NJFCP (SwRI)
+184.8,celsius,Distillation,percentage,60,NJFCP (SwRI)
+187.6,celsius,Distillation,percentage,70,NJFCP (SwRI)
+195.5,celsius,Distillation,percentage,80,NJFCP (SwRI)
+224.4,celsius,Distillation,percentage,90,NJFCP (SwRI)
+245.8,celsius,Distillation,percentage,95,NJFCP (SwRI)
+263.5,celsius,Distillation,percentage,100,NJFCP (SwRI)
