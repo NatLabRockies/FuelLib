@@ -1,47 +1,61 @@
-Temp,Temp_Units,Property,Property_Units,Property_Value
--40,celsius,Density,g/cm^3,0.822975
--20,celsius,Density,g/cm^3,0.8086
-0,celsius,Density,g/cm^3,0.794225
-20,celsius,Density,g/cm^3,0.77985
-40,celsius,Density,g/cm^3,0.765283333
-0,celsius,VaporPressure,kPa,0.04835033
-20,celsius,VaporPressure,kPa,0.628554285
-40,celsius,VaporPressure,kPa,1.402159558
-60,celsius,VaporPressure,kPa,3.432873401
-80,celsius,VaporPressure,kPa,7.397600428
-100,celsius,VaporPressure,kPa,14.60179954
-120,celsius,VaporPressure,kPa,26.59268128
--40,celsius,Viscosity,mm^2/s,6.6
--20,celsius,Viscosity,mm^2/s,3.5
-40,celsius,Viscosity,mm^2/s,1.14
-100,celsius,Viscosity,mm^2/s,0.61
--10,celsius,SurfaceTension,N/m,0.0258
-22,celsius,SurfaceTension,N/m,0.0238
-40,celsius,SurfaceTension,N/m,0.0228
-0,celsius,ThermalConductivity,W/m/K,0.129038462
-30,celsius,ThermalConductivity,W/m/K,0.124038462
-40,celsius,ThermalConductivity,W/m/K,0.12
-60,celsius,ThermalConductivity,W/m/K,0.116153846
--10,celsius,HeatCapacity,kJ/kg/K,2.018461485
-0,celsius,HeatCapacity,kJ/kg/K,2.047461358
-10,celsius,HeatCapacity,kJ/kg/K,2.07898547
-20,celsius,HeatCapacity,kJ/kg/K,2.11025023
-30,celsius,HeatCapacity,kJ/kg/K,2.13774594
-40,celsius,HeatCapacity,kJ/kg/K,2.18032366
-50,celsius,HeatCapacity,kJ/kg/K,2.21013612
-60,celsius,HeatCapacity,kJ/kg/K,2.24866239
-70,celsius,HeatCapacity,kJ/kg/K,2.28799548
-80,celsius,HeatCapacity,kJ/kg/K,2.32905174
-90,celsius,HeatCapacity,kJ/kg/K,2.36824652
-100,celsius,HeatCapacity,kJ/kg/K,2.4095333
-110,celsius,HeatCapacity,kJ/kg/K,2.44825551
-120,celsius,HeatCapacity,kJ/kg/K,2.48820526
-130,celsius,HeatCapacity,kJ/kg/K,2.52931339
-140,celsius,HeatCapacity,kJ/kg/K,2.56860038
-150,celsius,HeatCapacity,kJ/kg/K,2.60919559
-160,celsius,HeatCapacity,kJ/kg/K,2.66087899
-NaN,celsius,DerivedCetaneNumber,dimensionless,48.8
-NaN,celsius,FlashPoint,celsius,42
-NaN,celsius,FreezePoint,celsius,-52
-NaN,celsius,SmokePoint,mm,28.5
-NaN,celsius,HeatOfCombustion,MJ/kg,43.239
+Temp,Temp_Units,Property,Property_Units,Property_Value,Source
+-40,celsius,Density,g/cm^3,0.822975,Edwards 2020 (Fig. 14 SwRI)
+-20,celsius,Density,g/cm^3,0.8086,Edwards 2020 (Fig. 14 SwRI)
+0,celsius,Density,g/cm^3,0.794225,Edwards 2020 (Fig. 14 SwRI)
+20,celsius,Density,g/cm^3,0.77985,Edwards 2020 (Fig. 14 SwRI)
+40,celsius,Density,g/cm^3,0.765283333,Edwards 2020 (Fig. 14 SwRI)
+0,celsius,VaporPressure,kPa,0.04835033,Edwards 2017 (Fig. 16)
+20,celsius,VaporPressure,kPa,0.628554285,Edwards 2017 (Fig. 16)
+40,celsius,VaporPressure,kPa,1.402159558,Edwards 2017 (Fig. 16)
+60,celsius,VaporPressure,kPa,3.432873401,Edwards 2017 (Fig. 16)
+80,celsius,VaporPressure,kPa,7.397600428,Edwards 2017 (Fig. 16)
+100,celsius,VaporPressure,kPa,14.60179954,Edwards 2017 (Fig. 16)
+120,celsius,VaporPressure,kPa,26.59268128,Edwards 2017 (Fig. 16)
+-40,celsius,Viscosity,mm^2/s,6.6,Edwards 2017 (Table A-3)
+-20,celsius,Viscosity,mm^2/s,3.5,Edwards 2017 (Table A-3)
+40,celsius,Viscosity,mm^2/s,1.14,Edwards 2017 (Table A-3)
+100,celsius,Viscosity,mm^2/s,0.61,Edwards 2017 (Table A-3)
+-10,celsius,SurfaceTension,N/m,0.0258,Edwards 2017 (Table A-3 SwRI)
+22,celsius,SurfaceTension,N/m,0.0238,Edwards 2017 (Table A-3 SwRI)
+40,celsius,SurfaceTension,N/m,0.0228,Edwards 2017 (Table A-3 SwRI)
+0,celsius,ThermalConductivity,W/m/K,0.129038462,Edwards 2020 (Fig. 82)
+30,celsius,ThermalConductivity,W/m/K,0.124038462,Edwards 2020 (Fig. 82)
+40,celsius,ThermalConductivity,W/m/K,0.12,Edwards 2020 (Fig. 82)
+60,celsius,ThermalConductivity,W/m/K,0.116153846,Edwards 2020 (Fig. 82)
+-10,celsius,HeatCapacity,kJ/kg/K,2.018461485,Edwards 2017 (Table A-4 SwRI)
+0,celsius,HeatCapacity,kJ/kg/K,2.047461358,Edwards 2017 (Table A-4 SwRI)
+10,celsius,HeatCapacity,kJ/kg/K,2.07898547,Edwards 2017 (Table A-4 SwRI)
+20,celsius,HeatCapacity,kJ/kg/K,2.11025023,Edwards 2017 (Table A-4 SwRI)
+30,celsius,HeatCapacity,kJ/kg/K,2.13774594,Edwards 2017 (Table A-4 SwRI)
+40,celsius,HeatCapacity,kJ/kg/K,2.18032366,Edwards 2017 (Table A-4 SwRI)
+50,celsius,HeatCapacity,kJ/kg/K,2.21013612,Edwards 2017 (Table A-4 SwRI)
+60,celsius,HeatCapacity,kJ/kg/K,2.24866239,Edwards 2017 (Table A-4 SwRI)
+70,celsius,HeatCapacity,kJ/kg/K,2.28799548,Edwards 2017 (Table A-4 SwRI)
+80,celsius,HeatCapacity,kJ/kg/K,2.32905174,Edwards 2017 (Table A-4 SwRI)
+90,celsius,HeatCapacity,kJ/kg/K,2.36824652,Edwards 2017 (Table A-4 SwRI)
+100,celsius,HeatCapacity,kJ/kg/K,2.4095333,Edwards 2017 (Table A-4 SwRI)
+110,celsius,HeatCapacity,kJ/kg/K,2.44825551,Edwards 2017 (Table A-4 SwRI)
+120,celsius,HeatCapacity,kJ/kg/K,2.48820526,Edwards 2017 (Table A-4 SwRI)
+130,celsius,HeatCapacity,kJ/kg/K,2.52931339,Edwards 2017 (Table A-4 SwRI)
+140,celsius,HeatCapacity,kJ/kg/K,2.56860038,Edwards 2017 (Table A-4 SwRI)
+150,celsius,HeatCapacity,kJ/kg/K,2.60919559,Edwards 2017 (Table A-4 SwRI)
+160,celsius,HeatCapacity,kJ/kg/K,2.66087899,Edwards 2017 (Table A-4 SwRI)
+NaN,celsius,DerivedCetaneNumber,dimensionless,48.8,Edwards 2017 (Table A-3)
+NaN,celsius,FlashPoint,celsius,42,Edwards 2017 (Table A-3)
+NaN,celsius,FreezePoint,celsius,-52,Edwards 2017 (Table A-3)
+NaN,celsius,SmokePoint,mm,28.5,Edwards 2017 (Table A-3)
+NaN,celsius,HeatOfCombustion,MJ/kg,43.239,Edwards 2017 (Table A-3 SwRI)
+150,celsius,Distillation,percentage,0,Edwards 2017 (Table A-3 SwRI)
+162.2,celsius,Distillation,percentage,5,Edwards 2017 (Table A-3 SwRI)
+164.3,celsius,Distillation,percentage,10,Edwards 2017 (Table A-3 SwRI)
+167.4,celsius,Distillation,percentage,15,Edwards 2017 (Table A-3 SwRI)
+171.1,celsius,Distillation,percentage,20,Edwards 2017 (Table A-3 SwRI)
+176.9,celsius,Distillation,percentage,30,Edwards 2017 (Table A-3 SwRI)
+183,celsius,Distillation,percentage,40,Edwards 2017 (Table A-3 SwRI)
+189.7,celsius,Distillation,percentage,50,Edwards 2017 (Table A-3 SwRI)
+197,celsius,Distillation,percentage,60,Edwards 2017 (Table A-3 SwRI)
+206.5,celsius,Distillation,percentage,70,Edwards 2017 (Table A-3 SwRI)
+218.5,celsius,Distillation,percentage,80,Edwards 2017 (Table A-3 SwRI)
+233.9,celsius,Distillation,percentage,90,Edwards 2017 (Table A-3 SwRI)
+245,celsius,Distillation,percentage,95,Edwards 2017 (Table A-3 SwRI)
+256.7,celsius,Distillation,percentage,100,Edwards 2017 (Table A-3 SwRI)
