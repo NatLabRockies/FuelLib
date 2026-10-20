@@ -18,10 +18,10 @@ def test_writes_named_decompositions(monkeypatch, capsys, tmp_path):
             "fl-decomp-smiles",
             "--smiles",
             "CCc1ccccc1",
-            "CCCCCCC",
+            "CC(C)CCCCC",
             "--name",
             "ethylbenzene",
-            "n-heptane",
+            "2-methylheptane",
             "--method",
             "gani",
             "--out",
@@ -36,8 +36,8 @@ def test_writes_named_decompositions(monkeypatch, capsys, tmp_path):
         rows = list(csv.DictReader(output_file))
     assert rows[0]["Reference Compound"] == "ethylbenzene"
     assert rows[0]["ACH"] == "5"
-    assert rows[1]["Reference Compound"] == "n-heptane"
-    assert rows[1]["CH2"] == "5"
+    assert rows[1]["Reference Compound"] == "2-methylheptane"
+    assert rows[1]["CH2"] == "4"
 
 
 def test_reads_input_file(monkeypatch, capsys, tmp_path):

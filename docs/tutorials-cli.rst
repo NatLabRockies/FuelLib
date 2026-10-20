@@ -78,7 +78,8 @@ Decompose SMILES strings into the Constantinou-Gani groups used in
 
 .. code-block:: bash
 
-    fl-decomp-smiles -s CCc1ccccc1 CCCCCCC -n ethylbenzene n-heptane
+    # Note that SMILES strings with branching or complex structures must be quoted to avoid interpretation issues.
+    fl-decomp-smiles -s CCc1ccccc1 "CC(C)CCCCC" -n ethylbenzene 2-methylheptane
     fl-decomp-smiles -i compounds.csv -o decomposition.csv
 
 Options:
