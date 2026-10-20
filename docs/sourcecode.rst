@@ -51,6 +51,7 @@ FuelLib File Organization
         - ``transport_props_converter.py``: transport properties conversion utilities
         - ``plotting.py``: plotting utilities for composition and properties
         - ``fuel_manager.py``: fuel manager utility
+        - ``decomp_smiles.py``: SMILES group-decomposition utility (CLI: ``fl-decomp-smiles``)
         - ``build_docs.py``: documentation builder utility
         - ``clean_docs.py``: documentation cleaner utility
         - ``format_code.py``: code formatter utility
@@ -63,6 +64,8 @@ FuelLib File Organization
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
+    - ``test_gcm_gani.py``: unit tests for the ``gani`` GCM, including comparison of RDKit SMILES decompositions with ``refGani.csv``.
+    - ``test_cli_decomp_smiles.py``: unit tests for the ``fl-decomp-smiles`` command.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 

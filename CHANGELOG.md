@@ -7,8 +7,18 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Added
+- `gcm.gani.decompose` for automatically decomposing a SMILES string into Gani first- and second-order groups with RDKit SMARTS patterns, returning a single-row `DataFrame` of group counts.
+- `fl-decomp-smiles` command-line tool that decomposes SMILES strings (given directly with `--smiles`/`--name` or from a CSV with `--input`) using the selected `--method` (currently `gani`) and prints the counts or writes them to CSV with `--out`.
+- `fuellib.DEFAULT_DATA_DIR` exposing the path of the bundled `fuellib/data` directory.
+- Tests comparing RDKit decompositions of the reference compounds with `refGani.csv` and covering `fl-decomp-smiles`.
+
+### Known Issues
+- Automated Gani decompositions must be verified. For indene, the non-aromatic C=C bond is categorized as a `CH` group.
+
 ### Changed
 - Updated naming consistencies in `data/`.
+- `tutorials-basic.rst`, `tutorials-cli.rst`, `gcm.rst`, and `sourcecode.rst` document automatic SMILES decomposition and `fl-decomp-smiles`.
 
 ## [3.0.8a3] - 2026-10-15
 
