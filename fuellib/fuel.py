@@ -82,6 +82,7 @@ class Fuel:
         refCompoundsPath: str | Path | None = None,
         refGaniPath: str | Path | None = None,
         refNannoolalPath: str | Path | None = None,
+        refUnifacPath: str | Path | None = None,
         *,
         useRefProperties: bool = True,
     ) -> None:
@@ -101,6 +102,10 @@ class Fuel:
                 replaces rows with the same `Reference Compound`.
             refNannoolalPath: Path to the reference Nannoolal decomposition CSV file.
                 Defaults to `fuellib/data/refNannoolal.csv`. A custom table in
+                `fuelDataDir`, when present, is appended to the bundled table and
+                replaces rows with the same `Reference Compound`.
+            refUnifacPath: Path to the reference Unifac decomposition CSV file.
+                Defaults to `fuellib/data/refUnifac.csv`. A custom table in
                 `fuelDataDir`, when present, is appended to the bundled table and
                 replaces rows with the same `Reference Compound`.
             useRefProperties: Whether to use reference compound properties for
@@ -163,6 +168,10 @@ class Fuel:
             refNannoolalPath, self.fuelDataDir, method="Nannoolal"
         )
         """Reference Nannoolal group decompositions."""
+        self.refUnifac: DataFrame = load_ref_decomp(
+            refUnifacPath, self.fuelDataDir, method="Unifac"
+        )
+        """Reference Unifac group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(
             self.gcData, self.refCompounds, "referenceCompounds"
         )
@@ -192,6 +201,13 @@ class Fuel:
             .fillna(0)
         )
         """Nannoolal group decompositions for each matched compound."""
+
+        self.unifacDecomp: DataFrame = (
+            _match_gc_to_ref(self.compoundsData, self.refUnifac, "referenceUnifac")
+            .drop("Reference Compound", axis=1)
+            .fillna(0)
+        )
+        """Unifac group decompositions for each matched compound."""
 
         propFilePath = self.fuelDataDir / "propertiesData" / f"{name}.csv"
         self.propData: DataFrame | None = (

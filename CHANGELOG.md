@@ -19,6 +19,10 @@ release workflow to parse release entries in this file.
 - `fuellib.DEFAULT_DATA_DIR` exposing the path of the bundled `fuellib/data` directory.
 - Tests comparing RDKit decompositions of the reference compounds with `refGani.csv` and `refNannoolal.csv`, covering the Nannoolal viscosities, and covering `fl-decomp-smiles`.
 - Nannoolal et al. (2009) reference in `refs.bib`.
+- `correlate.distillation.distillation_curve_greenfield` simulating the ASTM D86 distillation curve with the Greenfield et al. (1998) macroscopic model (still pot, convectively cooled partial condenser, and air-filled CSTR) using UNIFAC activity and second-virial fugacity coefficients, with `D86Apparatus` for apparatus/procedure parameters and `D86Result` for the time histories and `temperature_at` interpolation. Dissolved air is not modeled.
+- `gcm.unifac.parameters` and `gcm.unifac.ln_gamma_x` for evaluating UNIFAC activity coefficients from mole fractions with plain NumPy arrays.
+- Tests for the D86 model, including a comparison with the measured Ford synfuel D86 curve of Greenfield et al. (1998).
+- Greenfield et al. (1998) reference in `refs.bib`.
 
 ### Known Issues
 - Automated Gani decompositions must be verified. For indene, the non-aromatic C=C bond is categorized as a `CH` group.

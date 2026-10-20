@@ -30,6 +30,7 @@ FuelLib File Organization
         - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity, flash point, lower heating value)
         - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion, yield sooting index, derived cetane number)
         - ``helpers.py``: shared helper functions for mixing rules and mass/mole fraction conversions
+        - ``distillation.py``: simulation of the ASTM D86 distillation curve with the Greenfield et al. (1998) macroscopic model
 
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
@@ -105,3 +106,4 @@ Click on links below for the full auto-documentation of the API.
     fuellib.correlate.components
     fuellib.correlate.mixture
     fuellib.correlate.helpers
+    fuellib.correlate.distillation

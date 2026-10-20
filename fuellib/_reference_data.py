@@ -97,25 +97,30 @@ def load_ref_compounds(path: str | Path | None, data_dir: Path) -> DataFrame:
 
 
 def load_ref_decomp(
-    path: str | Path | None, data_dir: Path, method: Literal["Gani", "Nannoolal"]
+    path: str | Path | None,
+    data_dir: Path,
+    method: Literal["Gani", "Nannoolal", "Unifac"],
 ) -> DataFrame:
     """Load bundled Gani or Nannoolal decompositions and apply name-based overrides.
 
     Args:
         path: Explicit custom Gani or Nannoolal decomposition file, if provided.
         data_dir: Directory containing custom fuel data.
-        method: Decomposition method, either "Gani" or "Nannoolal".
+        method: Decomposition method, either "Gani", "Nannoolal", or "Unifac".
 
     Returns:
-        The bundled Gani or Nannoolal decomposition table with custom additions and
-        overrides.
+        The bundled Gani, Nannoolal, or Unifac decomposition table with custom additions
+        and overrides.
     """
     if method == "Gani":
         default_path = DEFAULT_DATA_DIR / "refGani.csv"
         custom_path = _resolve_ref_path(path, data_dir, "refGani.csv")
-    else:  # method == "Nannoolal"
+    elif method == "Nannoolal":  # method == "Nannoolal"
         default_path = DEFAULT_DATA_DIR / "refNannoolal.csv"
         custom_path = _resolve_ref_path(path, data_dir, "refNannoolal.csv")
+    elif method == "Unifac":
+        default_path = DEFAULT_DATA_DIR / "refUnifac.csv"
+        custom_path = _resolve_ref_path(path, data_dir, "refUnifac.csv")
 
     default_data = pd.read_csv(default_path)
 

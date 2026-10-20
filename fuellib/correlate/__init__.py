@@ -1,5 +1,5 @@
 """FuelLib correlation functions."""
 
-from . import components, helpers, mixture
+from . import components, distillation, helpers, mixture
 
-__all__ = ["components", "helpers", "mixture"]
+__all__ = ["components", "distillation", "helpers", "mixture"]
