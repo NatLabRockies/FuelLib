@@ -1,5 +1,8 @@
 """Test cases for the Group Contribution Method (GCM) module in FuelLib."""
 
+from pathlib import Path
+
+import csv
 import unittest
 from types import SimpleNamespace
 from typing import cast
@@ -11,6 +14,7 @@ import pytest
 import fuellib as fl
 from fuellib.fuel import Fuel
 from fuellib.gcm import GCMRegistry, gani_gcm
+from fuellib.gcm.gani import decompose
 from fuellib.gcm.gani import (
     Cp_B,
     Cp_C,
@@ -31,6 +35,7 @@ from fuellib.gcm.gani import (
     rd_D,
 )
 from fuellib.utils import Units
+from fuellib import DEFAULT_DATA_DIR
 
 
 class GCMCoreTestCase(unittest.TestCase):
@@ -223,6 +228,56 @@ class GaniHelperFunctionTestCase(unittest.TestCase):
         decomp = _get_decomp(fuel)
         self.assertIsInstance(decomp, np.ndarray)
         self.assertEqual(decomp.shape, (fuel.num_compounds, len(TABLE.columns)))
+
+
+class GaniReferenceDecompositionTestCase(unittest.TestCase):
+    """Verify RDKit CG decompositions against the bundled reference data."""
+
+    def test_reference_decomposition(self):
+        """Test that the RDKit decomposition matches tabulated Gani data."""
+        df_refs = pd.read_csv(Path(DEFAULT_DATA_DIR) / "refCompounds.csv")
+        df_gani = pd.read_csv(
+            Path(DEFAULT_DATA_DIR) / "refGani.csv", skipinitialspace=True
+        )
+        df_gani.columns = df_gani.columns.str.strip()
+        df_gani["Reference Compound"] = df_gani["Reference Compound"].str.strip()
+        df_gani = df_gani.set_index("Reference Compound")
+        rows = {}
+
+        for name, smiles in zip(
+            df_refs["Reference Compound"], df_refs["SMILES"], strict=True
+        ):
+            counts = decompose(smiles).iloc[0]
+            counts = counts[counts != 0]
+            missing_groups = counts.index.difference(df_gani.columns)
+            if len(missing_groups):
+                raise KeyError(
+                    f"Groups {list(missing_groups)} not found in refGani columns"
+                )
+            rows[name] = counts.reindex(df_gani.columns, fill_value=0)
+
+        df_new = pd.DataFrame.from_dict(rows, orient="index", columns=df_gani.columns)
+        df_new.index.name = "Reference Compound"
+
+        # Compare against tabulated values
+        common = df_new.index.intersection(df_gani.index)
+        missing = df_new.index.difference(df_gani.index)
+        if len(missing):
+            print("Compounds not in refGani:", list(missing))
+
+        diff = df_new.loc[common] - df_gani.loc[common].astype(int)
+        mismatched = diff.index[(diff != 0).any(axis=1)]
+        print(f"{len(common) - len(mismatched)}/{len(common)} compounds match refGani.")
+        for name in mismatched:
+            cols = diff.columns[diff.loc[name] != 0]
+            print(
+                f"\n{name} ({df_refs.set_index('Reference Compound').loc[name, 'SMILES']}):"
+            )
+            for col in cols:
+                print(
+                    f"  {col}: computed={df_new.loc[name, col]}, "
+                    f"tabulated={df_gani.loc[name, col]}"
+                )
 
 
 if __name__ == "__main__":

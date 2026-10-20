@@ -70,6 +70,34 @@ Quick listing of available fuels:
     fl-fuels                   # List fuels shipped with FuelLib
     fl-fuels -dir customFuels  # List custom fuels
 
+SMILES Decomposition
+~~~~~~~~~~~~~~~~~~~~
+
+Decompose SMILES strings into the Constantinou-Gani groups used in
+``refGani.csv``:
+
+.. code-block:: bash
+
+    # Note that SMILES strings with branching or complex structures must be quoted to avoid interpretation issues.
+    fl-decomp-smiles -s CCc1ccccc1 "CC(C)CCCCC" -n ethylbenzene 2-methylheptane
+    fl-decomp-smiles -i compounds.csv -o decomposition.csv
+
+Options:
+
+- ``-s``/``--smiles``: one or more SMILES strings to decompose.
+- ``-n``/``--name``: optional ``Reference Compound`` names, exactly one for each
+  SMILES string given with ``--smiles``.
+- ``-i``/``--input``: CSV file with a ``SMILES`` column and an optional
+  ``Reference Compound`` column.
+- ``-m``/``--method``: group-contribution method (default and currently only
+  option: ``gani``).
+- ``-o``/``--out``: CSV file for the counts. Without it, the nonzero group
+  counts are printed.
+
+.. warning::
+    Verify the decompositions before use. A known shortcoming is indene, where
+    the non-aromatic C=C bond is categorized as a ``CH`` group.
+
 Export for CFD
 ~~~~~~~~~~~~~~
 

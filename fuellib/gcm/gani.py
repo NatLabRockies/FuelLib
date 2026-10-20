@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Annotated
 
 import numpy as np
 import pandas as pd
+from rdkit import Chem
 
 from ..utils import Units, types
 from .core import GCMRegistry
@@ -68,6 +69,126 @@ def _check_compatible_dims(
             f", but group decomposition matrix has {Aij.shape[1]} columns."
         )
         raise ValueError(msg)
+
+
+# Groups organized by priority (highest to lowest)
+order1_groups = [
+    ("ACCH3", "c-[CH3]"),
+    ("ACCH2", "c-[CH2]"),
+    ("ACCH", "c-[CH1]"),
+    ("ACH", "[cH1]"),
+    ("AC", "[cH0]"),
+    ("CH#C", "[CH1]#[CH0]"),
+    ("C#C", "[CH0]#[CH0]"),
+    ("CH2=C=CH", "[CH2]=[CH0]=[CH1]"),
+    ("CH2=CH", "[CH2]=[CH1]"),
+    ("CH2=C", "[CH2]=[CH0]"),
+    ("CH=CH", "[CH1]=[CH1]"),
+    ("CH=C", "[CH1]=[CH0]"),
+    ("CH3", "[CH3]"),
+    ("CH2", "[CH2]"),
+    ("CH", "[CH1]"),
+    ("C", "[CH0]"),
+]
+order2_groups = [
+    ("CH3CH3", "[CH3][CH3]"),
+    ("CHn=CHm—CHp=CHk k,n,m,p in (0,2)", "[C;H0,H2]=[C;H0,H2][C;H0,H2]=[C;H0,H2]"),
+    ("CH3-CHm=CH, m in (0,1), n in (0,2)", "[CH3][C;H0,H1]=[C;H0,H2]"),
+    ("CH2-CHm=CHn, m, n in (0,2)", "[CH2][C;H0,H2]=[C;H0,H2]"),
+    ("CH-CHm=CHn or C-CHm=CHn, m,n m in (0,2)", "[CH1][C;H0,H2]=[C;H0,H2]"),
+    ("CH-CHm=CHn or C-CHm=CHn, m,n m in (0,2)", "[CH0][C;H0,H2]=[C;H0,H2]"),
+    ("C(CH3)2C(CH3)2", "[C]([CH3])([CH3])[C]([CH3])([CH3])"),
+    ("CH(CH3)C(CH3)2", "[CH1]([CH3])[C]([CH3])([CH3])"),
+    ("CH(CH3)CH(CH3)", "[CH1]([CH3])[CH1]([CH3])"),
+    ("(CH3)2CH", "[CH3][CH1]([CH3])"),
+    ("(CH3)3C", "[CH3][C]([CH3])([CH3])"),
+]
+
+
+def decompose(smiles: str) -> pd.DataFrame:
+    """Decompose a molecule into first and second order groups based on SMARTS patterns.
+
+    Args:
+        smiles: The SMILES string of the molecule to decompose.
+
+    Returns:
+        A single-row DataFrame indexed by the SMILES string, with a column for every
+        group in the GCM table containing the number of occurrences of that group.
+
+    Raises:
+        ValueError: If the SMILES string cannot be parsed or if not all atoms are
+            matched to first order groups.
+        KeyError: If a matched group is not a column of the GCM table.
+    """
+    mol = Chem.MolFromSmiles(smiles)
+    if not mol:
+        raise ValueError(f"Error parsing SMILES: {smiles}")
+
+    atom_count = mol.GetNumAtoms()
+    matched = set()
+    group1_matches = dict()
+
+    for group, smarts in order1_groups:
+        query = Chem.MolFromSmarts(smarts)
+        if not query:
+            msg = f"Error parsing SMARTS pattern: {smarts}"
+            raise ValueError(msg)
+
+        matches = mol.GetSubstructMatches(query)
+        for match in matches:
+            if any(atom_id in matched for atom_id in match):
+                continue
+
+            matched.update(match)
+            group1_matches.setdefault(group, []).append(set(match))
+
+    if len(matched) != atom_count:
+        msg = (
+            "Not all atoms were matched to first order groups."
+            f"Matched {len(matched)} out of {atom_count} atoms."
+        )
+        raise ValueError(msg)
+
+    matched = set()
+    group2_matches = dict()
+
+    for group, smarts in order2_groups:
+        query = Chem.MolFromSmarts(smarts)
+        if not query:
+            msg = f"Error parsing SMARTS pattern: {smarts}"
+            raise ValueError(msg)
+
+        matches = mol.GetSubstructMatches(query)
+        for match in matches:
+            if any(atom_id in matched for atom_id in match):
+                continue
+
+            matched.update(match)
+            group2_matches.setdefault(group, []).append(set(match))
+
+    # Count each non-aromatic ring once (rings may share atoms in fused systems)
+    ring_info = mol.GetRingInfo()
+    for atom_ring, bond_ring in zip(
+        ring_info.AtomRings(), ring_info.BondRings(), strict=True
+    ):
+        if len(atom_ring) > 7 or all(
+            mol.GetBondWithIdx(b).GetIsAromatic() for b in bond_ring
+        ):
+            continue
+        group = f"{len(atom_ring)} membered ring"
+        group2_matches.setdefault(group, []).append(set(atom_ring))
+
+    invalid = (group1_matches.keys() | group2_matches.keys()) - set(TABLE.columns)
+    if invalid:
+        msg = f"Groups not found in GCM table columns: {sorted(invalid)}"
+        raise KeyError(msg)
+
+    df = pd.DataFrame(0, index=[smiles], columns=TABLE.columns)
+    for group_matches in (group1_matches, group2_matches):
+        for group, matches in group_matches.items():
+            df.loc[smiles, group] += len(matches)
+
+    return df
 
 
 @gani_gcm.register_property
