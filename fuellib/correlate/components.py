@@ -6,6 +6,8 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from .. import constants
+from ..gcm.nannoolal import nannoolal_gcm
+from ..rdk import mol
 from ..utils import Units, types
 
 if TYPE_CHECKING:
@@ -51,7 +53,7 @@ def density(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
 
 
 def kinematic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
-    """Calculate the viscosity using Dutt's equation.
+    """Calculate the kinematic viscosity using Dutt's equation.
 
     Uses Dutt's equation (4.23) from "Viscosity of Liquids". The equation
     predicts viscosity in mm^2/s and is converted to SI units.
@@ -72,7 +74,7 @@ def kinematic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantit
 
 
 def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
-    """Calculate liquid dynamic viscosity based on droplet temperature and density.
+    """Calculate the dynamic viscosity using Dutt's equation.
 
     Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
 
@@ -86,6 +88,52 @@ def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1
     nu_i = kinematic_viscosity_dutt(fuel, T)
     rho_i = density(fuel, T)
     return (nu_i * rho_i).to("Pa*s")
+
+
+def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate the dynamic viscosity using Nannoolal (2009) GCM.
+
+    Uses equation (6) from Nannoolal (2009).
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+
+    Returns:
+        Component dynamic viscosities in Pa*s.
+    """
+    T_mag = T.to("kelvin").magnitude
+    Tb_mag = fuel.Tb.to("kelvin").magnitude
+    dBvi = nannoolal_gcm.predict("dBv", fuel).magnitude
+    Tvi = nannoolal_gcm.predict("Tv", fuel).magnitude
+    ni = np.array([
+        sum(n for atom, n in mol.atom_counts(m).items() if atom != "H")
+        for m in fuel.rdkit_mols
+    ])
+    dBvi = dBvi / (ni**-2.5635 + 0.0685) + 3.7777
+    Tvi = 21.8444 * np.sqrt(Tb_mag) + Tvi**0.9315 / (ni**0.6577 + 4.9259) - 231.1361
+    denom = T_mag - Tvi / 16.0
+    eta = 1.3e-3 * np.exp(-dBvi * (T_mag - Tvi) / denom)
+    return Units.Quantity(eta, "Pa*s")
+
+
+def kinematic_viscosity_nannoolal(
+    fuel: "Fuel", T: types.Quantity0D
+) -> types.Quantity1D:
+    """Calculate the kinematic viscosity using Nannoolal (2009) GCM.
+
+        Divides equation (6) from Nannoolal (2009) by density.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to calculate the kinematic viscosities.
+
+    Returns:
+        Component kinematic viscosities in m^2/s.
+    """
+    eta = dynamic_viscosity_nannoolal(fuel, T)
+    rho = density(fuel, T)
+    return (eta / rho).to("m^2/s")
 
 
 def molar_specific_heat_capacity(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:

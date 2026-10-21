@@ -29,7 +29,7 @@ Three pieces make up the abstraction, all defined in
    from fuellib.gcm import GCMRegistry
 
    GCMRegistry.list_methods()
-   # ['boehm', 'gani']
+   # ['boehm', 'gani', 'nannoolal']
 
    gani = GCMRegistry.get_gcm("gani")
    gani.list_property_fns()
@@ -198,6 +198,65 @@ of 56.5 J/mol/K.
 
    fuel.dS_fus   # Quantity1D in J/(mol*K), evaluated via boehm_gcm.predict("dS_fus", fuel)
 
+The ``nannoolal`` method
+------------------------
+
+:mod:`fuellib.gcm.nannoolal` registers a ``"nannoolal"``
+:class:`~fuellib.gcm.core.GCM` with the saturated liquid viscosity group
+contributions of Nannoolal et al.\ :footcite:p:`nannoolal_estimation_2009`.
+The coefficients are read from ``fuellib/gcm/nannoolal.csv``, which has one
+row per first- or second-order group and columns for the group ``Order``,
+matching ``Priority``, and the ``dBv`` and ``Tv`` contributions. Two properties
+are registered:
+
+- ``dBv``: the group-contribution sum
+  :math:`\sum_k \mathbf{N}_{ik} \Delta b_k` for the viscosity curve slope.
+- ``Tv``: the group-contribution sum
+  :math:`\sum_k \mathbf{N}_{ik} t_{v,k}` for the viscosity reference
+  temperature.
+
+Both are dimensionless sums. The corrections for the number of heavy atoms
+and the normal boiling point are applied by
+:func:`~fuellib.correlate.components.dynamic_viscosity_nannoolal` (see
+:doc:`fuelprops`). The decomposition matrix :math:`\mathbf{N}` contains both
+first- and second-order groups and is read from ``refNannoolal.csv`` as
+:attr:`~fuellib.fuel.Fuel.nannoolalDecomp`.
+
+Some groups have no published viscosity contribution. Groups stored as
+``0.0`` (``>C=C=C<``, ``-C#C-C#C-``, ``C2C-CC2``, and ``Ortho-pair(s)``)
+trigger a :class:`UserWarning` listing the affected compounds. Groups with no
+value (``C3C-CC2`` and ``C3C-CC3``) propagate ``NaN`` to the compounds that
+contain them.
+
+:func:`fuellib.gcm.nannoolal.decompose` builds a Nannoolal decomposition from a
+SMILES string and returns a single-row :class:`pandas.DataFrame` with one
+column per group in ``nannoolal.csv``:
+
+.. code-block:: python
+
+   from fuellib.gcm.nannoolal import decompose
+
+   counts = decompose("CCc1ccccc1")
+   counts.loc[:, (counts != 0).any()]
+
+First-order groups are matched with RDKit SMARTS patterns in order of the
+Nannoolal priority, and each atom is assigned to only one first-order group.
+Second-order groups are additive and are counted from SMARTS matches and
+structural checks: the number of hydrogens (``No hydrogen``,
+``One hydrogen``), non-aromatic three-, four-, and five-membered rings
+(``3/4 ring``, ``5 ring``), and ortho, meta, or para substituent pairs on
+benzene rings (counted only when a single pair type is present). A
+:class:`ValueError` is raised if the SMILES cannot be parsed or an atom is not
+matched to a first-order group. The same functionality is available as
+``fl-decomp-smiles --method nannoolal`` (see :doc:`tutorials-cli`).
+
+.. code-block:: python
+
+   from fuellib.gcm import nannoolal_gcm
+
+   nannoolal_gcm.predict("dBv", fuel)   # dimensionless Quantity1D
+   nannoolal_gcm.predict("Tv", fuel)    # dimensionless Quantity1D
+
 Registering a new property
 ---------------------------
 
@@ -250,6 +309,9 @@ A completely new method can likewise be registered with
   ``fuel.compounds``. Each compound in the GCxGC data must be present in the
   reference tables, otherwise a ``ValueError`` is raised when the ``Fuel`` is
   created.
+- :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`: the Nannoolal group
+  decomposition (from ``refNannoolal.csv``) of each compound, used by the
+  ``nannoolal`` method. Each compound must also be present in this table.
 - :attr:`~fuellib.fuel.Fuel.compoundsData`: the rows of ``refCompounds.csv``
   matched to the GCxGC data, including the hydrocarbon ``Family`` used by the
   ``boehm`` method.
@@ -268,6 +330,7 @@ A completely new method can likewise be registered with
    fuel = Fuel("decane")
 
    fuel.ganiDecomp      # DataFrame, one row per compound
+   fuel.nannoolalDecomp # DataFrame, one row per compound
    fuel.compoundsData   # DataFrame of matched reference compounds
    fuel.Tc              # Quantity1D of critical temperatures
    fuel.dS_fus          # Quantity1D of fusion entropies (boehm)
@@ -285,6 +348,8 @@ See also
   the unit-aware value types returned by GCM property functions.
 - ``tests/test_gcm.py`` for further usage examples, including registration,
   error handling, and decomposition-matrix behavior.
+- ``tests/test_gcm_gani.py`` and ``tests/test_gcm_nannoolal.py`` for
+  comparisons of automated SMILES decompositions with the reference tables.
 
 References
 ----------

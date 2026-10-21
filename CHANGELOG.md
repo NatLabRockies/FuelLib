@@ -9,16 +9,27 @@ release workflow to parse release entries in this file.
 
 ### Added
 - `gcm.gani.decompose` for automatically decomposing a SMILES string into Gani first- and second-order groups with RDKit SMARTS patterns, returning a single-row `DataFrame` of group counts.
-- `fl-decomp-smiles` command-line tool that decomposes SMILES strings (given directly with `--smiles`/`--name` or from a CSV with `--input`) using the selected `--method` (currently `gani`) and prints the counts or writes them to CSV with `--out`.
+- `fl-decomp-smiles` command-line tool that decomposes SMILES strings (given directly with `--smiles`/`--name` or from a CSV with `--input`) using the selected `--method` (`gani` or `nannoolal`) and prints the counts or writes them to CSV with `--out`.
+- `gcm.nannoolal` with accompanying `nannoolal.csv`, registering a `"nannoolal"` GCM with the Nannoolal et al. (2009) saturated liquid viscosity group-contribution sums `dBv` and `Tv`. A `UserWarning` lists the compounds that use groups without a published contribution (stored as `0.0`).
+- `gcm.nannoolal.decompose` for automatically decomposing a SMILES string into Nannoolal first- and second-order groups with RDKit SMARTS patterns (first-order groups are matched by priority), returning a single-row `DataFrame` of group counts.
+- `data/refNannoolal.csv` with Nannoolal group decompositions of the reference compounds.
+- `Fuel.refNannoolal` and `Fuel.nannoolalDecomp` (matched `refNannoolal.csv` rows), and a `refNannoolalPath` argument to `Fuel.__init__` for supplying a custom Nannoolal reference table.
+- `correlate.components.dynamic_viscosity_nannoolal` and `correlate.components.kinematic_viscosity_nannoolal` for component viscosities from the Nannoolal GCM.
+- `correlate.mixture.kinematic_viscosity_nannoolal` and `correlate.mixture.dynamic_viscosity_nannoolal` for mixture viscosities from the Nannoolal component viscosities, using the Kendall-Monroe (default) or Arrhenius mixing rule.
 - `fuellib.DEFAULT_DATA_DIR` exposing the path of the bundled `fuellib/data` directory.
-- Tests comparing RDKit decompositions of the reference compounds with `refGani.csv` and covering `fl-decomp-smiles`.
+- Tests comparing RDKit decompositions of the reference compounds with `refGani.csv` and `refNannoolal.csv`, covering the Nannoolal viscosities, and covering `fl-decomp-smiles`.
+- Nannoolal et al. (2009) reference in `refs.bib`.
 
 ### Known Issues
 - Automated Gani decompositions must be verified. For indene, the non-aromatic C=C bond is categorized as a `CH` group.
+- Several Nannoolal groups (`>C=C=C<`, `-C#C-C#C-`, `C2C-CC2`, `Ortho-pair(s)`) have no published viscosity contributions and are treated as `0.0`; `C3C-CC2` and `C3C-CC3` have no values, so compounds containing them yield `NaN` viscosities.
 
 ### Changed
 - Updated naming consistencies in `data/`.
-- `tutorials-basic.rst`, `tutorials-cli.rst`, `gcm.rst`, and `sourcecode.rst` document automatic SMILES decomposition and `fl-decomp-smiles`.
+- Every compound in a fuel must now also be present in `refNannoolal.csv`. Custom fuels with compounds that are not in the bundled table must provide a custom `refNannoolal.csv`.
+- `fl-decomp-smiles --method` is case-insensitive and restricted to the supported methods.
+- The private `_reference_data.load_ref_gani` loader was generalized to `load_ref_decomp`, which loads either the Gani or Nannoolal decomposition table.
+- `tutorials-basic.rst`, `tutorials-cli.rst`, `tutorials-custom-fuels.rst`, `gcm.rst`, `fuelprops.rst`, `refcompounds.rst`, and `sourcecode.rst` document automatic SMILES decomposition, `fl-decomp-smiles`, the `nannoolal` GCM, and the Nannoolal viscosity correlations.
 
 ## [3.0.8a3] - 2026-10-15
 

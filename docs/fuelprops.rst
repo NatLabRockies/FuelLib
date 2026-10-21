@@ -109,6 +109,7 @@ provided :math:`T` in K unless noted otherwise.
    Property                       Units                  Description
    =============================  =====================  ===============================================================
    :math:`\nu_i`                  m\ :sup:`2`\ /s        Kinematic viscosity\ :footcite:p:`viswanath_viscosity_2007`.
+   :math:`\mu_i`                  Pa s                   Dynamic viscosity from the Nannoolal GCM\ :footcite:p:`nannoolal_estimation_2009`.
    :math:`L_{v,\textit{stp},i}`   J/kg                   Latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
@@ -150,11 +151,33 @@ The kinematic viscosity of the *i-th* compound of the fuel,
    \nu_i = \frac{\mu_i}{\rho_i}, 
 
 is calculated from Dutt's equation (Eq. 4.23 in Viscosity of 
-Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{\circ}` C:
+Liquids\ :footcite:p:`viswanath_viscosity_2007`) or with the GCM of Nannoolal
+et al.\ :footcite:p:`nannoolal_estimation_2009`. Dutt's equation calculates the
+kinematic viscosity directly provided :math:`T` in :math:`^{\circ}` C:
 
 .. math::
 
    \nu_i = 10^{-6} \times \exp \bigg\{-3.0171 + \frac{442.78 + 1.6452 \,T_{b,i}}{T + 239 - 0.19 \,T_{b,i}} \bigg\}.
+
+For supported hydrocarbons, the Nannoolal GCM calculates the dynamic viscosity of the *i-th* compound as:
+
+.. math::
+   \mu_i = 1.3\times10^{-3}\exp\left[-dBv_i\frac{T-T_{v,i}}{T-(T_{v,i}/16)}\right],
+
+then obtains :math:`\nu_i = \mu_i / \rho_i`. The tabulated group contributions are 
+:math:`\widetilde{dBv}_k` and :math:`\widetilde{T}_{v,k}`, whereas
+:math:`dBv_i` and :math:`T_{v,i}` are component parameters calculated from the
+group sums and normal boiling temperature:
+
+.. math::
+   dBv_i &= \frac{\sum_k N_{ik} \widetilde{dBv}_k}
+      {n_i^{-2.5635} + 0.0685} + 3.7777, \\
+   T_{v,i} &= 21.8444\sqrt{T_{b,i}}
+      + \frac{\left(\sum_k N_{ik} \widetilde{T}_{v,k}\right)^{0.9315}}
+      {n_i^{0.6577} + 4.9259} - 231.1361,
+
+Here, :math:`n_i` is the component's non-hydrogen atom count. 
+Groups without a published contribution are discussed in :doc:`gcm`.
 
 
 
@@ -741,11 +764,12 @@ are not predicted by FuelLib, so they are always taken from the reference data.
 
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
 from its ``SMILES``; the matched rows are available as :attr:`~fuellib.fuel.Fuel.compoundsData`, and the
-group decompositions from ``refGani.csv`` as :attr:`~fuellib.fuel.Fuel.ganiDecomp`. Custom tables can be provided with the
-``refCompoundsPath`` and ``refGaniPath`` arguments of :class:`~fuellib.fuel.Fuel`. Each custom table is merged
+group decompositions from ``refGani.csv`` and ``refNannoolal.csv`` as :attr:`~fuellib.fuel.Fuel.ganiDecomp` and
+:attr:`~fuellib.fuel.Fuel.nannoolalDecomp`. Custom tables can be provided with the
+``refCompoundsPath``, ``refGaniPath``, and ``refNannoolalPath`` arguments of :class:`~fuellib.fuel.Fuel`. Each custom table is merged
 with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
 the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
-bundled compound; a Gani decomposition duplicate is identified by its ``Reference Compound``.
+bundled compound; a Gani or Nannoolal decomposition duplicate is identified by its ``Reference Compound``.
 
 Validation
 ----------

@@ -68,6 +68,37 @@ def geometric(
     return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
 
 
+def arrhenius(X: types.Quantity1D, var_n: types.Quantity1D) -> types.Quantity0D:
+    """Apply the Arrhenius mixing rule to a positive component property.
+
+    Args:
+        X: Mole fractions of the compounds.
+        var_n: Positive component properties, typically kinematic viscosities.
+
+    Returns:
+        The mixture property in the units of `var_n`.
+    """
+    values = var_n.magnitude
+    mole_fractions = X.to("dimensionless").magnitude
+    return Units.Quantity(np.exp(np.sum(mole_fractions * np.log(values))), var_n.units)
+
+
+def kendall_monroe(X: types.Quantity1D, var_n: types.Quantity1D) -> types.Quantity0D:
+    """Apply the Kendall-Monroe mixing rule to a positive component property.
+
+    Args:
+        X: Mole fractions of the compounds.
+        var_n: Positive component properties, typically kinematic viscosities.
+
+    Returns:
+        The mixture property in the units of `var_n`.
+    """
+    values = var_n.magnitude
+    mole_fractions = X.to("dimensionless").magnitude
+    value = np.sum(mole_fractions * values ** (1.0 / 3.0)) ** 3.0
+    return Units.Quantity(value, var_n.units)
+
+
 def mean_molecular_weight(
     fuel: "Fuel", Yi: types.Quantity1D | None = None
 ) -> types.Quantity0D:
@@ -112,7 +143,7 @@ def kinematic_viscosity_dutt(
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
     *,
-    correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+    mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
 ) -> types.Quantity0D:
     """Calculate kinematic viscosity of the mixture.
 
@@ -123,24 +154,22 @@ def kinematic_viscosity_dutt(
         T: Temperature to compute property.
         Yi: Mass fractions of each compound.
             Defaults to `fuel.Y_0` (initial mass fractions).
-        correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+        mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
 
     Returns:
         Mixture kinematic viscosity in m^2/s.
     """
     Yi = Yi if Yi is not None else fuel.Y_0
-    nu_i = components.kinematic_viscosity_dutt(fuel, T).to("m^2/s").magnitude
+    nu_i = components.kinematic_viscosity_dutt(fuel, T).to("m^2/s")
     # Calculate mole fractions for each species
-    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi).magnitude
-    if correlation.casefold() == "Arrhenius".casefold():
+    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
+    if mixing_rule.casefold() == "Arrhenius".casefold():
         # Arrhenius mixing correlation
-        nu = np.exp(np.sum(Xi * np.log(nu_i)))
+        return arrhenius(Xi, nu_i)
     else:
         # Default: Kendall-Monroe mixing correlation
-        nu = np.sum(Xi * (nu_i ** (1.0 / 3.0))) ** 3.0
-
-    return Units.Quantity(nu, "m^2/s")
+        return kendall_monroe(Xi, nu_i)
 
 
 def dynamic_viscosity_dutt(
@@ -148,7 +177,7 @@ def dynamic_viscosity_dutt(
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
     *,
-    correlation: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+    mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
 ) -> types.Quantity0D:
     """Calculate dynamic viscosity of the mixture.
 
@@ -157,14 +186,74 @@ def dynamic_viscosity_dutt(
         T: Temperature to compute property.
         Yi: Mass fractions of each compound.
             Defaults to `fuel.Y_0` (initial mass fractions).
-        correlation: Mixing model ("Kendall-Monroe" or "Arrhenius").
+        mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
 
     Returns:
         Mixture dynamic viscosity in Pa*s.
     """
     Yi = Yi if Yi is not None else fuel.Y_0
-    nu = kinematic_viscosity_dutt(fuel, T, Yi, correlation=correlation)
+    nu = kinematic_viscosity_dutt(fuel, T, Yi, mixing_rule=mixing_rule)
+    rho = density(fuel, T, Yi)
+    return (rho * nu).to("Pa*s")
+
+
+def kinematic_viscosity_nannoolal(
+    fuel: "Fuel",
+    T: types.Quantity0D,
+    Yi: types.Quantity1D | None = None,
+    *,
+    mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+) -> types.Quantity0D:
+    """Calculate kinematic viscosity of the mixture from Nannoolal GCM.
+
+    Uses Kendall-Monroe (default) or Arrhenius mixing correlations.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+        Yi: Mass fractions of each compound.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
+            Defaults to "Kendall-Monroe".
+
+    Returns:
+        Mixture kinematic viscosity in m^2/s.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    nu_i = components.kinematic_viscosity_nannoolal(fuel, T).to("m^2/s")
+    # Calculate mole fractions for each species
+    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
+    if mixing_rule.casefold() == "Arrhenius".casefold():
+        # Arrhenius mixing correlation
+        return arrhenius(Xi, nu_i)
+    else:
+        # Default: Kendall-Monroe mixing correlation
+        return kendall_monroe(Xi, nu_i)
+
+
+def dynamic_viscosity_nannoolal(
+    fuel: "Fuel",
+    T: types.Quantity0D,
+    Yi: types.Quantity1D | None = None,
+    *,
+    mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
+) -> types.Quantity0D:
+    """Calculate dynamic viscosity of the mixture from Nannoolal GCM.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+        Yi: Mass fractions of each compound.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
+            Defaults to "Kendall-Monroe".
+
+    Returns:
+        Mixture dynamic viscosity in Pa*s.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    nu = kinematic_viscosity_nannoolal(fuel, T, Yi, mixing_rule=mixing_rule)
     rho = density(fuel, T, Yi)
     return (rho * nu).to("Pa*s")
 

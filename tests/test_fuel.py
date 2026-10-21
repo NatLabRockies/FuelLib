@@ -64,12 +64,22 @@ class TestParsing:
         customGani.loc[:, "CH3"] = 99
         customGani.to_csv(tmp_path / "refGani.csv", index=False)
 
+        customNannoolal = pd.read_csv(DEFAULT_DATA_DIR / "refNannoolal.csv")
+        customNannoolal = customNannoolal.loc[
+            customNannoolal["Reference Compound"].eq("n-decane")
+        ].copy()
+        customNannoolal.loc[:, "CH3-(ne)"] = 99
+        customNannoolal.to_csv(tmp_path / "refNannoolal.csv", index=False)
+
         fuel = Fuel("heptane-decane", fuelDataDir=tmp_path)
 
         assert fuel.compounds == ["n-heptane", "n-decane"]
         assert fuel.refCompounds["Reference Compound"].eq("n-decane").sum() == 1
+        assert fuel.refGani["Reference Compound"].eq("n-decane").sum() == 1
+        assert fuel.refNannoolal["Reference Compound"].eq("n-decane").sum() == 1
         assert fuel.compoundsData.loc[1, "DCN_Value"] == 999.0
         assert fuel.ganiDecomp.loc[1, "CH3"] == 99
+        assert fuel.nannoolalDecomp.loc[1, "CH3-(ne)"] == 99
 
 
 class TestRDKitProperties:

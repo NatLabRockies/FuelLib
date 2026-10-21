@@ -1,6 +1,7 @@
 """Reference-compound and GCM decomposition data loading."""
 
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -95,18 +96,27 @@ def load_ref_compounds(path: str | Path | None, data_dir: Path) -> DataFrame:
     )
 
 
-def load_ref_gani(path: str | Path | None, data_dir: Path) -> DataFrame:
-    """Load bundled Gani decompositions and apply custom name-based overrides.
+def load_ref_decomp(
+    path: str | Path | None, data_dir: Path, method: Literal["Gani", "Nannoolal"]
+) -> DataFrame:
+    """Load bundled Gani or Nannoolal decompositions and apply name-based overrides.
 
     Args:
-        path: Explicit custom Gani decomposition file, if provided.
+        path: Explicit custom Gani or Nannoolal decomposition file, if provided.
         data_dir: Directory containing custom fuel data.
+        method: Decomposition method, either "Gani" or "Nannoolal".
 
     Returns:
-        The bundled Gani decomposition table with custom additions and overrides.
+        The bundled Gani or Nannoolal decomposition table with custom additions and
+        overrides.
     """
-    default_path = DEFAULT_DATA_DIR / "refGani.csv"
-    custom_path = _resolve_ref_path(path, data_dir, "refGani.csv")
+    if method == "Gani":
+        default_path = DEFAULT_DATA_DIR / "refGani.csv"
+        custom_path = _resolve_ref_path(path, data_dir, "refGani.csv")
+    else:  # method == "Nannoolal"
+        default_path = DEFAULT_DATA_DIR / "refNannoolal.csv"
+        custom_path = _resolve_ref_path(path, data_dir, "refNannoolal.csv")
+
     default_data = pd.read_csv(default_path)
 
     if custom_path.resolve() == default_path.resolve():
@@ -125,6 +135,6 @@ def load_ref_gani(path: str | Path | None, data_dir: Path) -> DataFrame:
 __all__ = [
     "DEFAULT_DATA_DIR",
     "load_ref_compounds",
-    "load_ref_gani",
+    "load_ref_decomp",
     "smiles_series_to_inchi",
 ]
