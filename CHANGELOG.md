@@ -7,6 +7,8 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-10-21
+
 ### Added
 - `gcm.gani.decompose` for automatically decomposing a SMILES string into Gani first- and second-order groups with RDKit SMARTS patterns, returning a single-row `DataFrame` of group counts.
 - `fl-decomp-smiles` command-line tool that decomposes SMILES strings (given directly with `--smiles`/`--name` or from a CSV with `--input`) using the selected `--method` (`gani` or `nannoolal`) and prints the counts or writes them to CSV with `--out`.
