@@ -151,45 +151,32 @@ The kinematic viscosity of the *i-th* compound of the fuel,
    \nu_i = \frac{\mu_i}{\rho_i}, 
 
 is calculated from Dutt's equation (Eq. 4.23 in Viscosity of 
-Liquids\ :footcite:p:`viswanath_viscosity_2007`) provided :math:`T` in :math:`^{\circ}` C:
+Liquids\ :footcite:p:`viswanath_viscosity_2007`) or with the GCM of Nannoolal
+et al.\ :footcite:p:`nannoolal_estimation_2009`. Dutt's equation calculates the
+kinematic viscosity directly provided :math:`T` in :math:`^{\circ}` C:
 
 .. math::
 
    \nu_i = 10^{-6} \times \exp \bigg\{-3.0171 + \frac{442.78 + 1.6452 \,T_{b,i}}{T + 239 - 0.19 \,T_{b,i}} \bigg\}.
 
-.. _sec-nannoolal-viscosity:
-
-Nannoolal viscosity
-^^^^^^^^^^^^^^^^^^^
-
-.. autofunction:: fuellib.correlate.components.dynamic_viscosity_nannoolal
-   :noindex:
-
-.. autofunction:: fuellib.correlate.components.kinematic_viscosity_nannoolal
-   :noindex:
-
-As an alternative to Dutt's equation, the saturated liquid viscosity of each
-compound can be estimated with the group-contribution method of Nannoolal
-et al.\ :footcite:p:`nannoolal_estimation_2009`. Let :math:`\mathbf{N}` be the
-:math:`N_c \times N_g` matrix of Nannoolal first- and second-order groups in each compound
-(:attr:`~fuellib.fuel.Fuel.nannoolalDecomp`), and let :math:`\Delta b_k` and
-:math:`t_{v,k}` be the group contributions of the ``nannoolal`` GCM (:doc:`gcm`).
-With :math:`n_i` the number of non-hydrogen atoms in compound *i*, the viscosity
-curve slope and reference temperature are
+For supported hydrocarbons, the Nannoolal GCM calculates the dynamic viscosity of the *i-th* compound as:
 
 .. math::
+   \mu_i = 1.3\times10^{-3}\exp\left[-dBv_i\frac{T-T_{v,i}}{T-(T_{v,i}/16)}\right],
 
-   \Delta B_i &= \frac{\sum_{k=1}^{N_g} \mathbf{N}_{ik} \Delta b_k}{n_i^{-2.5635} + 0.0685} + 3.7777, \\
-   T_{v,i} &= 21.8444 \, T_{b,i}^{1/2} + \frac{\big(\sum_{k=1}^{N_g} \mathbf{N}_{ik} t_{v,k}\big)^{0.9315}}{n_i^{0.6577} + 4.9259} - 231.1361,
-
-where :math:`T_{b,i}` is the normal boiling point from :attr:`~fuellib.fuel.Fuel.Tb`.
-The dynamic viscosity is then
+then obtains :math:`\nu_i = \mu_i / \rho_i`. The tabulated group contributions are 
+:math:`\widetilde{dBv}_k` and :math:`\widetilde{T}_{v,k}`, whereas
+:math:`dBv_i` and :math:`T_{v,i}` are component parameters calculated from the
+group sums and normal boiling temperature:
 
 .. math::
+   dBv_i &= \frac{\sum_k N_{ik} \widetilde{dBv}_k}
+      {n_i^{-2.5635} + 0.0685} + 3.7777, \\
+   T_{v,i} &= 21.8444\sqrt{T_{b,i}}
+      + \frac{\left(\sum_k N_{ik} \widetilde{T}_{v,k}\right)^{0.9315}}
+      {n_i^{0.6577} + 4.9259} - 231.1361,
 
-   \mu_i = 1.3 \times 10^{-3} \exp \bigg[ -\Delta B_i \frac{T - T_{v,i}}{T - T_{v,i}/16} \bigg],
-
-in Pa s, and the kinematic viscosity is :math:`\nu_i = \mu_i / \rho_i`.
+Here, :math:`n_i` is the component's non-hydrogen atom count. 
 Groups without a published contribution are discussed in :doc:`gcm`.
 
 
@@ -562,17 +549,6 @@ The Arrhenius rule is:
 .. math::
 
    \ln \nu_{Arr} = \sum_{i=1}^{N_c} X_i\ln\nu_i .
-
-.. autofunction:: fuellib.correlate.mixture.kinematic_viscosity_nannoolal
-   :noindex:
-
-.. autofunction:: fuellib.correlate.mixture.dynamic_viscosity_nannoolal
-   :noindex:
-
-The same Kendall-Monroe (default) and Arrhenius mixing rules are available for
-the component kinematic viscosities from the Nannoolal GCM
-(see :ref:`sec-nannoolal-viscosity`). The mixture dynamic viscosity is
-:math:`\mu = \rho \, \nu`, with :math:`\rho` the mixture density.
 
 
 
