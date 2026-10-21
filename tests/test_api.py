@@ -65,6 +65,15 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                     fl.correlate.mixture.geometric(Xi, fuel.Tc)
                 )
                 print("    ✓ correlate.mixture.geometric")
+                component_nu = fuel.viscosity_kinematic(self.T)
+                self._assert_finite_and_positive(
+                    fl.correlate.mixture.arrhenius(Xi, component_nu)
+                )
+                print("    ✓ correlate.mixture.arrhenius")
+                self._assert_finite_and_positive(
+                    fl.correlate.mixture.kendall_monroe(Xi, component_nu)
+                )
+                print("    ✓ correlate.mixture.kendall_monroe")
 
                 # Composition conversion methods
                 print("  Composition Conversions:")
@@ -188,13 +197,13 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                     (
                         "mixture_kinematic_viscosity (Kendall-Monroe)",
                         lambda fuel=fuel, Yi=Yi: fuel.mixture_kinematic_viscosity(
-                            Yi, self.T, correlation="Kendall-Monroe"
+                            Yi, self.T, mixing_rule="Kendall-Monroe"
                         ),
                     ),
                     (
                         "mixture_kinematic_viscosity (Arrhenius)",
                         lambda fuel=fuel, Yi=Yi: fuel.mixture_kinematic_viscosity(
-                            Yi, self.T, correlation="Arrhenius"
+                            Yi, self.T, mixing_rule="Arrhenius"
                         ),
                     ),
                     (
@@ -359,13 +368,13 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
                 fuel.__getattribute__("mixture_kinematic_viscosity"),
                 Yi=Yi,
                 T=temp,
-                correlation="Kendall-Monroe",
+                mixing_rule="Kendall-Monroe",
             ),
             partial(
                 fuel.__getattribute__("mixture_dynamic_viscosity"),
                 Yi=Yi,
                 T=temp,
-                correlation="Kendall-Monroe",
+                mixing_rule="Kendall-Monroe",
             ),
             partial(
                 fuel.__getattribute__("mixture_vapor_pressure"),
