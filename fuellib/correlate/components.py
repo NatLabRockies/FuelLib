@@ -8,7 +8,7 @@ from scipy.optimize import curve_fit
 from .. import constants
 from ..gcm.nannoolal import nannoolal_gcm
 from ..rdk import mol
-from ..utils import Units, types
+from ..utils import Units, constants, types
 
 if TYPE_CHECKING:
     from ..fuel import Fuel
@@ -168,7 +168,7 @@ def molar_specific_heat_capacity_ruzicka(
     """
     Tr = T.to("K") / 100.0
     rd_A, rd_B, rd_D = fuel.RD_coeffs
-    cp_molar = constants.gas_constant * (rd_A + rd_B * Tr + rd_D * Tr**2)
+    cp_molar = constants.R * (rd_A + rd_B * Tr + rd_D * Tr**2)
     return cp_molar.to("J/(mol*K)")
 
 
@@ -576,13 +576,9 @@ def thermal_conductivity_latini(
 
 
 def flash_point_alqaheem(fuel: "Fuel") -> types.Quantity1D:
-    """Calculate component flash points using the Alqaheem-Riazi correlation.
+    """Calculate component flash points.
 
-    Uses the Alqaheem and Riazi (2017) correlation, which estimates the
-    flash point of a hydrocarbon as a fixed fraction of its (anchored)
-    normal boiling point:
-
-        Tfp_i = 0.70 * Tb_i
+    Uses the Alqaheem and Riazi (2017) correlation (eq. 18).
 
     Args:
         fuel: Fuel object.
@@ -594,16 +590,9 @@ def flash_point_alqaheem(fuel: "Fuel") -> types.Quantity1D:
 
 
 def flash_point_alibakhshi(fuel: "Fuel") -> types.Quantity1D:
-    """Calculate component flash points using the Alibakhshi et al. correlation.
+    """Calculate component flash points.
 
-    Uses the modified group-contribution correlation of Alibakhshi et al.
-    (2015):
-
-        Tfp_i = 12.14 + 0.73 * Tb_i + sum_k(N_ik * phi_k)
-
-    where `Tb_i` is the (anchored) normal boiling point and `phi_k` are the
-    Alibakhshi group-contribution terms tabulated in
-    `gcmExtendedTable.csv`.
+    Uses a modified group-contribution correlation of Alibakhshi et al. (2015) (eq. 5).
 
     Args:
         fuel: Fuel object.
@@ -617,25 +606,9 @@ def flash_point_alibakhshi(fuel: "Fuel") -> types.Quantity1D:
 def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
     """Calculate component lower heating values from a Hess cycle.
 
-    Uses heat of formation and heat of vaporization derived from the Constantinou-Gani
-    GCM. For component `i` with `nC` carbon atoms and `nH` hydrogen atoms, the
-    liquid-phase heat of formation is
-
-        Hf_liq_i = Hf_gas_i - Hv_stp_i,
-
-    the heat of combustion is
-
-        dHc_i = nC_i * Hf(CO2, g) + (nH_i / 2) * Hf(H2O, g) - Hf_liq_i,
-
-    using Hf(CO2, g) = -393.51 kJ/mol and Hf(H2O, g) = -241.83 kJ/mol at
-    298.15 K, and the net (lower) heating value is LHV_i = -dHc_i / MW_i.
-
     This estimate corresponds to hydrocarbons only; it does not account for
-    heteroatom-containing groups. Callers combining this with
-    heteroatom-containing compounds should validate the group decomposition
-    before use. The result is an engineering estimate related to ASTM
-    D4809/D3338 heating-value characterization, not a simulated
-    bomb-calorimeter test.
+    heteroatom-containing groups. The result is an engineering estimate related to ASTM
+    D4809/D3338 heating-value characterization, not a simulated bomb-calorimeter test.
 
     Args:
         fuel: Fuel object.

@@ -27,6 +27,15 @@ release workflow to parse release entries in this file.
 - Several Nannoolal groups (`>C=C=C<`, `-C#C-C#C-`, `C2C-CC2`, `Ortho-pair(s)`) have no published viscosity contributions and are treated as `0.0`; `C3C-CC2` and `C3C-CC3` have no values, so compounds containing them yield `NaN` viscosities.
 
 ### Changed
+- **Breaking:** removed the `fuellib.convert` module, including `convert.C2K`, `convert.K2C`, `convert.C2F`, `convert.F2C`, `convert.F2K`, and `convert.K2F`; use `Units.Quantity(T, "celsius").to("kelvin")` instead. `epsilon_to_characteristic_temperature` moved to `fuellib.utility`.
+- **Breaking:** `constants.gas_constant` renamed to `constants.R`.
+- **Breaking:** `Units` is now the shared `pint.UnitRegistry` instance instead of a wrapper class. The `Units.Q` alias was removed (use `Units.Quantity`), as were `types.ureg`, `types.QuantityT`, `types.PintQuantityT`, and `types.UnxtQuantityT`.
+- The `fl-C2K`, `fl-K2C`, `fl-C2F`, `fl-F2C`, `fl-F2K`, `fl-K2F`, and `fl-eps2K` commands moved from `cli/temp_converter.py` and `cli/transport_props_converter.py` into `cli/convert.py`; they use `Units` directly and print results with Pint unit formatting.
+- `get_data_dir` is now an alias of `get_fueldata_dir`; the data-locator functions use type hints and Google-style docstrings.
+- **Breaking:** `Fuel.mixture_flash_point` raises a `ValueError` for an unknown `correlation` instead of falling back to Alibakhshi.
+- Shortened `correlate.components` and `correlate.mixture` docstrings for the flash point, freeze point, heat of combustion, and yield sooting index correlations; equations are documented in `fuelprops.rst`.
+- `generate_baseline.py` uses `correlate.mixture.dynamic_viscosity_dutt` for dynamic viscosity.
+- **Breaking:** removed the `refCompoundsPath`, `refGaniPath`, and `refNannoolalPath` arguments from `Fuel.__init__`. Custom `refCompounds.csv`, `refGani.csv`, and `refNannoolal.csv` tables are auto-detected in `fuelDataDir` (which should follow the `fuellib/data` layout) and merged with the bundled tables; no message is printed when they are absent.
 - Updated naming consistencies in `data/`.
 - Every compound in a fuel must now also be present in `refNannoolal.csv`. Custom fuels with compounds that are not in the bundled table must provide a custom `refNannoolal.csv`.
 - `fl-decomp-smiles --method` is case-insensitive and restricted to the supported methods.

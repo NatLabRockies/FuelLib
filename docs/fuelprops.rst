@@ -764,9 +764,15 @@ are not predicted by FuelLib, so they are always taken from the reference data.
 
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
 from its ``SMILES``; the matched rows are available as :attr:`~fuellib.fuel.Fuel.compoundsData`, and the
+<<<<<<< HEAD
 group decompositions from ``refGani.csv`` and ``refNannoolal.csv`` as :attr:`~fuellib.fuel.Fuel.ganiDecomp` and
 :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`. Custom tables can be provided with the
 ``refCompoundsPath``, ``refGaniPath``, and ``refNannoolalPath`` arguments of :class:`~fuellib.fuel.Fuel`. Each custom table is merged
+=======
+group decompositions from ``refGani.csv`` as :attr:`~fuellib.fuel.Fuel.ganiDecomp`. Custom ``refCompounds.csv``,
+``refGani.csv``, and ``refNannoolal.csv`` tables placed in the ``fuelDataDir`` of :class:`~fuellib.fuel.Fuel` are
+detected automatically. Each custom table is merged
+>>>>>>> d5e57ee (Add fuel.metadata and reorganize (Closes #112))
 with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
 the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
 bundled compound; a Gani or Nannoolal decomposition duplicate is identified by its ``Reference Compound``.

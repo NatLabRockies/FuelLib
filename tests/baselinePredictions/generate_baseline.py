@@ -46,7 +46,7 @@ method_map = {
     "density": correlate.mixture.density,
     "viscosity": correlate.mixture.kinematic_viscosity_dutt,
     "vaporpressure": correlate.mixture.saturated_vapor_pressure,
-    "dynamicviscosity": correlate.mixture.dynamic_viscosity_nannoolal,
+    "dynamicviscosity": correlate.mixture.dynamic_viscosity_dutt,
     "surfacetension": correlate.mixture.surface_tension,
     "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
     "cp": correlate.components.molar_specific_heat_capacity,

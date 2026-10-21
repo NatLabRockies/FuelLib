@@ -1,6 +1,6 @@
 """Physical constants used in FuelLib calculations."""
 
-from .utils import Units
+from .types import Units
 
 # Physical constants
 #: Boltzmann's constant in J/K.
@@ -18,14 +18,6 @@ EpsilonByKB_gas = Units.Quantity(97.0, "K")
 MW_gas = Units.Quantity(28.97e-3, "kg/mol")
 
 # R gas-constant
-gas_constant = Units.Quantity(8.31446, "J/(mol*K)")
+R = Units.Quantity(8.31446, "J/(mol*K)")
 
-__all__ = [
-    "N_A",
-    "EpsilonByKB_gas",
-    "MW_gas",
-    "Sigma_gas",
-    "T_stp",
-    "gas_constant",
-    "k_B",
-]
+__all__ = ["N_A", "EpsilonByKB_gas", "MW_gas", "R", "Sigma_gas", "T_stp", "k_B"]
