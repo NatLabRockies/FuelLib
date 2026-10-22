@@ -42,6 +42,18 @@ class TestParsing:
         assert len(fuel.pelephysics_keys) == fuel.num_compounds
         assert all(isinstance(key, str) for key in fuel.pelephysics_keys)
 
+    @pytest.mark.parametrize(
+        "fuel_name",
+        ["posf4658", "posf10264", "posf10289", "posf10325", "posf11498"],
+    )
+    def test_metadata_loading(self, fuel_name: str) -> None:
+        """Test that the fuel metadata is correctly loaded for the POSF fuels."""
+        fuel = Fuel(fuel_name)
+        assert fuel.metadata is not None
+        for key in ("name", "category", "source", "reference", "description"):
+            assert fuel.metadata[key]
+        assert "POSF" in fuel.metadata["name"]
+
     def test_custom_ref_compounds_extend_and_override_bundled_data(
         self, tmp_path: Path
     ) -> None:

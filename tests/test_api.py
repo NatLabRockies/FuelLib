@@ -37,10 +37,6 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Utility functions (run per fuel for consistent CI grouping)
                 print("  Utility Functions:")
-                self.assertAlmostEqual(fl.convert.C2K(25.0), 298.15)
-                print("    ✓ convert.C2K")
-                self.assertAlmostEqual(fl.convert.K2C(298.15), 25.0)
-                print("    ✓ convert.K2C")
                 droplet_radius = Units.Quantity(1e-4, "m")
                 self.assertAlmostEqual(
                     fl.utility.droplet_volume(droplet_radius).to("m^3").magnitude,
@@ -402,28 +398,6 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
             ),
         ]
 
-        for func in to_check:
-            module = func.func.__module__ if hasattr(func.func, "__module__") else ""
-            name = func.func.__name__ if hasattr(func.func, "__name__") else ""
-            with self.subTest(module=module, name=name):
-                try:
-                    func()
-                except Exception as e:  # noqa: BLE001
-                    self.fail(f"Method failed with expected call. Exception: {e}")
-
-    def test__convert_module_api_call_persistence(self):
-        """Check that the FuelLib.convert module API persists across versions."""
-        to_check = [
-            partial(fl.convert.C2K, T=20.0),
-            partial(fl.convert.K2C, T=293.15),
-            partial(fl.convert.C2F, T=20.0),
-            partial(fl.convert.F2C, T=68.0),
-            partial(fl.convert.F2K, T=68.0),
-            partial(fl.convert.K2F, T=293.15),
-            partial(
-                fl.convert.epsilon_to_characteristic_temperature, epsilon_j_per_mol=1.0
-            ),
-        ]
         for func in to_check:
             module = func.func.__module__ if hasattr(func.func, "__module__") else ""
             name = func.func.__name__ if hasattr(func.func, "__name__") else ""

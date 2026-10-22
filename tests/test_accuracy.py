@@ -26,7 +26,7 @@ class MixtureTestCase(unittest.TestCase):
 
     data_dir = Path(__file__).parent / "baselinePredictions"
     base_file = data_dir / "mixture_baseline.csv"
-    base_data = pd.read_csv(base_file)
+    base_data = pd.read_csv(base_file, float_precision="round_trip")
 
     prop_width = max(len(prop) for prop in method_map.keys())
 

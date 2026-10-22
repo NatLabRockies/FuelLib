@@ -6,11 +6,13 @@ from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 
-from . import correlate
-from .utils import Units, types
+from .. import correlate
+from . import types
+from .constants import N_A, k_B
+from .types import Units
 
 if TYPE_CHECKING:
-    from .fuel import Fuel
+    from ..fuel import Fuel
 
 
 def mixing_rule(
@@ -70,4 +72,27 @@ def droplet_mass(
         return Units.Quantity(np.zeros_like(fuel.MW.magnitude), "kg")
 
 
-__all__ = ["droplet_mass", "droplet_volume", "mixing_rule"]
+def epsilon_to_characteristic_temperature(epsilon_j_per_mol: float) -> types.Quantity0D:
+    """Convert Lennard-Jones epsilon from J/mol to characteristic temperature in Kelvin.
+
+    The characteristic temperature (epsilon/k_B) is used in transport property
+    correlations and is required by combustion codes like CHEMKIN.
+
+    Uses the relation: T* = (epsilon_J/mol) / (N_A * k_B)
+
+    Args:
+        epsilon_j_per_mol: Lennard-Jones well depth epsilon in J/mol.
+
+    Returns:
+        Characteristic temperature (epsilon/k_B) in Kelvin.
+    """
+    eps = Units.Quantity(epsilon_j_per_mol, "J/mol")
+    return (eps / (N_A * k_B)).to("K")
+
+
+__all__ = [
+    "droplet_mass",
+    "droplet_volume",
+    "epsilon_to_characteristic_temperature",
+    "mixing_rule",
+]
