@@ -475,30 +475,10 @@ def export_converge(
 
 
 def main():
-    """Main function to execute the export process.
+    """Parse CLI arguments and export fuel properties for Converge simulations.
 
-    :param --fuel_name: Name of the fuel (mandatory).
-    :type --fuel_name: str
-
-    :param --fuel_data_dir: Directory where fuel data files are located.
-    :type --fuel_data_dir: str, optional (default: fuellib/data)
-
-    :param --temp_min: Minimum temperature (K) for the property calculations.
-    :type --temp_min: float, optional (default: 0 K)
-
-    :param --temp_max: Maximum temperature (K) for the property calculations.
-    :type --temp_max: float, optional (default: 1000 K)
-
-    :param --temp_step: Step size for temperature (K).
-    :type --temp_step: float, optional (default: 10 K)
-
-    :param --export_dir: Directory to export the properties.
-    :type --export_dir: str, optional (default: current working directory)
-
-    :param --export-mix: Export mixture properties instead of component properties.
-    :type --export-mix: bool, optional (default: False)
-
-    :raises FileNotFoundError: If required files for the specified fuel are not found.
+    Raises:
+        FileNotFoundError: If required files for the specified fuel are not found.
     """
     # Set up argument parser
     parser = argparse.ArgumentParser(
@@ -508,7 +488,7 @@ def main():
     # Mandatory argument for fuel name
     parser.add_argument(
         "-f",
-        "--fuel_name",
+        "--fuel-name",
         required=True,
         metavar="NAME",
         help="Name of the fuel (mandatory).",
@@ -517,7 +497,7 @@ def main():
     # Optional argument for fuel data directory
     parser.add_argument(
         "-dir",
-        "--fuel_data_dir",
+        "--fuel-data-dir",
         default=FUELDATA_DIR,
         metavar="PATH",
         help="Directory where fuel data files are located (optional, default: fuellib/data).",
@@ -526,7 +506,7 @@ def main():
     # Optional argument for minimum temperature
     parser.add_argument(
         "-t",
-        "--temp_min",
+        "--temp-min",
         type=float,
         default=0,
         metavar="K",
@@ -536,7 +516,7 @@ def main():
     # Optional argument for maximum temperature
     parser.add_argument(
         "-T",
-        "--temp_max",
+        "--temp-max",
         type=float,
         default=1000,
         metavar="K",
@@ -546,7 +526,7 @@ def main():
     # Optional argument for temperature step size
     parser.add_argument(
         "-s",
-        "--temp_step",
+        "--temp-step",
         type=int,
         default=10,
         metavar="K",
@@ -556,7 +536,7 @@ def main():
     # Optional argument for export directory
     parser.add_argument(
         "-o",
-        "--export_dir",
+        "--export-dir",
         default=os.getcwd(),
         metavar="PATH",
         help="Directory to export the properties (optional, default: current working directory).",
@@ -566,7 +546,6 @@ def main():
     parser.add_argument(
         "-m",
         "--export-mix",
-        "--export_mix",
         dest="export_mix",
         action="store_true",
         help="Export mixture properties instead of component properties.",

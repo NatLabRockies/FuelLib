@@ -13,6 +13,7 @@ release workflow to parse release entries in this file.
 - `docs` task to `lefthook.yaml` to verify build success before committing changes.
 
 ### Changed
+- CLI long options now use hyphens instead of underscores (for example, `--fuel-data-dir` and `--output-dir`).
 - `fuellib/{_data_locator,_reference_data}` -> `fuellib/data/{_data_locator,_reference_data}`.
 - `fuellib/{constants,utility}` -> `fuellib/utils/{constants,utility}`. `utility` is re-exported at the top-level `__init__` to maintain original API.
 - **Technically Breaking**: All `cli` conversion utilities moved to `cli/convert.py`. `fl-{convert}` continues to work the same.

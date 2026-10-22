@@ -57,9 +57,9 @@ Default Options
     
 After installing FuelLib with ``pip install fuellib``, run the following command in the terminal to export 
 the required GCM parameters. The fuel here, "heptane-decane", is a binary mixture 
-of heptane and decane. Note that ``--fuel_name`` is the only required input: ::
+of heptane and decane. Note that ``--fuel-name`` is the only required input: ::
     
-    fl-export-pele --fuel_name heptane-decane
+    fl-export-pele --fuel-name heptane-decane
 
 Or using the short option ``-f``: ::
 
@@ -120,14 +120,14 @@ Additional Options
 
 There are many additional options that can be specified when running the ``fl-export-pele`` command:
 
-- ``-dir, --fuel_data_dir PATH``: Directory containing the fuel data files. Default: ``fuellib/data``.
+- ``-dir, --fuel-data-dir PATH``: Directory containing the fuel data files. Default: ``fuellib/data``.
 - ``-u, --units {mks,cgs}``: Units for the properties. Default: ``mks`` (use ``cgs`` for PeleC).
-- ``-dep, --dep_fuel_names NAME [NAME ...]``: Gas-phase species that liquid fuel deposits to. Default: the emitted fuel species names.
+- ``-dep, --dep-fuel-names NAME [NAME ...]``: Gas-phase species that liquid fuel deposits to. Default: the emitted fuel species names.
 - ``-pp, --use-pp-keys``: Use PelePhysics keys for each compound.
-- ``-o, --export_dir PATH``: Directory to export the file. Default: ``./exportData``.
+- ``-o, --export-dir PATH``: Directory to export the file. Default: ``./exportData``.
 - ``-m, --export-mix``: Export fuel as a single mixture species.
-- ``-mn, --export_mix_name NAME``: Name of the mixture species if ``-m`` is set. Default: fuel name.
-- ``-l, --liq_prop_model {gcm,mp}``: Liquid property model to use. Default: ``gcm``.
+- ``-mn, --export-mix-name NAME``: Name of the mixture species if ``-m`` is set. Default: fuel name.
+- ``-l, --liq-prop-model {gcm,mp}``: Liquid property model to use. Default: ``gcm``.
 - ``-psat, --psat-antoine``: Use Antoine coefficients for vapor pressure in the MP model.
 
 Liquid Species Deposit to Single Gas-Phase Species
@@ -139,7 +139,7 @@ To specify all liquid fuel species deposit to a single gas-phase species, run: :
 
 Or with long options: ::
 
-    fl-export-pele --fuel_name heptane-decane --dep_fuel_names SINGLE_GAS
+    fl-export-pele --fuel-name heptane-decane --dep-fuel-names SINGLE_GAS
 
 Liquid Species Deposit to Specific Gas-Phase Species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -166,7 +166,7 @@ To export mixture properties of a multicomponent fuel as a single component, run
 
 Or with long options: ::
 
-    fl-export-pele --fuel_name heptane-decane --export-mix
+    fl-export-pele --fuel-name heptane-decane --export-mix
 
 This generates the following input file, ``FuelLib/exportData/sprayPropsGCM_mixture_heptane-decane.inp``: ::
 
@@ -205,9 +205,9 @@ where the liquid fuel is modeled as a single component that deposits to the HyCh
 Exporting Properties for the MP Model in Pele
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Users can export properties for the MP model in Pele by specifying ``--liq_prop_model mp`` when running the export command: ::
+Users can export properties for the MP model in Pele by specifying ``--liq-prop-model mp`` when running the export command: ::
     
-    fl-export-pele --fuel_name heptane-decane --liq_prop_model mp
+    fl-export-pele --fuel-name heptane-decane --liq-prop-model mp
 
 This generates the following input file, ``FuelLib/exportData/sprayPropsMP_heptane-decane.inp``, for use in a PeleLMeX simulation: ::
     
@@ -243,7 +243,7 @@ This generates the following input file, ``FuelLib/exportData/sprayPropsMP_hepta
 
 To include Antoine coefficients for vapor pressure in the MP model, specify ``--psat-antoine``: ::
     
-    fl-export-pele --fuel_name heptane-decane --liq_prop_model mp --psat-antoine
+    fl-export-pele --fuel-name heptane-decane --liq-prop-model mp --psat-antoine
 
 This generates the MP input file with Antoine coefficients for vapor pressure.
 

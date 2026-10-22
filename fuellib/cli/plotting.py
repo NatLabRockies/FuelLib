@@ -18,6 +18,30 @@ import fuellib as fl
 from ..utils import Units
 
 
+def _format_legend_label(fuel_name):
+    """Format a fuel name for a plot legend.
+
+    Preserve FuelLib's existing special handling: HEFA labels are uppercase,
+    POSF prefixes are omitted, and other names are capitalized.
+    """
+    if "hefa" in fuel_name.lower():
+        return fuel_name.upper()
+    if "posf" in fuel_name.lower():
+        return fuel_name[4:].upper()
+    return fuel_name.capitalize()
+
+
+def _resolve_legend_labels(fuel_names, leg=None):
+    """Return custom or default legend labels for the requested fuels."""
+    if leg is None:
+        return [_format_legend_label(fuel_name) for fuel_name in fuel_names]
+    if len(leg) == len(fuel_names):
+        return leg
+
+    msg = "leg must contain exactly one label for each fuel."
+    raise ValueError(msg)
+
+
 def plot_composition(
     fuel_name,
     fuel_data_dir=None,
@@ -222,25 +246,25 @@ def plot_mixture_properties(
     fuel_data_dir=None,
     output_dir=None,
     title=None,
+    leg=None,
     save=True,
     display=False,
 ):
     """Plot mixture properties for fuel(s) over a temperature range.
 
-    :param fuel_names: Name or list of fuel names to plot.
-    :type fuel_names: str or list[str]
-    :param property_names: Properties to plot (optional, defaults to standard set).
-    :type property_names: list[str], optional
-    :param fuel_data_dir: Directory where fuel data files are located (optional).
-    :type fuel_data_dir: str, optional
-    :param output_dir: Directory to save the plot (optional, default: current directory).
-    :type output_dir: str, optional
-    :param title: Title for the plot (optional, default: None).
-    :type title: str, optional
-    :param save: Whether to save the plot to a file (optional, default: True).
-    :type save: bool, optional
-    :param display: Whether to display the plot with plt.show() (optional, default: False).
-    :type display: bool, optional
+    Args:
+        fuel_names: Fuel name or names to plot.
+        property_names: Properties to plot. Defaults to the standard set.
+        fuel_data_dir: Directory containing fuel data. Defaults to the bundled data.
+        output_dir: Directory for saved plots. Defaults to the current directory.
+        title: Optional plot title.
+        leg: Literal legend label for each fuel. Defaults to the existing automatic
+            formatting.
+        save: Whether to save the plot. Defaults to True.
+        display: Whether to display the plot. Defaults to False.
+
+    Returns:
+        None.
     """
     if output_dir is None:
         output_dir = os.getcwd()
@@ -254,6 +278,8 @@ def plot_mixture_properties(
     # Handle single fuel_name or list
     if isinstance(fuel_names, str):
         fuel_names = [fuel_names]
+
+    legend_labels = _resolve_legend_labels(fuel_names, leg)
 
     # Default properties if not specified
     if property_names is None:
@@ -352,15 +378,6 @@ def plot_mixture_properties(
             color = color_palette[fuel_index % len(color_palette)]
         return (color, marker_style)
 
-    def get_legend_label(fuel_name):
-        """Create legend label for fuel."""
-        if "hefa" in fuel_name.lower():
-            return fuel_name.upper()
-        elif "posf" in fuel_name.lower():
-            return fuel_name[4:].upper()
-        else:
-            return fuel_name.capitalize()
-
     def get_temp_range(prop_name):
         """Get default temperature range for a property."""
         return default_ranges_by_property.get(
@@ -407,8 +424,8 @@ def plot_mixture_properties(
         num_prediction_points = (
             25 if prop_name == "SurfaceTension" and fuel.num_compounds > 20 else 100
         )
-        if len(T_data) > 0:
-            # Use data range if available
+        if len(T_data) > 1:
+            # Use the measured temperature range when it defines an interval.
             T_pred = Units.Quantity(
                 np.linspace(
                     T_data.magnitude.min(),
@@ -475,6 +492,7 @@ def plot_mixture_properties(
             if plot_units is None:
                 plot_units = prop_units
             line_color, marker_style = get_line_spec(fuel_name, fuel_index=fuel_idx)
+            legend_label = legend_labels[fuel_idx]
 
             # Plot predictions
             ax[i].plot(
@@ -482,19 +500,18 @@ def plot_mixture_properties(
                 pred,
                 "-",
                 color=line_color,
-                label=f"FuelLib: {get_legend_label(fuel_name)}",
+                label=f"FuelLib: {legend_label}",
                 linewidth=4,
             )
 
             # Plot experimental data if available
             if len(prop_data) > 0:
                 # Label the data with the fuel name
-                data_label = fuel_name
                 ax[i].scatter(
                     T_data,
                     prop_data,
                     marker=marker_style,
-                    label=f"Data: {get_legend_label(data_label)}",
+                    label=f"Data: {legend_label}",
                     facecolors=line_color,
                     s=75,
                     zorder=5,
@@ -538,21 +555,21 @@ def comp_main():
     # Fuel name (required)
     parser.add_argument(
         "-f",
-        "--fuel_name",
+        "--fuel-name",
         required=True,
         metavar="NAME",
         help="Name of the fuel to plot (required).",
     )
     parser.add_argument(
         "-dir",
-        "--fuel_data_dir",
+        "--fuel-data-dir",
         default=None,
         metavar="PATH",
         help="Directory where fuel data files are located (optional).",
     )
     parser.add_argument(
         "-o",
-        "--output_dir",
+        "--output-dir",
         default=None,
         metavar="PATH",
         help="Directory to save the plot (optional, default: current directory).",
@@ -603,7 +620,7 @@ def props_main():
 
     parser.add_argument(
         "-f",
-        "--fuel_names",
+        "--fuel-names",
         required=True,
         nargs="+",
         metavar="NAME",
@@ -611,7 +628,7 @@ def props_main():
     )
     parser.add_argument(
         "-p",
-        "--property_names",
+        "--property-names",
         nargs="+",
         default=None,
         metavar="PROP",
@@ -619,14 +636,14 @@ def props_main():
     )
     parser.add_argument(
         "-dir",
-        "--fuel_data_dir",
+        "--fuel-data-dir",
         default=None,
         metavar="PATH",
         help="Directory where fuel data files are located (optional).",
     )
     parser.add_argument(
         "-o",
-        "--output_dir",
+        "--output-dir",
         default=None,
         metavar="PATH",
         help="Directory to save the plot (optional, default: current directory).",
@@ -637,6 +654,12 @@ def props_main():
         default=None,
         metavar="TITLE",
         help="Title for the plot (optional).",
+    )
+    parser.add_argument(
+        "--leg",
+        nargs="+",
+        metavar="LABEL",
+        help="Literal legend label for each fuel, in the same order as --fuel-names.",
     )
     parser.add_argument(
         "-d",
@@ -662,6 +685,7 @@ def props_main():
             fuel_data_dir=args.fuel_data_dir,
             output_dir=args.output_dir,
             title=args.title,
+            leg=args.leg,
             save=args.save,
             display=args.display,
         )
@@ -688,21 +712,21 @@ def main():
     comp_parser = subparsers.add_parser("comp", help="Plot fuel composition")
     comp_parser.add_argument(
         "-f",
-        "--fuel_name",
+        "--fuel-name",
         required=True,
         metavar="NAME",
         help="Name of the fuel to plot (required).",
     )
     comp_parser.add_argument(
         "-dir",
-        "--fuel_data_dir",
+        "--fuel-data-dir",
         default=None,
         metavar="PATH",
         help="Directory where fuel data files are located (optional).",
     )
     comp_parser.add_argument(
         "-o",
-        "--output_dir",
+        "--output-dir",
         default=None,
         metavar="PATH",
         help="Directory to save the plot (optional, default: current directory).",
@@ -721,7 +745,7 @@ def main():
     )
     props_parser.add_argument(
         "-f",
-        "--fuel_names",
+        "--fuel-names",
         required=True,
         nargs="+",
         metavar="NAME",
@@ -729,7 +753,7 @@ def main():
     )
     props_parser.add_argument(
         "-p",
-        "--property_names",
+        "--property-names",
         nargs="+",
         default=None,
         metavar="PROP",
@@ -737,14 +761,14 @@ def main():
     )
     props_parser.add_argument(
         "-dir",
-        "--fuel_data_dir",
+        "--fuel-data-dir",
         default=None,
         metavar="PATH",
         help="Directory where fuel data files are located (optional).",
     )
     props_parser.add_argument(
         "-o",
-        "--output_dir",
+        "--output-dir",
         default=None,
         metavar="PATH",
         help="Directory to save the plot (optional, default: current directory).",
@@ -755,6 +779,12 @@ def main():
         default=None,
         metavar="TITLE",
         help="Title for the plot (optional).",
+    )
+    props_parser.add_argument(
+        "--leg",
+        nargs="+",
+        metavar="LABEL",
+        help="Literal legend label for each fuel, in the same order as --fuel-names.",
     )
 
     args = parser.parse_args()
@@ -779,6 +809,7 @@ def main():
                 fuel_data_dir=args.fuel_data_dir,
                 output_dir=args.output_dir,
                 title=args.title,
+                leg=args.leg,
             )
         except Exception as e:  # noqa: BLE001
             print(f"Error plotting mixture properties: {e}")

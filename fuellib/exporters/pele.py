@@ -558,39 +558,10 @@ def export_pele(
 
 
 def main():
-    """Main function to execute the export process.
+    """Parse CLI arguments and export fuel properties for Pele simulations.
 
-    :param --fuel_name: Name of the fuel (mandatory).
-    :type --fuel_name: str
-
-    :param --fuel_data_dir: Directory where fuel data files are located. Default is fuellib/data.
-    :type --fuel_data_dir: str, optional
-
-    :param --units: Units for critical properties. Options are "mks" (default) or "cgs".
-    :type --units: str, optional
-
-    :param --dep_fuel_names: Space-separated list with len(fuel.compounds) or single fuel that all compounds deposit. Default is fuel.compounds.
-    :type --dep_fuel_names: str, optional
-
-    :param --use-pp-keys: Use the PelePhysics key for each compound.
-    :type --use_pp_keys: bool, optional
-
-    :param --export_dir: Directory to export the properties. Default is the current working directory.
-    :type --export_dir: str, optional
-
-    :param --export-mix: Export mixture properties of the fuel.
-    :type --export_mix: bool, optional
-
-    :param --export_mix_name: Name the mixture if different than fuel_name. Default is fuel_name.
-    :type --export_mix_name: str, optional
-
-    :param --liq_prop_model: Model for liquid properties. Options are "gcm" (default) or "mp".
-    :type --liq_prop_model: str, optional
-
-    :param --psat-antoine: Use Antoine coefficients for vapor pressure in the MP model.
-    :type --psat_antoine: bool, optional
-
-    :raises FileNotFoundError: If required files for the specified fuel are not found.
+    Raises:
+        FileNotFoundError: If required files for the specified fuel are not found.
     """
     # Set up argument parser
     parser = argparse.ArgumentParser(
@@ -600,7 +571,7 @@ def main():
     # Mandatory argument for fuel name
     parser.add_argument(
         "-f",
-        "--fuel_name",
+        "--fuel-name",
         required=True,
         metavar="NAME",
         help="Name of the fuel (mandatory).",
@@ -609,7 +580,7 @@ def main():
     # Optional argument for fuel data directory
     parser.add_argument(
         "-dir",
-        "--fuel_data_dir",
+        "--fuel-data-dir",
         default=FUELDATA_DIR,
         metavar="PATH",
         help="Directory where fuel data files are located (optional, default: fuellib/data).",
@@ -628,7 +599,7 @@ def main():
     # Optional argument for deposition fuel names
     parser.add_argument(
         "-dep",
-        "--dep_fuel_names",
+        "--dep-fuel-names",
         nargs="+",  # Accepts one or more values
         default=None,
         metavar="NAME",
@@ -639,7 +610,6 @@ def main():
     parser.add_argument(
         "-pp",
         "--use-pp-keys",
-        "--use_pp_keys",
         dest="use_pp_keys",
         action="store_true",
         help="Use PelePhysics keys for each compound.",
@@ -648,7 +618,7 @@ def main():
     # Optional argument for export directory
     parser.add_argument(
         "-o",
-        "--export_dir",
+        "--export-dir",
         default=os.getcwd(),
         metavar="PATH",
         help="Directory to export the properties (optional, default: current working directory).",
@@ -658,7 +628,6 @@ def main():
     parser.add_argument(
         "-m",
         "--export-mix",
-        "--export_mix",
         dest="export_mix",
         action="store_true",
         help="Export mixture properties of the fuel.",
@@ -667,7 +636,7 @@ def main():
     # Optional argument for mixture name if different than fuel_name
     parser.add_argument(
         "-mn",
-        "--export_mix_name",
+        "--export-mix-name",
         default=None,
         metavar="NAME",
         help="Name the mixture if different than fuel_name (optional, default: fuel_name).",
@@ -676,7 +645,7 @@ def main():
     # Optional argument for liquid property model
     parser.add_argument(
         "-l",
-        "--liq_prop_model",
+        "--liq-prop-model",
         default="gcm",
         metavar="{gcm,mp}",
         help="Model for liquid properties (optional, default: gcm).",
@@ -686,7 +655,6 @@ def main():
     parser.add_argument(
         "-psat",
         "--psat-antoine",
-        "--psat_antoine",
         dest="psat_antoine",
         action="store_true",
         help="Use Antoine coefficients for vapor pressure in the MP model.",
