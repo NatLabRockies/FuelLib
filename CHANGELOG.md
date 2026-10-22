@@ -11,6 +11,12 @@ release workflow to parse release entries in this file.
 - `Fuel.metadata` attribute containing additional fuel information parsed from `fuel_metadata.yaml`, if available.
 - Three new single-component fuels for testing purposes. Bundled properties primarily include dynamic viscosity.
 - `docs` task to `lefthook.yaml` to verify build success before committing changes.
+- `gcm.unifac` with accompanying `unifac.csv` and `unifac_amn.csv`, implementing the UNIFAC 2.0 (Hayer et al., 2025) activity coefficient model. Registers a `"unifac"` GCM with the compound volume and surface parameters `R` and `Q`, and provides `ln_gamma` (from a fuel, temperature, and mass fractions) and the NumPy kernel `ln_gamma_x` with `parameters` for repeated evaluations.
+- `gcm.unifac.decompose` for automatically decomposing a hydrocarbon SMILES string into UNIFAC subgroups; also available as `fl-decomp-smiles --method unifac`.
+- `data/refUNIFAC.csv` with UNIFAC subgroup decompositions of the reference compounds, loaded into `Fuel.refUnifac` and `Fuel.unifacDecomp`.
+- `tests/test_gcm_unifac.py` covering the UNIFAC tables, decompositions, and activity coefficients.
+- Hayer et al. (2025) reference in `refs.bib`.
+- `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
 
 ### Changed
 - `fuellib/{_data_locator,_reference_data}` -> `fuellib/data/{_data_locator,_reference_data}`.
@@ -23,6 +29,7 @@ release workflow to parse release entries in this file.
 - `Fuel.MW` to a cached_property to avoid repetitive RDKit calls.
 - `baselinePredictions/generate_baseline.py` can now regenerate specific baselines (fuels/properties) and allows `useRefProperties` to be toggled from the CLI.
 - `constants.gas_constant` -> `constants.R` to be more consistent with other variable names.
+- Every compound in a fuel must now also be present in `refUNIFAC.csv`. Custom fuels with compounds that are not in the bundled table must provide a custom `refUNIFAC.csv`.
 
 ### Fixed
 - `mixture.derived_cetane_number` and `mixture.yield_sooting_index` return types corrected to `Quantity0D`. `Fuel` wrappers updated accordingly.
