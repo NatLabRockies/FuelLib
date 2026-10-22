@@ -1,0 +1,6 @@
+fuellib.gcm.boehm.dS\_fus
+=========================
+
+.. currentmodule:: fuellib.gcm.boehm
+
+.. autofunction:: dS_fus

@@ -1,0 +1,16 @@
+﻿fuellib.gcm.core
+================
+
+.. automodule:: fuellib.gcm.core
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      GCM
+      GCMRegistry
+      PropertyProtocol
+   

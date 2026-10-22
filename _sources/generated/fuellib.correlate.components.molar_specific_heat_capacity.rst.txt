@@ -1,0 +1,6 @@
+fuellib.correlate.components.molar\_specific\_heat\_capacity
+============================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: molar_specific_heat_capacity

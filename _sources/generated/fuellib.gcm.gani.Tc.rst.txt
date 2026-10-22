@@ -1,0 +1,6 @@
+fuellib.gcm.gani.Tc
+===================
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autofunction:: Tc

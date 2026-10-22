@@ -1,0 +1,6 @@
+fuellib.correlate.components.latent\_heat\_vaporization
+=======================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: latent_heat_vaporization

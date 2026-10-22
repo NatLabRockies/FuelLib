@@ -1,0 +1,101 @@
+fuellib.fuel.Fuel
+=================
+
+.. currentmodule:: fuellib.fuel
+
+.. autoclass:: Fuel
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Fuel.Cp_B
+      ~Fuel.Cp_C
+      ~Fuel.Cp_stp
+      ~Fuel.DCN
+      ~Fuel.Gf_stp
+      ~Fuel.Hf_stp
+      ~Fuel.Hv_stp
+      ~Fuel.Lv_stp
+      ~Fuel.MW
+      ~Fuel.Pc
+      ~Fuel.RD_coeffs
+      ~Fuel.Tb
+      ~Fuel.Tc
+      ~Fuel.Tm
+      ~Fuel.Vc
+      ~Fuel.Vm_stp
+      ~Fuel.YSI
+      ~Fuel.dS_fus
+      ~Fuel.epsilonByKB
+      ~Fuel.fam
+      ~Fuel.formulas
+      ~Fuel.hc_type
+      ~Fuel.nC
+      ~Fuel.nH
+      ~Fuel.num_compounds
+      ~Fuel.omega
+      ~Fuel.phi
+      ~Fuel.rdkit_mols
+      ~Fuel.sigma
+      ~Fuel.name
+      ~Fuel.useRefProperties
+      ~Fuel.fuelDataDir
+      ~Fuel.gcData
+      ~Fuel.Y_0
+      ~Fuel.refCompounds
+      ~Fuel.refGani
+      ~Fuel.refNannoolal
+      ~Fuel.compoundsData
+      ~Fuel.compounds
+      ~Fuel.smiles
+      ~Fuel.ganiDecomp
+      ~Fuel.nannoolalDecomp
+      ~Fuel.propData
+      ~Fuel.metadata
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Fuel.Cl
+      ~Fuel.Cp
+      ~Fuel.X2Y
+      ~Fuel.Y2X
+      ~Fuel.density
+      ~Fuel.diffusion_coeff
+      ~Fuel.flash_point
+      ~Fuel.latent_heat_vaporization
+      ~Fuel.mass2X
+      ~Fuel.mass2Y
+      ~Fuel.mean_molecular_weight
+      ~Fuel.mixture_density
+      ~Fuel.mixture_derived_cetane_number
+      ~Fuel.mixture_dynamic_viscosity
+      ~Fuel.mixture_flash_point
+      ~Fuel.mixture_freeze_point
+      ~Fuel.mixture_heat_of_combustion
+      ~Fuel.mixture_kinematic_viscosity
+      ~Fuel.mixture_surface_tension
+      ~Fuel.mixture_thermal_conductivity
+      ~Fuel.mixture_vapor_pressure
+      ~Fuel.mixture_vapor_pressure_antoine_coeffs
+      ~Fuel.mixture_yield_sooting_index
+      ~Fuel.molar_liquid_vol
+      ~Fuel.psat
+      ~Fuel.psat_antoine_coeffs
+      ~Fuel.surface_tension
+      ~Fuel.thermal_conductivity
+      ~Fuel.viscosity_dynamic
+      ~Fuel.viscosity_kinematic
+   
+   
