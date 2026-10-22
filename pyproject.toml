@@ -71,6 +71,7 @@ fl-plt-comp = "fuellib.cli.plotting:comp_main"
 fl-plt-props = "fuellib.cli.plotting:props_main"
 fl-fuels = "fuellib.cli.fuel_manager:list_fuels_main"
 fl-decomp-smiles = "fuellib.cli.decomp_smiles:decompose_smiles"
+fl-simulate = "fuellib.cli.simulate:main"
 
 # Developer tasks
 [tool.taskipy.tasks]

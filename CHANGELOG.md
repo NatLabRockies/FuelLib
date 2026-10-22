@@ -16,6 +16,7 @@ release workflow to parse release entries in this file.
 - `data/refUNIFAC.csv` with UNIFAC subgroup decompositions of the reference compounds, loaded into `Fuel.refUnifac` and `Fuel.unifacDecomp`.
 - `tests/test_gcm_unifac.py` covering the UNIFAC tables, decompositions, and activity coefficients.
 - Hayer et al. (2025) reference in `refs.bib`.
+- `fl-simulate` CLI (`cli/simulate.py`) that runs a fuel test simulation (currently `d86_greenfield`) for one or more fuels and exports or shows a plot of the results, overlaying multiple fuels with a legend and plotting measured data from `propertiesData` as symbols, if available.
 - `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
 
 ### Changed

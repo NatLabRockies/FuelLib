@@ -35,6 +35,9 @@ FuelLib File Organization
         - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion, yield sooting index, derived cetane number)
         - ``helpers.py``: shared helper functions for mixing rules and mass/mole fraction conversions
 
+    - **simulate**: subpackage with simulations of fuel tests
+        - ``distillation/greenfield.py``: ASTM D86 distillation curve model of Greenfield et al. (1998) (see :doc:`distillation`)
+
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
 
@@ -61,6 +64,7 @@ FuelLib File Organization
         - ``plotting.py``: plotting utilities for composition and properties
         - ``fuel_manager.py``: fuel manager utility
         - ``decomp_smiles.py``: SMILES group-decomposition utility (CLI: ``fl-decomp-smiles``)
+        - ``simulate.py``: fuel test simulations with plots of the results (CLI: ``fl-simulate``)
         - ``build_docs.py``: documentation builder utility
         - ``clean_docs.py``: documentation cleaner utility
         - ``format_code.py``: code formatter utility
@@ -112,3 +116,4 @@ Click on links below for the full auto-documentation of the API.
     fuellib.correlate.components
     fuellib.correlate.mixture
     fuellib.correlate.helpers
+    fuellib.simulate.distillation.greenfield
