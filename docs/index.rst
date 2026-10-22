@@ -68,6 +68,7 @@ Development tools (Sphinx, Ruff, ty, pytest) are available for developers instal
    fuelprops
    refcompounds
    gcm
+   distillation
    units
    tutorials
    sourcecode   
