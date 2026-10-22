@@ -1,0 +1,24 @@
+Temp,Temp_Units,Property,Property_Units,Property_Value,Source
+146.7,kelvin,DynamicViscosity,Pa*s,0.55,NIST Chemistry WebBook
+160,kelvin,DynamicViscosity,Pa*s,0.0456,NIST Chemistry WebBook
+180,kelvin,DynamicViscosity,Pa*s,0.01246,NIST Chemistry WebBook
+200,kelvin,DynamicViscosity,Pa*s,0.00544,NIST Chemistry WebBook
+220,kelvin,DynamicViscosity,Pa*s,0.002928,NIST Chemistry WebBook
+240,kelvin,DynamicViscosity,Pa*s,0.001801,NIST Chemistry WebBook
+260,kelvin,DynamicViscosity,Pa*s,0.0012161,NIST Chemistry WebBook
+280,kelvin,DynamicViscosity,Pa*s,0.0008778,NIST Chemistry WebBook
+300,kelvin,DynamicViscosity,Pa*s,0.0006648,NIST Chemistry WebBook
+320,kelvin,DynamicViscosity,Pa*s,0.0005213,NIST Chemistry WebBook
+340,kelvin,DynamicViscosity,Pa*s,0.0004193,NIST Chemistry WebBook
+360,kelvin,DynamicViscosity,Pa*s,0.00034362,NIST Chemistry WebBook
+380,kelvin,DynamicViscosity,Pa*s,0.0002855,NIST Chemistry WebBook
+400,kelvin,DynamicViscosity,Pa*s,0.0002398,NIST Chemistry WebBook
+420,kelvin,DynamicViscosity,Pa*s,0.0002028,NIST Chemistry WebBook
+440,kelvin,DynamicViscosity,Pa*s,0.0001725,NIST Chemistry WebBook
+460,kelvin,DynamicViscosity,Pa*s,0.000147,NIST Chemistry WebBook
+480,kelvin,DynamicViscosity,Pa*s,0.0001252,NIST Chemistry WebBook
+500,kelvin,DynamicViscosity,Pa*s,0.000106,NIST Chemistry WebBook
+520,kelvin,DynamicViscosity,Pa*s,8.84E-05,NIST Chemistry WebBook
+540,kelvin,DynamicViscosity,Pa*s,7.15E-05,NIST Chemistry WebBook
+560,kelvin,DynamicViscosity,Pa*s,5.26E-05,NIST Chemistry WebBook
+572.1,kelvin,DynamicViscosity,Pa*s,3.20E-05,NIST Chemistry WebBook

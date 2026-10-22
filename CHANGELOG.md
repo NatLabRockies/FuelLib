@@ -7,6 +7,40 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Added
+- `Fuel.metadata` attribute containing additional fuel information parsed from `fuel_metadata.yaml`, if available.
+- Three new single-component fuels for testing purposes. Bundled properties primarily include dynamic viscosity.
+- `docs` task to `lefthook.yaml` to verify build success before committing changes.
+- `gcm.unifac` with accompanying `unifac.csv` and `unifac_amn.csv`, implementing the UNIFAC 2.0 (Hayer et al., 2025) activity coefficient model. Registers a `"unifac"` GCM with the compound volume and surface parameters `R` and `Q`, and provides `ln_gamma` (from a fuel, temperature, and mass fractions) and the NumPy kernel `ln_gamma_x` with `parameters` for repeated evaluations.
+- `gcm.unifac.decompose` for automatically decomposing a hydrocarbon SMILES string into UNIFAC subgroups; also available as `fl-decomp-smiles --method unifac`.
+- `data/refUNIFAC.csv` with UNIFAC subgroup decompositions of the reference compounds, loaded into `Fuel.refUnifac` and `Fuel.unifacDecomp`.
+- `tests/test_gcm_unifac.py` covering the UNIFAC tables, decompositions, and activity coefficients.
+- Hayer et al. (2025) reference in `refs.bib`.
+- `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
+
+### Changed
+- `fuellib/{_data_locator,_reference_data}` -> `fuellib/data/{_data_locator,_reference_data}`.
+- `fuellib/{constants,utility}` -> `fuellib/utils/{constants,utility}`. `utility` is re-exported at the top-level `__init__` to maintain original API.
+- **Technically Breaking**: All `cli` conversion utilities moved to `cli/convert.py`. `fl-{convert}` continues to work the same.
+- **Technically Breaking**: `convert.epsilon_to_characteristic_temperature` moved to `utils/utility.epsilon_to_characteristic_temperature` (similar utility methods exist here). `fl-eps2K` continues to work the same.
+  - `epsilon_to_characteristic_temperature` now returns an instance of `Quantity0D`.
+- `_reference_data._resolve_ref_path` repurposed to `_find_custom_ref_path` to handle new approach to locating custom data.
+  - Loading functions in `_reference_data` updated accordingly.
+- `Fuel.MW` to a cached_property to avoid repetitive RDKit calls.
+- `baselinePredictions/generate_baseline.py` can now regenerate specific baselines (fuels/properties) and allows `useRefProperties` to be toggled from the CLI.
+- `constants.gas_constant` -> `constants.R` to be more consistent with other variable names.
+- Every compound in a fuel must now also be present in `refUNIFAC.csv`. Custom fuels with compounds that are not in the bundled table must provide a custom `refUNIFAC.csv`.
+
+### Fixed
+- `mixture.derived_cetane_number` and `mixture.yield_sooting_index` return types corrected to `Quantity0D`. `Fuel` wrappers updated accordingly.
+- `Fuel.mixture_flash_point` raises `ValueError` with unknown correlation.
+
+### Removed
+- **Breaking**: Removed `ref{File}Path` arguments from `Fuel.__init__`. Fuel initialization assumes that custom fuel directories follow the format outlined in documentation.
+- `fuellib/convert.py`. All temperature conversions transitioned to using the `pint` library (including `cli`).
+- Placeholders for `unxt`/`jax` support in `utils/types.py`. 
+- Tests for the `fuellib.convert` module. `epsilon_to_characteristic_temperature` tests updated.
+
 ## [3.1.0] - 2026-10-21
 
 ### Added

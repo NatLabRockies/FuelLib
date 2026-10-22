@@ -6,8 +6,9 @@ which generally provides weight percentages of a given hydrocarbon family and ca
 To address this challenge, FuelLib uses a set of reference compounds that represent the major hydrocarbon families and carbon numbers found in jet fuels.
 A comprehensive list of the reference compounds used in FuelLib can be found in the 
 `fuellib/data/refCompounds.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/refCompounds.csv>`_ file, 
-with associated Constantinou-Gani\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995` functional group decompositions in `fuellib/data/refGani.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/refGani.csv>`_
-and Nannoolal\ :footcite:p:`nannoolal_estimation_2009` group decompositions in `fuellib/data/refNannoolal.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/refNannoolal.csv>`_.
+with associated Constantinou-Gani\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995` functional group decompositions in `fuellib/data/refGani.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/refGani.csv>`_,
+Nannoolal\ :footcite:p:`nannoolal_estimation_2009` group decompositions in `fuellib/data/refNannoolal.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/refNannoolal.csv>`_,
+and UNIFAC 2.0\ :footcite:p:`hayer_advancing_2025` subgroup decompositions in `fuellib/data/refUNIFAC.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/refUNIFAC.csv>`_.
 
 The table below lists the family, carbon number, name, and SMILES string of each reference compound. 
 The measured property columns of ``refCompounds.csv`` are omitted here; see :ref:`sec-reference-properties` 

@@ -6,33 +6,28 @@ from typing import Literal
 import pandas as pd
 from pandas import DataFrame, Series
 
-from .rdk.mol import smiles_to_inchi
+from ..rdk.mol import smiles_to_inchi
 
-DEFAULT_DATA_DIR = Path(__file__).parent / "data"
+DEFAULT_DATA_DIR = Path(__file__).parent
 
 
-def _resolve_ref_path(path: str | Path | None, data_dir: Path, file_name: str) -> Path:
-    """Resolve a custom reference-table path, falling back to bundled data.
+def _find_custom_ref_path(data_dir: Path, file_name: str) -> Path | None:
+    """Locate a custom reference table in a fuel data directory.
 
     Args:
-        path: Explicit custom reference-table path, if provided.
         data_dir: Directory containing custom fuel data.
         file_name: Reference-table file name.
 
     Returns:
-        Resolved path to the custom or bundled reference table.
-
-    Raises:
-        FileNotFoundError: If neither the custom nor bundled table exists.
+        Path to the custom reference table, or `None` if `data_dir` has no such
+        file or it is the bundled table.
     """
-    ref_path = Path(path) if path is not None else data_dir / file_name
-    if not ref_path.exists():
-        print(f"Reference file not found at {ref_path}, using default location.")
-        ref_path = DEFAULT_DATA_DIR / file_name
-        if not ref_path.exists():
-            msg = f"Default reference file not found: {ref_path}"
-            raise FileNotFoundError(msg)
-    return ref_path
+    custom_path = data_dir / file_name
+    if not custom_path.is_file():
+        return None
+    if custom_path.resolve() == (DEFAULT_DATA_DIR / file_name).resolve():
+        return None
+    return custom_path
 
 
 def smiles_series_to_inchi(smiles: Series) -> Series:
@@ -52,25 +47,23 @@ def smiles_series_to_inchi(smiles: Series) -> Series:
     )
 
 
-def load_ref_compounds(path: str | Path | None, data_dir: Path) -> DataFrame:
+def load_ref_compounds(data_dir: Path) -> DataFrame:
     """Load bundled reference compounds and apply custom overrides.
 
-    Custom rows replace bundled rows when their SMILES strings resolve to the
+    If `data_dir` contains a `refCompounds.csv` file, its rows are added to the bundled
+    table. Custom rows replace bundled rows when their SMILES strings resolve to the
     same InChI, allowing alternative valid SMILES representations for the same
     compound.
 
     Args:
-        path: Explicit custom reference-compound file, if provided.
         data_dir: Directory containing custom fuel data.
 
     Returns:
         The bundled reference-compound table with custom additions and overrides.
     """
-    default_path = DEFAULT_DATA_DIR / "refCompounds.csv"
-    custom_path = _resolve_ref_path(path, data_dir, "refCompounds.csv")
-    default_data = pd.read_csv(default_path)
-
-    if custom_path.resolve() == default_path.resolve():
+    default_data = pd.read_csv(DEFAULT_DATA_DIR / "refCompounds.csv")
+    custom_path = _find_custom_ref_path(data_dir, "refCompounds.csv")
+    if custom_path is None:
         return default_data
 
     custom_data = pd.read_csv(custom_path)
@@ -97,29 +90,25 @@ def load_ref_compounds(path: str | Path | None, data_dir: Path) -> DataFrame:
 
 
 def load_ref_decomp(
-    path: str | Path | None, data_dir: Path, method: Literal["Gani", "Nannoolal"]
+    data_dir: Path, method: Literal["Gani", "Nannoolal", "UNIFAC"]
 ) -> DataFrame:
-    """Load bundled Gani or Nannoolal decompositions and apply name-based overrides.
+    """Load GCM decompositions and apply name-based overrides.
+
+    If `data_dir` contains a `ref{method}.csv` file, its rows are added to the bundled
+    table, replacing bundled rows with the same `Reference Compound` value.
 
     Args:
-        path: Explicit custom Gani or Nannoolal decomposition file, if provided.
         data_dir: Directory containing custom fuel data.
-        method: Decomposition method, either "Gani" or "Nannoolal".
+        method: Decomposition method, either "Gani", "Nannoolal", or "UNIFAC".
 
     Returns:
-        The bundled Gani or Nannoolal decomposition table with custom additions and
+        The bundled method-specific decomposition table with custom additions and
         overrides.
     """
-    if method == "Gani":
-        default_path = DEFAULT_DATA_DIR / "refGani.csv"
-        custom_path = _resolve_ref_path(path, data_dir, "refGani.csv")
-    else:  # method == "Nannoolal"
-        default_path = DEFAULT_DATA_DIR / "refNannoolal.csv"
-        custom_path = _resolve_ref_path(path, data_dir, "refNannoolal.csv")
-
-    default_data = pd.read_csv(default_path)
-
-    if custom_path.resolve() == default_path.resolve():
+    file_name = f"ref{method}.csv"
+    default_data = pd.read_csv(DEFAULT_DATA_DIR / file_name)
+    custom_path = _find_custom_ref_path(data_dir, file_name)
+    if custom_path is None:
         return default_data
 
     custom_data = pd.read_csv(custom_path)
