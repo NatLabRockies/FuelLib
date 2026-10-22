@@ -28,7 +28,7 @@ Create a fuel data directory with this structure:
 
 - ``propertiesData/{fuel_name}.csv``: measured property data (one file per fuel) loaded into ``Fuel.propData``.
 - ``refCompounds.csv``, ``refGani.csv``, and ``refNannoolal.csv``: custom reference compound and group decomposition tables. When present, each table supplements FuelLib's built-in table; it does not replace it. If a file is absent, FuelLib uses the built-in table in ``fuellib/data``.
-- ``fuel_metadata.yaml``: display name, source, and other documentation for each fuel (used by ``fl-fuel-manager``). The :class:`~fuellib.fuel.Fuel` class does not read this file.
+- ``fuel_metadata.yaml``: display name, source, and other documentation for each fuel, keyed by fuel name under a top-level ``fuels`` entry. The entry for a fuel is loaded into ``Fuel.metadata`` (``None`` if the file or entry is absent).
 
 Fuel variants with identical compounds but different weight percentages simply use separate ``gcData`` files that refer to the same reference compounds.
 
@@ -73,7 +73,7 @@ See the `Basic Usage tutorial <tutorials-basic.html#decomposing-fuel-components-
 Using Custom Fuels
 ------------------
 
-Once your custom fuel directory is set up, you can use it like any built-in fuel by specifying the ``fuelDataDir`` when creating a fuel object. Custom reference tables can also be supplied directly with ``refCompoundsPath``, ``refGaniPath``, and ``refNannoolalPath``:
+Once your custom fuel directory is set up, you can use it like any built-in fuel by specifying the ``fuelDataDir`` when creating a fuel object. Custom reference tables are only read from ``fuelDataDir``, so they must follow the directory structure above:
 
 .. code-block:: python
 
@@ -86,15 +86,6 @@ Once your custom fuel directory is set up, you can use it like any built-in fuel
     T = fl.Units.Quantity(320, "K") # Temperature as a pint.Quantity
     p_sat_i = fuel.psat(T)
     p_sat_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
-
-    # Use custom reference tables stored outside of the fuel data directory
-    fuel = fl.Fuel(
-        "new-saf",
-        fuelDataDir="/path/to/customFuels",
-        refCompoundsPath="/path/to/refCompounds.csv",
-        refGaniPath="/path/to/refGani.csv",
-        refNannoolalPath="/path/to/refNannoolal.csv",
-    )
 
 Tips and Best Practices
 -----------------------

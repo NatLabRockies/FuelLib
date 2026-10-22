@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
-from fuellib import constants
-
-from ..utils import Units, types
+from ..utils import Units, constants, types
 from . import components, helpers
 
 if TYPE_CHECKING:
@@ -484,7 +482,7 @@ def freeze_point_boehm(
         helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
     )
 
-    R = constants.gas_constant.to("J/(mol*K)")
+    R = constants.R.to("J/(mol*K)")
     Tm = fuel.Tm.to("K")
     dS_fus = fuel.dS_fus.to("J/(mol*K)")
     dH_fus = Tm * dS_fus
@@ -751,7 +749,7 @@ def heat_of_combustion(
 
 def yield_sooting_index(
     fuel: "Fuel", Yi: types.Quantity1D | None = None
-) -> types.Quantity1D:
+) -> types.Quantity0D:
     """Calculate the yield sooting index of the fuel mixture.
 
     Combines each component's yield sooting index (`Fuel.YSI`)
@@ -793,7 +791,7 @@ def derived_cetane_number(
     Yi: types.Quantity1D | None = None,
     *,
     T_ref: types.Quantity0D = constants.T_stp,
-) -> types.Quantity1D:
+) -> types.Quantity0D:
     """Calculate the derived cetane number (DCN) of the fuel mixture.
 
     Combines each component's derived cetane number with a linear, liquid volume

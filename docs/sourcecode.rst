@@ -12,10 +12,11 @@ FuelLib File Organization
 - **fuellib:** main package directory containing:
 
     - ``fuel.py``: core :class:`~fuellib.fuel.Fuel` class for Group Contribution Method calculations, including loading of GCxGC data and matching of compounds to the reference data tables
-    - ``constants.py``: physical constants (Boltzmann, Avogadro)
-    - ``convert.py``: temperature conversion functions and Lennard-Jones calculations
-    - ``utility.py``: utility functions for mixture properties and droplet calculations
-    - ``_data_locator.py``: internal module for locating and validating fuel data directories
+
+    - **utils**: subpackage with shared utilities
+        - ``constants.py``: physical constants and reference values (Boltzmann, Avogadro, gas constant, standard temperature, and air properties)
+        - ``utility.py``: utility functions for mixing rules, droplet calculations, and Lennard-Jones conversions (re-exported as ``fuellib.utility``)
+        - ``types.py``: unit-aware type aliases and the ``Units`` registry
 
     - **gcm**: subpackage implementing the Group Contribution Method (GCM) abstraction
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
@@ -36,12 +37,14 @@ FuelLib File Organization
 
     - **data**: directory containing fuel data and reference data
 
+        - ``_data_locator.py``: internal module for locating and validating fuel data directories
+        - ``_reference_data.py``: internal module for loading the reference tables and merging custom tables found in a fuel data directory
         - ``refCompounds.csv``: reference compounds (``Family``, ``Carbon Number``, ``Reference Compound``, ``SMILES``) and their optional measured properties (``{Property}_Value``, ``_Error``, ``_Units``, ``_Source``, ``_Notes``)
         - ``refGani.csv``: functional group decompositions of the reference compounds
         - ``refNannoolal.csv``: Nannoolal group decompositions of the reference compounds
         - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages (``{fuel_name}.csv``)
         - **propertiesData:** directory containing measurement or predicted data used for validation
-        - ``fuel_metadata.yaml``: YAML file with source information and other optional metadata for each fuel
+        - ``fuel_metadata.yaml``: YAML file with source information and other optional metadata for each fuel (loaded into ``Fuel.metadata``)
     
     - **exporters:** subpackage with CLI exporters for generating fuel properties
     
@@ -50,8 +53,7 @@ FuelLib File Organization
 
     - **cli:** subpackage with command-line interface tools for data conversion and analysis
     
-        - ``temp_converter.py``: temperature conversion utilities
-        - ``transport_props_converter.py``: transport properties conversion utilities
+        - ``convert.py``: temperature and Lennard-Jones conversion utilities (CLI: ``fl-C2K``, ``fl-K2C``, ``fl-C2F``, ``fl-F2C``, ``fl-F2K``, ``fl-K2F``, ``fl-eps2K``)
         - ``plotting.py``: plotting utilities for composition and properties
         - ``fuel_manager.py``: fuel manager utility
         - ``decomp_smiles.py``: SMILES group-decomposition utility (CLI: ``fl-decomp-smiles``)
@@ -93,9 +95,8 @@ Click on links below for the full auto-documentation of the API.
     :toctree: generated
 
     fuellib.fuel
-    fuellib.constants
-    fuellib.convert
-    fuellib.utility
+    fuellib.utils.constants
+    fuellib.utils.utility
     fuellib.utils.types
     fuellib.gcm.core
     fuellib.gcm.gani

@@ -60,13 +60,13 @@ fl-export-pele = "fuellib.exporters.pele:main"
 fl-build-docs = "fuellib.cli.build_docs:main"
 fl-clean-docs = "fuellib.cli.clean_docs:main"
 fl-format = "fuellib.cli.format_code:main"
-fl-eps2K = "fuellib.cli.transport_props_converter:eps2K_main"
-fl-C2K = "fuellib.cli.temp_converter:c2k_main"
-fl-K2C = "fuellib.cli.temp_converter:k2c_main"
-fl-C2F = "fuellib.cli.temp_converter:c2f_main"
-fl-F2C = "fuellib.cli.temp_converter:f2c_main"
-fl-F2K = "fuellib.cli.temp_converter:f2k_main"
-fl-K2F = "fuellib.cli.temp_converter:k2f_main"
+fl-eps2K = "fuellib.cli.convert:eps2K_main"
+fl-C2K = "fuellib.cli.convert:c2k_main"
+fl-K2C = "fuellib.cli.convert:k2c_main"
+fl-C2F = "fuellib.cli.convert:c2f_main"
+fl-F2C = "fuellib.cli.convert:f2c_main"
+fl-F2K = "fuellib.cli.convert:f2k_main"
+fl-K2F = "fuellib.cli.convert:k2f_main"
 fl-plt-comp = "fuellib.cli.plotting:comp_main"
 fl-plt-props = "fuellib.cli.plotting:props_main"
 fl-fuels = "fuellib.cli.fuel_manager:list_fuels_main"
@@ -121,9 +121,13 @@ layers = [
     "fuellib.exporters | fuellib.cli", # Not importable by any modules
     "fuellib.fuel",
     "fuellib.correlate",
+    "fuellib.data",
     "fuellib.gcm",
     "fuellib.rdk",
     "fuellib.utils", # Importable by all modules
+]
+ignore_imports = [
+    "fuellib.utils.utility -> fuellib.correlate",
 ]
 
 # Pytest configurations

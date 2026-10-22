@@ -5,10 +5,9 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit
 
-from .. import constants
 from ..gcm.nannoolal import nannoolal_gcm
 from ..rdk import mol
-from ..utils import Units, types
+from ..utils import Units, constants, types
 
 if TYPE_CHECKING:
     from ..fuel import Fuel
@@ -168,7 +167,7 @@ def molar_specific_heat_capacity_ruzicka(
     """
     Tr = T.to("K") / 100.0
     rd_A, rd_B, rd_D = fuel.RD_coeffs
-    cp_molar = constants.gas_constant * (rd_A + rd_B * Tr + rd_D * Tr**2)
+    cp_molar = constants.R * (rd_A + rd_B * Tr + rd_D * Tr**2)
     return cp_molar.to("J/(mol*K)")
 
 

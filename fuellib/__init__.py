@@ -15,25 +15,24 @@ except ImportError:
 
 # Import fuel class
 # Import submodules for namespacing
-from . import constants, convert, correlate, utility
+from . import correlate
 
 # Import data locator functions
-from ._data_locator import (
+from .data._data_locator import (
     get_data_dir,
     get_fueldata_dir,
     get_fueldata_gc_dir,
     get_fueldata_props_dir,
 )
-from ._reference_data import DEFAULT_DATA_DIR
+from .data._reference_data import DEFAULT_DATA_DIR
 from .fuel import Fuel
-from .utils import Units
+from .utils import Units, constants, utility
 
 __all__ = [
     "DEFAULT_DATA_DIR",
     "Fuel",
     "Units",
     "constants",
-    "convert",
     "correlate",
     "get_data_dir",
     "get_fueldata_dir",
