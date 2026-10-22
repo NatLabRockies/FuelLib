@@ -8,20 +8,21 @@ from typing import Literal
 
 import numpy as np
 import pandas as pd
+import yaml
 from pandas import DataFrame, Series
 from rdkit.Chem import Mol
 
 from . import correlate
-from ._reference_data import (
+from .data._reference_data import (
     DEFAULT_DATA_DIR,
     load_ref_compounds,
     load_ref_decomp,
     smiles_series_to_inchi,
 )
-from .constants import EpsilonByKB_gas, MW_gas, Sigma_gas, T_stp
 from .gcm import boehm_gcm, gani_gcm
 from .rdk import mol
 from .utils import Units, types
+from .utils.constants import EpsilonByKB_gas, MW_gas, Sigma_gas, T_stp
 
 
 def _match_gc_to_ref(gcData: DataFrame, refData: DataFrame, refName: str) -> DataFrame:
@@ -79,9 +80,6 @@ class Fuel:
         self,
         name: str,
         fuelDataDir: str | Path | None = None,
-        refCompoundsPath: str | Path | None = None,
-        refGaniPath: str | Path | None = None,
-        refNannoolalPath: str | Path | None = None,
         *,
         useRefProperties: bool = True,
     ) -> None:
@@ -91,24 +89,12 @@ class Fuel:
             name: Name of the fuel.
             fuelDataDir: Directory containing fuel data.
                 Defaults to `fuelLib/data`.
-            refCompoundsPath: Path to the reference compounds CSV file.
-                Defaults to `fuellib/data/refCompounds.csv`. A custom table in
-                `fuelDataDir`, when present, is appended to the bundled table and
-                replaces rows with the same InChI.
-            refGaniPath: Path to the reference Gani decomposition CSV file.
-                Defaults to `fuellib/data/refGani.csv`. A custom table in
-                `fuelDataDir`, when present, is appended to the bundled table and
-                replaces rows with the same `Reference Compound`.
-            refNannoolalPath: Path to the reference Nannoolal decomposition CSV file.
-                Defaults to `fuellib/data/refNannoolal.csv`. A custom table in
-                `fuelDataDir`, when present, is appended to the bundled table and
-                replaces rows with the same `Reference Compound`.
             useRefProperties: Whether to use reference compound properties for
                 calculations. Defaults to `True`.
 
         Raises:
-            FileNotFoundError: If the fuel data directory, reference CSV files,
-                or gcxgc data file do not exist.
+            FileNotFoundError: If the fuel data directory or GCxGC data file do not
+                exist.
             ValueError: If the GCxGC data does not contain either 'Reference Compound'
                 or 'SMILES' columns or 'Weight %' column is missing.
         """
@@ -151,18 +137,14 @@ class Fuel:
         )
         """Initial weight fractions from the GCxGC data."""
 
-        self.refCompounds: DataFrame = load_ref_compounds(
-            refCompoundsPath, self.fuelDataDir
-        )
+        self.refCompounds: DataFrame = load_ref_compounds(self.fuelDataDir)
         """Reference compounds and their properties."""
-        self.refGani: DataFrame = load_ref_decomp(
-            refGaniPath, self.fuelDataDir, method="Gani"
-        )
+        self.refGani: DataFrame = load_ref_decomp(self.fuelDataDir, "Gani")
         """Reference Gani group decompositions."""
-        self.refNannoolal: DataFrame = load_ref_decomp(
-            refNannoolalPath, self.fuelDataDir, method="Nannoolal"
-        )
+        self.refNannoolal: DataFrame = load_ref_decomp(self.fuelDataDir, "Nannoolal")
         """Reference Nannoolal group decompositions."""
+        self.refUnifac: DataFrame = load_ref_decomp(self.fuelDataDir, "UNIFAC")
+        """Reference UNIFAC group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(
             self.gcData, self.refCompounds, "referenceCompounds"
         )
@@ -193,11 +175,28 @@ class Fuel:
         )
         """Nannoolal group decompositions for each matched compound."""
 
+        self.unifacDecomp: DataFrame = (
+            _match_gc_to_ref(self.compoundsData, self.refUnifac, "referenceUNIFAC")
+            .drop("Reference Compound", axis=1)
+            .fillna(0)
+        )
+        """UNIFAC group decompositions for each matched compound."""
+
         propFilePath = self.fuelDataDir / "propertiesData" / f"{name}.csv"
         self.propData: DataFrame | None = (
             pd.read_csv(propFilePath) if propFilePath.exists() else None
         )
         """Property data for the fuel/mixture, if available."""
+
+        metadataFilePath = self.fuelDataDir / "fuel_metadata.yaml"
+        self.metadata: dict | None = (
+            (yaml.safe_load(metadataFilePath.read_text()) or {})
+            .get("fuels", {})
+            .get(name)
+            if metadataFilePath.exists()
+            else None
+        )
+        """Fuel metadata, if available."""
 
     def _get_ref_values(self, prop: str, output_units: str) -> types.Quantity1D:
         """Get reference values for the given compounds in the specified output units.
@@ -441,12 +440,12 @@ class Fuel:
         """Number of hydrogen atoms for each compound in the fuel mixture."""
         return [mol.atom_counts(m).get("H", 0) for m in self.rdkit_mols]
 
-    @property
+    @cached_property
     def MW(self) -> types.Quantity1D:
         """Molecular weights of the compounds in the fuel mixture in kg/mol."""
-        return Units.Q([mol.molecular_weight(m) for m in self.rdkit_mols], "g/mol").to(
-            "kg/mol"
-        )
+        return Units.Quantity(
+            [mol.molecular_weight(m) for m in self.rdkit_mols], "g/mol"
+        ).to("kg/mol")
 
     @property
     def num_compounds(self) -> int:
@@ -1062,14 +1061,20 @@ class Fuel:
 
         Returns:
             Mixture flash point in K.
+
+        Raises:
+            ValueError: If an unknown correlation method is specified.
         """
         if correlation.casefold() == "alqaheem":
             return correlate.mixture.flash_point_alqaheem(
                 self, Yi, mixing_rule=mixing_rule
             )
-        return correlate.mixture.flash_point_alibakhshi(
-            self, Yi, mixing_rule=mixing_rule
-        )
+        if correlation.casefold() == "alibakhshi":
+            return correlate.mixture.flash_point_alibakhshi(
+                self, Yi, mixing_rule=mixing_rule
+            )
+        msg = f"Unknown correlation method: {correlation}"
+        raise ValueError(msg)
 
     def mixture_heat_of_combustion(self, Yi: types.Quantity1D) -> types.Quantity0D:
         """Calculate heat of combustion of the mixture.
@@ -1082,7 +1087,7 @@ class Fuel:
         """
         return correlate.mixture.heat_of_combustion(self, Yi)
 
-    def mixture_yield_sooting_index(self, Yi: types.Quantity1D) -> types.Quantity1D:
+    def mixture_yield_sooting_index(self, Yi: types.Quantity1D) -> types.Quantity0D:
         """Calculate yield sooting index of the mixture.
 
         Args:
@@ -1098,7 +1103,7 @@ class Fuel:
         Yi: types.Quantity1D,
         *,
         T_ref: types.Quantity0D = T_stp,
-    ) -> types.Quantity1D:
+    ) -> types.Quantity0D:
         """Calculate derived cetane number of the mixture.
 
         Args:

@@ -74,8 +74,8 @@ SMILES Decomposition
 ~~~~~~~~~~~~~~~~~~~~
 
 Decompose SMILES strings into the Constantinou-Gani groups used in
-``refGani.csv`` (default) or the Nannoolal groups used in
-``refNannoolal.csv``:
+``refGani.csv`` (default), the Nannoolal groups used in
+``refNannoolal.csv``, or the UNIFAC subgroups used in ``refUNIFAC.csv``:
 
 .. code-block:: bash
 
@@ -83,6 +83,7 @@ Decompose SMILES strings into the Constantinou-Gani groups used in
     fl-decomp-smiles -s CCc1ccccc1 "CC(C)CCCCC" -n ethylbenzene 2-methylheptane
     fl-decomp-smiles -i compounds.csv -o decomposition.csv
     fl-decomp-smiles -s CCc1ccccc1 -n ethylbenzene -m nannoolal
+    fl-decomp-smiles -s CCc1ccccc1 -n ethylbenzene -m unifac
 
 Options:
 
@@ -91,8 +92,8 @@ Options:
   SMILES string given with ``--smiles``.
 - ``-i``/``--input``: CSV file with a ``SMILES`` column and an optional
   ``Reference Compound`` column.
-- ``-m``/``--method``: group-contribution method, ``gani`` (default) or
-  ``nannoolal`` (case-insensitive).
+- ``-m``/``--method``: group-contribution method, ``gani`` (default),
+  ``nannoolal``, or ``unifac`` (case-insensitive).
 - ``-o``/``--out``: CSV file for the counts. Without it, the nonzero group
   counts are printed.
 
@@ -100,6 +101,32 @@ Options:
     Verify the decompositions before use. A known shortcoming of the ``gani``
     method is indene, where the non-aromatic C=C bond is categorized as a
     ``CH`` group.
+
+Simulations
+~~~~~~~~~~~
+
+Simulate a fuel test for one or more fuels and plot the results. Multiple fuels are
+overlaid on the same plot with a legend. If ``propertiesData/{fuel_name}.csv`` has
+measured data for the simulated test (``Distillation`` rows for
+``d86_greenfield``), it is plotted as symbols in the color of the fuel's curve:
+
+.. code-block:: bash
+
+    fl-simulate d86_greenfield -f heptane-decane                   # Show the plot
+    fl-simulate d86_greenfield -f heptane-decane -o d86.png        # Export the plot
+    fl-simulate d86_greenfield -f posf10264 posf10325 posf10289    # Compare fuels
+    fl-simulate d86_greenfield -f my-fuel -dir customFuels --no-use-ref-props
+
+Options:
+
+- ``SIMULATION`` (positional): simulation to perform. ``d86_greenfield`` is the
+  ASTM D86 distillation curve model of Greenfield et al. (see :doc:`distillation`).
+- ``-f``/``--fuel_names``: name(s) of the fuel(s), space-separated (required).
+- ``-dir``/``--fuel_data_dir``: directory where fuel data files are located
+  (default: ``fuellib/data``). Applies to all fuels.
+- ``-r``/``--use-ref-props``, ``--no-use-ref-props``: whether to use reference
+  compound properties (default: use them).
+- ``-o``/``--output``: file to export the plot to. Without it, the plot is shown.
 
 Export for CFD
 ~~~~~~~~~~~~~~

@@ -29,7 +29,7 @@ Three pieces make up the abstraction, all defined in
    from fuellib.gcm import GCMRegistry
 
    GCMRegistry.list_methods()
-   # ['boehm', 'gani', 'nannoolal']
+   # ['boehm', 'gani', 'nannoolal', 'unifac']
 
    gani = GCMRegistry.get_gcm("gani")
    gani.list_property_fns()
@@ -257,6 +257,106 @@ matched to a first-order group. The same functionality is available as
    nannoolal_gcm.predict("dBv", fuel)   # dimensionless Quantity1D
    nannoolal_gcm.predict("Tv", fuel)    # dimensionless Quantity1D
 
+The ``unifac`` method
+---------------------
+
+:mod:`fuellib.gcm.unifac` implements the UNIFAC 2.0 activity coefficient
+model of Hayer et al.\ :footcite:p:`hayer_advancing_2025`. UNIFAC 2.0 keeps the
+UNIFAC subgroup volume and surface parameters, :math:`R_k` and :math:`Q_k`, and
+replaces the main-group interaction parameters :math:`a_{mn}` with a complete
+table obtained with machine learning. The parameters are read from two files:
+
+- ``fuellib/gcm/unifac.csv``: one column per subgroup with its subgroup number,
+  name, main group number and name, and the ``R`` and ``Q`` parameters. The
+  table has two subgroups named ``CHO``; the second is renamed ``CHO.1``.
+- ``fuellib/gcm/unifac_amn.csv``: the interaction parameters :math:`a_{mn}`
+  in K, with rows :math:`m` and columns :math:`n` indexed by main group number.
+
+The decomposition matrix :math:`\boldsymbol{\nu}`, where :math:`\nu_{ki}` is
+the number of subgroups :math:`k` in compound :math:`i`, is read from
+``refUNIFAC.csv`` as :attr:`~fuellib.fuel.Fuel.unifacDecomp`. Two properties
+are registered with the ``"unifac"`` :class:`~fuellib.gcm.core.GCM`:
+
+- ``R``: the compound volume parameter :math:`r_i = \sum_k \nu_{ki} R_k`.
+- ``Q``: the compound surface parameter :math:`q_i = \sum_k \nu_{ki} Q_k`.
+
+Both are dimensionless.
+
+.. code-block:: python
+
+   from fuellib.gcm import unifac_gcm
+
+   unifac_gcm.predict("R", fuel)   # dimensionless Quantity1D
+   unifac_gcm.predict("Q", fuel)   # dimensionless Quantity1D
+
+Activity coefficients
+^^^^^^^^^^^^^^^^^^^^^
+
+The activity coefficient of the *i-th* compound is the sum of a combinatorial
+and a residual part, :math:`\ln \gamma_i = \ln \gamma_i^C + \ln \gamma_i^R`.
+The combinatorial part accounts for differences in molecular size and shape:
+
+.. math::
+
+   \ln \gamma_i^C &= 1 - V_i + \ln V_i - 5 q_i \left( 1 - \frac{V_i}{F_i} + \ln \frac{V_i}{F_i} \right), \\
+   V_i &= \frac{r_i}{\sum_j x_j r_j}, \qquad F_i = \frac{q_i}{\sum_j x_j q_j},
+
+where :math:`x_j` are the liquid mole fractions. The residual part accounts for
+the interactions between subgroups:
+
+.. math::
+
+   \ln \gamma_i^R &= \sum_k \nu_{ki} \left( \ln \Gamma_k - \ln \Gamma_k^{(i)} \right), \\
+   \ln \Gamma_k &= Q_k \left[ 1 - \ln \left( \sum_m \Theta_m \Psi_{mk} \right) - \sum_m \frac{\Theta_m \Psi_{km}}{\sum_n \Theta_n \Psi_{nm}} \right], \\
+   \Theta_m &= \frac{Q_m X_m}{\sum_n Q_n X_n}, \qquad X_m = \frac{\sum_j \nu_{mj} x_j}{\sum_j \sum_n \nu_{nj} x_j}, \qquad \Psi_{mn} = \exp \left( -\frac{a_{mn}}{T} \right),
+
+where :math:`\Gamma_k` is the residual activity coefficient of subgroup
+:math:`k` in the mixture and :math:`\Gamma_k^{(i)}` is the same quantity in pure
+compound :math:`i`. The interaction parameter :math:`a_{mn}` of two subgroups
+is that of their main groups, and :math:`a_{mm} = 0`. Subgroups of the same
+main group (for example ``CH3`` and ``CH2``) therefore do not contribute to the
+residual part.
+
+:func:`fuellib.gcm.unifac.ln_gamma` evaluates :math:`\ln \gamma_i` for a fuel at
+temperature ``T``. The composition is given as liquid mass fractions ``Yi``
+(default: :attr:`~fuellib.fuel.Fuel.Y_0`) and converted to mole fractions.
+For repeated evaluations, such as in a solver loop,
+:func:`~fuellib.gcm.unifac.parameters` collects the arrays
+:math:`\boldsymbol{\nu}`, :math:`R_k`, :math:`Q_k`, and :math:`a_{mn}` for the
+subgroups present in the fuel once, and
+:func:`~fuellib.gcm.unifac.ln_gamma_x` evaluates :math:`\ln \gamma_i` with
+plain NumPy arrays from mole fractions and a temperature in K:
+
+.. code-block:: python
+
+   from fuellib import Fuel, Units
+   from fuellib.gcm import unifac
+
+   fuel = Fuel("posf10325")
+   unifac.ln_gamma(fuel, Units.Quantity(300.0, "K"))   # dimensionless Quantity1D
+
+   params = unifac.parameters(fuel)
+   x = fuel.Y2X(fuel.Y_0).to("dimensionless").magnitude
+   unifac.ln_gamma_x(x, 300.0, *params)                # NumPy array
+
+:func:`fuellib.gcm.unifac.decompose` builds a UNIFAC decomposition from a SMILES
+string and returns a single-row :class:`pandas.DataFrame` with one column per
+subgroup in ``unifac.csv``:
+
+.. code-block:: python
+
+   from fuellib.gcm.unifac import decompose
+
+   counts = decompose("CCc1ccccc1")
+   counts.loc[:, (counts != 0).any()]
+
+Only the hydrocarbon subgroups are matched, in order of priority: ``ACCH3``,
+``ACCH2``, ``ACCH``, ``ACH``, ``AC``, ``CH2=CH``, ``CH=CH``, ``CH2=C``,
+``CH=C``, ``C=C``, ``CH3``, ``CH2``, ``CH``, and ``C``. A :class:`ValueError` is
+raised if the SMILES cannot be parsed or an atom is not matched to a subgroup,
+for example a heteroatom. The same functionality is available as
+``fl-decomp-smiles --method unifac`` (see :doc:`tutorials-cli`).
+
 Registering a new property
 ---------------------------
 
@@ -312,6 +412,9 @@ A completely new method can likewise be registered with
 - :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`: the Nannoolal group
   decomposition (from ``refNannoolal.csv``) of each compound, used by the
   ``nannoolal`` method. Each compound must also be present in this table.
+- :attr:`~fuellib.fuel.Fuel.unifacDecomp`: the UNIFAC subgroup decomposition
+  (from ``refUNIFAC.csv``) of each compound, used by the ``unifac`` method.
+  Each compound must also be present in this table.
 - :attr:`~fuellib.fuel.Fuel.compoundsData`: the rows of ``refCompounds.csv``
   matched to the GCxGC data, including the hydrocarbon ``Family`` used by the
   ``boehm`` method.
@@ -331,6 +434,7 @@ A completely new method can likewise be registered with
 
    fuel.ganiDecomp      # DataFrame, one row per compound
    fuel.nannoolalDecomp # DataFrame, one row per compound
+   fuel.unifacDecomp    # DataFrame, one row per compound
    fuel.compoundsData   # DataFrame of matched reference compounds
    fuel.Tc              # Quantity1D of critical temperatures
    fuel.dS_fus          # Quantity1D of fusion entropies (boehm)
@@ -348,8 +452,12 @@ See also
   the unit-aware value types returned by GCM property functions.
 - ``tests/test_gcm.py`` for further usage examples, including registration,
   error handling, and decomposition-matrix behavior.
-- ``tests/test_gcm_gani.py`` and ``tests/test_gcm_nannoolal.py`` for
-  comparisons of automated SMILES decompositions with the reference tables.
+- ``tests/test_gcm_gani.py``, ``tests/test_gcm_nannoolal.py``, and
+  ``tests/test_gcm_unifac.py`` for comparisons of automated SMILES
+  decompositions with the reference tables.
+- ``tests/test_gcm_unifac.py`` for checks of the UNIFAC activity coefficients
+  against a reference implementation, the pure-component limit, and the
+  Gibbs-Duhem relation.
 
 References
 ----------

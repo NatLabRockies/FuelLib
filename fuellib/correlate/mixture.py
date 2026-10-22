@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
-from fuellib import constants
-
-from ..utils import Units, types
+from ..utils import Units, constants, types
 from . import components, helpers
 
 if TYPE_CHECKING:
@@ -439,32 +437,7 @@ def freeze_point_boehm(
     *,
     alpha: float = 1.0,
 ) -> types.Quantity0D:
-    """Calculate the freeze point of the mixture using the Boehm method.
-
-    Solves the solid-liquid equilibrium model of Boehm et al. (2022),
-    equation 21, for every compound using its mole fraction in the mixture,
-    and returns the highest candidate temperature, which marks the first
-    crystal to form on cooling. A scipy root finder is used in place of the
-    fixed-point iteration used in the original reference implementation.
-
-    For each hydrocarbon family, `fusion_families.csv` supplies the entropy
-    of fusion `dS_fus_i = max(A_f + B_f * (nC_i - C_ref_f), 20)` in
-    J/(mol*K); unclassified compounds fall back to the Walden-rule estimate
-    of 56.5 J/mol/K. The enthalpy of fusion is `dH_fus_i = Tm_i * dS_fus_i`,
-    and the solid-minus-liquid heat-capacity approximation is
-    `dCp_i = -0.35 * Cp_L_i(298.15 K)` on a molar basis. Boehm's equation 21
-    is solved per compound `j` against the ideal binary mixing entropy of
-    that compound relative to the rest of the mixture,
-
-        dS_mix_j = -(R / x_j) * [(1 - x_j) * ln(1 - x_j) + x_j * ln(x_j)],
-
-        T_j = (dH_fus_j + x_j * dCp_j * (Tm_j - T_j))
-              / (dS_fus_j + x_j * dCp_j * ln(T_j / Tm_j) + alpha * dS_mix_j).
-
-    Components with mole fraction at or below 1e-6 are excluded from the
-    result. This is an equilibrium screening model; it does not represent
-    cooling rate, supercooling, crystal kinetics, or detailed solid-phase
-    nonideality.
+    """Calculate the freeze point of the mixture using Boehm (2022) eq. (21).
 
     Args:
         fuel: Fuel object.
@@ -484,7 +457,7 @@ def freeze_point_boehm(
         helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
     )
 
-    R = constants.gas_constant.to("J/(mol*K)")
+    R = constants.R.to("J/(mol*K)")
     Tm = fuel.Tm.to("K")
     dS_fus = fuel.dS_fus.to("J/(mol*K)")
     dH_fus = Tm * dS_fus
@@ -628,12 +601,7 @@ def flash_point_alqaheem(
     *,
     mixing_rule: Literal["linear", "Liaw"] = "Liaw",
 ) -> types.Quantity0D:
-    """Calculate the flash point of the mixture using the Alqaheem method.
-
-    Uses the Alqaheem-Riazi pure-component correlation
-    (`components.flash_point_alqaheem`) combined with either the Liaw-Chiu
-    (default) or linear mixing rule; see `flash_point_alibakhshi` for the
-    Liaw-Chiu mixture-rule formulation shared by both methods.
+    """Calculate mixture flash point with Alqaheem-Riazi (2017) correlation eq. (18).
 
     Args:
         fuel: Fuel object.
@@ -671,27 +639,7 @@ def flash_point_alibakhshi(
     *,
     mixing_rule: Literal["linear", "Liaw"] = "Liaw",
 ) -> types.Quantity0D:
-    """Calculate the flash point of the mixture using the Alibakhshi method.
-
-    Uses the Alibakhshi et al. pure-component correlation
-    (`components.flash_point_alibakhshi`) combined with either the Liaw-Chiu
-    (default) or linear mixing rule.
-
-    For `mixing_rule="linear"`, the mixture flash point is the mass-fraction
-    weighted average, `Tfp_mix = sum(Yi * Tfp_i)`.
-
-    For `mixing_rule="Liaw"` (default), mole fractions `Xi` are used with the
-    ideal-activity Liaw-Chiu (2006) relation, which solves for the mixture
-    flash point `Tfp_mix` satisfying
-
-        sum(Xi * Psat_i(Tfp_mix) / Psat_i(Tfp_i)) = 1,
-
-    where `Psat_i` is evaluated with the Lee-Kesler correlation using each
-    compound's own critical properties (see
-    `components.saturated_vapor_pressure`). The residual is solved with a
-    bounded Newton iteration (`helpers.liaw_chiu_flash_point`) initialized
-    from the mole-fraction-weighted pure-component flash point. This ideal
-    mixing rule does not model nonideal liquid activity coefficients.
+    """Calculate mixture flash point with Alibakhshi (2017) correlation eq. (5).
 
     Args:
         fuel: Fuel object.
@@ -728,13 +676,8 @@ def heat_of_combustion(
 ) -> types.Quantity0D:
     """Calculate the heat of combustion of the fuel using a Hess cycle.
 
-    Combines each component's lower heating value
-    (`components.lower_heating_value`) with a mass-fraction weighted mixing
-    rule, `dHc_mix = sum(Yi * LHV_i)`, reported as the positive heat released
-    per unit mass. This is a net (lower) basis,
-    consistent with gaseous-water combustion products; it is an engineering
-    estimate related to ASTM D4809/D3338 heating-value characterization, not
-    a simulated bomb-calorimeter test.
+    This is an engineering estimate related to ASTM D4809/D3338 heating-value
+    characterization, not a simulated bomb-calorimeter test.
 
     Args:
         fuel: Fuel object.
@@ -751,13 +694,11 @@ def heat_of_combustion(
 
 def yield_sooting_index(
     fuel: "Fuel", Yi: types.Quantity1D | None = None
-) -> types.Quantity1D:
+) -> types.Quantity0D:
     """Calculate the yield sooting index of the fuel mixture.
 
-    Combines each component's yield sooting index (`Fuel.YSI`)
-    with a mole-fraction weighted mixing rule, `YSI_mix = sum(Xi * YSI_i)`.
-    Components without a YSI value (NaN) are excluded and the mole fractions of
-    the remaining components are renormalized to sum to one.
+    Components without a YSI value are excluded and the mole fractions of the
+    remaining components are renormalized to sum to one.
 
     Args:
         fuel: Fuel object.
@@ -793,7 +734,7 @@ def derived_cetane_number(
     Yi: types.Quantity1D | None = None,
     *,
     T_ref: types.Quantity0D = constants.T_stp,
-) -> types.Quantity1D:
+) -> types.Quantity0D:
     """Calculate the derived cetane number (DCN) of the fuel mixture.
 
     Combines each component's derived cetane number with a linear, liquid volume

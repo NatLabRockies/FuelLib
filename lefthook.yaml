@@ -15,8 +15,11 @@ pre-commit:
     4-imports:
       run: uv run lint-imports
 
-    5-test:
+    5-docs:
+      run: sphinx-build -M html docs/ docs/_build
+
+    6-test:
       run: uv run pytest
 
-    6-check-clean:
+    7-check-clean:
       run: git diff --exit-code
