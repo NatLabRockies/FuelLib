@@ -1,10 +1,9 @@
 # FuelLib
+![GitHub Release](https://img.shields.io/github/v/release/NatLabRockies/FuelLib?logo=github)
 ![PyPI - Version](https://img.shields.io/pypi/v/fuellib?logo=pypi)
-![PyPI - Status](https://img.shields.io/pypi/status/fuellib?logo=pypi)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fuellib?logo=pypi)
 
 
-![GitHub Release](https://img.shields.io/github/v/release/NatLabRockies/FuelLib?logo=github)
 ![CI](https://github.com/NatLabRockies/FuelLib/workflows/FuelLib-CI/badge.svg)
 ![Documentation](https://github.com/NatLabRockies/FuelLib/workflows/FuelLib-Docs/badge.svg)
 
