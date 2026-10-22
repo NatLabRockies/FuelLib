@@ -27,6 +27,7 @@ release workflow to parse release entries in this file.
 ### Fixed
 - `mixture.derived_cetane_number` and `mixture.yield_sooting_index` return types corrected to `Quantity0D`. `Fuel` wrappers updated accordingly.
 - `Fuel.mixture_flash_point` raises `ValueError` with unknown correlation.
+- Baseline prediction values and errors now use round-trip-safe CSV serialization and parsing, preventing loss of floating-point precision when `mixture_baseline.csv` is regenerated.
 
 ### Removed
 - **Breaking**: Removed `ref{File}Path` arguments from `Fuel.__init__`. Fuel initialization assumes that custom fuel directories follow the format outlined in documentation.

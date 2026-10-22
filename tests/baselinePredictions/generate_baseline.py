@@ -23,6 +23,10 @@ from fuellib import correlate, Units, Fuel
 data_dir = Path(__file__).parent
 mixture_file = data_dir / "mixture_baseline.csv"
 
+# A CSV baseline is a numerical regression fixture, not a display report. Write
+# computed floats with Python's shortest representation that reconstructs the
+# original IEEE-754 binary64 value when it is parsed again.
+
 columns = [
     "Fuel",
     "Temp",
@@ -69,6 +73,11 @@ def _normalize(prop_name: str) -> str:
     return prop_name.replace(" ", "").strip().lower()
 
 
+def _format_baseline_float(value: float) -> str:
+    """Return a round-trip-safe decimal representation of a float."""
+    return repr(float(value))
+
+
 def update_baseline(
     fuels: Iterable[str] | None = None,
     properties: Iterable[str] | None = None,
@@ -105,7 +114,7 @@ def update_baseline(
 
     # Load existing baselines and drop the rows that will be regenerated.
     if mixture_file.exists():
-        existing = pd.read_csv(mixture_file)
+        existing = pd.read_csv(mixture_file, float_precision="round_trip")
         fuel_mask = (
             existing["Fuel"].isin(selected_fuels)
             if fuels
@@ -168,7 +177,12 @@ def update_baseline(
         if frames
         else pd.DataFrame(columns=columns)
     )
-    mixture_data.to_csv(mixture_file, index=False)
+    # Do not apply the format to input temperatures: their shortest decimal form
+    # is more readable, and they are not calculated regression values.
+    output_data = mixture_data.copy()
+    for column in ("Baseline_Value", "Baseline_Error"):
+        output_data[column] = output_data[column].map(_format_baseline_float)
+    output_data.to_csv(mixture_file, index=False)
     print(
         f"Wrote {len(new_data)} regenerated row(s) to {mixture_file} "
         f"({len(mixture_data)} total)."
