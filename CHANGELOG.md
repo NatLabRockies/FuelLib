@@ -30,7 +30,7 @@ release workflow to parse release entries in this file.
 
 ### Removed
 - **Breaking**: Removed `ref{File}Path` arguments from `Fuel.__init__`. Fuel initialization assumes that custom fuel directories follow the format outlined in documentation.
-- `fuellib/convert.py`. All temperature conversions transitioned to using the `pint` libary (including `cli`).
+- `fuellib/convert.py`. All temperature conversions transitioned to using the `pint` library (including `cli`).
 - Placeholders for `unxt`/`jax` support in `utils/types.py`. 
 - Tests for the `fuellib.convert` module. `epsilon_to_characteristic_temperature` tests updated.
 

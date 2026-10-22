@@ -33,9 +33,12 @@ columns = [
     "Baseline_Error",
 ]
 fuel_names = {
+    "2-methyloctane",
     "decane",
     "dodecane",
     "heptane",
+    "methylcyclohexane",
+    "toluene",
     "posf10264",
     "posf10289",
     "posf10325",
