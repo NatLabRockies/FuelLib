@@ -656,7 +656,8 @@ def props_main():
         help="Title for the plot (optional).",
     )
     parser.add_argument(
-        "--leg",
+        "-leg",
+        "--leg-labels",
         nargs="+",
         metavar="LABEL",
         help="Literal legend label for each fuel, in the same order as --fuel-names.",
@@ -685,7 +686,7 @@ def props_main():
             fuel_data_dir=args.fuel_data_dir,
             output_dir=args.output_dir,
             title=args.title,
-            leg=args.leg,
+            leg=args.leg_labels,
             save=args.save,
             display=args.display,
         )
@@ -781,7 +782,8 @@ def main():
         help="Title for the plot (optional).",
     )
     props_parser.add_argument(
-        "--leg",
+        "-leg",
+        "--leg-labels",
         nargs="+",
         metavar="LABEL",
         help="Literal legend label for each fuel, in the same order as --fuel-names.",
@@ -809,7 +811,7 @@ def main():
                 fuel_data_dir=args.fuel_data_dir,
                 output_dir=args.output_dir,
                 title=args.title,
-                leg=args.leg,
+                leg=args.leg_labels,
             )
         except Exception as e:  # noqa: BLE001
             print(f"Error plotting mixture properties: {e}")
