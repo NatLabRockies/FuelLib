@@ -65,7 +65,7 @@ def list_fuels_main():
 
     parser.add_argument(
         "-dir",
-        "--fuel_data_dir",
+        "--fuel-data-dir",
         default=None,
         metavar="PATH",
         help="Directory containing fuel data (with gcData/ and, optionally, fuel_metadata.yaml). "

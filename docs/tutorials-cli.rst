@@ -22,7 +22,13 @@ Examples:
 
     fl-plt-comp -f posf10325
     fl-plt-props -f posf10264 posf10325 posf10289
-    fl-plt-props -f my-fuel -dir customFuels -p Density Viscosity
+    fl-plt-props -f my-fuel --fuel-data-dir customFuels -p Density Viscosity
+    fl-plt-props -f my-fuel --fuel-data-dir customFuels --leg-labels "My Fuel"
+
+Use ``--leg-labels`` to supply a literal legend label for each fuel, in the same
+order as ``--fuel-names``. Quote labels containing spaces, for example
+``--leg-labels "Fuel 1" "Fuel 2"``. Without this option, FuelLib retains its
+existing automatic legend formatting.
 
 The first two commands provide the following plots for the specified fuels, while the third command plots only the density and viscosity of a custom fuel:
 
@@ -68,7 +74,7 @@ Quick listing of available fuels:
 .. code-block:: bash
 
     fl-fuels                   # List fuels shipped with FuelLib
-    fl-fuels -dir customFuels  # List custom fuels
+    fl-fuels --fuel-data-dir customFuels  # List custom fuels
 
 SMILES Decomposition
 ~~~~~~~~~~~~~~~~~~~~
