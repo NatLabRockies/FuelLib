@@ -23,10 +23,6 @@ from fuellib import correlate, Units, Fuel
 data_dir = Path(__file__).parent
 mixture_file = data_dir / "mixture_baseline.csv"
 
-# A CSV baseline is a numerical regression fixture, not a display report. Write
-# computed floats with Python's shortest representation that reconstructs the
-# original IEEE-754 binary64 value when it is parsed again.
-
 columns = [
     "Fuel",
     "Temp",
