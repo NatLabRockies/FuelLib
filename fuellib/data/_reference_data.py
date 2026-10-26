@@ -89,7 +89,9 @@ def load_ref_compounds(data_dir: Path) -> DataFrame:
     )
 
 
-def load_ref_decomp(data_dir: Path, method: Literal["Gani", "Nannoolal"]) -> DataFrame:
+def load_ref_decomp(
+    data_dir: Path, method: Literal["Gani", "Nannoolal", "UNIFAC"]
+) -> DataFrame:
     """Load GCM decompositions and apply name-based overrides.
 
     If `data_dir` contains a `ref{method}.csv` file, its rows are added to the bundled
@@ -97,10 +99,10 @@ def load_ref_decomp(data_dir: Path, method: Literal["Gani", "Nannoolal"]) -> Dat
 
     Args:
         data_dir: Directory containing custom fuel data.
-        method: Decomposition method, either "Gani" or "Nannoolal".
+        method: Decomposition method, either "Gani", "Nannoolal", or "UNIFAC".
 
     Returns:
-        The bundled Gani or Nannoolal decomposition table with custom additions and
+        The bundled method-specific decomposition table with custom additions and
         overrides.
     """
     file_name = f"ref{method}.csv"

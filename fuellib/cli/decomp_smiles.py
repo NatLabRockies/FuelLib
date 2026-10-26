@@ -5,11 +5,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from fuellib.gcm import gani, nannoolal
+from fuellib.gcm import gani, nannoolal, unifac
 
 DECOMPOSERS = {
     "gani": gani.decompose,
     "nannoolal": nannoolal.decompose,
+    "unifac": unifac.decompose,
 }
 
 

@@ -143,6 +143,8 @@ class Fuel:
         """Reference Gani group decompositions."""
         self.refNannoolal: DataFrame = load_ref_decomp(self.fuelDataDir, "Nannoolal")
         """Reference Nannoolal group decompositions."""
+        self.refUnifac: DataFrame = load_ref_decomp(self.fuelDataDir, "UNIFAC")
+        """Reference UNIFAC group decompositions."""
         self.compoundsData: DataFrame = _match_gc_to_ref(
             self.gcData, self.refCompounds, "referenceCompounds"
         )
@@ -172,6 +174,13 @@ class Fuel:
             .fillna(0)
         )
         """Nannoolal group decompositions for each matched compound."""
+
+        self.unifacDecomp: DataFrame = (
+            _match_gc_to_ref(self.compoundsData, self.refUnifac, "referenceUNIFAC")
+            .drop("Reference Compound", axis=1)
+            .fillna(0)
+        )
+        """UNIFAC group decompositions for each matched compound."""
 
         propFilePath = self.fuelDataDir / "propertiesData" / f"{name}.csv"
         self.propData: DataFrame | None = (

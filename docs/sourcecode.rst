@@ -26,6 +26,9 @@ FuelLib File Organization
         - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
         - ``nannoolal.py``: Nannoolal et al. (2009) viscosity group contributions (``dBv``, ``Tv``) registered against the ``nannoolal`` GCM, and automated SMILES decomposition into Nannoolal groups
         - ``nannoolal.csv``: group-contribution coefficient table used by ``nannoolal.py``
+        - ``unifac.py``: UNIFAC 2.0 (Hayer et al., 2025) activity coefficients, with the compound volume and surface parameters (``R``, ``Q``) registered against the ``unifac`` GCM, and automated SMILES decomposition into UNIFAC hydrocarbon subgroups
+        - ``unifac.csv``: UNIFAC subgroup table (main group, ``R``, ``Q``) used by ``unifac.py``
+        - ``unifac_amn.csv``: UNIFAC 2.0 main-group interaction parameters ``a_mn`` (K) used by ``unifac.py``
 
     - **correlate**: subpackage with correlation functions used to compute temperature-dependent properties of components and mixtures
         - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity, flash point, lower heating value)
@@ -42,6 +45,7 @@ FuelLib File Organization
         - ``refCompounds.csv``: reference compounds (``Family``, ``Carbon Number``, ``Reference Compound``, ``SMILES``) and their optional measured properties (``{Property}_Value``, ``_Error``, ``_Units``, ``_Source``, ``_Notes``)
         - ``refGani.csv``: functional group decompositions of the reference compounds
         - ``refNannoolal.csv``: Nannoolal group decompositions of the reference compounds
+        - ``refUNIFAC.csv``: UNIFAC subgroup decompositions of the reference compounds
         - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages (``{fuel_name}.csv``)
         - **propertiesData:** directory containing measurement or predicted data used for validation
         - ``fuel_metadata.yaml``: YAML file with source information and other optional metadata for each fuel (loaded into ``Fuel.metadata``)
@@ -71,6 +75,7 @@ FuelLib File Organization
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
     - ``test_gcm_gani.py``: unit tests for the ``gani`` GCM, including comparison of RDKit SMILES decompositions with ``refGani.csv``.
     - ``test_gcm_nannoolal.py``: unit tests for the ``nannoolal`` GCM, including comparison of RDKit SMILES decompositions with ``refNannoolal.csv`` and the Nannoolal viscosity correlations.
+    - ``test_gcm_unifac.py``: unit tests for the ``unifac`` GCM, including comparison of RDKit SMILES decompositions with ``refUNIFAC.csv`` and checks of the UNIFAC 2.0 activity coefficients.
     - ``test_cli_decomp_smiles.py``: unit tests for the ``fl-decomp-smiles`` command.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
@@ -102,6 +107,7 @@ Click on links below for the full auto-documentation of the API.
     fuellib.gcm.gani
     fuellib.gcm.boehm
     fuellib.gcm.nannoolal
+    fuellib.gcm.unifac
     fuellib.rdk.mol
     fuellib.correlate.components
     fuellib.correlate.mixture

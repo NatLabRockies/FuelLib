@@ -764,12 +764,13 @@ are not predicted by FuelLib, so they are always taken from the reference data.
 
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
 from its ``SMILES``; the matched rows are available as :attr:`~fuellib.fuel.Fuel.compoundsData`, and the
-group decompositions from ``refGani.csv`` and ``refNannoolal.csv`` as :attr:`~fuellib.fuel.Fuel.ganiDecomp` and
-:attr:`~fuellib.fuel.Fuel.nannoolalDecomp`. Custom tables are read from ``refCompounds.csv``, ``refGani.csv``,
-and ``refNannoolal.csv`` in the ``fuelDataDir`` passed to :class:`~fuellib.fuel.Fuel` (see :doc:`tutorials-custom-fuels`). Each custom table is merged
+group decompositions from ``refGani.csv``, ``refNannoolal.csv``, and ``refUNIFAC.csv`` as
+:attr:`~fuellib.fuel.Fuel.ganiDecomp`, :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`, and
+:attr:`~fuellib.fuel.Fuel.unifacDecomp`. Custom tables are read from ``refCompounds.csv``, ``refGani.csv``,
+``refNannoolal.csv``, and ``refUNIFAC.csv`` in the ``fuelDataDir`` passed to :class:`~fuellib.fuel.Fuel` (see :doc:`tutorials-custom-fuels`). Each custom table is merged
 with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
 the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
-bundled compound; a Gani or Nannoolal decomposition duplicate is identified by its ``Reference Compound``.
+bundled compound; a Gani, Nannoolal, or UNIFAC decomposition duplicate is identified by its ``Reference Compound``.
 
 Validation
 ----------
