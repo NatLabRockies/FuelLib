@@ -176,7 +176,7 @@ def test_decompose(smiles: str, expected: dict[str, int]):
 
 @pytest.mark.parametrize("smiles", ["not-a-smiles", "C1CC"])
 def test_decompose_invalid_smiles(smiles: str):
-    """Unparseable SMILES should raise a ValueError."""
+    """Unparsable SMILES should raise a ValueError."""
     with pytest.raises(ValueError, match="Error parsing SMILES"):
         decompose(smiles)
 
