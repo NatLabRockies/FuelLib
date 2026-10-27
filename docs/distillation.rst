@@ -120,6 +120,228 @@ represent the apparatus by three unit operations in series:
      - ``ln_gamma``, ``ln_phi``
      - Activity and fugacity coefficients (natural log in the code)
 
+Apparatus parameters
+--------------------
+
+:class:`~fuellib.simulate.distillation.greenfield.D86Apparatus` holds the apparatus
+and procedure parameters. The heat transfer area of the vertical tube in equation 9
+is its outer surface, :math:`A = \pi D L`.
+
+.. list-table:: Default apparatus parameters.
+   :header-rows: 1
+   :widths: auto
+   :align: center
+
+   * - Field
+     - Symbol
+     - Default
+     - Source
+   * - ``pressure``
+     - :math:`P`
+     - 101325 Pa
+     - Greenfield et al.\ :footcite:p:`greenfield_macroscopic_1998`
+   * - ``T_room``
+     - :math:`T_{room}`
+     - 298.15 K
+     - Greenfield et al. (298 K)
+   * - ``charge_volume``
+     -
+     - 100 mL
+     - ASTM D86
+   * - ``air_volume``
+     - :math:`V`
+     - 85 cm\ :sup:`3`
+     - Greenfield et al.
+   * - ``cylinder_heat_capacity``
+     - :math:`C_{p,cylinder}`
+     - 4.2 J/K
+     - Greenfield et al.
+   * - ``column_length``
+     - :math:`L`
+     - 0.13 m
+     - Greenfield et al.
+   * - ``column_diameter``
+     - :math:`D`
+     - 0.025 m
+     - Greenfield et al. (outer diameter)
+   * - ``collection_rate_min``
+     -
+     - 4 mL/min
+     - ASTM D86
+   * - ``collection_rate_max``
+     -
+     - 5 mL/min
+     - ASTM D86
+
+Pure-compound properties
+------------------------
+
+The temperature-dependent pure-compound properties (:math:`\ln P^{sat}`,
+:math:`C_{p,\ell}`, :math:`C^0_{p,v}`) are tabulated once on a 1 K grid and
+interpolated with cubic splines.
+
+Vapor pressure
+^^^^^^^^^^^^^^
+
+The saturated vapor pressure :math:`P_i^{sat}` comes from the Lee-Kesler
+correlation (see :ref:`eq-GCM-correlations`).
+
+Heat capacities
+^^^^^^^^^^^^^^^
+
+Greenfield et al.\ :footcite:p:`greenfield_macroscopic_1998` obtain the liquid heat
+capacity of nonpolar compounds from the ideal-gas heat capacity with the correlation
+
+.. math::
+
+   \frac{C_{p,\ell} - C^0_{p,v}}{R} = (0.5 + 2.2\omega) \Big[ 3.67 + 11.64 (1 - T_r)^4 + 0.634 (1 - T_r)^{-1} \Big]. \tag{19}
+
+FuelLib has no per-compound ideal-gas polynomials, so equation 19 is used in
+reverse: the liquid heat capacity :math:`C_{p,\ell}` comes from FuelLib's
+group-contribution correlation (see :ref:`eq-GCM-properties`) and
+equation 19 is solved for :math:`C^0_{p,v}`. To avoid the singularity at
+:math:`T_r = 1`, :math:`T_r` is capped at 0.95, and :math:`C^0_{p,v}` is floored
+at :math:`4R`, the ideal-gas heat capacity of a rigid nonlinear molecule.
+
+Cross critical properties
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The vapor fugacity coefficients (see `Vapor fugacity coefficients`_) use second
+virial coefficients from the corresponding-states correlations given by Greenfield
+et al.\ :footcite:p:`greenfield_macroscopic_1998`. The cross critical properties
+of each pair of compounds do not depend on temperature and are computed once,
+
+.. math::
+
+   \omega_{ij} = \tfrac{1}{2} (\omega_i + \omega_j) \tag{22}
+
+.. math::
+
+   T_{c_{ij}} = \sqrt{T_{c_i} T_{c_j}} \tag{23}
+
+.. math::
+
+   V_{c_{ij}} = \tfrac{1}{8} \Big( V_{c_i}^{1/3} + V_{c_j}^{1/3} \Big)^3 \tag{24}
+
+.. math::
+
+   Z_{c_{ij}} = \tfrac{1}{2} (Z_{c_i} + Z_{c_j}) \tag{25}
+
+.. math::
+
+   P_{c_{ij}} = Z_{c_{ij}} R T_{c_{ij}} / V_{c_{ij}} \tag{26}
+
+with :math:`Z_c \equiv P_c V_c / (R T_c)`.
+
+Initial state
+-------------
+
+Initial charge
+^^^^^^^^^^^^^^
+
+The charge volume is converted to moles of each compound, :math:`x_i W`, with the
+liquid molar volumes at :math:`T_{room}` from the Rackett equation with the
+Yamada-Gunn compressibility (see :ref:`eq-GCM-correlations`), assuming ideal (zero
+excess volume) mixing. The same molar volumes convert the condensate to a recovered
+volume fraction at room temperature.
+
+Phase equilibrium
+^^^^^^^^^^^^^^^^^
+
+The flask liquid is at its bubble point,
+
+.. math::
+
+   \phi_i^{(1)} y_i P = \gamma_i^{(1)} x_i P_i^{sat}. \tag{10}
+
+The activity coefficients :math:`\gamma_i` come from UNIFAC 2.0 (see :doc:`gcm`).
+The equilibrium in stage 2 (equation 11) has the same form.
+
+Vapor fugacity coefficients
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+With the cross critical properties of equations 22-26, the second virial
+coefficients are
+
+.. math::
+
+   B_{ij} = \frac{R T_{c_{ij}}}{P_{c_{ij}}} \Big( B^0 + \omega_{ij} B^1 \Big) \tag{27}
+
+.. math::
+
+   B^0 = 0.083 - 0.422 \, T_r^{-1.6} \tag{28}
+
+.. math::
+
+   B^1 = 0.139 - 0.172 \, T_r^{-4.2} \tag{29}
+
+with :math:`T_r = T / T_{c_{ij}}`, and the fugacity coefficients are
+
+.. math::
+
+   \ln \phi_k = \frac{P}{RT} \Big[ B_{kk} + \tfrac{1}{2} \sum_i \sum_\ell y_i y_\ell (2 \delta_{ik} - \delta_{i\ell}) \Big] - \frac{B_{kk} P_k^{sat}}{RT} \tag{30}
+
+.. math::
+
+   \delta_{ij} = 2 B_{ij} - B_{ii} - B_{jj}. \tag{31}
+
+Because :math:`\sum_\ell y_\ell = 1` and :math:`\delta` is symmetric, the code
+evaluates the double sum in equation 30 as
+:math:`2 \sum_i y_i \delta_{ik} - \sum_i \sum_\ell y_i y_\ell \delta_{i\ell}`. The
+last term of equation 30 is :math:`\ln \phi_k^{sat}`, so equation 30 gives
+:math:`\ln(\phi_k / \phi_k^{sat})`.
+
+Bubble point
+^^^^^^^^^^^^
+
+The bubble temperature of a liquid :math:`x_i` solves
+:math:`f(T) = \ln \sum_i K_i x_i = 0`, with :math:`K_i = y_i / x_i` from
+equation 10. The iteration alternates :math:`y_i = K_i x_i / S`, with
+:math:`S = \sum_i K_i x_i`, and the Newton step
+
+.. math::
+
+   T \leftarrow T - \frac{\ln S}{\sum_i y_i \, d \ln P_i^{sat} / dT},
+
+which neglects the temperature dependence of :math:`\gamma_i` and :math:`\phi_i`.
+Steps are limited to 20 K.
+
+Initial heating rate
+^^^^^^^^^^^^^^^^^^^^
+
+The enthalpy of vaporization follows from the Clausius-Clapeyron equation, treating
+the vapor as an ideal gas,
+
+.. math::
+
+   \Delta H_{vap} = -R \frac{d \ln P^{sat}}{d (1/T)} = R T^2 \frac{d \ln P^{sat}}{dT}, \tag{17}
+
+where :math:`d \ln P^{sat} / dT` is the derivative of the spline. The initial
+heating rate :math:`\dot{Q}_1` is 1.25 times the rate needed to vaporize the middle
+of the collection-rate band at the initial bubble point.
+
+Warm-up
+^^^^^^^
+
+The energy balance on the flask is
+
+.. math::
+
+   W C_{p1,\ell} \frac{\partial T_1}{\partial t} = R_2 C_{p2,\ell} (T_2 - T_1) - D_1 |\Delta H_{vap1}| + \dot{Q}_1. \tag{5}
+
+The charge starts at :math:`T_{room}` and is heated to its bubble point with
+equation 5 at :math:`D_1 = R_2 = 0`.
+
+Distillation
+------------
+
+Time step
+^^^^^^^^^
+
+Each step advances the state by :math:`\delta t = \min(\delta t_{max}, 0.02 W / D_1)`,
+using :math:`D_1` from the previous step. The flask vapor composition :math:`y_i`
+and temperature :math:`T_1` are known from the bubble point (equation 10).
+
 Stage 1: distillation flask
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -140,17 +362,8 @@ with the mole fractions of every stream summing to one,
    \sum_i x_i = \sum_i y_i = \sum_i u_i = \sum_i v_i = 1. \tag{3}
 
 Equation 1 is the sum of equation 2 over all compounds, so the code integrates
-only equation 2. The energy balance on the flask is
-
-.. math::
-
-   W C_{p1,\ell} \frac{\partial T_1}{\partial t} = R_2 C_{p2,\ell} (T_2 - T_1) - D_1 |\Delta H_{vap1}| + \dot{Q}_1, \tag{5}
-
-and the flask liquid is at its bubble point,
-
-.. math::
-
-   \phi_i^{(1)} y_i P = \gamma_i^{(1)} x_i P_i^{sat}. \tag{10}
+only equation 2. Together with the energy balance (equation 5) and the bubble point
+(equation 10), these determine the flask state.
 
 Stage 2: mixing stage
 ^^^^^^^^^^^^^^^^^^^^^
@@ -182,125 +395,6 @@ and the reflux and vapor leaving stage 2 are in equilibrium,
 .. math::
 
    \phi_i^{(2)} v_i P = \gamma_i^{(2)} u_i P_i^{sat}. \tag{11}
-
-Stage 3: air-filled CSTR
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-The vapor from stage 2 displaces the air initially in the apparatus,
-
-.. math::
-
-   V C^{tot} \frac{\partial v_i^{out}}{\partial t} = v_i D_2 - v_i^{out} D_3, \tag{12}
-
-with :math:`D_3 = D_2`. The heat lost by the entering vapor is gained by the air
-and the glass,
-
-.. math::
-
-   \Big( (n_{N_2} + n_{O_2}) C_{p,air,v} + C_{p,cylinder} \Big) (T_3 - T_3') = \Big( \sum_i n_i C_{p,i,v} \Big) (T_2 - T_3), \tag{13}
-
-where :math:`T_3'` is the temperature at the previous time step and
-:math:`n_i = v_i D_2 \delta t` are the moles entering during the step. Solving for
-:math:`T_3` gives the D86 temperature,
-
-.. math::
-
-   T_3 = \frac{\Big( (n_{N_2} + n_{O_2}) C_{p,air,v} + C_{p,cylinder} \Big) T_3' + \Big( \sum_i n_i C_{p,i,v} \Big) T_2}{(n_{N_2} + n_{O_2}) C_{p,air,v} + C_{p,cylinder} + \sum_i n_i C_{p,i,v}}. \tag{14}
-
-Physical properties
--------------------
-
-Enthalpy of vaporization
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-The enthalpy of vaporization follows from the Clausius-Clapeyron equation, treating
-the vapor as an ideal gas,
-
-.. math::
-
-   \Delta H_{vap} = -R \frac{d \ln P^{sat}}{d (1/T)} = R T^2 \frac{d \ln P^{sat}}{dT}. \tag{17}
-
-Heat capacities
-^^^^^^^^^^^^^^^
-
-The ideal-gas heat capacity of air in equation 14 uses the polynomial
-
-.. math::
-
-   C^0_{p,v} = a + b T + c T^2 + d T^3 \tag{18}
-
-with the N\ :sub:`2` and O\ :sub:`2` coefficients of Greenfield et
-al.\ :footcite:p:`greenfield_macroscopic_1998` (Table 3), mixed as 79 mol%
-N\ :sub:`2` and 21 mol% O\ :sub:`2`. Greenfield et al. obtain the liquid heat
-capacity of nonpolar compounds from the ideal-gas heat capacity with the correlation
-
-.. math::
-
-   \frac{C_{p,\ell} - C^0_{p,v}}{R} = (0.5 + 2.2\omega) \Big[ 3.67 + 11.64 (1 - T_r)^4 + 0.634 (1 - T_r)^{-1} \Big]. \tag{19}
-
-FuelLib has no per-compound ideal-gas polynomials, so equation 19 is used in
-reverse: the liquid heat capacity :math:`C_{p,\ell}` comes from FuelLib's
-group-contribution correlation (see :ref:`eq-GCM-properties`) and
-equation 19 is solved for :math:`C^0_{p,v}`. To avoid the singularity at
-:math:`T_r = 1`, :math:`T_r` is capped at 0.95, and :math:`C^0_{p,v}` is floored
-at :math:`4R`, the ideal-gas heat capacity of a rigid nonlinear molecule.
-
-Vapor fugacity coefficients
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The vapor fugacity coefficients use second virial coefficients from the
-corresponding-states correlations given by Greenfield et
-al.\ :footcite:p:`greenfield_macroscopic_1998`. For each pair of compounds,
-
-.. math::
-
-   \omega_{ij} = \tfrac{1}{2} (\omega_i + \omega_j) \tag{22}
-
-.. math::
-
-   T_{c_{ij}} = \sqrt{T_{c_i} T_{c_j}} \tag{23}
-
-.. math::
-
-   V_{c_{ij}} = \tfrac{1}{8} \Big( V_{c_i}^{1/3} + V_{c_j}^{1/3} \Big)^3 \tag{24}
-
-.. math::
-
-   Z_{c_{ij}} = \tfrac{1}{2} (Z_{c_i} + Z_{c_j}) \tag{25}
-
-.. math::
-
-   P_{c_{ij}} = Z_{c_{ij}} R T_{c_{ij}} / V_{c_{ij}} \tag{26}
-
-with :math:`Z_c \equiv P_c V_c / (R T_c)`. The second virial coefficients are
-
-.. math::
-
-   B_{ij} = \frac{R T_{c_{ij}}}{P_{c_{ij}}} \Big( B^0 + \omega_{ij} B^1 \Big) \tag{27}
-
-.. math::
-
-   B^0 = 0.083 - 0.422 \, T_r^{-1.6} \tag{28}
-
-.. math::
-
-   B^1 = 0.139 - 0.172 \, T_r^{-4.2} \tag{29}
-
-with :math:`T_r = T / T_{c_{ij}}`, and the fugacity coefficients are
-
-.. math::
-
-   \ln \phi_k = \frac{P}{RT} \Big[ B_{kk} + \tfrac{1}{2} \sum_i \sum_\ell y_i y_\ell (2 \delta_{ik} - \delta_{i\ell}) \Big] - \frac{B_{kk} P_k^{sat}}{RT} \tag{30}
-
-.. math::
-
-   \delta_{ij} = 2 B_{ij} - B_{ii} - B_{jj}. \tag{31}
-
-Because :math:`\sum_\ell y_\ell = 1` and :math:`\delta` is symmetric, the code
-evaluates the double sum in equation 30 as
-:math:`2 \sum_i y_i \delta_{ik} - \sum_i \sum_\ell y_i y_\ell \delta_{i\ell}`. The
-last term of equation 30 is :math:`\ln \phi_k^{sat}`, so equation 30 gives
-:math:`\ln(\phi_k / \phi_k^{sat})`.
 
 Natural convection from the vertical tube
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -337,39 +431,11 @@ al.\ :footcite:p:`greenfield_macroscopic_1998`,
 
 with :math:`k` in W/m/K and :math:`\beta g \rho^2 / \mu^2` in 1/(K m\ :sup:`3`).
 
-Other properties
-^^^^^^^^^^^^^^^^
+Solution of stages 1 and 2
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Vapor pressure:** Lee-Kesler correlation (see :ref:`eq-GCM-correlations`).
-- **Activity coefficients:** UNIFAC 2.0 (see :doc:`gcm`).
-- **Liquid molar volume:** Rackett equation with the Yamada-Gunn compressibility
-  (see :ref:`eq-GCM-correlations`), with ideal (zero excess volume) mixing. It sets the moles charged and converts the
-  condensate to a recovered volume fraction at room temperature.
-
-The temperature-dependent pure-compound properties (:math:`\ln P^{sat}`,
-:math:`C_{p,\ell}`, :math:`C^0_{p,v}`) are tabulated once on a 1 K grid and
-interpolated with cubic splines; :math:`d \ln P^{sat} / dT` in equation 17 is the
-derivative of the spline.
-
-Numerical solution
-------------------
-
-Warm-up
-^^^^^^^
-
-The charge starts at :math:`T_{room}` and is heated to its bubble point with
-equation 5 at :math:`D_1 = R_2 = 0`. The initial heating rate
-:math:`\dot{Q}_1` is 1.25 times the rate needed to vaporize the middle of the
-collection-rate band.
-
-Time step
-^^^^^^^^^
-
-Each step advances the state by :math:`\delta t = \min(\delta t_{max}, 0.02 W / D_1)`,
-using :math:`D_1` from the previous step. The flask vapor composition :math:`y_i`
-and temperature :math:`T_1` are known from the bubble point (equation 10). The
-lowest possible stage-2 temperature, :math:`T_{2,min}`, is the bubble point of the
-flask vapor, reached when all of it condenses. Three cases follow.
+The lowest possible stage-2 temperature, :math:`T_{2,min}`, is the bubble point of
+the flask vapor, reached when all of it condenses. Three cases follow.
 
 1. **Pure or constant-boiling liquid** (:math:`T_1 - T_{2,min} < 10^{-3}` K): the
    vapor condenses at :math:`T_2 = T_1` with :math:`u_i = v_i = y_i`. All the heat
@@ -395,43 +461,7 @@ flask vapor, reached when all of it condenses. Three cases follow.
    Trial temperatures for which :math:`D_1` exceeds what the heater can supply
    return the right-hand side of equation 5 alone.
 
-:math:`D_2` then follows from equation 6. Equation 12 is integrated exactly over the
-step, holding :math:`D_2` and :math:`v_i` constant,
-
-.. math::
-
-   v_i^{out}(t + \delta t) = v_i + \Big( v_i^{out}(t) - v_i \Big) \exp \left( -\frac{D_2 \, \delta t}{V C^{tot}} \right),
-
-for each fuel compound and for air (with :math:`v_{air} = 0`), where
-:math:`V C^{tot}` is the ideal-gas moles in the CSTR volume at :math:`T_{room}`
-and :math:`P`. The moles of air in equation 14 are
-:math:`n_{N_2} + n_{O_2} = V C^{tot} v_{air}^{out}`. The condensate collected over
-the step is the fuel entering the CSTR minus the fuel accumulated in it,
-:math:`v_i D_2 \delta t - V C^{tot} \Delta v_i^{out}`. Without the CSTR
-(``air_cstr=False``, the "partial model" of Greenfield et
-al.\ :footcite:p:`greenfield_macroscopic_1998`), all the stage-2 vapor is collected
-and :math:`T_3 = T_2`.
-
-Finally, the heating rate is adjusted to keep the collection rate in the
-4-5 mL/min band: :math:`\dot{Q}_1` is multiplied by :math:`\exp(\delta t / \tau)` when
-the rate is below the band and by :math:`\exp(-\delta t / \tau)` when it is above,
-with :math:`\tau = 30` s. The simulation ends when :math:`W` falls below
-``residue_fraction`` of its initial value.
-
-Bubble point
-^^^^^^^^^^^^
-
-The bubble temperature of a liquid :math:`x_i` solves
-:math:`f(T) = \ln \sum_i K_i x_i = 0`, with :math:`K_i = y_i / x_i` from
-equation 10. The iteration alternates :math:`y_i = K_i x_i / S`, with
-:math:`S = \sum_i K_i x_i`, and the Newton step
-
-.. math::
-
-   T \leftarrow T - \frac{\ln S}{\sum_i y_i \, d \ln P_i^{sat} / dT},
-
-which neglects the temperature dependence of :math:`\gamma_i` and :math:`\phi_i`.
-Steps are limited to 20 K.
+:math:`D_2` then follows from equation 6.
 
 Flash
 ^^^^^
@@ -448,6 +478,66 @@ equation\ :footcite:p:`rachford_procedure_1952`
 clipped to :math:`[0, 1]`. Then :math:`u_i = y_i / [1 + \beta (K_i - 1)]` and
 :math:`v_i = K_i u_i`, and :math:`K_i` is updated from equation 11 until it
 converges.
+
+Stage 3: air-filled CSTR
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The vapor from stage 2 displaces the air initially in the apparatus,
+
+.. math::
+
+   V C^{tot} \frac{\partial v_i^{out}}{\partial t} = v_i D_2 - v_i^{out} D_3, \tag{12}
+
+with :math:`D_3 = D_2`, where :math:`V C^{tot}` is the ideal-gas moles in the CSTR
+volume at :math:`T_{room}` and :math:`P`. Equation 12 is integrated exactly over
+the step, holding :math:`D_2` and :math:`v_i` constant,
+
+.. math::
+
+   v_i^{out}(t + \delta t) = v_i + \Big( v_i^{out}(t) - v_i \Big) \exp \left( -\frac{D_2 \, \delta t}{V C^{tot}} \right),
+
+for each fuel compound and for air (with :math:`v_{air} = 0`). The condensate
+collected over the step is the fuel entering the CSTR minus the fuel accumulated in
+it, :math:`v_i D_2 \delta t - V C^{tot} \Delta v_i^{out}`.
+
+The heat lost by the entering vapor is gained by the air and the glass,
+
+.. math::
+
+   \Big( (n_{N_2} + n_{O_2}) C_{p,air,v} + C_{p,cylinder} \Big) (T_3 - T_3') = \Big( \sum_i n_i C_{p,i,v} \Big) (T_2 - T_3), \tag{13}
+
+where :math:`T_3'` is the temperature at the previous time step and
+:math:`n_i = v_i D_2 \delta t` are the moles entering during the step. Solving for
+:math:`T_3` gives the D86 temperature,
+
+.. math::
+
+   T_3 = \frac{\Big( (n_{N_2} + n_{O_2}) C_{p,air,v} + C_{p,cylinder} \Big) T_3' + \Big( \sum_i n_i C_{p,i,v} \Big) T_2}{(n_{N_2} + n_{O_2}) C_{p,air,v} + C_{p,cylinder} + \sum_i n_i C_{p,i,v}}. \tag{14}
+
+The moles of air in equation 14 are
+:math:`n_{N_2} + n_{O_2} = V C^{tot} v_{air}^{out}`, and their ideal-gas heat
+capacity uses the polynomial
+
+.. math::
+
+   C^0_{p,v} = a + b T + c T^2 + d T^3 \tag{18}
+
+with the N\ :sub:`2` and O\ :sub:`2` coefficients of Greenfield et
+al.\ :footcite:p:`greenfield_macroscopic_1998` (Table 3), mixed as 79 mol%
+N\ :sub:`2` and 21 mol% O\ :sub:`2`.
+
+Without the CSTR (``air_cstr=False``, the "partial model" of Greenfield et
+al.\ :footcite:p:`greenfield_macroscopic_1998`), all the stage-2 vapor is collected
+and :math:`T_3 = T_2`.
+
+Heating-rate control
+^^^^^^^^^^^^^^^^^^^^
+
+Finally, the heating rate is adjusted to keep the collection rate in the
+4-5 mL/min band: :math:`\dot{Q}_1` is multiplied by :math:`\exp(\delta t / \tau)` when
+the rate is below the band and by :math:`\exp(-\delta t / \tau)` when it is above,
+with :math:`\tau = 30` s. The simulation ends when :math:`W` falls below
+``residue_fraction`` of its initial value.
 
 Differences from Greenfield et al.
 ----------------------------------
@@ -498,59 +588,7 @@ uses:
 - 79 mol% N\ :sub:`2` and 21 mol% O\ :sub:`2` for the heat capacity of air,
 - the outer diameter of the tube for the heat transfer area,
   :math:`A = \pi D L`, and
-- the integrated form of equation 12 given in `Time step`_.
-
-Apparatus parameters
---------------------
-
-:class:`~fuellib.simulate.distillation.greenfield.D86Apparatus` holds the apparatus
-and procedure parameters.
-
-.. list-table:: Default apparatus parameters.
-   :header-rows: 1
-   :widths: auto
-   :align: center
-
-   * - Field
-     - Symbol
-     - Default
-     - Source
-   * - ``pressure``
-     - :math:`P`
-     - 101325 Pa
-     - Greenfield et al.\ :footcite:p:`greenfield_macroscopic_1998`
-   * - ``T_room``
-     - :math:`T_{room}`
-     - 298.15 K
-     - Greenfield et al. (298 K)
-   * - ``charge_volume``
-     -
-     - 100 mL
-     - ASTM D86
-   * - ``air_volume``
-     - :math:`V`
-     - 85 cm\ :sup:`3`
-     - Greenfield et al.
-   * - ``cylinder_heat_capacity``
-     - :math:`C_{p,cylinder}`
-     - 4.2 J/K
-     - Greenfield et al.
-   * - ``column_length``
-     - :math:`L`
-     - 0.13 m
-     - Greenfield et al.
-   * - ``column_diameter``
-     - :math:`D`
-     - 0.025 m
-     - Greenfield et al. (outer diameter)
-   * - ``collection_rate_min``
-     -
-     - 4 mL/min
-     - ASTM D86
-   * - ``collection_rate_max``
-     -
-     - 5 mL/min
-     - ASTM D86
+- the integrated form of equation 12 given in `Stage 3: air-filled CSTR`_.
 
 References
 ----------
