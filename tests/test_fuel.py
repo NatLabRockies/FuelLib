@@ -35,6 +35,17 @@ class TestParsing:
         assert fuel.Y_0.units == ""
         assert pytest.approx(fuel.Y_0.magnitude.sum(), abs=1e-8) == 1.0
 
+    def test_Y_0_without_weight_column(self, tmp_path: Path) -> None:
+        """GCxGC data without a 'Weight %' column gives an all-zero Y_0."""
+        (tmp_path / "gcData").mkdir()
+        gc = pd.read_csv(DEFAULT_DATA_DIR / "gcData" / "heptane-decane.csv")
+        gc.drop(columns="Weight %").to_csv(
+            tmp_path / "gcData" / "heptane-decane.csv", index=False
+        )
+        fuel = Fuel("heptane-decane", fuelDataDir=tmp_path)
+        assert fuel.Y_0.units == ""
+        assert np.array_equal(fuel.Y_0.magnitude, np.zeros(2))
+
     def test_pelephysics_keys(self) -> None:
         """Test that the PelePhysics keys are correctly loaded for each compound in the fuel mixture."""
         fuel = Fuel("posf10325")
