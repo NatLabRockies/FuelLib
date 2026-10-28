@@ -31,6 +31,12 @@ The easiest way to install FuelLib is via pip from [pypi.org/project/fuellib](ht
 pip install fuellib
 ~~~
 
+To also install the optional [inverse fuel design](https://NatLabRockies.github.io/FuelLib/inverse.html) module (adds `jax`, `jaxtyping`, and `optax`):
+
+~~~
+pip install "fuellib[inverse]"
+~~~
+
 For better dependency isolation, it is recommended to create a [conda](https://www.anaconda.com/download) environment. For example:
 
 #### Using Conda
