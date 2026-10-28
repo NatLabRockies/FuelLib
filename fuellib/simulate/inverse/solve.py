@@ -2,6 +2,7 @@
 
 import time
 from collections.abc import Callable
+from functools import partial
 
 import jax
 import jax.numpy as jnp
@@ -15,11 +16,19 @@ import fuellib
 
 from ...utils import types
 from ...utils.types import Units
-from .constraints import DensityConstraint, ViscosityConstraint
+from .constraints import (
+    AromaticsConstraint,
+    DensityConstraint,
+    FlashPointConstraint,
+    FreezePointConstraint,
+    HeatOfCombustionConstraint,
+    ViscosityConstraint,
+)
 from .models import Problem, Solution
 
 _v = f"v{fuellib.__version__}"
 logo = rf"""
+
  /$$$$$$$$                  /$$ /$$       /$$ /$$                                     
 | $$_____/                 | $$| $$      |__/| $$                                     
 | $$    /$$   /$$  /$$$$$$ | $$| $$       /$$| $$$$$$$                                
@@ -36,7 +45,7 @@ logo = rf"""
           | $$  | $$  \ $$ \  $$/$$/| $$$$$$$$| $$  \__/|  $$$$$$ | $$$$$$$$
           | $$  | $$  | $$  \  $$$/ | $$_____/| $$       \____  $$| $$_____/
          /$$$$$$| $$  | $$   \  $/  |  $$$$$$$| $$       /$$$$$$$/|  $$$$$$$
-        |______/|__/  |__/    \_/    \_______/|__/      |_______/  \_______/ ({_v})  
+        |______/|__/  |__/    \_/    \_______/|__/      |_______/  \_______/ ({_v})
 """
 
 
@@ -159,20 +168,24 @@ def solve(
 
     def prop_row(
         name: str,
-        con: DensityConstraint | ViscosityConstraint,
-        prop: Callable[
-            [types.Quantity1D, types.Quantity0D], types.Quantity0D | types.Quantity1D
-        ],
+        con: DensityConstraint
+        | ViscosityConstraint
+        | AromaticsConstraint
+        | HeatOfCombustionConstraint
+        | FlashPointConstraint
+        | FreezePointConstraint,
+        prop: Callable[[types.Quantity1D], types.Quantity0D | types.Quantity1D],
         units: str,
+        temp: types.Quantity0D | None = None,
     ) -> list[str]:
         def fmt_value(v: types.Quantity0D | types.Quantity1D | None) -> str:
             return "-" if v is None else f"{v.m_as(units):.2f}"
 
         return [
             name,
-            f"{con.temp:.1f~P}",
-            fmt_value(None if Y0 is None else prop(Y0, con.temp)),
-            fmt_value(prop(Yi, con.temp)),
+            "-" if temp is None else f"{temp:.1f~P}",
+            fmt_value(None if Y0 is None else prop(Y0)),
+            fmt_value(prop(Yi)),
             fmt_value(con.min),
             fmt_value(con.max),
             f"{Units.Unit(units):~P}",
@@ -180,11 +193,53 @@ def solve(
 
     headers = ["Property", "Temp", "Original", "Final", "Min", "Max", "Units"]
     rows = [
-        prop_row("Density", d, fuel.mixture_density, "kg/m^3") for d in c.density
+        prop_row(
+            "Density", d, partial(fuel.mixture_density, T=d.temp), "kg/m^3", d.temp
+        )
+        for d in c.density
     ] + [
-        prop_row("Viscosity", v, fuel.mixture_kinematic_viscosity, "mm^2/s")
+        prop_row(
+            "Viscosity",
+            v,
+            partial(fuel.mixture_kinematic_viscosity, T=v.temp),
+            "mm^2/s",
+            v.temp,
+        )
         for v in c.viscosity
     ]
+    if c.aromatics is not None:
+        rows.append(
+            prop_row(
+                "Aromatics", c.aromatics, fuel.mixture_aromatics_content, "percent"
+            )
+        )
+    if c.heat_of_combustion is not None:
+        rows.append(
+            prop_row(
+                "Heat of Combustion",
+                c.heat_of_combustion,
+                fuel.mixture_heat_of_combustion,
+                "MJ/kg",
+            )
+        )
+    if c.flash_point is not None:
+        rows.append(
+            prop_row(
+                "Flash Point",
+                c.flash_point,
+                fuel.mixture_flash_point,
+                "celsius",
+            )
+        )
+    if c.freeze_point is not None:
+        rows.append(
+            prop_row(
+                "Freeze Point",
+                c.freeze_point,
+                fuel.mixture_freeze_point,
+                "celsius",
+            )
+        )
     widths = [max(len(r[i]) for r in [headers, *rows]) for i in range(len(headers))]
     sep = "    "
     width = sum(widths) + len(sep) * (len(widths) - 1)

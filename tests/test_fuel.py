@@ -306,3 +306,27 @@ class TestMemberFunctions:
         Yi = fuel.X2Y(Xi)
         Xi_roundtrip = fuel.Y2X(Yi)
         assert Xi_roundtrip.magnitude == pytest.approx(Xi.magnitude)
+
+    @pytest.mark.parametrize(
+        "fuel_name, expected",
+        [("decane", 0.0), ("heptane-decane", 0.0), ("toluene", 100.0)],
+    )
+    def test_mixture_aromatics_content_pure(
+        self, fuel_name: str, expected: float
+    ) -> None:
+        """Test aromatics content for fuels with no or only aromatic compounds."""
+        fuel = Fuel(fuel_name)
+        aro = fuel.mixture_aromatics_content(fuel.Y_0)
+        assert aro.units == "percent"
+        assert aro.magnitude == pytest.approx(expected)
+
+    def test_mixture_aromatics_content_mixture(self) -> None:
+        """Test aromatics content of a jet fuel against a manual volume-fraction sum."""
+        fuel = Fuel("posf10325")
+        aro = fuel.mixture_aromatics_content(fuel.Y_0).m_as("percent")
+        rho = fuel.density(Units.Quantity(298.15, "K")).m_as("kg/m^3")
+        V = fuel.Y_0.magnitude / rho
+        is_aromatic = np.array(fuel.hc_type) == "aromatic"
+        expected = 100.0 * V[is_aromatic].sum() / V.sum()
+        assert 0.0 < aro < 100.0
+        assert aro == pytest.approx(expected)

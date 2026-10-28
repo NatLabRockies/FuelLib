@@ -719,6 +719,24 @@ components\ :footcite:p:`kim_designing_2023`, so the mixture :math:`DCN` should 
 The graph neural network models of Kim et al. for predicting cetane numbers are available at
 `BioE-KimLab/CNpred <https://github.com/BioE-KimLab/CNpred>`_.
 
+Mixture aromatics content
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_aromatics_content
+   :noindex:
+
+The aromatics content is the total liquid volume percent of aromatic compounds in the mixture,
+
+.. math::
+   \phi_{\textit{aro}} = 100 \sum_{i \in \mathcal{A}} \phi_i, \qquad
+   \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
+
+where :math:`\mathcal{A}` is the set of compounds whose
+:attr:`~fuellib.fuel.Fuel.hc_type` is ``"aromatic"`` (any compound containing an aromatic
+ring, including cycloaromatics and diaromatics), and :math:`\rho_i` is the component liquid
+density evaluated at standard temperature (``constants.T_stp``). The result is in vol%,
+directly comparable with aromatics specifications (e.g., ASTM D1319).
+
 Reference Compounds for Jet Fuels
 ---------------------------------
 
