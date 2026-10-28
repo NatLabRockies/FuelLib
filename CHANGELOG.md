@@ -19,7 +19,7 @@ release workflow to parse release entries in this file.
 - `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
 - `simulate.inverse` subpackage for inverse fuel design: blends an additive into a fuel so that the blend satisfies density and viscosity constraints, using a JAX/Optax augmented Lagrangian solver. Provides `Config`, `DensityConstraint`, `ViscosityConstraint`, `Problem`, `Solution`, `solve`, the packaged ASTM D7566 configuration `d7566_config`, and JAX mixing rules in `simulate.inverse.mixing`.
 - `fl-inverse` command-line tool for inverse fuel design.
-- `inverse` optional dependency group (`jax`, `jaxtyping`, `optax`), included in the `dev` extra.
+- `inverse` optional dependency group (`jax`, `jaxtyping`, `optax`), included in the `dev` extra. Install with `pip install "fuellib[inverse]"`; importing `simulate.inverse` or running `fl-inverse` without it raises a clear install hint, and the inverse tests are skipped.
 - `tests/test_inverse.py` covering the constraints, configuration, problem, solver, and `fl-inverse`, and consistency tests between the JAX and `Fuel` mixture density and viscosity in `tests/test_accuracy.py`.
 - `inverse.rst` documenting the inverse design method, and `fl-inverse` usage in `tutorials-cli.rst`.
 - Nocedal and Wright (2006), Kingma and Ba (2015), and ASTM D7566 references in `refs.bib`.

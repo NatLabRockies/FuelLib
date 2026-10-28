@@ -1,6 +1,9 @@
 """Command-line interface for inverse fuel design using FuelLib."""
 
-from ..simulate.inverse import d7566_config, Problem, solve
+try:
+    from ..simulate.inverse import d7566_config, Problem, solve
+except ImportError as e:
+    raise SystemExit(f"Error: {e}") from None
 from pathlib import Path
 import pandas as pd
 from ..fuel import Fuel

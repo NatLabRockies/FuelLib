@@ -6,8 +6,13 @@ import unittest
 import numpy as np
 import pandas as pd
 
-import jax.numpy as jnp
-from fuellib.simulate.inverse import mixing
+try:
+    import jax.numpy as jnp
+    from fuellib.simulate.inverse import mixing
+
+    HAS_INVERSE = True
+except ImportError:
+    HAS_INVERSE = False
 from fuellib.utils import Units
 from fuellib import Fuel, correlate
 from baselinePredictions.generate_baseline import method_map
@@ -156,6 +161,7 @@ class TestFuelMWAccuracy:
         )
 
 
+@pytest.mark.skipif(not HAS_INVERSE, reason="requires the 'inverse' extra")
 class TestInverseConsistency:
     """Test class for verifying inverse accuracy against the main codebase."""
 
