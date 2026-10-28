@@ -11,12 +11,15 @@ from pydantic import ValidationError
 
 from fuellib.cli.inverse import main
 from fuellib import DEFAULT_DATA_DIR, Fuel, Units
+from fuellib.utils.constants import T_stp
 from fuellib.simulate.inverse import (
+    AromaticsConstraint,
     Config,
     DensityConstraint,
     Problem,
     ViscosityConstraint,
     d7566_config,
+    mixing,
     solve,
 )
 
@@ -96,6 +99,41 @@ class TestConstraints:
         assert float(ok(Y0)[0]) == 0.0
         assert float(bad(Y0)[0]) > 0.0
 
+    def test_aromatics_requires_a_bound(self) -> None:
+        """At least one of min or max must be set; no temperature is accepted."""
+        with pytest.raises(ValidationError):
+            AromaticsConstraint()
+        with pytest.raises(ValidationError):
+            AromaticsConstraint(temp=T15, max=Units.Quantity(25.0, "percent"))  # ty: ignore[unknown-argument]
+
+    def test_aromatics_out_of_range(self) -> None:
+        """Limits outside [0, 100] % are rejected."""
+        with pytest.raises(ValidationError):
+            AromaticsConstraint(max=Units.Quantity(25.0, ""))  # 2500 %
+
+    def test_aromatics_labels(self) -> None:
+        """One label per active bound."""
+        a = AromaticsConstraint(
+            min=Units.Quantity(8.0, "percent"), max=Units.Quantity(25.0, "percent")
+        )
+        assert a.labels() == ["Min aromatics content", "Max aromatics content"]
+
+    def test_aromatics_penalty(self, fuel: Fuel, Y0: jnp.ndarray) -> None:
+        """Penalty is zero when feasible and positive when violated."""
+        arom = fuel.mixture_aromatics_content(fuel.Y_0).m_as("percent")
+        ok = AromaticsConstraint(max=Units.Quantity(arom + 5.0, "percent")).bind(fuel)
+        bad = AromaticsConstraint(max=Units.Quantity(arom / 2, "percent")).bind(fuel)
+        assert float(ok(Y0)[0]) == 0.0
+        assert float(bad(Y0)[0]) > 0.0
+
+    def test_aromatics_mixing_matches_fuel(self, fuel: Fuel, Y0: jnp.ndarray) -> None:
+        """JAX aromatics content matches `Fuel.mixture_aromatics_content`."""
+        rho_i = jnp.asarray(fuel.density(T_stp).m_as("kg/m^3"))
+        is_aromatic = jnp.asarray(np.array(fuel.hc_type) == "aromatic", dtype=float)
+        jax_val = float(mixing.aromatics_content(Y0, rho_i, is_aromatic))
+        expected = fuel.mixture_aromatics_content(fuel.Y_0).m_as("percent")
+        assert np.isclose(jax_val, expected)
+
 
 class TestConfig:
     """Tests for the configuration model."""
@@ -105,11 +143,13 @@ class TestConfig:
         c = Config()
         assert c.density == ()
         assert c.viscosity == ()
+        assert c.aromatics is None
 
     def test_d7566_config(self) -> None:
         """D7566 config has one density and two viscosity limits."""
         assert len(d7566_config.density) == 1
         assert len(d7566_config.viscosity) == 2
+        assert d7566_config.aromatics is not None
 
     def test_rejects_invalid_values(self) -> None:
         """Invalid settings and unknown fields are rejected."""
@@ -124,8 +164,28 @@ class TestProblem:
 
     def test_constraint_names(self, problem: Problem) -> None:
         """Names and weights match the active constraint terms."""
-        assert len(problem.constraint_names) == 4
-        assert problem.constraint_weights.shape == (4,)
+        assert len(problem.constraint_names) == 9
+        assert problem.constraint_weights.shape == (9,)
+
+    def test_aromatics_and_zero_weight(self, fuel: Fuel, Y0: jnp.ndarray) -> None:
+        """Aromatics terms are included; zero-weight constraints are dropped."""
+        config = Config(
+            density=(
+                DensityConstraint(
+                    temp=T15, min=Units.Quantity(700.0, "kg/m^3"), weight=0.0
+                ),
+            ),
+            aromatics=AromaticsConstraint(
+                min=Units.Quantity(0.0, ""), max=Units.Quantity(1.0, "")
+            ),
+        )
+        problem = Problem(fuel, config)
+        assert problem.constraint_names == [
+            "Min aromatics content",
+            "Max aromatics content",
+        ]
+        assert problem.constraint_weights.shape == (2,)
+        assert problem.constraints(Y0).shape == (2,)
 
     def test_blend(self, problem: Problem) -> None:
         """Blend is a valid composition that reduces to Y_0 without addition."""
