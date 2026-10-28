@@ -80,7 +80,7 @@ weights:
 
 .. code-block:: python
 
-    from fuellib.simulate.inverse import DensityConstraint, ViscosityConstraint
+    from fuellib.simulate.inverse import AromaticsConstraint, DensityConstraint, ViscosityConstraint
 
     density_constraint = DensityConstraint(
         temp=Units.Quantity(15.0, "celsius"),
@@ -93,16 +93,26 @@ weights:
         max=Units.Quantity(4.0, "mm^2/s"),
         weight=1.0,
     )
+    aromatics_constraint = AromaticsConstraint(
+        min=Units.Quantity(8.0, "percent"),
+        max=Units.Quantity(25.0, "percent"),
+        weight=1.0,
+    )
+
+Density and viscosity constraints are defined at a temperature and may be given several
+times (one per temperature). The aromatics content is evaluated at standard temperature,
+so :class:`AromaticsConstraint` takes no ``temp`` and at most one may be given.
 
 In general, constraints contain parameters that define the target value or range for the
 property. Constraints are computed using the following correlations and mixing rules:
 
-=======================  ===================================================  ====================================================
-Property                 Correlation                                          Mixing Rule
-=======================  ===================================================  ====================================================
-``DensityConstraint``    N/A                                                  Linear
-``ViscosityConstraint``  Dutt\ :footcite:p:`viswanath_viscosity_2007`         Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
-=======================  ===================================================  ====================================================
+=========================  ===================================================  ====================================================
+Property                   Correlation                                          Mixing Rule
+=========================  ===================================================  ====================================================
+``DensityConstraint``      N/A                                                  Linear
+``ViscosityConstraint``    Dutt\ :footcite:p:`viswanath_viscosity_2007`         Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
+``AromaticsConstraint``    N/A                                                  Liquid volume fraction of aromatics
+=========================  ===================================================  ====================================================
 
 See the :class:`API documentation <fuellib.simulate.inverse.constraints>` for
 more details on each constraint class and its parameters.
@@ -119,7 +129,12 @@ Example:
 
 .. code-block:: python
 
-    from fuellib.simulate.inverse import Config, DensityConstraint, ViscosityConstraint
+    from fuellib.simulate.inverse import (
+        AromaticsConstraint,
+        Config,
+        DensityConstraint,
+        ViscosityConstraint,
+    )
 
     density_specs = (DensityConstraint, ...,)
     viscosity_specs = (ViscosityConstraint, ...,)
@@ -127,6 +142,7 @@ Example:
     custom_config = Config(
         density=density_specs,
         viscosity=viscosity_specs,
+        aromatics=AromaticsConstraint(...),
         ... # Optimization configurations
     )
 

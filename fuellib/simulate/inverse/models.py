@@ -22,7 +22,11 @@ from pydantic import (
 from ...fuel import Fuel
 from ...utils.types import Units
 from .constraints import (
+    AromaticsConstraint,
     DensityConstraint,
+    FlashPointConstraint,
+    FreezePointConstraint,
+    HeatOfCombustionConstraint,
     ViscosityConstraint,
 )
 
@@ -41,6 +45,14 @@ class Config(BaseModel):
     """Density limits, each at its own temperature with its own weight."""
     viscosity: tuple[ViscosityConstraint, ...] = Field(default_factory=tuple)
     """Viscosity limits, each at its own temperature with its own weight."""
+    aromatics: AromaticsConstraint | None = None
+    """Aromatics content limit."""
+    heat_of_combustion: HeatOfCombustionConstraint | None = None
+    """Heat of combustion limit."""
+    flash_point: FlashPointConstraint | None = None
+    """Flash point limit."""
+    freeze_point: FreezePointConstraint | None = None
+    """Freeze point limit."""
 
     # Optimizer and convergence
     learning_rate: PositiveFloat = 1e-2
@@ -88,6 +100,23 @@ d7566_config = Config(
             weight=1.0,
         ),
     ),
+    aromatics=AromaticsConstraint(
+        min=Units.Quantity(8.0, "percent"),
+        max=Units.Quantity(25.0, "percent"),
+        weight=1.0,
+    ),
+    heat_of_combustion=HeatOfCombustionConstraint(
+        min=Units.Quantity(42.8, "MJ/kg"),
+        weight=1.0,
+    ),
+    flash_point=FlashPointConstraint(
+        min=Units.Quantity(38.0, "celsius"),
+        weight=1.0,
+    ),
+    freeze_point=FreezePointConstraint(
+        max=Units.Quantity(-40.0, "celsius"),
+        weight=1.0,
+    ),
 )
 
 
@@ -119,9 +148,17 @@ class Problem:
         """Original fuel weight composition (all zeros if ignored)."""
         self._empty_base = bool(np.sum(Y_0) == 0.0)
 
-        self._constraints = (
-            *c.density,
-            *c.viscosity,
+        self._constraints = tuple(
+            k
+            for k in (
+                *c.density,
+                *c.viscosity,
+                c.aromatics,
+                c.heat_of_combustion,
+                c.flash_point,
+                c.freeze_point,
+            )
+            if k is not None and k.weight > 0
         )
         self.binds = [c.bind(fuel) for c in self._constraints]
         self.constraint_names = [n for k in self._constraints for n in k.labels()]
