@@ -126,7 +126,7 @@ providing an interface to the fuel and constraints for evaluating the fuel mixtu
 Optimization Process
 --------------------
 The optimization process involves minimizing target property deviations subject to the constraints defined in the ``Config``.
-The solver uses an augmented Lagrangian approach\ :footcite:p:`nocedal_numerical_2006`, where the Lagrangian is approximately
+The solver uses an augmented Lagrangian approach, where the Lagrangian is approximately
 minimized for fixed multipliers (inner loop), followed by updates to the multipliers and penalty parameters (outer loop).
 The process continues until the maximum number of steps is reached or the constraint violations fall below the specified tolerance.
 
@@ -183,7 +183,7 @@ inequality constraints :math:`g_j \le 0`, computed by
 where :math:`\lambda_j \ge 0` are the Lagrange multiplier estimates, :math:`\mu > 0` is
 the penalty parameter, and :math:`w_j \gt 0` are the constraint weights. Gradients of
 :math:`\mathcal{L}` are computed with JAX automatic differentiation, and the parameters
-are updated with the Adam optimizer\ :footcite:p:`kingma_adam_2015`.
+are updated with `optax`'s Adam optimizer.
 
 Algorithm
 ^^^^^^^^^

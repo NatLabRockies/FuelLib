@@ -23,7 +23,7 @@ release workflow to parse release entries in this file.
 - `inverse` optional dependency group (`jax`, `jaxtyping`, `optax`), included in the `dev` extra. Install with `pip install "fuellib[inverse]"`; importing `simulate.inverse` or running `fl-inverse` without it raises a clear install hint, and the inverse tests are skipped.
 - `tests/test_inverse.py` covering the constraints, configuration, problem, solver, and `fl-inverse`, and consistency tests between the JAX and `Fuel` mixture density and viscosity in `tests/test_accuracy.py`.
 - `inverse.rst` documenting the inverse design method, and `fl-inverse` usage in `tutorials-cli.rst`.
-- Nocedal and Wright (2006), Kingma and Ba (2015), and ASTM D7566 references in `refs.bib`.
+- ASTM D7566 references in `refs.bib`.
 
 ### Changed
 - **Technically Breaking**: The default viscosity `correlation` of `Fuel.viscosity_kinematic`, `Fuel.viscosity_dynamic`, `Fuel.mixture_kinematic_viscosity`, and `Fuel.mixture_dynamic_viscosity` is now `"Nannoolal"` instead of `"Dutt"`. Pass `correlation="Dutt"` to recover the previous behavior.
