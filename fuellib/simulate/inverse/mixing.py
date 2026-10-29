@@ -196,3 +196,50 @@ def freeze_point(
     converged = jnp.abs(jax.lax.stop_gradient(_residual(T))) < 1e-4 * dH_fus
     valid = converged & (Xi > 1e-6)
     return jnp.max(jnp.where(valid, T, -jnp.inf)) - 273.15
+
+
+def distillation_curve(
+    Yi: Array, rho_i: Array, MW_i: Array
+) -> tuple[Array, Array, Array, Array]:
+    """Predict the D86 distillation curve of a fuel mixture.
+
+    Uses an algebraic correlation described by Hosseinifar-Shahverdi (2021) eq. (17).
+
+    Args:
+        Yi: Array of mass fractions of the components.
+        rho_i: Array of densities of the components in kg/m^3.
+        MW_i: Array of molecular weights of the components.
+
+    Returns:
+        Tuple of arrays containing T10, T50, T90, and Tf of the mixture.
+    """
+
+    def _specific_gravity() -> Array:
+        # Specific gravity at 15 °C (rel. to water).
+        rho = density(Yi, rho_i)
+        return rho / 1000.0
+
+    def _boiling_point(SG: Array) -> Array:
+        MW = 1.0 / jnp.sum(Yi / MW_i)
+        par = (3.0 + 2.0 * SG) / (3.0 - SG)
+        return jnp.power(
+            jnp.abs(
+                8.681861 * MW**0.125592 * par ** (0.5 * 0.531591)
+                - 14.3011 * MW**-0.51418 * par ** (0.5 * 2.079049)
+            ),
+            2.144104,
+        )
+
+    SG = _specific_gravity()
+    Tb = _boiling_point(SG)
+    Kw = jnp.power(1.8 * Tb, 1.0 / 3.0) / SG
+
+    T50 = 1.011998 * Tb - 6.58657
+    T70 = jnp.square(1.031160 * Tb - 7.50023) / T50
+    T10 = (jnp.abs((26.27226 * jnp.exp(SG) - 51.8037) * Kw**6.974859) ** 0.093016) / (
+        T50**-0.70173
+    )
+    T90 = jnp.square(0.996538 * 0.5 * (Tb + T70) + 1.963764) / (0.5 * (T10 + T50))
+    Tf = 21.4523 * jnp.square(-0.31317 * Tb - 2.02015) / (T10 + T50)
+
+    return T10, T50, T90, Tf

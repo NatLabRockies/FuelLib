@@ -123,6 +123,13 @@ Property                        Correlation                                     
 ``FreezePointConstraint``       N/A                                                  Boehm\ :footcite:p:`boehm_blend_2022`
 ==============================  ===================================================  ====================================================
 
+:class:`DistillationCurveConstraint` predicts the D86 T10, T50, T90, and final boiling
+point algebraically from the mixture specific gravity and mean molecular weight
+(Hosseinifar-Shahverdi, eq. 17). Its limits are currently fixed to the D7566
+requirements (T10 :math:`\le` 205 °C, T50 - T10 :math:`\ge` 15 °C,
+T90 - T10 :math:`\ge` 40 °C, final boiling point :math:`\le` 300 °C); only its
+``weight`` is configurable.
+
 These match the corresponding ``Fuel`` mixture methods described in :doc:`fuelprops`,
 reimplemented in JAX in :mod:`fuellib.simulate.inverse.mixing`. The heat of combustion is
 the mass-fraction weighted average of the component lower heating values. The flash point

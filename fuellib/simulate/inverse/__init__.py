@@ -14,6 +14,7 @@ from . import mixing
 from .constraints import (
     AromaticsConstraint,
     DensityConstraint,
+    DistillationCurveConstraint,
     FlashPointConstraint,
     FreezePointConstraint,
     HeatOfCombustionConstraint,
@@ -26,6 +27,7 @@ __all__ = [
     "AromaticsConstraint",
     "Config",
     "DensityConstraint",
+    "DistillationCurveConstraint",
     "FlashPointConstraint",
     "FreezePointConstraint",
     "HeatOfCombustionConstraint",

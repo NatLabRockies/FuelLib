@@ -370,16 +370,24 @@ class TestSpecificGravity:
 class TestBoilingPointHosseinifar:
     """Unit tests for `correlate.mixture.boiling_point_hosseinifar`."""
 
-    def test_paper_example_virgin_naphtha(self) -> None:
+    def test_paper_example_virgin_naphtha(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Test against the virgin naphtha example in Hosseinifar and Shahverdi (2022).
 
         Mw = 97 g/mol, SG = 0.724, measured Tb = 373 K.
         """
-        fake_fuel = SimpleNamespace(
-            Y_0=None,
-            mixture_specific_gravity=lambda Yi: Units.Quantity(0.724, ""),
-            mean_molecular_weight=lambda Yi: Units.Quantity(97.0, "g/mol"),
+        monkeypatch.setattr(
+            correlate.mixture,
+            "specific_gravity",
+            lambda fuel, Yi: Units.Quantity(0.724, ""),
         )
+        monkeypatch.setattr(
+            correlate.mixture,
+            "mean_molecular_weight",
+            lambda fuel, Yi: Units.Quantity(97.0, "g/mol"),
+        )
+        fake_fuel = SimpleNamespace(Y_0=None)
         Tb = correlate.mixture.boiling_point_hosseinifar(fake_fuel)  # ty: ignore[invalid-argument-type]
         assert Tb.units == "kelvin"
         assert Tb.magnitude == pytest.approx(373.0, rel=3e-2)

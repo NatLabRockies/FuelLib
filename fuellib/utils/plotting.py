@@ -44,6 +44,8 @@ def plot_distillation_curve(
         result: Predicted distillation curve.
         fuel: Fuel whose experimental distillation data should be overlaid.
             Defaults to None (no experimental data).
+        out: Path or string specifying where to save the plot.
+            Defaults to None (do not save the plot).
         ax: Axes to plot on. Defaults to a new figure and axes.
         units: Temperature units for the plot. Defaults to "celsius".
         label: Legend label for the predicted curve. Defaults to "FuelLib".

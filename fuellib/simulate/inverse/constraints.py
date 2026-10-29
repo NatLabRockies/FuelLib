@@ -1,6 +1,6 @@
 """Constraints for inverse fuel composition modeling."""
 
-from typing import Callable
+from typing import Callable, ClassVar
 
 import jax.numpy as jnp
 import numpy as np
@@ -457,5 +457,63 @@ class FreezePointConstraint(BaseConstraint):
             if hi is not None:
                 g.append(jnp.maximum(fp - hi, 0.0) / scale)
             return g
+
+        return penalty
+
+
+class DistillationCurveConstraint(BaseConstraint):
+    """D86 distillation curve limits for the fuel mixture.
+
+    The limits are currently fixed to the ASTM D7566 requirements:
+    T10 <= 205 °C, T50 - T10 >= 15 °C, T90 - T10 >= 40 °C, and final boiling
+    point <= 300 °C.
+    """
+
+    T10_max: ClassVar[float] = 205.0
+    """Maximum 10% recovered temperature in Celsius."""
+    T50_T10_min: ClassVar[float] = 15.0
+    """Minimum difference between the 50% and 10% recovered temperatures in
+    Celsius."""
+    T90_T10_min: ClassVar[float] = 40.0
+    """Minimum difference between the 90% and 10% recovered temperatures in
+    Celsius."""
+    Tf_max: ClassVar[float] = 300.0
+    """Maximum final boiling point in Celsius."""
+
+    def labels(self) -> list[str]:
+        """Get the names of the penalty terms.
+
+        Returns:
+            Names of the terms returned by `penalty`, in the same order.
+        """
+        if self.weight <= 0:
+            return []
+        return ["Max T10", "Min T50 - T10", "Min T90 - T10", "Max final boiling point"]
+
+    def bind(self, fuel: Fuel) -> Callable[[Array], list[Array]]:
+        """Bind the constraint to a specific fuel mixture.
+
+        Args:
+            fuel: Object representing the fuel mixture.
+
+        Returns:
+            A callable that takes the component weight fractions vector `Yi`
+            and returns the penalties for the distillation curve limits.
+        """
+        rho_i = jnp.asarray(
+            fuel.density(Units.Quantity(60.0, "fahrenheit")).m_as("kg/m^3")
+        )
+        MW_i = jnp.asarray(fuel.MW.m_as("g/mol"))
+
+        def penalty(Yi: Array) -> list[Array]:
+            T10, T50, T90, Tf = mixing.distillation_curve(Yi, rho_i, MW_i)
+            T10_C = T10 - 273.15
+            Tf_C = Tf - 273.15
+            return [
+                jnp.maximum(T10_C - self.T10_max, 0.0) / self.T10_max,
+                jnp.maximum(self.T50_T10_min - (T50 - T10), 0.0) / self.T50_T10_min,
+                jnp.maximum(self.T90_T10_min - (T90 - T10), 0.0) / self.T90_T10_min,
+                jnp.maximum(Tf_C - self.Tf_max, 0.0) / self.Tf_max,
+            ]
 
         return penalty

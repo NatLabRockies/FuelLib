@@ -164,8 +164,8 @@ class TestProblem:
 
     def test_constraint_names(self, problem: Problem) -> None:
         """Names and weights match the active constraint terms."""
-        assert len(problem.constraint_names) == 9
-        assert problem.constraint_weights.shape == (9,)
+        assert len(problem.constraint_names) == 13
+        assert problem.constraint_weights.shape == (13,)
 
     def test_aromatics_and_zero_weight(self, fuel: Fuel, Y0: jnp.ndarray) -> None:
         """Aromatics terms are included; zero-weight constraints are dropped."""

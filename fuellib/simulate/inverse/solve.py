@@ -240,6 +240,34 @@ def solve(
                 "celsius",
             )
         )
+    if c.distillation is not None:
+        dc = c.distillation
+        dist_specs: list[
+            tuple[
+                str,
+                Callable[[types.DistillationResult], types.Quantity0D],
+                float | None,
+                float | None,
+                str,
+            ]
+        ] = [
+            ("T10", lambda r: r.T10, None, dc.T10_max, "celsius"),
+            ("T50 - T10", lambda r: r.T50 - r.T10, dc.T50_T10_min, None, "delta_degC"),
+            ("T90 - T10", lambda r: r.T90 - r.T10, dc.T90_T10_min, None, "delta_degC"),
+            ("Final Boiling Point", lambda r: r.Tf, None, dc.Tf_max, "celsius"),
+        ]
+        dist_orig = None if Y0 is None else fuel.mixture_distillation_curve(Y0)
+        dist_final = fuel.mixture_distillation_curve(Yi)
+        for name, get, lo, hi, units in dist_specs:
+            rows.append([
+                name,
+                "-",
+                "-" if dist_orig is None else f"{get(dist_orig).m_as(units):.2f}",
+                f"{get(dist_final).m_as(units):.2f}",
+                "-" if lo is None else f"{lo:.2f}",
+                "-" if hi is None else f"{hi:.2f}",
+                f"{Units.Unit(units):~P}",
+            ])
     widths = [max(len(r[i]) for r in [headers, *rows]) for i in range(len(headers))]
     sep = "    "
     width = sum(widths) + len(sep) * (len(widths) - 1)

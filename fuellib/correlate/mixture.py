@@ -467,8 +467,8 @@ def boiling_point_hosseinifar(
         Mixture boiling point in K.
     """
     Yi = Yi if Yi is not None else fuel.Y_0
-    SG = fuel.mixture_specific_gravity(Yi).magnitude
-    MW = fuel.mean_molecular_weight(Yi).m_as("g/mol")
+    SG = specific_gravity(fuel, Yi).magnitude
+    MW = mean_molecular_weight(fuel, Yi).m_as("g/mol")
 
     par = (3.0 + 2.0 * SG) / (3.0 - SG)
     Tb = np.power(

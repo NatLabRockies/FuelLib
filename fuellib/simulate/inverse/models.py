@@ -24,6 +24,7 @@ from ...utils.types import Units
 from .constraints import (
     AromaticsConstraint,
     DensityConstraint,
+    DistillationCurveConstraint,
     FlashPointConstraint,
     FreezePointConstraint,
     HeatOfCombustionConstraint,
@@ -53,6 +54,8 @@ class Config(BaseModel):
     """Flash point limit."""
     freeze_point: FreezePointConstraint | None = None
     """Freeze point limit."""
+    distillation: DistillationCurveConstraint | None = None
+    """D86 distillation curve limits."""
 
     # Optimizer and convergence
     learning_rate: PositiveFloat = 1e-2
@@ -117,6 +120,7 @@ d7566_config = Config(
         max=Units.Quantity(-40.0, "celsius"),
         weight=1.0,
     ),
+    distillation=DistillationCurveConstraint(weight=1.0),
 )
 
 
@@ -157,6 +161,7 @@ class Problem:
                 c.heat_of_combustion,
                 c.flash_point,
                 c.freeze_point,
+                c.distillation,
             )
             if k is not None and k.weight > 0
         )
