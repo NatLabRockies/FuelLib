@@ -203,7 +203,7 @@ def distillation_curve(
 ) -> tuple[Array, Array, Array, Array]:
     """Predict the D86 distillation curve of a fuel mixture.
 
-    Uses an algebraic correlation described by Hosseinifar-Shahverdi (2021) eq. (17).
+    Uses an algebraic correlation by Hosseinifar and Shahverdi (2022) eq. (17).
 
     Args:
         Yi: Array of mass fractions of the components.

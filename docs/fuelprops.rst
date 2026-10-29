@@ -467,6 +467,9 @@ are used throughout this section.
    :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
    :math:`YSI`               --               Yield sooting index
    :math:`DCN`               --               Derived cetane number
+   :math:`SG`                --               Specific gravity
+   :math:`T_b`               K                Boiling point
+   :math:`T_{x}`             K                Distillation curve
    ========================  ===============  =====================
 
 .. _tab-mass-mole-fracs:
@@ -736,6 +739,69 @@ where :math:`\mathcal{A}` is the set of compounds whose
 ring, including cycloaromatics and diaromatics), and :math:`\rho_i` is the component liquid
 density evaluated at standard temperature (``constants.T_stp``). The result is in vol%,
 directly comparable with aromatics specifications (e.g., ASTM D1319).
+
+Mixture specific gravity
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_specific_gravity
+   :noindex:
+
+The specific gravity of the mixture is its density (see Mixture density above) at
+60 °F relative to a reference water density of 1000 kg/m\ :sup:`3`:
+
+.. math::
+   SG = \frac{\rho(60\,^\circ\text{F})}{1000 \text{ kg/m}^3}.
+
+Mixture boiling point
+^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_boiling_point
+   :noindex:
+
+The boiling point of the mixture is estimated from its specific gravity :math:`SG` and mean
+molecular weight :math:`M_w` (in g/mol) with the correlation of Hosseinifar and
+Shahverdi\ :footcite:p:`hosseinifar_prediction_2022`, equation 21:
+
+.. math::
+   T_b = \left| 8.681861 \, M_w^{0.125592} \, P^{0.531591/2}
+   - 14.3011 \, M_w^{-0.51418} \, P^{2.079049/2} \right|^{2.144104}, \qquad
+   P = \frac{3 + 2 \, SG}{3 - SG},
+
+with :math:`T_b` in K. This is a characteristic boiling point of the whole mixture,
+distinct from the component normal boiling points :math:`T_{b,i}`.
+
+Mixture distillation curve
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_distillation_curve
+   :noindex:
+
+The ASTM D86 distillation curve of the mixture is estimated algebraically from the mixture
+boiling point :math:`T_b` and specific gravity :math:`SG` (see above) with the correlations
+of Hosseinifar and Shahverdi\ :footcite:p:`hosseinifar_prediction_2022`, equation 17.
+With all temperatures in K and :math:`T_x` the temperature at which :math:`x` vol% has been
+recovered,
+
+.. math::
+   K_w &= \frac{(1.8 \, T_b)^{1/3}}{SG}, \\
+   T_{50} &= 1.011998 \, T_b - 6.58657, \\
+   T_{70} &= \frac{(1.031160 \, T_b - 7.50023)^2}{T_{50}}, \\
+   T_{30} &= \left[(1.621539 \, T_b - 9.99940)^3 - T_{50}^3 - 2 \, T_{70}^3\right]^{1/3}, \\
+   T_{10} &= \left|\left(26.27226 \, e^{SG} - 51.8037\right) K_w^{6.974859}\right|^{0.093016}
+             T_{50}^{0.70173}, \\
+   T_{90} &= \frac{\left[0.996538 \, (T_b + T_{70})/2 + 1.963764\right]^2}{(T_{10} + T_{50})/2}, \\
+   T_{5} &= \left|\left(1.401359 \sqrt{T_b T_{50}} + 7.349205\right)^3 - T_{70}^3 - T_{90}^3\right|^{0.341504}, \\
+   T_{f} &= \frac{21.4523 \, (-0.31317 \, T_b - 2.02015)^2}{T_{10} + T_{50}}, \\
+   T_{0} &= \left(\frac{4}{T_f}\right)^{2.70170} \frac{(-10.7870 \, T_b + 1389.756)^4}{(T_{10} + T_{50})^2},
+
+where :math:`K_w` is the Watson characterization factor and :math:`T_f` is the final
+boiling point. The temperatures are returned as a
+:class:`~fuellib.utils.types.DistillationResult` with fields ``T0``, ``T5``, ``T10``,
+``T30``, ``T50``, ``T70``, ``T90``, and ``Tf``. Because the curve depends only on
+:math:`SG` and :math:`M_w`, it does not resolve the detailed composition of the mixture.
+The predicted curve can be plotted, along with any measured ``Distillation`` data in
+:attr:`~fuellib.fuel.Fuel.propData`, using
+:func:`~fuellib.utils.plotting.plot_distillation_curve`.
 
 Reference Compounds for Jet Fuels
 ---------------------------------

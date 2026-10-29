@@ -456,7 +456,7 @@ def boiling_point_hosseinifar(
 ) -> types.Quantity0D:
     """Calculate the boiling point of the mixture.
 
-    Uses Hosseinifar-Shahverdi (2021) eq. (21).
+    Uses Hosseinifar and Shahverdi (2022) eq. (21).
 
     Args:
         fuel: Fuel object.
@@ -850,7 +850,7 @@ def distillation_curve_hosseinifar(
 ) -> DistillationResult:
     """Calculate the distillation curve of a fuel mixture.
 
-    Uses an algebraic correlation described by Hosseinifar-Shahverdi (2021) eq. (17).
+    Uses an algebraic correlation by Hosseinifar and Shahverdi (2022) eq. (17).
 
     Args:
         fuel: Fuel object.

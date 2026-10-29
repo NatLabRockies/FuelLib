@@ -104,28 +104,31 @@ weights:
 
 Density and viscosity constraints are defined at a temperature and may be given several
 times (one per temperature). The aromatics content (evaluated at standard temperature),
-heat of combustion, flash point, and freeze point do not depend on a user-specified
-temperature, so :class:`AromaticsConstraint`, :class:`HeatOfCombustionConstraint`,
-:class:`FlashPointConstraint`, and :class:`FreezePointConstraint` take no ``temp``
+heat of combustion, flash point, freeze point, and distillation curve do not depend on a
+user-specified temperature, so :class:`AromaticsConstraint`,
+:class:`HeatOfCombustionConstraint`, :class:`FlashPointConstraint`,
+:class:`FreezePointConstraint`, and :class:`DistillationCurveConstraint` take no ``temp``
 and at most one of each may be given.
 
 In general, constraints contain parameters that define the target value or range for the
 property. Constraints are computed using the following correlations and mixing rules:
 
-==============================  ===================================================  ====================================================
-Property                        Correlation                                          Mixing Rule
-==============================  ===================================================  ====================================================
-``DensityConstraint``           N/A                                                  Linear
-``ViscosityConstraint``         Dutt\ :footcite:p:`viswanath_viscosity_2007`         Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
-``AromaticsConstraint``         N/A                                                  Linear
-``HeatOfCombustionConstraint``  Hess cycle (lower heating value)                     Linear
-``FlashPointConstraint``        Alibakhshi\ :footcite:p:`alibakhshi_modified_2015`   Liaw-Chiu\ :footcite:p:`liaw_general_2006`
-``FreezePointConstraint``       N/A                                                  Boehm\ :footcite:p:`boehm_blend_2022`
-==============================  ===================================================  ====================================================
+===============================  ==================================================================  ====================================================
+Property                         Correlation                                                         Mixing Rule
+===============================  ==================================================================  ====================================================
+``DensityConstraint``            N/A                                                                 Linear
+``ViscosityConstraint``          Dutt\ :footcite:p:`viswanath_viscosity_2007`                        Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
+``AromaticsConstraint``          N/A                                                                 Linear
+``HeatOfCombustionConstraint``   Hess cycle (lower heating value)                                    Linear
+``FlashPointConstraint``         Alibakhshi\ :footcite:p:`alibakhshi_modified_2015`                  Liaw-Chiu\ :footcite:p:`liaw_general_2006`
+``FreezePointConstraint``        N/A                                                                 Boehm\ :footcite:p:`boehm_blend_2022`
+``DistillationCurveConstraint``  Hosseinifar-Shahverdi\ :footcite:p:`hosseinifar_prediction_2022`    N/A
+===============================  ==================================================================  ====================================================
 
 :class:`DistillationCurveConstraint` predicts the D86 T10, T50, T90, and final boiling
 point algebraically from the mixture specific gravity and mean molecular weight
-(Hosseinifar-Shahverdi, eq. 17). Its limits are currently fixed to the D7566
+(Hosseinifar and Shahverdi\ :footcite:p:`hosseinifar_prediction_2022`, equation 17; see
+the mixture distillation curve in :doc:`fuelprops`). Its limits are currently fixed to the D7566
 requirements (T10 :math:`\le` 205 °C, T50 - T10 :math:`\ge` 15 °C,
 T90 - T10 :math:`\ge` 40 °C, final boiling point :math:`\le` 300 °C); only its
 ``weight`` is configurable.
@@ -160,6 +163,7 @@ Example:
         Config,
         DensityConstraint,
         FlashPointConstraint,
+        DistillationCurveConstraint,
         FreezePointConstraint,
         HeatOfCombustionConstraint,
         ViscosityConstraint,
@@ -175,6 +179,7 @@ Example:
         heat_of_combustion=HeatOfCombustionConstraint(...),
         flash_point=FlashPointConstraint(...),
         freeze_point=FreezePointConstraint(...),
+        distillation=DistillationCurveConstraint(weight=1.0),
         ... # Optimization configurations
     )
 
@@ -318,6 +323,14 @@ specifications\ :footcite:`astm_D7566-26`, including:
 +-------------------------+-------------+--------------+--------------+
 | ``Freeze Point``        | \-          | \-           | -40.0 °C     |
 +-------------------------+-------------+--------------+--------------+
+| ``T10``                 | \-          | \-           | 205.0 °C     |
++-------------------------+-------------+--------------+--------------+
+| ``T50 - T10``           | \-          | 15.0 °C      | \-           |
++-------------------------+-------------+--------------+--------------+
+| ``T90 - T10``           | \-          | 40.0 °C      | \-           |
++-------------------------+-------------+--------------+--------------+
+| ``Final Boiling Point`` | \-          | \-           | 300.0 °C     |
++-------------------------+-------------+--------------+--------------+
 
 :sup:`*` *D1319 or IP 156 or D8305.*
 
@@ -327,7 +340,7 @@ Results
 On completion, :func:`~fuellib.simulate.inverse.solve` prints the original and final
 GCxGC compositions, a table of the original and final values of each constrained property
 (density and viscosity at each constraint temperature, aromatics content, heat of
-combustion, flash point, and freeze point) alongside their limits, and a summary that
+combustion, flash point, freeze point, and distillation curve points) alongside their limits, and a summary that
 includes any constraints that remain violated. It returns a :class:`~fuellib.simulate.inverse.models.Solution` containing
 the optimized blend (``blend``) and the additive (``additive``) as copies of the fuel's
 ``gcData`` DataFrame with updated ``Weight %`` columns, the additive mass fraction in the
