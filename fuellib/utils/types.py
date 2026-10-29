@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TypeAlias
 
 import numpy as np
@@ -24,9 +25,25 @@ Quantity2D: TypeAlias = pint.Quantity[Array2D]
 """Unit-aware quantity with a two-dimensional array magnitude."""
 
 
+# Result classes
+@dataclass(frozen=True)
+class DistillationResult:
+    """Result of a distillation calculation."""
+
+    T0: Quantity0D
+    T5: Quantity0D
+    T10: Quantity0D
+    T30: Quantity0D
+    T50: Quantity0D
+    T70: Quantity0D
+    T90: Quantity0D
+    Tf: Quantity0D
+
+
 __all__ = [
     "Array1D",
     "Array2D",
+    "DistillationResult",
     "Quantity0D",
     "Quantity1D",
     "Quantity2D",

@@ -107,6 +107,7 @@ Click on links below for the full auto-documentation of the API.
     fuellib.utils.constants
     fuellib.utils.utility
     fuellib.utils.types
+    fuellib.utils.plotting
     fuellib.gcm.core
     fuellib.gcm.gani
     fuellib.gcm.boehm

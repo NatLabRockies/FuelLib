@@ -1,11 +1,12 @@
 """Test suite for the Fuel class in the fuellib package."""
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
 
-from fuellib import Fuel, Units
+from fuellib import Fuel, Units, correlate
 from fuellib.fuel import DEFAULT_DATA_DIR
 
 import numpy as np
@@ -330,3 +331,88 @@ class TestMemberFunctions:
         expected = 100.0 * V[is_aromatic].sum() / V.sum()
         assert 0.0 < aro < 100.0
         assert aro == pytest.approx(expected)
+
+
+class TestSpecificGravity:
+    """Unit tests for `correlate.mixture.specific_gravity`."""
+
+    def test_decane_matches_literature(self) -> None:
+        """Test n-decane specific gravity against the literature value at 60 F (~0.734)."""
+        fuel = Fuel("decane")
+        sg = correlate.mixture.specific_gravity(fuel)
+        assert sg.units == "dimensionless"
+        assert sg.magnitude == pytest.approx(0.734, rel=1e-2)
+
+    def test_default_Yi_is_Y_0(self) -> None:
+        """Test that omitting Yi uses the fuel's initial mass fractions."""
+        fuel = Fuel("posf10325")
+        sg_default = correlate.mixture.specific_gravity(fuel)
+        sg_explicit = correlate.mixture.specific_gravity(fuel, fuel.Y_0)
+        assert sg_default.magnitude == pytest.approx(sg_explicit.magnitude)
+
+    def test_consistent_with_density_at_60F(self) -> None:
+        """Test that specific gravity equals mixture density at 60 F over 1000 kg/m^3."""
+        fuel = Fuel("heptane-decane")
+        Yi = Units.Quantity(np.array([0.3, 0.7]), "dimensionless")
+        sg = correlate.mixture.specific_gravity(fuel, Yi)
+        rho = correlate.mixture.density(fuel, Units.Quantity(60.0, "fahrenheit"), Yi)
+        assert sg.magnitude == pytest.approx(rho.m_as("kg/m^3") / 1000.0)
+        # A heptane/decane blend must lie between the pure-component values.
+        sg_pure = [
+            correlate.mixture.specific_gravity(
+                fuel, Units.Quantity(np.array(Y), "dimensionless")
+            ).magnitude
+            for Y in ([1.0, 0.0], [0.0, 1.0])
+        ]
+        assert min(sg_pure) < sg.magnitude < max(sg_pure)
+
+
+class TestBoilingPointHosseinifar:
+    """Unit tests for `correlate.mixture.boiling_point_hosseinifar`."""
+
+    def test_paper_example_virgin_naphtha(self) -> None:
+        """Test against the virgin naphtha example in Hosseinifar and Shahverdi (2022).
+
+        Mw = 97 g/mol, SG = 0.724, measured Tb = 373 K.
+        """
+        fake_fuel = SimpleNamespace(
+            Y_0=None,
+            mixture_specific_gravity=lambda Yi: Units.Quantity(0.724, ""),
+            mean_molecular_weight=lambda Yi: Units.Quantity(97.0, "g/mol"),
+        )
+        Tb = correlate.mixture.boiling_point_hosseinifar(fake_fuel)  # ty: ignore[invalid-argument-type]
+        assert Tb.units == "kelvin"
+        assert Tb.magnitude == pytest.approx(373.0, rel=3e-2)
+
+    @pytest.mark.parametrize(
+        "fuel_name, expected_Tb",
+        [("heptane", 371.6), ("decane", 447.3)],
+    )
+    def test_pure_compound_matches_literature(
+        self, fuel_name: str, expected_Tb: float
+    ) -> None:
+        """Test pure n-alkane normal boiling points against literature values."""
+        fuel = Fuel(fuel_name)
+        Tb = correlate.mixture.boiling_point_hosseinifar(fuel)
+        assert Tb.m_as("K") == pytest.approx(expected_Tb, rel=3e-2)
+
+    def test_default_Yi_is_Y_0(self) -> None:
+        """Test that omitting Yi uses the fuel's initial mass fractions."""
+        fuel = Fuel("posf10325")
+        Tb_default = correlate.mixture.boiling_point_hosseinifar(fuel)
+        Tb_explicit = correlate.mixture.boiling_point_hosseinifar(fuel, fuel.Y_0)
+        assert Tb_default.magnitude == pytest.approx(Tb_explicit.magnitude)
+
+    def test_blend_between_pure_components(self) -> None:
+        """Test that a heptane/decane blend boils between the pure-component values."""
+        fuel = Fuel("heptane-decane")
+        Tb_pure = [
+            correlate.mixture.boiling_point_hosseinifar(
+                fuel, Units.Quantity(np.array(Y), "dimensionless")
+            ).m_as("K")
+            for Y in ([1.0, 0.0], [0.0, 1.0])
+        ]
+        Tb_blend = correlate.mixture.boiling_point_hosseinifar(
+            fuel, Units.Quantity(np.array([0.5, 0.5]), "dimensionless")
+        ).m_as("K")
+        assert Tb_pure[0] < Tb_blend < Tb_pure[1]
