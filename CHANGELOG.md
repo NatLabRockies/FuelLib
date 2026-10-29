@@ -19,6 +19,7 @@ release workflow to parse release entries in this file.
 - `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
 - `simulate.inverse` subpackage for inverse fuel design: blends an additive into a fuel so that the blend satisfies density and viscosity constraints, using a JAX/Optax augmented Lagrangian solver. Provides `Config`, `DensityConstraint`, `ViscosityConstraint`, `Problem`, `Solution`, `solve`, the packaged ASTM D7566 configuration `d7566_config`, and JAX mixing rules in `simulate.inverse.mixing`.
 - `fl-inverse` command-line tool for inverse fuel design.
+- `Problem(..., ignore_composition=True)` and `fl-inverse --ignore-composition` to ignore the original fuel composition and design a mixture of its components from scratch (additive mass fraction of 1).
 - `inverse` optional dependency group (`jax`, `jaxtyping`, `optax`), included in the `dev` extra. Install with `pip install "fuellib[inverse]"`; importing `simulate.inverse` or running `fl-inverse` without it raises a clear install hint, and the inverse tests are skipped.
 - `tests/test_inverse.py` covering the constraints, configuration, problem, solver, and `fl-inverse`, and consistency tests between the JAX and `Fuel` mixture density and viscosity in `tests/test_accuracy.py`.
 - `inverse.rst` documenting the inverse design method, and `fl-inverse` usage in `tutorials-cli.rst`.
@@ -37,7 +38,6 @@ release workflow to parse release entries in this file.
 - `baselinePredictions/generate_baseline.py` can now regenerate specific baselines (fuels/properties) and allows `useRefProperties` to be toggled from the CLI.
 - `constants.gas_constant` -> `constants.R` to be more consistent with other variable names.
 - Every compound in a fuel must now also be present in `refUNIFAC.csv`. Custom fuels with compounds that are not in the bundled table must provide a custom `refUNIFAC.csv`.
-- The `Weight %` column of the GCxGC data is now optional. Without it, `Fuel.Y_0` is all zeros (e.g., for a list of available components in inverse design).
 
 ### Fixed
 - `mixture.derived_cetane_number` and `mixture.yield_sooting_index` return types corrected to `Quantity0D`. `Fuel` wrappers updated accordingly.

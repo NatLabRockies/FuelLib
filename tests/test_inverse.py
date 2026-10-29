@@ -142,7 +142,7 @@ class TestProblem:
         """With an empty base fuel the blend is the addition and sums to 1."""
         (tmp_path / "gcData").mkdir()
         gc = pd.read_csv(DEFAULT_DATA_DIR / "gcData" / "posf10325.csv")
-        gc.drop(columns="Weight %").to_csv(
+        gc.assign(**{"Weight %": 0.0}).to_csv(
             tmp_path / "gcData" / "blank.csv", index=False
         )
         problem = Problem(Fuel("blank", fuelDataDir=tmp_path), d7566_config)
@@ -153,6 +153,17 @@ class TestProblem:
         Yi = problem.blend(params)
         assert np.isclose(float(Yi.sum()), 1.0)
         assert np.all(Yi >= 0.0)
+
+    def test_blend_ignore_composition(self, fuel: Fuel) -> None:
+        """Ignoring the composition makes the blend the addition itself."""
+        problem = Problem(fuel, d7566_config, ignore_composition=True)
+        assert np.array_equal(problem.Y_0, np.zeros(fuel.num_compounds))
+        params = {
+            "logits": jnp.zeros_like(problem.Y_0),
+            "frac": jnp.asarray(-5.0),
+        }
+        Yi = problem.blend(params)
+        assert np.allclose(Yi, 1.0 / fuel.num_compounds)
 
     def test_constraints_and_loss(self, problem: Problem) -> None:
         """Base fuel is feasible, so constraints and loss are zero."""
@@ -191,17 +202,25 @@ class TestSolve:
         rho = fuel.mixture_density(Y, T15).m_as("kg/m^3")
         assert rho >= rho_min.m_as("kg/m^3") * (1 - config.violation_tol)
 
-    def test_without_optional_columns(self, tmp_path: Path) -> None:
-        """Solver runs on GCxGC data without 'GC-Bin' and 'Weight %' columns."""
+    def test_without_gc_bin_and_zero_weights(self, tmp_path: Path) -> None:
+        """Solver runs on GCxGC data without 'GC-Bin' and with zero 'Weight %'."""
         (tmp_path / "gcData").mkdir()
         gc = pd.read_csv(DEFAULT_DATA_DIR / "gcData" / "posf10325.csv")
-        gc.drop(columns=["GC-Bin", "Weight %"]).to_csv(
+        gc.drop(columns="GC-Bin").assign(**{"Weight %": 0.0}).to_csv(
             tmp_path / "gcData" / "components.csv", index=False
         )
         fuel = Fuel("components", fuelDataDir=tmp_path)
         solution = solve(Problem(fuel, d7566_config), max_steps=10)
         assert np.isclose(solution.blend["Weight %"].sum(), 100.0)
         assert solution.additive_fraction == 1.0
+
+    def test_ignore_composition(self, fuel: Fuel) -> None:
+        """Ignoring the composition gives an additive fraction of 1."""
+        problem = Problem(fuel, d7566_config, ignore_composition=True)
+        solution = solve(problem, max_steps=10)
+        assert solution.additive_fraction == 1.0
+        assert np.all(solution.additive_fraction_history == 1.0)
+        assert np.allclose(solution.blend["Weight %"], solution.additive["Weight %"])
 
 
 class TestCLI:
@@ -220,7 +239,7 @@ class TestCLI:
                 "posf10325",
                 "--max-steps",
                 "10",
-                "--no-use-ref-props",
+                "--disable-ref-props",
                 "--output",
                 str(tmp_path),
             ],

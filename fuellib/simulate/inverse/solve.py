@@ -199,7 +199,7 @@ def solve(
     new_gc = fuel.gcData.copy()
     new_gc["Weight %"] = Yi.magnitude * 100.0
 
-    original = fuel.Y_0.magnitude * 100.0
+    original = np.array(problem.Y_0) * 100.0
     final = new_gc["Weight %"].to_numpy(float)
     diff = final - original
 

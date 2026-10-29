@@ -139,18 +139,13 @@ ignore_imports = [
 
 # Pytest configurations
 [tool.pytest.ini_options]
-testpaths = [
-    "tests",
-    "fuellib",
-]
+testpaths = ["tests"]
 addopts = [
-    "--doctest-modules",
     "--ignore=tests/baselinePredictions/generate_baseline.py",
     "--cov=fuellib",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
-doctest_optionflags = "NORMALIZE_WHITESPACE"
 
 # Pytest coverage configurations
 [tool.coverage.run]

@@ -94,12 +94,17 @@ d7566_config = Config(
 class Problem:
     """Static fuel data, objective, and constraints of the inverse design problem."""
 
-    def __init__(self, fuel: Fuel, config: Config) -> None:
+    def __init__(
+        self, fuel: Fuel, config: Config, *, ignore_composition: bool = False
+    ) -> None:
         """Precompute the per-component properties of the fuel.
 
         Args:
             fuel: Base fuel to which an addition is blended.
             config: Optimization settings.
+            ignore_composition: Whether to ignore the original composition of the
+                fuel (`fuel.Y_0`). If `True`, the blend is made entirely of the
+                addition (additive mass fraction of 1). Defaults to `False`.
         """
         self.fuel: Fuel = fuel
         """Base fuel object."""
@@ -107,9 +112,12 @@ class Problem:
         """Optimization settings."""
         c = config
 
-        self.Y_0: Array = jnp.asarray(fuel.Y_0.to("").magnitude)
-        """Original fuel weight composition."""
-        self._empty_base = bool(np.sum(fuel.Y_0.to("").magnitude) == 0.0)
+        Y_0 = fuel.Y_0.to("").magnitude
+        if ignore_composition:
+            Y_0 = np.zeros_like(Y_0)
+        self.Y_0: Array = jnp.asarray(Y_0)
+        """Original fuel weight composition (all zeros if ignored)."""
+        self._empty_base = bool(np.sum(Y_0) == 0.0)
 
         self._constraints = (
             *c.density,
