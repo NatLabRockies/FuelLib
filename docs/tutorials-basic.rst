@@ -25,7 +25,7 @@ Required Input Files
 
 FuelLib comes with a variety of built-in fuels with pre-populated input files, but you can also add your own custom fuels by providing the required input files. Each fuel requires one input file:
 
-- ``fuellib/data/gcData/<fuel_name>.csv``: the GCxGC composition of the fuel (must include a ``Weight %`` column and either a ``Reference Compound`` or a ``SMILES`` column; optional columns include ``GC-Bin`` and ``PelePhysics Key``)
+- ``fuellib/data/gcData/<fuel_name>.csv``: the GCxGC composition of the fuel (must include either a ``Reference Compound`` or a ``SMILES`` column and ``Weight %``; optional columns include ``GC-Bin`` and ``PelePhysics Key``)
 
 Each row of the GCxGC file is matched to a compound in the reference data tables, which store the compound's SMILES, hydrocarbon family, and group decomposition:
 

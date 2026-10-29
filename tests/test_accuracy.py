@@ -6,6 +6,13 @@ import unittest
 import numpy as np
 import pandas as pd
 
+try:
+    import jax.numpy as jnp
+    from fuellib.simulate.inverse import mixing
+
+    HAS_INVERSE = True
+except ImportError:
+    HAS_INVERSE = False
 from fuellib.utils import Units
 from fuellib import Fuel, correlate
 from baselinePredictions.generate_baseline import method_map
@@ -152,6 +159,169 @@ class TestFuelMWAccuracy:
         assert np.isclose(mw, expected_mw, atol=1e-4), (
             f"{fuel_name}: expected {expected_mw}, got {mw}"
         )
+
+
+@pytest.mark.skipif(not HAS_INVERSE, reason="requires the 'inverse' extra")
+class TestInverseConsistency:
+    """Test class for verifying inverse accuracy against the main codebase."""
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_density(self, fuel_name: str) -> None:
+        """Test that the inverse density predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+        T = Units.Quantity(298.15, "K")
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        rho_i = jnp.asarray(fuel.density(T).m_as("kg/m^3"))
+        rho_inv = mixing.density(Yi, rho_i)
+        rho_base = fuel.mixture_density(fuel.Y_0, T).m_as("kg/m^3")
+
+        assert np.isclose(rho_inv, rho_base), (
+            f"{fuel_name}: inverse density {rho_inv} does not match base density {rho_base}"
+        )
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_viscosity(self, fuel_name: str) -> None:
+        """Test that the inverse viscosity predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+        T = Units.Quantity(298.15, "K")
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        mu_i = jnp.asarray(fuel.viscosity_kinematic(T).m_as("m^2/s"))
+        mw_i = jnp.asarray(fuel.MW.m_as("kg/mol"))
+        mu_inv = mixing.viscosity(Yi, mu_i, mw_i)
+        mu_base = fuel.mixture_kinematic_viscosity(fuel.Y_0, T).m_as("m^2/s")
+
+        assert np.isclose(mu_inv, mu_base), (
+            f"{fuel_name}: inverse viscosity {mu_inv} does not match base viscosity {mu_base}"
+        )
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_aromatics(self, fuel_name: str) -> None:
+        """Test that the inverse aromatics predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+        T = Units.Quantity(298.15, "K")
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        rho_i = jnp.asarray(fuel.density(T).m_as("kg/m^3"))
+        is_aromatic = jnp.asarray(np.array(fuel.hc_type) == "aromatic", dtype=float)
+        aro_inv = mixing.aromatics_content(Yi, rho_i, is_aromatic)
+        aro_base = fuel.mixture_aromatics_content(fuel.Y_0).m_as("percent")
+
+        assert np.isclose(aro_inv, aro_base), (
+            f"{fuel_name}: inverse aromatics {aro_inv} does not match base aromatics {aro_base}"
+        )
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_heat_of_combustion(self, fuel_name: str) -> None:
+        """Test that the inverse heat of combustion predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        Lhv_i = jnp.asarray(
+            correlate.components.lower_heating_value(fuel).m_as("MJ/kg")
+        )
+        h_inv = mixing.heat_of_combustion(Yi, Lhv_i)
+        h_base = fuel.mixture_heat_of_combustion(fuel.Y_0).m_as("MJ/kg")
+
+        assert np.isclose(h_inv, h_base), (
+            f"{fuel_name}: inverse heat of combustion {h_inv} does not match base heat of combustion {h_base}"
+        )
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_flash_point(self, fuel_name: str) -> None:
+        """Test that the inverse flash point predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+        T = Units.Quantity(298.15, "K")
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        Tfp_i = jnp.asarray(fuel.flash_point().m_as("celsius"))
+        Tc_i = jnp.asarray(fuel.Tc.m_as("K"))
+        Pc_i = jnp.asarray(fuel.Pc.m_as("Pa"))
+        omega_i = jnp.asarray(fuel.omega.m_as(""))
+        MW_i = jnp.asarray(fuel.MW.m_as("kg/mol"))
+        Tfp_inv = mixing.flash_point(Yi, Tfp_i, Tc_i, Pc_i, omega_i, MW_i)
+        Tfp_base = fuel.mixture_flash_point(fuel.Y_0).m_as("celsius")
+
+        assert np.isclose(Tfp_inv, Tfp_base), (
+            f"{fuel_name}: inverse flash point {Tfp_inv} does not match base flash point {Tfp_base}"
+        )
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_freeze_point(self, fuel_name: str) -> None:
+        """Test that the inverse freeze point predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+        T = Units.Quantity(298.15, "K")
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        Tm_i = jnp.asarray(fuel.Tm.m_as("kelvin"))
+        dS_fus_i = jnp.asarray(fuel.dS_fus.m_as("J/(mol*K)"))
+        Cp_i = jnp.asarray(
+            correlate.components.molar_specific_heat_capacity_ruzicka(
+                fuel, Units.Quantity(298.15, "K")
+            ).m_as("J/(mol*K)")
+        )
+        MW_i = jnp.asarray(fuel.MW.m_as("kg/mol"))
+        Tfp_inv = mixing.freeze_point(Yi, Tm_i, dS_fus_i, Cp_i, MW_i)
+        Tfp_base = fuel.mixture_freeze_point(fuel.Y_0).m_as("celsius")
+
+        assert np.isclose(Tfp_inv, Tfp_base, atol=5e-3), (
+            f"{fuel_name}: inverse freeze point {Tfp_inv} does not match base freeze point {Tfp_base}"
+        )  # A small tolerance (0.005) due to root-finding technique
 
 
 if __name__ == "__main__":

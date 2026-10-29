@@ -6,6 +6,7 @@ import numpy as np
 from scipy.optimize import curve_fit, root
 
 from ..utils import Units, constants, types
+from ..utils.types import DistillationResult
 from . import components, helpers
 
 if TYPE_CHECKING:
@@ -134,6 +135,24 @@ def density(
     Yi = Yi if Yi is not None else fuel.Y_0
     rho_i = components.density(fuel, T).to("kg/m^3")
     return Yi @ rho_i
+
+
+def specific_gravity(
+    fuel: "Fuel", Yi: types.Quantity1D | None = None
+) -> types.Quantity0D:
+    """Calculate specific gravity of the mixture.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        Mixture specific gravity (dimensionless).
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    rho = density(fuel, Units.Quantity(60.0, "fahrenheit"), Yi).to("kg/m^3")
+    return rho / Units.Quantity(1000.0, "kg/m^3")
 
 
 def kinematic_viscosity_dutt(
@@ -429,6 +448,37 @@ def thermal_conductivity_latini(
     tci = components.thermal_conductivity_latini(fuel, T).to("W/(m*K)").magnitude
     tc = np.sum(Yi.magnitude * tci ** (-2)) ** (-0.5)
     return Units.Quantity(tc, "W/(m*K)")
+
+
+def boiling_point_hosseinifar(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+) -> types.Quantity0D:
+    """Calculate the boiling point of the mixture.
+
+    Uses Hosseinifar and Shahverdi (2022) eq. (21).
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        Mixture boiling point in K.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    SG = specific_gravity(fuel, Yi).magnitude
+    MW = mean_molecular_weight(fuel, Yi).m_as("g/mol")
+
+    par = (3.0 + 2.0 * SG) / (3.0 - SG)
+    Tb = np.power(
+        np.abs(
+            8.681861 * MW**0.125592 * par ** (0.5 * 0.531591)
+            - 14.3011 * MW**-0.51418 * par ** (0.5 * 2.079049)
+        ),
+        2.144104,
+    )
+    return Units.Quantity(Tb, "K")
 
 
 def freeze_point_boehm(
@@ -769,3 +819,73 @@ def derived_cetane_number(
     tot_vol = np.sum(Yi / rho_i)
     vol_frac = (Yi / rho_i) / tot_vol
     return Units.Quantity(np.sum(vol_frac * dcn_i.magnitude), "")
+
+
+def aromatics_content(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+) -> types.Quantity0D:
+    """Calculate the aromatics content of the fuel mixture.
+
+    Sums the liquid volume fractions (evaluated at standard temperature) of all
+    components classified as aromatic by `fuel.hc_type`.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        Aromatics content of the mixture in volume percent.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
+    is_aromatic = np.array(fuel.hc_type) == "aromatic"
+    return Units.Quantity(np.sum(Vi.magnitude[is_aromatic]), "").to("percent")
+
+
+def distillation_curve_hosseinifar(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+) -> DistillationResult:
+    """Calculate the distillation curve of a fuel mixture.
+
+    Uses an algebraic correlation by Hosseinifar and Shahverdi (2022) eq. (17).
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        DistillationResult containing key temperatures of the mixture.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    Tb = boiling_point_hosseinifar(fuel, Yi).m_as("K")
+    SG = specific_gravity(fuel, Yi).magnitude
+    Kw = np.power(1.8 * Tb, 1.0 / 3.0) / SG
+
+    T50 = 1.011998 * Tb - 6.58657
+    T70 = np.square(1.031160 * Tb - 7.50023) / T50
+    T30 = np.power((1.621539 * Tb - 9.99940) ** 3 - T50**3 - 2 * (T70) ** 3, 1.0 / 3.0)
+    T10 = (np.abs((26.27226 * np.exp(SG) - 51.8037) * Kw**6.974859) ** 0.093016) / (
+        T50**-0.70173
+    )
+    T90 = np.square(0.996538 * 0.5 * (Tb + T70) + 1.963764) / (0.5 * (T10 + T50))
+    T5 = (
+        np.abs((1.401359 * np.sqrt(Tb * T50) + 7.349205) ** 3 - T70**3 - T90**3)
+        ** 0.341504
+    )
+    Tf = 21.4523 * np.square(-0.31317 * Tb - 2.02015) / (T10 + T50)
+    T0 = (4 / Tf) ** 2.70170 * ((-10.7870 * Tb + 1389.756) ** 4 / (T10 + T50) ** 2)
+
+    return DistillationResult(
+        T0=Units.Quantity(T0, "K"),
+        T5=Units.Quantity(T5, "K"),
+        T10=Units.Quantity(T10, "K"),
+        T30=Units.Quantity(T30, "K"),
+        T50=Units.Quantity(T50, "K"),
+        T70=Units.Quantity(T70, "K"),
+        T90=Units.Quantity(T90, "K"),
+        Tf=Units.Quantity(Tf, "K"),
+    )

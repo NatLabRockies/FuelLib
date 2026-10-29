@@ -574,6 +574,18 @@ class Fuel:
         """
         return correlate.helpers.mass_fractions_to_mole_fractions(self, Yi)
 
+    def Y2V(self, Yi: types.Quantity1D, T: types.Quantity0D) -> types.Quantity1D:
+        """Convert mass fractions (Yi) to volume fractions (Vi).
+
+        Args:
+            Yi: Mass fractions of each compound.
+            T: Temperature at which to evaluate the mixture density.
+
+        Returns:
+            Volume fractions of the compounds (shape: num_compounds,).
+        """
+        return correlate.helpers.mass_fractions_to_volume_fractions(self, Yi, T)
+
     def density(
         self, T: types.Quantity0D, comp_idx: int | None = None
     ) -> types.Quantity1D:
@@ -879,6 +891,21 @@ class Fuel:
         """
         return correlate.mixture.density(self, T, Yi)
 
+    def mixture_specific_gravity(
+        self,
+        Yi: types.Quantity1D | None = None,
+    ) -> types.Quantity0D:
+        """Calculate specific gravity of the mixture at 60 F.
+
+        Args:
+            Yi: Mass fractions of each compound.
+                Defaults to the fuel's initial mass fractions (Y_0).
+
+        Returns:
+            Mixture specific gravity (dimensionless).
+        """
+        return correlate.mixture.specific_gravity(self, Yi)
+
     def mixture_kinematic_viscosity(
         self,
         Yi: types.Quantity1D,
@@ -1028,6 +1055,30 @@ class Fuel:
         """
         return correlate.mixture.thermal_conductivity_latini(self, T, Yi)
 
+    def mixture_boiling_point(
+        self,
+        Yi: types.Quantity1D | None = None,
+        *,
+        correlation: Literal["Hosseinifar"] = "Hosseinifar",
+    ) -> types.Quantity0D:
+        """Calculate boiling point of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+                Defaults to `fuel.Y_0` (initial mass fractions).
+            correlation: Correlation method. "Hosseinifar" only currently supported.
+
+        Returns:
+            Mixture boiling point in K.
+
+        Raises:
+            ValueError: If an unknown correlation method is specified.
+        """
+        if correlation.casefold() == "hosseinifar":
+            return correlate.mixture.boiling_point_hosseinifar(self, Yi)
+        msg = f"Unknown correlation method: {correlation}"
+        raise ValueError(msg)
+
     def mixture_freeze_point(
         self, Yi: types.Quantity1D, *, alpha: float = 1.0
     ) -> types.Quantity0D:
@@ -1114,6 +1165,46 @@ class Fuel:
             Mixture derived cetane number.
         """
         return correlate.mixture.derived_cetane_number(self, Yi, T_ref=T_ref)
+
+    def mixture_aromatics_content(
+        self,
+        Yi: types.Quantity1D,
+    ) -> types.Quantity0D:
+        """Calculate aromatics content of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+
+        Returns:
+            Mixture aromatics content in volume percent.
+        """
+        return correlate.mixture.aromatics_content(self, Yi)
+
+    def mixture_distillation_curve(
+        self,
+        Yi: types.Quantity1D,
+        *,
+        correlation: Literal["hosseinifar"] = "hosseinifar",
+    ) -> types.DistillationResult:
+        """Calculate distillation curve of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            correlation: The correlation method to use for the distillation curve.
+                Currently only supports "hosseinifar".
+
+        Returns:
+            Distillation curve result as a DistillationResult object containing
+                fraction recovered temperatures (T0, T10, ...) in K.
+
+        Raises:
+            ValueError: If an unknown correlation is specified.
+        """
+        if correlation.casefold() == "hosseinifar":
+            return correlate.mixture.distillation_curve_hosseinifar(self, Yi)
+
+        msg = f"Unknown correlation '{correlation}'."
+        raise ValueError(msg)
 
 
 __all__ = ["Fuel"]

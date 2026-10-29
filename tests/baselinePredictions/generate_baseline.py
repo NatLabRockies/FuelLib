@@ -17,6 +17,7 @@ import argparse
 
 import pandas as pd
 import numpy as np
+import pint
 from pathlib import Path
 from fuellib import correlate, Units, Fuel
 
@@ -49,6 +50,29 @@ fuel_names = {
     "posf10325",
 }
 
+# Percent recovered -> `DistillationResult` field predicted by the correlation.
+DISTILLATION_POINTS = {
+    0: "T0",
+    5: "T5",
+    10: "T10",
+    30: "T30",
+    50: "T50",
+    70: "T70",
+    90: "T90",
+    100: "Tf",
+}
+
+
+def distillation_point(fuel: Fuel, T: pint.Quantity) -> pint.Quantity:
+    """Return the Hosseinifar distillation temperature at a percent recovered.
+
+    ``T`` carries the percent recovered so this fits the ``method(fuel, T)`` API.
+    """
+    pct = round(T.m_as("percent"))
+    result = correlate.mixture.distillation_curve_hosseinifar(fuel)
+    return getattr(result, DISTILLATION_POINTS[pct])
+
+
 method_map = {
     "density": correlate.mixture.density,
     "viscosity": correlate.mixture.kinematic_viscosity_dutt,
@@ -61,6 +85,7 @@ method_map = {
     "flashpoint": correlate.mixture.flash_point_alibakhshi,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
     "derivedcetanenumber": correlate.mixture.derived_cetane_number,
+    "distillation": distillation_point,
 }
 
 
@@ -134,6 +159,11 @@ def update_baseline(
 
         props_data = fuel.propData
         for prop_name in props_data["Property"].unique():
+            if (
+                selected_props is not None
+                and _normalize(prop_name) not in selected_props
+            ):
+                continue
             prop_data = props_data[props_data["Property"] == prop_name]
             method = method_map.get(prop_name.replace(" ", "").strip().lower(), None)
             if method is None:
@@ -141,13 +171,25 @@ def update_baseline(
                 continue
 
             for row in prop_data.itertuples():
+                if _normalize(prop_name) == "distillation":
+                    # Data files store the measured temperature in `Temp` and the
+                    # percent recovered in `Property_Value`; swap them so percent
+                    # recovered is the independent variable.
+                    if round(row.Property_Value) not in DISTILLATION_POINTS:
+                        continue  # Correlation only predicts fixed points
+                    indep_val, indep_units = row.Property_Value, "percent"
+                    known_val, known_units = row.Temp, row.Temp_Units
+                else:
+                    indep_val, indep_units = row.Temp, row.Temp_Units
+                    known_val, known_units = row.Property_Value, row.Property_Units
+
                 # Temperature-independent properties (e.g., freeze point) have no Temp
                 # (pandas parses "NaN" as float nan), so do not pass T to the method.
                 kwargs = {}
-                if not pd.isna(row.Temp):
-                    kwargs["T"] = Units.Quantity(row.Temp, row.Temp_Units)
-                prop_val = Units.Quantity(row.Property_Value, row.Property_Units)
-                pred_val = method(fuel=fuel, **kwargs).to(row.Property_Units)
+                if not pd.isna(indep_val):
+                    kwargs["T"] = Units.Quantity(indep_val, indep_units)
+                prop_val = Units.Quantity(known_val, known_units)
+                pred_val = method(fuel=fuel, **kwargs).to(known_units)
 
                 pred_mag = pred_val.magnitude
                 if isinstance(pred_mag, np.ndarray):
@@ -158,10 +200,10 @@ def update_baseline(
 
                 new_rows.append([
                     fuel_name,
-                    row.Temp,
-                    row.Temp_Units,
+                    indep_val,
+                    indep_units,
                     prop_name,
-                    row.Property_Units,
+                    known_units,
                     pred_mag,
                     pred_mag - prop_val.magnitude,
                 ])
