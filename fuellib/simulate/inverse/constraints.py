@@ -361,7 +361,7 @@ class FlashPointConstraint(BaseConstraint):
             ValueError: If neither min nor max is set for the flash point
                 constraint.
         """
-        Tfp_i = jnp.asarray(fuel.flash_point().m_as("celsius"))
+        Tfp_i = jnp.asarray(fuel.flash_point(correlation="Alibakhshi").m_as("celsius"))
         Tc_i = jnp.asarray(fuel.Tc.m_as("K"))
         Pc_i = jnp.asarray(fuel.Pc.m_as("Pa"))
         omega_i = jnp.asarray(fuel.omega)

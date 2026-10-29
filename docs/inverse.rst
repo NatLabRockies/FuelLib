@@ -80,7 +80,11 @@ weights:
 
 .. code-block:: python
 
-    from fuellib.simulate.inverse import AromaticsConstraint, DensityConstraint, ViscosityConstraint
+    from fuellib.simulate.inverse import (
+        DensityConstraint,
+        FlashPointConstraint,
+        ViscosityConstraint,
+    )
 
     density_constraint = DensityConstraint(
         temp=Units.Quantity(15.0, "celsius"),
@@ -93,27 +97,42 @@ weights:
         max=Units.Quantity(4.0, "mm^2/s"),
         weight=1.0,
     )
-    aromatics_constraint = AromaticsConstraint(
-        min=Units.Quantity(8.0, "percent"),
-        max=Units.Quantity(25.0, "percent"),
+    flash_point_constraint = FlashPointConstraint(
+        min=Units.Quantity(38.0, "celsius"),
         weight=1.0,
     )
 
 Density and viscosity constraints are defined at a temperature and may be given several
-times (one per temperature). The aromatics content is evaluated at standard temperature,
-so :class:`AromaticsConstraint` takes no ``temp`` and at most one may be given.
+times (one per temperature). The aromatics content (evaluated at standard temperature),
+heat of combustion, flash point, and freeze point do not depend on a user-specified
+temperature, so :class:`AromaticsConstraint`, :class:`HeatOfCombustionConstraint`,
+:class:`FlashPointConstraint`, and :class:`FreezePointConstraint` take no ``temp``
+and at most one of each may be given.
 
 In general, constraints contain parameters that define the target value or range for the
 property. Constraints are computed using the following correlations and mixing rules:
 
-=========================  ===================================================  ====================================================
-Property                   Correlation                                          Mixing Rule
-=========================  ===================================================  ====================================================
-``DensityConstraint``      N/A                                                  Linear
-``ViscosityConstraint``    Dutt\ :footcite:p:`viswanath_viscosity_2007`         Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
-``AromaticsConstraint``    N/A                                                  Liquid volume fraction of aromatics
-=========================  ===================================================  ====================================================
+==============================  ===================================================  ====================================================
+Property                        Correlation                                          Mixing Rule
+==============================  ===================================================  ====================================================
+``DensityConstraint``           N/A                                                  Linear
+``ViscosityConstraint``         Dutt\ :footcite:p:`viswanath_viscosity_2007`         Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
+``AromaticsConstraint``         N/A                                                  Linear
+``HeatOfCombustionConstraint``  Hess cycle (lower heating value)                     Linear
+``FlashPointConstraint``        Alibakhshi\ :footcite:p:`alibakhshi_modified_2015`   Liaw-Chiu\ :footcite:p:`liaw_general_2006`
+``FreezePointConstraint``       N/A                                                  Boehm\ :footcite:p:`boehm_blend_2022`
+==============================  ===================================================  ====================================================
 
+These match the corresponding ``Fuel`` mixture methods described in :doc:`fuelprops`,
+reimplemented in JAX in :mod:`fuellib.simulate.inverse.mixing`. The heat of combustion is
+the mass-fraction weighted average of the component lower heating values. The flash point
+uses the Alibakhshi component flash points with the Liaw-Chiu mixing rule, and the freeze
+point solves the Boehm et al. solid-liquid equilibrium equation for each compound and takes
+the highest temperature among the compounds present in the blend. Both implicit equations
+are solved with Newton's method, and their gradients are obtained by implicit
+differentiation (``jax.lax.custom_root``) rather than by differentiating through the
+iterations. Because the freeze point is a maximum over compounds, its gradient acts only
+through the compound that crystallizes first.
 See the :class:`API documentation <fuellib.simulate.inverse.constraints>` for
 more details on each constraint class and its parameters.
 
@@ -133,6 +152,9 @@ Example:
         AromaticsConstraint,
         Config,
         DensityConstraint,
+        FlashPointConstraint,
+        FreezePointConstraint,
+        HeatOfCombustionConstraint,
         ViscosityConstraint,
     )
 
@@ -143,6 +165,9 @@ Example:
         density=density_specs,
         viscosity=viscosity_specs,
         aromatics=AromaticsConstraint(...),
+        heat_of_combustion=HeatOfCombustionConstraint(...),
+        flash_point=FlashPointConstraint(...),
+        freeze_point=FreezePointConstraint(...),
         ... # Optimization configurations
     )
 
@@ -269,22 +294,34 @@ Packaged Configs
 The inverse design routine currently comes with a pre-packaged configuration describing ASTM D7566 fuel 
 specifications\ :footcite:`astm_D7566-26`, including:
 
-+---------------+-------------+--------------+--------------+
-| Property      | Temperature | Minimum      | Maximum      |
-+===============+=============+==============+==============+
-| ``Density``   | 15 °C       | 775.0 kg/m³  | 840.0 kg/m³  |
-+---------------+-------------+--------------+--------------+
-| ``Viscosity`` | -20 °C      | \-           | 8.0 mm²/s    |
-|               +-------------+--------------+--------------+
-|               | -40 °C      | \-           | 12.0 mm²/s   |
-+---------------+-------------+--------------+--------------+
++-------------------------+-------------+--------------+--------------+
+| Property                | Temperature | Minimum      | Maximum      |
++=========================+=============+==============+==============+
+| ``Density``             | 15 °C       | 775.0 kg/m³  | 840.0 kg/m³  |
++-------------------------+-------------+--------------+--------------+
+| ``Viscosity``           | -20 °C      | \-           | 8.0 mm²/s    |
+|                         +-------------+--------------+--------------+
+|                         | -40 °C      | \-           | 12.0 mm²/s   |
++-------------------------+-------------+--------------+--------------+
+| ``Aromatics``:sup:`*`   | \-          | 8.0 vol%     | 25.0 vol%    |
++-------------------------+-------------+--------------+--------------+
+| ``Heat of Combustion``  | \-          | 42.8 MJ/kg   | \-           |
++-------------------------+-------------+--------------+--------------+
+| ``Flash Point``         | \-          | 38.0 °C      | \-           |
++-------------------------+-------------+--------------+--------------+
+| ``Freeze Point``        | \-          | \-           | -40.0 °C     |
++-------------------------+-------------+--------------+--------------+
+
+:sup:`*` *D1319 or IP 156 or D8305.*
 
 
 Results
 ^^^^^^^
-On completion, :func:`~fuellib.simulate.inverse.solve` prints any constraints that
-remain violated along with the final blend density and viscosity at each constraint
-temperature. It returns a :class:`~fuellib.simulate.inverse.models.Solution` containing
+On completion, :func:`~fuellib.simulate.inverse.solve` prints the original and final
+GCxGC compositions, a table of the original and final values of each constrained property
+(density and viscosity at each constraint temperature, aromatics content, heat of
+combustion, flash point, and freeze point) alongside their limits, and a summary that
+includes any constraints that remain violated. It returns a :class:`~fuellib.simulate.inverse.models.Solution` containing
 the optimized blend (``blend``) and the additive (``additive``) as copies of the fuel's
 ``gcData`` DataFrame with updated ``Weight %`` columns, the additive mass fraction in the
 blend (``additive_fraction``), and histories of the additive composition and mass fraction.
