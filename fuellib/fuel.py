@@ -96,7 +96,7 @@ class Fuel:
             FileNotFoundError: If the fuel data directory or GCxGC data file do not
                 exist.
             ValueError: If the GCxGC data does not contain either 'Reference Compound'
-                or 'SMILES' columns.
+                or 'SMILES' columns or 'Weight %' column is missing.
         """
         self.name: str = name
         """Name of the fuel/mixture."""
@@ -126,12 +126,10 @@ class Fuel:
                 "columns."
             )
             raise ValueError(msg)
-
-        Y_0 = (
-            self.gcData["Weight %"].to_numpy(float)
-            if "Weight %" in self.gcData.columns
-            else np.zeros(self.gcData.shape[0])
-        )
+        if "Weight %" not in self.gcData.columns:
+            msg = "GCxGC data must contain 'Weight %' column."
+            raise ValueError(msg)
+        Y_0 = self.gcData["Weight %"].to_numpy(float)
         self.Y_0: types.Quantity1D = (
             Units.Quantity(Y_0 / sum(Y_0), "")
             if sum(Y_0) > 0

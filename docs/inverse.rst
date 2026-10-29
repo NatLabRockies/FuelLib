@@ -51,9 +51,22 @@ For more information on usage, run:
 
 Generating an Ideal Mixture
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Instead of blending an additive into an original fuel composition to meet specific property constraints, users can provide a GCxGC file containing
-the available reference components but omitting the `Weight %` column (or setting all values to zero). In this case, the inverse design routine
-will determine an optimal mixture of available components that satisfy the specified property constraints.
+Instead of blending an additive into an original fuel composition to meet specific property constraints, users can
+determine an optimal mixture of a fuel's components from scratch that satisfies the specified property constraints.
+In this case, the original composition is ignored and the additive mass fraction is automatically set to 1, so the
+blend is made entirely of the additive. This is enabled by either:
+
+- passing ``ignore_composition=True`` to :class:`~fuellib.simulate.inverse.models.Problem`
+  (or ``--ignore-composition`` to ``fl-inverse``), or
+- providing a GCxGC file containing the available reference components with all ``Weight %`` values set to zero.
+
+.. code-block:: python
+
+    problem = Problem(config=d7566_config, fuel=fuel, ignore_composition=True)
+
+.. code-block:: bash
+
+   fl-inverse --fuel-name fuel --ignore-composition
 
 Defining the Problem
 --------------------
@@ -238,7 +251,7 @@ Setting                       Default      Description
 Packaged Configs
 ^^^^^^^^^^^^^^^^
 The inverse design routine currently comes with a pre-packaged configuration describing ASTM D7566 fuel 
-specifications\ :footcite:`d02_committee_specification_nodate`, including:
+specifications\ :footcite:`astm_D7566-26`, including:
 
 +---------------+-------------+--------------+--------------+
 | Property      | Temperature | Minimum      | Maximum      |
