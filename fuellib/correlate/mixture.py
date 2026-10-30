@@ -729,9 +729,7 @@ def yield_sooting_index(
     return Units.Quantity(np.sum(Xi_valid * ysi_valid) / np.sum(Xi_valid), "")
 
 
-def smoke_point(
-    fuel: "Fuel", Yi: types.Quantity1D | None = None
-) -> types.Quantity0D:
+def smoke_point(fuel: "Fuel", Yi: types.Quantity1D | None = None) -> types.Quantity0D:
     """Calculate the smoke point of the fuel mixture.
 
     Uses the McEnally scaling relationship between the yield sooting index (YSI)
