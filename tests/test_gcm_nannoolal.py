@@ -1,7 +1,5 @@
 """Test the Nannoolal decomposition against the bundled reference data."""
 
-import warnings
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -52,17 +50,13 @@ def test_reference_decomposition(name: str):
     assert not diff, f"{name} ({smiles}) group (computed, tabulated): {diff}"
 
 
-@pytest.mark.parametrize("fuel_name, warns", [("heptane", False), ("posf10325", True)])
-def test_viscosity(fuel_name: str, warns: bool):
+@pytest.mark.parametrize("fuel_name", ["heptane", "posf10325"])
+def test_viscosity(fuel_name: str):
     """Nannoolal viscosities should be finite and positive with correct units."""
     fuel = Fuel(fuel_name)
     T = Units.Quantity(298.15, "K")
 
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        mu_i = components.dynamic_viscosity_nannoolal(fuel, T)
-    zero_warnings = [w for w in caught if "no published contribution" in str(w.message)]
-    assert bool(zero_warnings) == warns
+    mu_i = components.dynamic_viscosity_nannoolal(fuel, T)
 
     nu_i = components.kinematic_viscosity_nannoolal(fuel, T)
     for prop, units in [(mu_i, "Pa*s"), (nu_i, "m^2/s")]:

@@ -614,6 +614,4 @@ def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
     dH_form_co2 = Units.Quantity(-393.51, "kJ/mol")  # At 298.15 K
     dH_form_h2o = Units.Quantity(-241.83, "kJ/mol")  # At 298.15 K
     Hf_liq = (fuel.Hf_stp - fuel.Hv_stp).to("J/mol")
-    nC = np.array(fuel.nC)
-    nH = np.array(fuel.nH)
-    return -(nC * dH_form_co2 + 0.5 * nH * dH_form_h2o - Hf_liq) / fuel.MW
+    return -(fuel.nC * dH_form_co2 + 0.5 * fuel.nH * dH_form_h2o - Hf_liq) / fuel.MW

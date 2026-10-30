@@ -430,15 +430,19 @@ class Fuel:
         """RDKit `Mol` objects for the compounds in the fuel mixture."""
         return [mol.from_smiles(smiles) for smiles in self.smiles]
 
-    @property
-    def nC(self) -> list[int]:
+    @cached_property
+    def nC(self) -> np.ndarray:
         """Number of carbon atoms for each compound in the fuel mixture."""
-        return [mol.atom_counts(m).get("C", 0) for m in self.rdkit_mols]
+        return np.array(
+            [mol.atom_counts(m).get("C", 0) for m in self.rdkit_mols], dtype=int
+        )
 
-    @property
-    def nH(self) -> list[int]:
+    @cached_property
+    def nH(self) -> np.ndarray:
         """Number of hydrogen atoms for each compound in the fuel mixture."""
-        return [mol.atom_counts(m).get("H", 0) for m in self.rdkit_mols]
+        return np.array(
+            [mol.atom_counts(m).get("H", 0) for m in self.rdkit_mols], dtype=int
+        )
 
     @cached_property
     def MW(self) -> types.Quantity1D:
@@ -594,7 +598,7 @@ class Fuel:
         self,
         T: types.Quantity0D,
         comp_idx: int | None = None,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
     ) -> types.Quantity1D:
         """Calculate component kinematic viscosity.
 
@@ -603,7 +607,7 @@ class Fuel:
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
 
         Returns:
             Viscosity of each component in m^2/s.
@@ -623,7 +627,7 @@ class Fuel:
         self,
         T: types.Quantity0D,
         comp_idx: int | None = None,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
     ) -> types.Quantity1D:
         """Calculate component dynamic viscosity.
 
@@ -632,7 +636,7 @@ class Fuel:
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
 
         Returns:
             Dynamic viscosity in Pa*s.
@@ -883,7 +887,7 @@ class Fuel:
         self,
         Yi: types.Quantity1D,
         T: types.Quantity0D,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
         mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
         """Calculate kinematic viscosity of the mixture.
@@ -892,7 +896,7 @@ class Fuel:
             Yi: Mass fractions of each compound.
             T: Temperature to compute property.
             correlation: Component viscosity correlation ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
             mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
                 Defaults to "Kendall-Monroe".
 
@@ -916,7 +920,7 @@ class Fuel:
         self,
         Yi: types.Quantity1D,
         T: types.Quantity0D,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
         mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
         """Calculate dynamic viscosity of the mixture.
@@ -925,7 +929,7 @@ class Fuel:
             Yi: Mass fractions of each compound.
             T: Temperature to compute property.
             correlation: Component viscosity correlation ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
             mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
                 Defaults to "Kendall-Monroe".
 
@@ -1097,6 +1101,23 @@ class Fuel:
             Mixture yield sooting index.
         """
         return correlate.mixture.yield_sooting_index(self, Yi)
+
+    def mixture_smoke_point(
+        self,
+        Yi: types.Quantity1D,
+        correlation: Literal["NJFCP", "McEnally"] = "NJFCP",
+    ) -> types.Quantity0D:
+        """Calculate smoke point of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            correlation: Smoke point correlation ("NJFCP" or "McEnally").
+                Defaults to "NJFCP".
+
+        Returns:
+            Mixture smoke point in mm.
+        """
+        return correlate.mixture.smoke_point(self, Yi, correlation=correlation)
 
     def mixture_derived_cetane_number(
         self,
