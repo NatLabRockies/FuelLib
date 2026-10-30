@@ -102,8 +102,32 @@ def mass_fractions_to_mole_fractions(
     return Units.Quantity(Xi, "dimensionless")
 
 
+def mass_fractions_to_volume_fractions(
+    fuel: "Fuel", Yi: types.Quantity1D, T: types.Quantity0D
+) -> types.Quantity1D:
+    """Convert mass fractions (Yi) to volume fractions (Vi).
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+        T: Temperature at which to evaluate the mixture density.
+
+    Returns:
+        Volume fractions of the compounds (shape: num_compounds,).
+    """
+    density = fuel.density(T)
+    if np.sum(Yi) != 0:
+        V = Yi / density
+        Vi = (V / np.sum(V)).magnitude
+    else:
+        Vi = np.zeros_like(fuel.MW.magnitude)
+
+    return Units.Quantity(Vi, "dimensionless")
+
+
 __all__ = [
     "mass_fractions_to_mole_fractions",
+    "mass_fractions_to_volume_fractions",
     "mass_to_mass_fractions",
     "mass_to_mole_fractions",
     "mole_fractions_to_mass_fractions",

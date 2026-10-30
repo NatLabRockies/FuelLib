@@ -40,12 +40,12 @@ Create a file named ``{fuel_name}.csv`` in the ``gcData/`` directory with fuel c
 
 **Required columns:**
 
-- ``Weight %``: Weight percentage of each component (normalized automatically).
 - ``Reference Compound`` and/or ``SMILES``: Identifies the compound. Each row is matched to ``refCompounds.csv`` by ``Reference Compound`` name (case-insensitive) first, then by the InChI derived from ``SMILES``.
+- ``Weight %``: Weight percentage of each component (normalized automatically).
 
 **Optional columns:**
 
-- ``GC-Bin``: Name of the GCxGC bin, used as the compound name by the exporters when PelePhysics keys are not used.
+- ``GC-Bin``: Name of the GCxGC bin, used as the compound name by the exporters (when PelePhysics keys are not used) and in the inverse design output. Falls back to the matched ``Reference Compound`` if omitted.
 - ``PelePhysics Key``: Species name of the compound in a PelePhysics mechanism.
 
 **Example:**

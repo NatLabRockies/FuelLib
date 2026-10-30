@@ -578,6 +578,18 @@ class Fuel:
         """
         return correlate.helpers.mass_fractions_to_mole_fractions(self, Yi)
 
+    def Y2V(self, Yi: types.Quantity1D, T: types.Quantity0D) -> types.Quantity1D:
+        """Convert mass fractions (Yi) to volume fractions (Vi).
+
+        Args:
+            Yi: Mass fractions of each compound.
+            T: Temperature at which to evaluate the mixture density.
+
+        Returns:
+            Volume fractions of the compounds (shape: num_compounds,).
+        """
+        return correlate.helpers.mass_fractions_to_volume_fractions(self, Yi, T)
+
     def density(
         self, T: types.Quantity0D, comp_idx: int | None = None
     ) -> types.Quantity1D:
@@ -1135,6 +1147,20 @@ class Fuel:
             Mixture derived cetane number.
         """
         return correlate.mixture.derived_cetane_number(self, Yi, T_ref=T_ref)
+
+    def mixture_aromatics_content(
+        self,
+        Yi: types.Quantity1D,
+    ) -> types.Quantity0D:
+        """Calculate aromatics content of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+
+        Returns:
+            Mixture aromatics content in volume percent.
+        """
+        return correlate.mixture.aromatics_content(self, Yi)
 
 
 __all__ = ["Fuel"]
