@@ -44,6 +44,12 @@ The easiest way to install FuelLib is via pip:
 
    pip install fuellib
 
+To also install the optional `inverse fuel design <inverse.html>`_ module (adds ``jax``, ``jaxtyping``, and ``optax``):
+
+.. code-block:: bash
+
+   pip install "fuellib[inverse]"
+
 After installation, several command-line tools will be available for exporting fuel data and plotting fuel properties. See the `CLI Tutorials <tutorials-cli.html>`_ for detailed usage examples and options.
 
 For more detailed information on a development setup, see the `Contributing <development.html>`_ page.
@@ -68,6 +74,7 @@ Development tools (Sphinx, Ruff, ty, pytest) are available for developers instal
    fuelprops
    refcompounds
    gcm
+   inverse
    units
    tutorials
    sourcecode   

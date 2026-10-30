@@ -33,11 +33,16 @@ dependencies = [
     "rdkit>=2022.3.1",
     "pint>=0.26.1",
     "pydantic>=2.13.5",
-    "uncertainties>=3.2.3",
 ]
 
 [project.optional-dependencies]
+inverse = [
+    "jax>=0.12.0.1",
+    "jaxtyping>=0.3.11",
+    "optax>=0.2.8",
+]
 dev = [
+    "fuellib[inverse]",
     "pytest>=6.0",
     "sphinx>=4.0",
     "sphinx-rtd-theme>=1.0",
@@ -71,6 +76,7 @@ fl-plt-comp = "fuellib.cli.plotting:comp_main"
 fl-plt-props = "fuellib.cli.plotting:props_main"
 fl-fuels = "fuellib.cli.fuel_manager:list_fuels_main"
 fl-decomp-smiles = "fuellib.cli.decomp_smiles:decompose_smiles"
+fl-inverse = "fuellib.cli.inverse:main"
 
 # Developer tasks
 [tool.taskipy.tasks]
@@ -119,6 +125,7 @@ name = "Module layering"
 type = "layers"
 layers = [
     "fuellib.exporters | fuellib.cli", # Not importable by any modules
+    "fuellib.simulate",
     "fuellib.fuel",
     "fuellib.correlate",
     "fuellib.data",
@@ -132,18 +139,13 @@ ignore_imports = [
 
 # Pytest configurations
 [tool.pytest.ini_options]
-testpaths = [
-    "tests",
-    "fuellib",
-]
+testpaths = ["tests"]
 addopts = [
-    "--doctest-modules",
     "--ignore=tests/baselinePredictions/generate_baseline.py",
     "--cov=fuellib",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
-doctest_optionflags = "NORMALIZE_WHITESPACE"
 
 # Pytest coverage configurations
 [tool.coverage.run]

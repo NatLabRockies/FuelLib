@@ -108,6 +108,34 @@ Options:
     method is indene, where the non-aromatic C=C bond is categorized as a
     ``CH`` group.
 
+Inverse Fuel Design
+~~~~~~~~~~~~~~~~~~~
+
+Blend an additive into a fuel so that the blend meets a set of property
+constraints (requires the ``inverse`` extra, see :doc:`inverse`):
+
+.. code-block:: bash
+
+    fl-inverse -f posf10264                                # Print the results
+    fl-inverse -f posf10264 -o posf10264_opt               # Export the results
+    fl-inverse -f my-fuel -dir customFuels --disable-ref-props
+    fl-inverse -f posf10264 --ignore-composition           # Ideal mixture
+
+Options:
+
+- ``-c``/``--config``: packaged configuration of property constraints
+  (default: ``d7566``).
+- ``-f``/``--fuel-name``: name of the initial fuel (required).
+- ``-dir``/``--fuel-data-dir``: directory where fuel data files are located
+  (default: ``fuellib/data``).
+- ``-m``/``--max-steps``: maximum number of optimization steps (default: 100,000).
+- ``--disable-ref-props``: do not use reference compound properties.
+- ``--ignore-composition``: ignore the original composition (``Weight %``) of
+  the fuel and design a mixture of its components from scratch (the additive
+  mass fraction is 1).
+- ``-o``/``--output``: directory to export the optimized blend, additive, and
+  blend ratio to. Without it, the results are only printed.
+
 Export for CFD
 ~~~~~~~~~~~~~~
 
