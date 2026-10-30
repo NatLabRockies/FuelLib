@@ -61,6 +61,7 @@ method_map = {
     "flashpoint": correlate.mixture.flash_point_alibakhshi,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
     "derivedcetanenumber": correlate.mixture.derived_cetane_number,
+    "smokepoint": correlate.mixture.smoke_point,
 }
 
 
@@ -135,6 +136,8 @@ def update_baseline(
         props_data = fuel.propData
         for prop_name in props_data["Property"].unique():
             prop_data = props_data[props_data["Property"] == prop_name]
+            if selected_props is not None and _normalize(prop_name) not in selected_props:
+                continue
             method = method_map.get(prop_name.replace(" ", "").strip().lower(), None)
             if method is None:
                 print(f"No method found for property '{prop_name}'; skipping.")

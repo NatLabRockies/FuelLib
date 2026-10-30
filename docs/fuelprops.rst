@@ -700,10 +700,10 @@ Mixture smoke point
    :noindex:
 
 The mixture smoke point :math:`SP` is estimated from the mixture
-YSI using the correlation form of McEnally et al.\ :footcite:p:`mcenally_soot_2020`,
+YSI using the correlation from McEnally et al.\ :footcite:p:`mcenally_soot_2020`,
 
 .. math::
-   \frac{YSI}{S_{air}} = a + \frac{b}{SP},
+   \frac{YSI}{S} = a + \frac{b}{SP},
 
 with the coefficients selected by the ``correlation`` argument:
 
@@ -717,7 +717,7 @@ with the coefficients selected by the ``correlation`` argument:
    * - ``"NJFCP"`` (default)
      - 0.2493
      - 30.2077
-     - Least-squares fit of :math:`YSI/S` against :math:`1/SP` using measured smoke points of eight NJFCP POSF fuels
+     - Least-squares fit using measured smoke points of eight NJFCP POSF fuels
    * - ``"McEnally"``
      - 0.4034
      - 29.90546
