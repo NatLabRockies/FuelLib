@@ -743,7 +743,7 @@ def smoke_point(
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.Y_0` (initial mass fractions).
-        correlation: Fit coefficients to use: "McEnally" or "NJFCP". 
+        correlation: Fit coefficients to use: "McEnally" or "NJFCP".
             Defaults to "NJFCP".
 
     Returns:
