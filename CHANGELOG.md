@@ -20,6 +20,8 @@ release workflow to parse release entries in this file.
 - `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
 
 ### Changed
+- **Technically Breaking**: The default viscosity `correlation` of `Fuel.viscosity_kinematic`, `Fuel.viscosity_dynamic`, `Fuel.mixture_kinematic_viscosity`, and `Fuel.mixture_dynamic_viscosity` is now `"Nannoolal"` instead of `"Dutt"`. Pass `correlation="Dutt"` to recover the previous behavior.
+- Removed the warning emitted by the Nannoolal GCM (`dBv` and `Tv`) when a compound uses a group whose published contribution is a `0.0` placeholder. Those contributions are still treated as zero.
 - CLI long options now use hyphens instead of underscores (for example, `--fuel-data-dir` and `--output-dir`).
 - `fuellib/{_data_locator,_reference_data}` -> `fuellib/data/{_data_locator,_reference_data}`.
 - `fuellib/{constants,utility}` -> `fuellib/utils/{constants,utility}`. `utility` is re-exported at the top-level `__init__` to maintain original API.
