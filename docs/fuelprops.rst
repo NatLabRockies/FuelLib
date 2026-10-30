@@ -466,6 +466,7 @@ are used throughout this section.
    :math:`T_{fp}`            K                Flash point
    :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
    :math:`YSI`               --               Yield sooting index
+   :math: `SP`               mm               Smoke point
    :math:`DCN`               --               Derived cetane number
    ========================  ===============  =====================
 
@@ -691,6 +692,27 @@ not predicted by FuelLib. The mixture value is the mole-fraction weighted averag
 
 A ``ValueError`` listing the compounds is raised if the reference data are missing for any
 component. Mass fractions are converted to mole fractions using the component molecular weights.
+
+Mixture smoke point
+^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_smoke_point
+   :noindex:
+
+The mixture smoke point :math:`SP` is estimated from the mixture
+YSI using the correlation of McEnally et al.\ :footcite:p:`mcenally_soot_2020`,
+
+.. math::
+   SP = \frac{b}{YSI / S - a},
+
+with :math:`a = 0.4034` and :math:`b = 29.90546`.
+Here :math:`S` is the moles of oxidizer (air) required to stoichiometrically
+combust one mole of fuel. For a hydrocarbon :math:`\mathrm{C}_x\mathrm{H}_y`,
+:math:`S = (x + y/4)/0.209`, where 0.209 is the mole fraction of :math:`\mathrm{O_2}` in air.
+For a mixture, :math:`YSI` (see above) and :math:`S = \sum_i X_i S_i` are
+mole-fraction weighted averages. Higher :math:`SP` indicates a lower sooting tendency, whereas
+higher :math:`YSI` indicates a higher sooting tendency. The result is reported in mm. A ``ValueError``
+is raised if :math:`YSI` is unavailable for any component, is not positive, or if :math:`YSI/S \le a`.
 
 Mixture derived cetane number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
