@@ -8,7 +8,7 @@ release workflow to parse release entries in this file.
 ## [Unreleased]
 
 ### Added
-- `mixture.smoke_point` and `Fuel.mixture_smoke_point`, estimating the smoke point from the mixture yield sooting index and the stoichiometric air requirement (McEnally correlation).
+- `mixture.smoke_point` and `Fuel.mixture_smoke_point`, estimating the smoke point from the mixture yield sooting index and the stoichiometric air requirement. The `correlation` option selects fitted NJFCP coefficients (default) or the McEnally correlation.
 - `Fuel.metadata` attribute containing additional fuel information parsed from `fuel_metadata.yaml`, if available.
 - Three new single-component fuels for testing purposes. Bundled properties primarily include dynamic viscosity.
 - `docs` task to `lefthook.yaml` to verify build success before committing changes.

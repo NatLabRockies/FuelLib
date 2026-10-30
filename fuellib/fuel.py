@@ -1102,16 +1102,22 @@ class Fuel:
         """
         return correlate.mixture.yield_sooting_index(self, Yi)
 
-    def mixture_smoke_point(self, Yi: types.Quantity1D) -> types.Quantity0D:
+    def mixture_smoke_point(
+        self,
+        Yi: types.Quantity1D,
+        correlation: Literal["NJFCP", "McEnally"] = "NJFCP",
+    ) -> types.Quantity0D:
         """Calculate smoke point of the mixture.
 
         Args:
             Yi: Mass fractions of each compound in the mixture.
+            correlation: Smoke point correlation ("NJFCP" or "McEnally").
+                Defaults to "NJFCP".
 
         Returns:
             Mixture smoke point in mm.
         """
-        return correlate.mixture.smoke_point(self, Yi)
+        return correlate.mixture.smoke_point(self, Yi, correlation=correlation)
 
     def mixture_derived_cetane_number(
         self,
