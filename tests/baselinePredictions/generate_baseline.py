@@ -51,9 +51,9 @@ fuel_names = {
 
 method_map = {
     "density": correlate.mixture.density,
-    "viscosity": correlate.mixture.kinematic_viscosity_dutt,
+    "viscosity": correlate.mixture.kinematic_viscosity_nannoolal,
     "vaporpressure": correlate.mixture.saturated_vapor_pressure,
-    "dynamicviscosity": correlate.mixture.dynamic_viscosity_dutt,
+    "dynamicviscosity": correlate.mixture.dynamic_viscosity_nannoolal,
     "surfacetension": correlate.mixture.surface_tension,
     "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
     "cp": correlate.components.molar_specific_heat_capacity,
@@ -61,6 +61,7 @@ method_map = {
     "flashpoint": correlate.mixture.flash_point_alibakhshi,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
     "derivedcetanenumber": correlate.mixture.derived_cetane_number,
+    "smokepoint": correlate.mixture.smoke_point,
 }
 
 
@@ -135,6 +136,11 @@ def update_baseline(
         props_data = fuel.propData
         for prop_name in props_data["Property"].unique():
             prop_data = props_data[props_data["Property"] == prop_name]
+            if (
+                selected_props is not None
+                and _normalize(prop_name) not in selected_props
+            ):
+                continue
             method = method_map.get(prop_name.replace(" ", "").strip().lower(), None)
             if method is None:
                 print(f"No method found for property '{prop_name}'; skipping.")

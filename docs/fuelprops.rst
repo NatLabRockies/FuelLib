@@ -150,9 +150,9 @@ The kinematic viscosity of the *i-th* compound of the fuel,
    
    \nu_i = \frac{\mu_i}{\rho_i}, 
 
-is calculated from Dutt's equation (Eq. 4.23 in Viscosity of 
-Liquids\ :footcite:p:`viswanath_viscosity_2007`) or with the GCM of Nannoolal
-et al.\ :footcite:p:`nannoolal_estimation_2009`. Dutt's equation calculates the
+is calculated with the GCM of Nannoolal et al.\ :footcite:p:`nannoolal_estimation_2009`
+(default) or from Dutt's equation (Eq. 4.23 in Viscosity of 
+Liquids\ :footcite:p:`viswanath_viscosity_2007`). Dutt's equation calculates the
 kinematic viscosity directly provided :math:`T` in :math:`^{\circ}` C:
 
 .. math::
@@ -466,6 +466,7 @@ are used throughout this section.
    :math:`T_{fp}`            K                Flash point
    :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
    :math:`YSI`               --               Yield sooting index
+   :math: `SP`               mm               Smoke point
    :math:`DCN`               --               Derived cetane number
    ========================  ===============  =====================
 
@@ -692,6 +693,44 @@ not predicted by FuelLib. The mixture value is the mole-fraction weighted averag
 A ``ValueError`` listing the compounds is raised if the reference data are missing for any
 component. Mass fractions are converted to mole fractions using the component molecular weights.
 
+Mixture smoke point
+^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_smoke_point
+   :noindex:
+
+The mixture smoke point :math:`SP` is estimated from the mixture
+YSI using the correlation from McEnally et al.\ :footcite:p:`mcenally_soot_2020`,
+
+.. math::
+   \frac{YSI}{S} = a + \frac{b}{SP},
+
+with the coefficients selected by the ``correlation`` argument:
+
+.. list-table::
+   :header-rows: 1
+
+   * - ``correlation``
+     - :math:`a`
+     - :math:`b`
+     - Basis
+   * - ``"NJFCP"`` (default)
+     - 0.2493
+     - 30.2077
+     - Least-squares fit using measured smoke points of eight NJFCP POSF fuels
+   * - ``"McEnally"``
+     - 0.4034
+     - 29.90546
+     - McEnally et al. correlation
+
+Here :math:`S` is the moles of oxidizer (air) required to stoichiometrically
+combust one mole of fuel. For a hydrocarbon :math:`\mathrm{C}_x\mathrm{H}_y`,
+:math:`S = (x + y/4)/0.209`, where 0.209 is the mole fraction of :math:`\mathrm{O_2}` in air.
+For a mixture, :math:`YSI` (see above) and :math:`S = \sum_i X_i S_i` are
+mole-fraction weighted averages. Higher :math:`SP` indicates a lower sooting tendency, whereas
+higher :math:`YSI` indicates a higher sooting tendency. The result is reported in mm. A ``ValueError``
+is raised if :math:`YSI` is unavailable for any component, is not positive, or if :math:`YSI/S \le a`.
+
 Mixture derived cetane number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -793,11 +832,17 @@ Multicomponent Fuels
 
    Properties of conventional jet fuels JP-8 (POSF10264), Jet A (POSF10325), and JP-5 (POSF10289) against data from the Air Force Research Laboratory\ :footcite:p:`edwards_jet_2020`. Note that the data sets for thermal conductivity are very inconsistent, but they typically show linear decreases in thermal conductivity with temperature. 
 
+.. figure:: /figures/smokePointValidation.png
+   :width: 450pt
+   :align: center
+
+   Predictions of smoke point using the McEnally et al.\ :footcite:p:`mcenally_soot_2020` correlation and coefficients, as well as coefficients from fitting against measured smoke points from the NJFCP database.
+
 Fuel Blends
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /figures/hefaBlends.png
-   :width: 250pt
+   :width: 400pt
    :align: center
    
    Properties of three HEFA fuels produced from different feedstocks (camelina, tallow, and mixed fat) blended with Jet-A.  Measurement and GCxGC data from Vozka et al.\ :footcite:p:`vozka_impact_2018`. 
