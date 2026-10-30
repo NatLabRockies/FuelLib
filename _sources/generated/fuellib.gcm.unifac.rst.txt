@@ -1,0 +1,20 @@
+﻿fuellib.gcm.unifac
+==================
+
+.. automodule:: fuellib.gcm.unifac
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      Q
+      R
+      decompose
+      ln_gamma
+      ln_gamma_x
+      parameters
+   

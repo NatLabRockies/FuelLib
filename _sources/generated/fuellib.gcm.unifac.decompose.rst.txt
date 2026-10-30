@@ -1,0 +1,6 @@
+fuellib.gcm.unifac.decompose
+============================
+
+.. currentmodule:: fuellib.gcm.unifac
+
+.. autofunction:: decompose

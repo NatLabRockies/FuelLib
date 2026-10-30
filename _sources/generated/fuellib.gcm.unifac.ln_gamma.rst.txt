@@ -1,0 +1,6 @@
+fuellib.gcm.unifac.ln\_gamma
+============================
+
+.. currentmodule:: fuellib.gcm.unifac
+
+.. autofunction:: ln_gamma

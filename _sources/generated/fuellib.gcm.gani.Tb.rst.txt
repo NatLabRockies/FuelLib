@@ -1,0 +1,6 @@
+fuellib.gcm.gani.Tb
+===================
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autofunction:: Tb
