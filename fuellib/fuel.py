@@ -430,15 +430,19 @@ class Fuel:
         """RDKit `Mol` objects for the compounds in the fuel mixture."""
         return [mol.from_smiles(smiles) for smiles in self.smiles]
 
-    @property
-    def nC(self) -> list[int]:
+    @cached_property
+    def nC(self) -> np.ndarray:
         """Number of carbon atoms for each compound in the fuel mixture."""
-        return [mol.atom_counts(m).get("C", 0) for m in self.rdkit_mols]
+        return np.array(
+            [mol.atom_counts(m).get("C", 0) for m in self.rdkit_mols], dtype=int
+        )
 
-    @property
-    def nH(self) -> list[int]:
+    @cached_property
+    def nH(self) -> np.ndarray:
         """Number of hydrogen atoms for each compound in the fuel mixture."""
-        return [mol.atom_counts(m).get("H", 0) for m in self.rdkit_mols]
+        return np.array(
+            [mol.atom_counts(m).get("H", 0) for m in self.rdkit_mols], dtype=int
+        )
 
     @cached_property
     def MW(self) -> types.Quantity1D:
@@ -1097,6 +1101,23 @@ class Fuel:
             Mixture yield sooting index.
         """
         return correlate.mixture.yield_sooting_index(self, Yi)
+
+    def mixture_smoke_point(
+        self,
+        Yi: types.Quantity1D,
+        correlation: Literal["NJFCP", "McEnally"] = "NJFCP",
+    ) -> types.Quantity0D:
+        """Calculate smoke point of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+            correlation: Smoke point correlation ("NJFCP" or "McEnally").
+                Defaults to "NJFCP".
+
+        Returns:
+            Mixture smoke point in mm.
+        """
+        return correlate.mixture.smoke_point(self, Yi, correlation=correlation)
 
     def mixture_derived_cetane_number(
         self,

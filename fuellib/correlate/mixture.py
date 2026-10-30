@@ -729,6 +729,65 @@ def yield_sooting_index(
     return Units.Quantity(np.sum(Xi_valid * ysi_valid) / np.sum(Xi_valid), "")
 
 
+def smoke_point(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+    correlation: Literal["NJFCP", "McEnally"] = "NJFCP",
+) -> types.Quantity0D:
+    """Calculate the smoke point of the fuel mixture.
+
+    Relates the mixture yield sooting index and stoichiometric air requirement
+    to the smoke point SP.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+        correlation: Fit coefficients to use: "McEnally" or "NJFCP".
+            Defaults to "NJFCP".
+
+    Returns:
+        Smoke point of the mixture in mm.
+
+    Raises:
+        ValueError: If `correlation` is not recognized, if yield sooting index is
+            unavailable for any component, if the mixture YSI is not positive, or if
+            YSI / S <= a (outside the range of the correlation).
+
+    References:
+        McEnally correlation: https://doi.org/10.6084/m9.figshare.12918980
+    """
+    # Coefficients (a, b) of YSI / S = a + b / SP, where SP is the smoke point in mm.
+    coefficients = {
+        "njfcp": (0.2493, 30.2077),  # Least-squares fit to NJFCP POSF fuel smoke points
+        "mcenally": (0.4034, 29.90546),
+    }
+    if correlation.casefold() not in coefficients:
+        msg = (
+            f'Unknown smoke point correlation "{correlation}". '
+            'Options: "NJFCP", "McEnally".'
+        )
+        raise ValueError(msg)
+    a, b = coefficients[correlation.casefold()]
+    Yi = Yi if Yi is not None else fuel.Y_0
+    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
+    ysi = yield_sooting_index(fuel, Yi).magnitude
+    if not ysi > 0:
+        msg = f"Mixture yield sooting index must be positive to compute SP, got {ysi}."
+        raise ValueError(msg)
+    X_O2_air = 0.209  # Mole fraction of O2 in air
+    S_i = (fuel.nC + fuel.nH / 4.0) / X_O2_air
+    S = np.sum(Xi.magnitude * S_i) / np.sum(Xi.magnitude)
+    denom = ysi / S - a
+    if denom <= 0:
+        msg = (
+            f"YSI / S = {ysi / S:.3f} must exceed {a} to compute SP; "
+            "the mixture is outside the range of the correlation."
+        )
+        raise ValueError(msg)
+    return Units.Quantity(b / denom, "mm")
+
+
 def derived_cetane_number(
     fuel: "Fuel",
     Yi: types.Quantity1D | None = None,

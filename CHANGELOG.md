@@ -8,6 +8,7 @@ release workflow to parse release entries in this file.
 ## [Unreleased]
 
 ### Added
+- `mixture.smoke_point` and `Fuel.mixture_smoke_point`, estimating the smoke point from the mixture yield sooting index and the stoichiometric air requirement. The `correlation` option selects fitted NJFCP coefficients (default) or the McEnally correlation.
 - `Fuel.metadata` attribute containing additional fuel information parsed from `fuel_metadata.yaml`, if available.
 - Three new single-component fuels for testing purposes. Bundled properties primarily include dynamic viscosity.
 - `docs` task to `lefthook.yaml` to verify build success before committing changes.
@@ -28,6 +29,7 @@ release workflow to parse release entries in this file.
 - `_reference_data._resolve_ref_path` repurposed to `_find_custom_ref_path` to handle new approach to locating custom data.
   - Loading functions in `_reference_data` updated accordingly.
 - `Fuel.MW` to a cached_property to avoid repetitive RDKit calls.
+- **Technically Breaking**: `Fuel.nC` and `Fuel.nH` now return integer `np.ndarray`s instead of lists and are cached properties.
 - `baselinePredictions/generate_baseline.py` can now regenerate specific baselines (fuels/properties) and allows `useRefProperties` to be toggled from the CLI.
 - `constants.gas_constant` -> `constants.R` to be more consistent with other variable names.
 - Every compound in a fuel must now also be present in `refUNIFAC.csv`. Custom fuels with compounds that are not in the bundled table must provide a custom `refUNIFAC.csv`.

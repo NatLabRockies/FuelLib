@@ -23,7 +23,6 @@ Temp,Temp_Units,Property,Property_Units,Property_Value,
 22,celsius,SurfaceTension,dynes/cm,23.4,NJFCP (SwRI)
 40,celsius,SurfaceTension,dynes/cm,21,NJFCP (SwRI)
 -10,celsius,HeatCapacity,kJ/kg/K,1.84,NJFCP (SwRI)
-0,celsius,HeatCapacity,kJ/kg/K,2.88,NJFCP (SwRI)
 10,celsius,HeatCapacity,kJ/kg/K,1.92,NJFCP (SwRI)
 20,celsius,HeatCapacity,kJ/kg/K,1.96,NJFCP (SwRI)
 30,celsius,HeatCapacity,kJ/kg/K,1.99,NJFCP (SwRI)

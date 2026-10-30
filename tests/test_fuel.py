@@ -116,8 +116,10 @@ class TestRDKitProperties:
     ) -> None:
         """Test the number of carbon atoms for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert fuel.nC == expected_nC
-        assert fuel.nH == expected_nH
+        assert isinstance(fuel.nC, np.ndarray)
+        assert isinstance(fuel.nH, np.ndarray)
+        assert fuel.nC.tolist() == expected_nC
+        assert fuel.nH.tolist() == expected_nH
 
     @pytest.mark.parametrize(
         "fuel_name, expected_MW",
