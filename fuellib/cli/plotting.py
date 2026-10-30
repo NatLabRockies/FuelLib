@@ -366,10 +366,10 @@ def plot_mixture_properties(
         """
         # Get marker style from map
         marker_style = "o"  # Default
-        for key, spec in line_specs_map.items():
-            if key in fuel_name.lower():
-                marker_style = spec
-                break
+        # Prefer the longest matching key so "dodecane" does not match "decane"
+        matches = [key for key in line_specs_map if key in fuel_name.lower()]
+        if matches:
+            marker_style = line_specs_map[max(matches, key=len)]
 
         # Get color: use fuel-specific mapping if available, otherwise use palette
         if fuel_name in fuel_color_map:

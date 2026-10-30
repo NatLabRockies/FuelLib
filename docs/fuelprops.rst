@@ -150,9 +150,9 @@ The kinematic viscosity of the *i-th* compound of the fuel,
    
    \nu_i = \frac{\mu_i}{\rho_i}, 
 
-is calculated from Dutt's equation (Eq. 4.23 in Viscosity of 
-Liquids\ :footcite:p:`viswanath_viscosity_2007`) or with the GCM of Nannoolal
-et al.\ :footcite:p:`nannoolal_estimation_2009`. Dutt's equation calculates the
+is calculated with the GCM of Nannoolal et al.\ :footcite:p:`nannoolal_estimation_2009`
+(default) or from Dutt's equation (Eq. 4.23 in Viscosity of 
+Liquids\ :footcite:p:`viswanath_viscosity_2007`). Dutt's equation calculates the
 kinematic viscosity directly provided :math:`T` in :math:`^{\circ}` C:
 
 .. math::

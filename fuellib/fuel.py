@@ -598,7 +598,7 @@ class Fuel:
         self,
         T: types.Quantity0D,
         comp_idx: int | None = None,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
     ) -> types.Quantity1D:
         """Calculate component kinematic viscosity.
 
@@ -607,7 +607,7 @@ class Fuel:
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
 
         Returns:
             Viscosity of each component in m^2/s.
@@ -627,7 +627,7 @@ class Fuel:
         self,
         T: types.Quantity0D,
         comp_idx: int | None = None,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
     ) -> types.Quantity1D:
         """Calculate component dynamic viscosity.
 
@@ -636,7 +636,7 @@ class Fuel:
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
 
         Returns:
             Dynamic viscosity in Pa*s.
@@ -887,7 +887,7 @@ class Fuel:
         self,
         Yi: types.Quantity1D,
         T: types.Quantity0D,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
         mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
         """Calculate kinematic viscosity of the mixture.
@@ -896,7 +896,7 @@ class Fuel:
             Yi: Mass fractions of each compound.
             T: Temperature to compute property.
             correlation: Component viscosity correlation ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
             mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
                 Defaults to "Kendall-Monroe".
 
@@ -920,7 +920,7 @@ class Fuel:
         self,
         Yi: types.Quantity1D,
         T: types.Quantity0D,
-        correlation: Literal["Dutt", "Nannoolal"] = "Dutt",
+        correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
         mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
     ) -> types.Quantity0D:
         """Calculate dynamic viscosity of the mixture.
@@ -929,7 +929,7 @@ class Fuel:
             Yi: Mass fractions of each compound.
             T: Temperature to compute property.
             correlation: Component viscosity correlation ("Dutt" or "Nannoolal").
-                Defaults to "Dutt".
+                Defaults to "Nannoolal".
             mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
                 Defaults to "Kendall-Monroe".
 

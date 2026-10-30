@@ -1,6 +1,5 @@
 """Nannoolal group contribution parameters."""
 
-import warnings
 from itertools import combinations
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated
@@ -70,31 +69,6 @@ def _check_compatible_dims(
             f", but group decomposition matrix has {Aij.shape[1]} columns."
         )
         raise ValueError(msg)
-
-
-def _warn_zero_contributions(
-    property_name: str, xj: types.Array1D, nij: types.Array2D, fuel: "Fuel"
-) -> None:
-    """Warn if a component uses a group whose contribution is a 0.0 placeholder.
-
-    Args:
-        property_name: Name of the property being predicted.
-        xj: The GCM property vector.
-        nij: The group decomposition matrix.
-        fuel: The fuel object containing the compound names.
-    """
-    used = (nij != 0) & (xj == 0.0)
-    rows = np.flatnonzero(used.any(axis=1))
-    if rows.size == 0:
-        return
-    details = "\n".join(
-        f"  {fuel.compounds[i]}: {TABLE.index[used[i]].tolist()}" for i in rows
-    )
-    warnings.warn(
-        f"Nannoolal '{property_name}' has no published contribution for groups in "
-        f"the following compounds; using 0.0:\n{details}",
-        stacklevel=3,
-    )
 
 
 # Connected to N, O, F or Cl (aliphatic or aromatic N/O)
@@ -268,7 +242,6 @@ def dBv(fuel: "Fuel") -> types.Quantity1D:
     nij = _get_decomp(fuel)
     dBvj = _get_row("dBv")
     _check_compatible_dims(dBvj, nij)
-    _warn_zero_contributions("dBv", dBvj, nij, fuel)
     # Only absent groups are zeroed; NaN propagates for used, unsupported groups
     dBvi = np.where(nij != 0, nij * dBvj, 0.0).sum(axis=1)
     return Units.Quantity(dBvi, "")
@@ -289,6 +262,5 @@ def Tv(fuel: "Fuel") -> types.Quantity1D:
     nij = _get_decomp(fuel)
     Tvj = _get_row("Tv")
     _check_compatible_dims(Tvj, nij)
-    _warn_zero_contributions("Tv", Tvj, nij, fuel)
     Tvi = np.where(nij != 0, nij * Tvj, 0.0).sum(axis=1)
     return Units.Quantity(Tvi, "")

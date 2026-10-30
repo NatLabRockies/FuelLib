@@ -51,9 +51,9 @@ fuel_names = {
 
 method_map = {
     "density": correlate.mixture.density,
-    "viscosity": correlate.mixture.kinematic_viscosity_dutt,
+    "viscosity": correlate.mixture.kinematic_viscosity_nannoolal,
     "vaporpressure": correlate.mixture.saturated_vapor_pressure,
-    "dynamicviscosity": correlate.mixture.dynamic_viscosity_dutt,
+    "dynamicviscosity": correlate.mixture.dynamic_viscosity_nannoolal,
     "surfacetension": correlate.mixture.surface_tension,
     "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
     "cp": correlate.components.molar_specific_heat_capacity,
