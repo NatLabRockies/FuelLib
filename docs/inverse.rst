@@ -97,12 +97,24 @@ weights:
 In general, constraints contain parameters that define the target value or range for the
 property. Constraints are computed using the following correlations and mixing rules:
 
-=======================  ===================================================  ====================================================
-Property                 Correlation                                          Mixing Rule
-=======================  ===================================================  ====================================================
-``DensityConstraint``    N/A                                                  Linear
-``ViscosityConstraint``  Dutt\ :footcite:p:`viswanath_viscosity_2007`         Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
-=======================  ===================================================  ====================================================
+=======================  ======================================================  ====================================================
+Property                 Correlation                                             Mixing Rule
+=======================  ======================================================  ====================================================
+``DensityConstraint``    N/A                                                     Linear
+``ViscosityConstraint``  Nannoolal\ :footcite:p:`nannoolal_estimation_2009` or   Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
+                         Dutt\ :footcite:p:`viswanath_viscosity_2007`
+=======================  ======================================================  ====================================================
+
+The component viscosity correlation used by :class:`ViscosityConstraint` is selected
+with ``component_correlation``, which accepts ``"Nannoolal"`` (default) or ``"Dutt"``:
+
+.. code-block:: python
+
+    viscosity_constraint = ViscosityConstraint(
+        temp=Units.Quantity(-20.0, "celsius"),
+        max=Units.Quantity(4.0, "mm^2/s"),
+        component_correlation="Dutt",
+    )
 
 See the :class:`API documentation <fuellib.simulate.inverse.constraints>` for
 more details on each constraint class and its parameters.

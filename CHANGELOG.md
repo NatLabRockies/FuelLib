@@ -19,6 +19,7 @@ release workflow to parse release entries in this file.
 - Hayer et al. (2025) reference in `refs.bib`.
 - `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
 - `simulate.inverse` subpackage for inverse fuel design: blends an additive into a fuel so that the blend satisfies density and viscosity constraints, using a JAX/Optax augmented Lagrangian solver. Provides `Config`, `DensityConstraint`, `ViscosityConstraint`, `Problem`, `Solution`, `solve`, the packaged ASTM D7566 configuration `d7566_config`, and JAX mixing rules in `simulate.inverse.mixing`.
+  - `ViscosityConstraint.component_correlation` (`"Nannoolal"` by default, or `"Dutt"`) selects the correlation used for component viscosities.
 - `fl-inverse` command-line tool for inverse fuel design.
 - `Problem(..., ignore_composition=True)` and `fl-inverse --ignore-composition` to ignore the original fuel composition and design a mixture of its components from scratch (additive mass fraction of 1).
 - `inverse` optional dependency group (`jax`, `jaxtyping`, `optax`), included in the `dev` extra. Install with `pip install "fuellib[inverse]"`; importing `simulate.inverse` or running `fl-inverse` without it raises a clear install hint, and the inverse tests are skipped.

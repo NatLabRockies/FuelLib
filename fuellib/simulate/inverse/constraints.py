@@ -1,6 +1,6 @@
 """Constraints for inverse fuel composition modeling."""
 
-from typing import Callable
+from typing import Callable, Literal
 
 import jax.numpy as jnp
 from jax import Array
@@ -106,6 +106,8 @@ class ViscosityConstraint(BaseConstraint):
     """Minimum allowed viscosity (None disables the lower bound)."""
     max: types.Quantity0D | None = None
     """Maximum allowed viscosity (None disables the upper bound)."""
+    component_correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal"
+    """Correlation method to use for component viscosities."""
 
     @model_validator(mode="after")
     def _check_consistency(self) -> "ViscosityConstraint":
@@ -145,7 +147,11 @@ class ViscosityConstraint(BaseConstraint):
         Raises:
             ValueError: If neither min nor max is set for the viscosity constraint.
         """
-        mu_i = jnp.asarray(fuel.viscosity_kinematic(self.temp).m_as("mm^2/s"))
+        mu_i = jnp.asarray(
+            fuel.viscosity_kinematic(
+                self.temp, correlation=self.component_correlation
+            ).m_as("mm^2/s")
+        )
         mw_i = jnp.asarray(fuel.MW.m_as("g/mol"))
         lo = self.min.m_as("mm^2/s") if self.min is not None else None
         hi = self.max.m_as("mm^2/s") if self.max is not None else None

@@ -87,7 +87,7 @@ class TestConstraints:
 
     def test_viscosity_penalty(self, fuel: Fuel, Y0: jnp.ndarray) -> None:
         """Penalty is zero when feasible and positive when violated."""
-        ok = ViscosityConstraint(temp=T_20, max=Units.Quantity(4.0, "mm^2/s")).bind(
+        ok = ViscosityConstraint(temp=T_20, max=Units.Quantity(8.0, "mm^2/s")).bind(
             fuel
         )
         bad = ViscosityConstraint(temp=T_20, max=Units.Quantity(1.0, "mm^2/s")).bind(
