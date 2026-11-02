@@ -11,13 +11,24 @@ except ImportError as e:
     ) from e
 
 from . import mixing
-from .constraints import DensityConstraint, ViscosityConstraint
+from .constraints import (
+    AromaticsConstraint,
+    DensityConstraint,
+    FlashPointConstraint,
+    FreezePointConstraint,
+    HeatOfCombustionConstraint,
+    ViscosityConstraint,
+)
 from .models import Config, Problem, Solution, d7566_config
 from .solve import solve
 
 __all__ = [
+    "AromaticsConstraint",
     "Config",
     "DensityConstraint",
+    "FlashPointConstraint",
+    "FreezePointConstraint",
+    "HeatOfCombustionConstraint",
     "Problem",
     "Solution",
     "ViscosityConstraint",

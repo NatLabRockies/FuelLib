@@ -7,6 +7,19 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Added
+- `AromaticsConstraint`, `HeatOfCombustionConstraint`, `FlashPointConstraint`, and `FreezePointConstraint` in `simulate.inverse`, with corresponding JAX mixing rules in `simulate.inverse.mixing`, so inverse fuel designs can also constrain aromatics content, heat of combustion, flash point, and freeze point.
+- Consistency tests between the JAX and `Fuel` mixture aromatics content, heat of combustion, flash point, and freeze point in `tests/test_accuracy.py`.
+- `Config.aromatics`, `Config.heat_of_combustion`, `Config.flash_point`, and `Config.freeze_point` fields for the new inverse design constraints.
+- `mixture.aromatics_content` and `Fuel.mixture_aromatics_content` for the liquid volume percent of aromatic compounds, documented in `fuelprops.rst` and tested in `tests/test_fuel.py`.
+- `correlate.helpers.mass_fractions_to_volume_fractions` for converting mass fractions to liquid volume fractions.
+
+### Changed
+- `d7566_config` now also includes ASTM D7566 aromatics content (8-25 vol%), minimum heat of combustion (42.8 MJ/kg), minimum flash point (38 °C), and maximum freeze point (-40 °C) limits.
+- `Problem` skips constraints with a zero `weight`.
+- The `fl-inverse`/`solve` summary table reports aromatics content, heat of combustion, flash point, and freeze point when the corresponding constraints are configured.
+- `inverse.rst` documents the new constraints, their correlations and mixing rules, and how the implicit flash and freeze point equations are differentiated.
+
 ## [3.1.1] - 2026-11-02
 
 ### Added

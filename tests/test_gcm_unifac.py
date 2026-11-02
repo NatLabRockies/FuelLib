@@ -386,7 +386,7 @@ def test_ln_gamma_fuel(posf10325: Fuel):
 
     # Temperature units are converted
     np.testing.assert_allclose(
-        unifac.ln_gamma(posf10325, Units.Quantity(26.85, "degC")).magnitude,
+        unifac.ln_gamma(posf10325, Units.Quantity(26.85, "celsius")).magnitude,
         ln_g.magnitude,
         rtol=1e-10,
     )
