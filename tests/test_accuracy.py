@@ -6,6 +6,13 @@ import unittest
 import numpy as np
 import pandas as pd
 
+try:
+    import jax.numpy as jnp
+    from fuellib.simulate.inverse import mixing
+
+    HAS_INVERSE = True
+except ImportError:
+    HAS_INVERSE = False
 from fuellib.utils import Units
 from fuellib import Fuel, correlate
 from baselinePredictions.generate_baseline import method_map
@@ -151,6 +158,60 @@ class TestFuelMWAccuracy:
         mw = fuel.mean_molecular_weight(fuel.Y_0).magnitude  # kg/mol expected
         assert np.isclose(mw, expected_mw, atol=1e-4), (
             f"{fuel_name}: expected {expected_mw}, got {mw}"
+        )
+
+
+@pytest.mark.skipif(not HAS_INVERSE, reason="requires the 'inverse' extra")
+class TestInverseConsistency:
+    """Test class for verifying inverse accuracy against the main codebase."""
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_density(self, fuel_name: str) -> None:
+        """Test that the inverse density predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+        T = Units.Quantity(298.15, "K")
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        rho_i = jnp.asarray(fuel.density(T).m_as("kg/m^3"))
+        rho_inv = mixing.density(Yi, rho_i)
+        rho_base = fuel.mixture_density(fuel.Y_0, T).m_as("kg/m^3")
+
+        assert np.isclose(rho_inv, rho_base), (
+            f"{fuel_name}: inverse density {rho_inv} does not match base density {rho_base}"
+        )
+
+    @pytest.mark.parametrize(
+        "fuel_name",
+        [
+            "heptane",
+            "dodecane",
+            "posf10264",
+            "posf10289",
+            "posf10325",
+        ],
+    )
+    def test_mixture_viscosity(self, fuel_name: str) -> None:
+        """Test that the inverse viscosity predictions are consistent with the main codebase."""
+        fuel = Fuel(fuel_name)
+        T = Units.Quantity(298.15, "K")
+
+        Yi = jnp.asarray(fuel.Y_0.m_as(""))
+        mu_i = jnp.asarray(fuel.viscosity_kinematic(T).m_as("m^2/s"))
+        mw_i = jnp.asarray(fuel.MW.m_as("kg/mol"))
+        mu_inv = mixing.viscosity(Yi, mu_i, mw_i)
+        mu_base = fuel.mixture_kinematic_viscosity(fuel.Y_0, T).m_as("m^2/s")
+
+        assert np.isclose(mu_inv, mu_base), (
+            f"{fuel_name}: inverse viscosity {mu_inv} does not match base viscosity {mu_base}"
         )
 
 
