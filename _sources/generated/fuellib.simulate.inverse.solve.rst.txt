@@ -1,0 +1,6 @@
+﻿fuellib.simulate.inverse.solve
+==============================
+
+.. currentmodule:: fuellib.simulate.inverse
+
+.. autofunction:: solve

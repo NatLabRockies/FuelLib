@@ -1,0 +1,35 @@
+fuellib.simulate.inverse.models.Problem
+=======================================
+
+.. currentmodule:: fuellib.simulate.inverse.models
+
+.. autoclass:: Problem
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Problem.fuel
+      ~Problem.config
+      ~Problem.Y_0
+      ~Problem.constraint_names
+      ~Problem.constraint_weights
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Problem.blend
+      ~Problem.constraints
+      ~Problem.loss
+   
+   

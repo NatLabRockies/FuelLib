@@ -1,0 +1,16 @@
+﻿fuellib.simulate.inverse.constraints
+====================================
+
+.. automodule:: fuellib.simulate.inverse.constraints
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      BaseConstraint
+      DensityConstraint
+      ViscosityConstraint
+   

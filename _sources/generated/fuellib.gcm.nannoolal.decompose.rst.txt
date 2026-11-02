@@ -1,0 +1,6 @@
+fuellib.gcm.nannoolal.decompose
+===============================
+
+.. currentmodule:: fuellib.gcm.nannoolal
+
+.. autofunction:: decompose

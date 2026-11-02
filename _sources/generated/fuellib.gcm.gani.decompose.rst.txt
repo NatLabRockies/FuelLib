@@ -1,0 +1,6 @@
+fuellib.gcm.gani.decompose
+==========================
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autofunction:: decompose

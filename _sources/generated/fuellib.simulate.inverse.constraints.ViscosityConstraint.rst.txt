@@ -1,0 +1,62 @@
+fuellib.simulate.inverse.constraints.ViscosityConstraint
+========================================================
+
+.. currentmodule:: fuellib.simulate.inverse.constraints
+
+.. autoclass:: ViscosityConstraint
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ViscosityConstraint.model_computed_fields
+      ~ViscosityConstraint.model_config
+      ~ViscosityConstraint.model_extra
+      ~ViscosityConstraint.model_fields
+      ~ViscosityConstraint.model_fields_set
+      ~ViscosityConstraint.temp
+      ~ViscosityConstraint.min
+      ~ViscosityConstraint.max
+      ~ViscosityConstraint.component_correlation
+      ~ViscosityConstraint.weight
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~ViscosityConstraint.bind
+      ~ViscosityConstraint.construct
+      ~ViscosityConstraint.copy
+      ~ViscosityConstraint.dict
+      ~ViscosityConstraint.from_orm
+      ~ViscosityConstraint.json
+      ~ViscosityConstraint.labels
+      ~ViscosityConstraint.model_construct
+      ~ViscosityConstraint.model_copy
+      ~ViscosityConstraint.model_dump
+      ~ViscosityConstraint.model_dump_json
+      ~ViscosityConstraint.model_json_schema
+      ~ViscosityConstraint.model_parametrized_name
+      ~ViscosityConstraint.model_post_init
+      ~ViscosityConstraint.model_rebuild
+      ~ViscosityConstraint.model_validate
+      ~ViscosityConstraint.model_validate_json
+      ~ViscosityConstraint.model_validate_strings
+      ~ViscosityConstraint.parse_file
+      ~ViscosityConstraint.parse_obj
+      ~ViscosityConstraint.parse_raw
+      ~ViscosityConstraint.schema
+      ~ViscosityConstraint.schema_json
+      ~ViscosityConstraint.update_forward_refs
+      ~ViscosityConstraint.validate
+   
+   

@@ -1,0 +1,632 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inverse Fuel Design &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Units" href="units.html" />
+    <link rel="prev" title="Group Contribution Method Abstraction" href="gcm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#latent-heat-of-vaporization">Latent heat of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mass-specific-heat-capacity-of-the-liquid">Mass specific heat capacity of the liquid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#saturated-vapor-pressure">Saturated vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#flash-point">Flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#lower-heating-value">Lower heating value</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-freeze-point">Mixture freeze point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-flash-point">Mixture flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-heat-of-combustion">Mixture heat of combustion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-yield-sooting-index">Mixture yield sooting index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-smoke-point">Mixture smoke point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-derived-cetane-number">Mixture derived cetane number</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-property-data">Reference Property Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#validation">Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="refcompounds.html">Reference Compounds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="refcompounds.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gcm.html">Group Contribution Method Abstraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#core-concepts">Core concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-gani-method">The <code class="docutils literal notranslate"><span class="pre">gani</span></code> method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gcm.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gcm.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-boehm-method">The <code class="docutils literal notranslate"><span class="pre">boehm</span></code> method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-nannoolal-method">The <code class="docutils literal notranslate"><span class="pre">nannoolal</span></code> method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-unifac-method">The <code class="docutils literal notranslate"><span class="pre">unifac</span></code> method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gcm.html#activity-coefficients">Activity coefficients</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#registering-a-new-property">Registering a new property</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#fuel-integration"><code class="docutils literal notranslate"><span class="pre">Fuel</span></code> integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#see-also">See also</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Inverse Fuel Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-and-usage">Installation and Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#python-usage">Python Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-usage">Command-Line Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generating-an-ideal-mixture">Generating an Ideal Mixture</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-the-problem">Defining the Problem</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constraints">Constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#config">Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#problem">Problem</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#optimization-process">Optimization Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#blend-parameterization">Blend Parameterization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constraint-functions">Constraint Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#augmented-lagrangian">Augmented Lagrangian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#algorithm">Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#solver-settings">Solver Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#packaged-configs">Packaged Configs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#results">Results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="units.html#basic-example">Basic example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#type-annotations">Type annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#further-reading">Further reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#required-input-files">Required Input Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-cli.html">Command-Line Interface (CLI) Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#unit-conversion-tools">Unit Conversion Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#fuel-management">Fuel Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#smiles-decomposition">SMILES Decomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#inverse-fuel-design">Inverse Fuel Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#export-for-cfd">Export for CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-cli.html#developer-tools">Developer Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-custom-fuels.html">Adding Custom Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#gcxgc-composition-data">GCxGC Composition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#reference-compounds-and-group-decompositions">Reference Compounds and Group Decompositions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#using-custom-fuels">Using Custom Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-custom-fuels.html#tips-and-best-practices">Tips and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials-export-converge.html">Exporting Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials-export-converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#public-api">Public API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.html">fuellib.fuel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.constants.html">fuellib.utils.constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.utility.html">fuellib.utils.utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.types.html">fuellib.utils.types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.core.html">fuellib.gcm.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.gani.html">fuellib.gcm.gani</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.boehm.html">fuellib.gcm.boehm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.nannoolal.html">fuellib.gcm.nannoolal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.unifac.html">fuellib.gcm.unifac</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.rdk.mol.html">fuellib.rdk.mol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.components.html">fuellib.correlate.components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.mixture.html">fuellib.correlate.mixture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.helpers.html">fuellib.correlate.helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.simulate.inverse.models.html">fuellib.simulate.inverse.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.simulate.inverse.constraints.html">fuellib.simulate.inverse.constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.simulate.inverse.solve.html">fuellib.simulate.inverse.solve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.simulate.inverse.mixing.html">fuellib.simulate.inverse.mixing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Contributing to FuelLib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#optional-conda-environment">Optional: Conda Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#developer-tasks">Developer Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#pre-commit-hooks">Pre-commit Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#optional-uv">Optional: uv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#working-with-units-pint">Working with Units (pint)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#updating-the-changelog">Updating the Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#contributing-guidelines">Contributing Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#building-and-viewing-documentation-locally">Building and Viewing Documentation Locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#releasing">Releasing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#release-security-setup-repository-administrator">Release security setup (repository administrator)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Inverse Fuel Design</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/inverse.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="inverse-fuel-design">
+<h1>Inverse Fuel Design<a class="headerlink" href="#inverse-fuel-design" title="Link to this heading"></a></h1>
+<p>The inverse fuel design approach aims to determine the optimal fuel composition that satisfies specific property
+constraints using <a class="reference external" href="https://jax.readthedocs.io/">JAX</a> for automatic differentiation and <a class="reference external" href="https://optax.readthedocs.io/">Optax</a>
+for optimization.</p>
+<section id="installation-and-usage">
+<h2>Installation and Usage<a class="headerlink" href="#installation-and-usage" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">inverse</span></code> module is installable as part of the FuelLib package via pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"fuellib[inverse]"</span>
+</pre></div>
+</div>
+<section id="python-usage">
+<h3>Python Usage<a class="headerlink" href="#python-usage" title="Link to this heading"></a></h3>
+<p>After installation, the <code class="docutils literal notranslate"><span class="pre">inverse</span></code> module can be imported and used within your Python
+scripts as part of FuelLib:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fuellib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fuel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.simulate.inverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">d7566_config</span><span class="p">,</span> <span class="n">solve</span>
+
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">Fuel</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="c1"># Define the inverse design problem with ASTM D7566 specifications</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">d7566_config</span><span class="p">,</span> <span class="n">fuel</span><span class="o">=</span><span class="n">fuel</span><span class="p">)</span>
+<span class="n">solution</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+<span class="n">solution</span><span class="o">.</span><span class="n">blend</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"new_gc.csv"</span><span class="p">)</span>  <span class="c1"># Optimized blend</span>
+<span class="n">solution</span><span class="o">.</span><span class="n">additive</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"additive_gc.csv"</span><span class="p">)</span>  <span class="c1"># Additive composition</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Additive mass fraction: </span><span class="si">{</span><span class="n">solution</span><span class="o">.</span><span class="n">additive_fraction</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="command-line-usage">
+<h3>Command-Line Usage<a class="headerlink" href="#command-line-usage" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">fl-inverse</span></code> provides a command-line interface for solving inverse fuel design problems using FuelLib. A simple example is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fl-inverse<span class="w"> </span>--config<span class="w"> </span>d7566<span class="w"> </span>--fuel-name<span class="w"> </span>fuel<span class="w"> </span>--output<span class="w"> </span>fuel_opt
+</pre></div>
+</div>
+<p>This creates the directory <code class="docutils literal notranslate"><span class="pre">fuel_opt</span></code> containing <code class="docutils literal notranslate"><span class="pre">fuel_opt.csv</span></code> (the optimized blend),
+<code class="docutils literal notranslate"><span class="pre">additive.csv</span></code> (the additive composition, normalized to 100 %), and <code class="docutils literal notranslate"><span class="pre">blend.txt</span></code>
+(the mass percentages of the original fuel and the additive in the blend).</p>
+<p>For more information on usage, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fl-inverse<span class="w"> </span>--help
+</pre></div>
+</div>
+</section>
+<section id="generating-an-ideal-mixture">
+<h3>Generating an Ideal Mixture<a class="headerlink" href="#generating-an-ideal-mixture" title="Link to this heading"></a></h3>
+<p>Instead of blending an additive into an original fuel composition to meet specific property constraints, users can
+determine an optimal mixture of a fuel’s components from scratch that satisfies the specified property constraints.
+In this case, the original composition is ignored and the additive mass fraction is automatically set to 1, so the
+blend is made entirely of the additive. This is enabled by either:</p>
+<ul class="simple">
+<li><p>passing <code class="docutils literal notranslate"><span class="pre">ignore_composition=True</span></code> to <a class="reference internal" href="generated/fuellib.simulate.inverse.models.Problem.html#fuellib.simulate.inverse.models.Problem" title="fuellib.simulate.inverse.models.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Problem</span></code></a>
+(or <code class="docutils literal notranslate"><span class="pre">--ignore-composition</span></code> to <code class="docutils literal notranslate"><span class="pre">fl-inverse</span></code>), or</p></li>
+<li><p>providing a GCxGC file containing the available reference components with all <code class="docutils literal notranslate"><span class="pre">Weight</span> <span class="pre">%</span></code> values set to zero.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">d7566_config</span><span class="p">,</span> <span class="n">fuel</span><span class="o">=</span><span class="n">fuel</span><span class="p">,</span> <span class="n">ignore_composition</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fl-inverse<span class="w"> </span>--fuel-name<span class="w"> </span>fuel<span class="w"> </span>--ignore-composition
+</pre></div>
+</div>
+</section>
+</section>
+<section id="defining-the-problem">
+<h2>Defining the Problem<a class="headerlink" href="#defining-the-problem" title="Link to this heading"></a></h2>
+<section id="constraints">
+<h3>Constraints<a class="headerlink" href="#constraints" title="Link to this heading"></a></h3>
+<p>The inverse design problem allows specifying various constraints on fuel properties,
+including density, viscosity, and other physical or chemical properties. Each constraint
+is represented by a corresponding class, such as <code class="xref py py-class docutils literal notranslate"><span class="pre">DensityConstraint</span></code> or
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ViscosityConstraint</span></code>, and can be customized with specific parameters and
+weights:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.simulate.inverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">DensityConstraint</span><span class="p">,</span> <span class="n">ViscosityConstraint</span>
+
+<span class="n">density_constraint</span> <span class="o">=</span> <span class="n">DensityConstraint</span><span class="p">(</span>
+    <span class="n">temp</span><span class="o">=</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="s2">"celsius"</span><span class="p">),</span>
+    <span class="nb">min</span><span class="o">=</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">775.0</span><span class="p">,</span> <span class="s2">"kg/m^3"</span><span class="p">),</span>
+    <span class="nb">max</span><span class="o">=</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">840.0</span><span class="p">,</span> <span class="s2">"kg/m^3"</span><span class="p">),</span>
+    <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">viscosity_constraint</span> <span class="o">=</span> <span class="n">ViscosityConstraint</span><span class="p">(</span>
+    <span class="n">temp</span><span class="o">=</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">"celsius"</span><span class="p">),</span>
+    <span class="nb">max</span><span class="o">=</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="s2">"mm^2/s"</span><span class="p">),</span>
+    <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In general, constraints contain parameters that define the target value or range for the
+property. Constraints are computed using the following correlations and mixing rules:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Correlation</p></th>
+<th class="head"><p>Mixing Rule</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DensityConstraint</span></code></p></td>
+<td><p>N/A</p></td>
+<td><p>Linear</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ViscosityConstraint</span></code></p></td>
+<td><p>Nannoolal<a class="footnote-reference brackets" href="#footcite-nannoolal-estimation-2009" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> or
+Dutt<a class="footnote-reference brackets" href="#footcite-viswanath-viscosity-2007" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+<td><p>Kendall-Monroe<a class="footnote-reference brackets" href="#footcite-kendall-viscosity-1917" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+</tr>
+</tbody>
+</table>
+<p>The component viscosity correlation used by <code class="xref py py-class docutils literal notranslate"><span class="pre">ViscosityConstraint</span></code> is selected
+with <code class="docutils literal notranslate"><span class="pre">component_correlation</span></code>, which accepts <code class="docutils literal notranslate"><span class="pre">&quot;Nannoolal&quot;</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">&quot;Dutt&quot;</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viscosity_constraint</span> <span class="o">=</span> <span class="n">ViscosityConstraint</span><span class="p">(</span>
+    <span class="n">temp</span><span class="o">=</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">"celsius"</span><span class="p">),</span>
+    <span class="nb">max</span><span class="o">=</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="s2">"mm^2/s"</span><span class="p">),</span>
+    <span class="n">component_correlation</span><span class="o">=</span><span class="s2">"Dutt"</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="generated/fuellib.simulate.inverse.constraints.html#module-fuellib.simulate.inverse.constraints" title="fuellib.simulate.inverse.constraints"><code class="xref py py-class docutils literal notranslate"><span class="pre">API</span> <span class="pre">documentation</span></code></a> for
+more details on each constraint class and its parameters.</p>
+</section>
+<section id="config">
+<h3>Config<a class="headerlink" href="#config" title="Link to this heading"></a></h3>
+<p>The <a class="reference internal" href="generated/fuellib.simulate.inverse.models.Config.html#fuellib.simulate.inverse.models.Config" title="fuellib.simulate.inverse.models.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object specifies the target properties
+and constraints for the fuel design, such as density or viscosity. For more information
+on constraints, see the Constraints section above. See the
+<a class="reference internal" href="generated/fuellib.simulate.inverse.models.Config.html#fuellib.simulate.inverse.models.Config" title="fuellib.simulate.inverse.models.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">API</span> <span class="pre">documentation</span></code></a> for the full list
+of configuration options.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.simulate.inverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">DensityConstraint</span><span class="p">,</span> <span class="n">ViscosityConstraint</span>
+
+<span class="n">density_specs</span> <span class="o">=</span> <span class="p">(</span><span class="n">DensityConstraint</span><span class="p">,</span> <span class="o">...</span><span class="p">,)</span>
+<span class="n">viscosity_specs</span> <span class="o">=</span> <span class="p">(</span><span class="n">ViscosityConstraint</span><span class="p">,</span> <span class="o">...</span><span class="p">,)</span>
+
+<span class="n">custom_config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="n">density</span><span class="o">=</span><span class="n">density_specs</span><span class="p">,</span>
+    <span class="n">viscosity</span><span class="o">=</span><span class="n">viscosity_specs</span><span class="p">,</span>
+    <span class="o">...</span> <span class="c1"># Optimization configurations</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="problem">
+<h3>Problem<a class="headerlink" href="#problem" title="Link to this heading"></a></h3>
+<p>The <a class="reference internal" href="generated/fuellib.simulate.inverse.models.Problem.html#fuellib.simulate.inverse.models.Problem" title="fuellib.simulate.inverse.models.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Problem</span></code></a> object contains the <code class="docutils literal notranslate"><span class="pre">Config</span></code> (see the Config section above)
+and the initial fuel object to be used in the inverse design process. It serves as the main input for the optimization routine,
+providing an interface to the fuel and constraints for evaluating the fuel mixture during the optimization process.</p>
+</section>
+</section>
+<section id="optimization-process">
+<h2>Optimization Process<a class="headerlink" href="#optimization-process" title="Link to this heading"></a></h2>
+<p>The optimization process involves minimizing target property deviations subject to the constraints defined in the <code class="docutils literal notranslate"><span class="pre">Config</span></code>.
+The solver uses an augmented Lagrangian approach, where the Lagrangian is approximately
+minimized for fixed multipliers (inner loop), followed by updates to the multipliers and penalty parameters (outer loop).
+The process continues until the maximum number of steps is reached or the constraint violations fall below the specified tolerance.</p>
+<section id="blend-parameterization">
+<h3>Blend Parameterization<a class="headerlink" href="#blend-parameterization" title="Link to this heading"></a></h3>
+<p>Rather than optimizing the mass fractions directly, the solver blends an <em>additive</em> into the
+base fuel composition <span class="math notranslate nohighlight">\(\mathbf{Y}_0\)</span> (<a class="reference internal" href="generated/fuellib.simulate.inverse.models.Problem.html#fuellib.simulate.inverse.models.Problem.blend" title="fuellib.simulate.inverse.models.Problem.blend"><code class="xref py py-meth docutils literal notranslate"><span class="pre">blend()</span></code></a>).
+The addition is described by two unconstrained parameters: a vector of logits
+<span class="math notranslate nohighlight">\(\mathbf{z} \in \mathbb{R}^N\)</span> (one per component) and a scalar <span class="math notranslate nohighlight">\(s\)</span> that sets the mass
+fraction of the addition in the blend:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{Y}_\mathrm{add} = \Pi_\Delta(\mathbf{z}), \qquad
+\alpha = \sigma(s) = \frac{1}{1 + e^{-s}}, \qquad
+\mathbf{Y} = (1 - \alpha)\,\mathbf{Y}_0 + \alpha\,\mathbf{Y}_\mathrm{add},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Pi_\Delta\)</span> is the Euclidean projection onto the probability simplex
+<span class="math notranslate nohighlight">\(\{\mathbf{y} : y_i \ge 0,\ \sum_i y_i = 1\}\)</span>. This guarantees that every candidate
+<span class="math notranslate nohighlight">\(\mathbf{Y}\)</span> is a valid composition (all non-negative entries and summing to one) and,
+because the simplex projection sets small entries exactly to zero, tends to produce
+additions made of only a few components. The parameters are initialized to
+<span class="math notranslate nohighlight">\(\mathbf{z} = \mathbf{0}\)</span> (uniform addition) and <span class="math notranslate nohighlight">\(s = -5\)</span>
+(<span class="math notranslate nohighlight">\(\alpha \approx 0.7\%\)</span>), so the search starts close to the base fuel.</p>
+</section>
+<section id="constraint-functions">
+<h3>Constraint Functions<a class="headerlink" href="#constraint-functions" title="Link to this heading"></a></h3>
+<p>Each active bound of a constraint contributes one normalized constraint function
+<span class="math notranslate nohighlight">\(g_j(\mathbf{Y})\)</span>, which is zero when the bound is satisfied and positive otherwise.
+For a mixture property <span class="math notranslate nohighlight">\(p(\mathbf{Y})\)</span> evaluated at the constraint temperature,</p>
+<div class="math notranslate nohighlight">
+\[g_j^\mathrm{min} = \frac{\max\left(p_\mathrm{min} - p(\mathbf{Y}),\, 0\right)}{p_\mathrm{ref}},
+\qquad
+g_j^\mathrm{max} = \frac{\max\left(p(\mathbf{Y}) - p_\mathrm{max},\, 0\right)}{p_\mathrm{ref}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(p_\mathrm{ref}\)</span> is <span class="math notranslate nohighlight">\(p_\mathrm{max}\)</span> if an upper bound is set and
+<span class="math notranslate nohighlight">\(p_\mathrm{min}\)</span> otherwise. The normalization makes violations of different
+properties comparable, so a single tolerance applies to all of them. Each constraint’s
+<code class="docutils literal notranslate"><span class="pre">weight</span></code> <span class="math notranslate nohighlight">\(w_j\)</span> scales its contribution to the penalty.</p>
+</section>
+<section id="augmented-lagrangian">
+<h3>Augmented Lagrangian<a class="headerlink" href="#augmented-lagrangian" title="Link to this heading"></a></h3>
+<p>The inner loop minimizes the augmented Lagrangian for
+inequality constraints <span class="math notranslate nohighlight">\(g_j \le 0\)</span>, computed by
+<a class="reference internal" href="generated/fuellib.simulate.inverse.models.Problem.html#fuellib.simulate.inverse.models.Problem.loss" title="fuellib.simulate.inverse.models.Problem.loss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">loss()</span></code></a>:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}(\mathbf{z}, s;\, \boldsymbol{\lambda}, \mu) =
+\sum_j \frac{\max\left(\lambda_j + \mu w_j g_j(\mathbf{Y}),\, 0\right)^2 - \lambda_j^2}{2 \mu w_j},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\lambda_j \ge 0\)</span> are the Lagrange multiplier estimates, <span class="math notranslate nohighlight">\(\mu &gt; 0\)</span> is
+the penalty parameter, and <span class="math notranslate nohighlight">\(w_j \gt 0\)</span> are the constraint weights. Gradients of
+<span class="math notranslate nohighlight">\(\mathcal{L}\)</span> are computed with JAX automatic differentiation, and the parameters
+are updated with <cite>optax</cite>’s Adam optimizer.</p>
+</section>
+<section id="algorithm">
+<h3>Algorithm<a class="headerlink" href="#algorithm" title="Link to this heading"></a></h3>
+<p>The full procedure implemented in <a class="reference internal" href="generated/fuellib.simulate.inverse.solve.html#fuellib.simulate.inverse.solve" title="fuellib.simulate.inverse.solve"><code class="xref py py-func docutils literal notranslate"><span class="pre">solve()</span></code></a> is:</p>
+<ol class="arabic simple">
+<li><p>Initialize <span class="math notranslate nohighlight">\(\mathbf{z} = \mathbf{0}\)</span>, <span class="math notranslate nohighlight">\(s = -5\)</span>,
+<span class="math notranslate nohighlight">\(\boldsymbol{\lambda} = \mathbf{0}\)</span>, and <span class="math notranslate nohighlight">\(\mu\)</span> = <code class="docutils literal notranslate"><span class="pre">penalty_init</span></code>.</p></li>
+<li><p><strong>Inner loop:</strong> take Adam steps on <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with fixed
+<span class="math notranslate nohighlight">\(\boldsymbol{\lambda}\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> until one of the following occurs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">max_inner_steps</span></code> steps have been taken in this inner loop,</p></li>
+<li><p>the loss has stalled, i.e., its change over the last <code class="docutils literal notranslate"><span class="pre">stall_window</span></code> steps is at
+most <code class="docutils literal notranslate"><span class="pre">stall_rtol</span></code> times its current magnitude, or</p></li>
+<li><p>the total number of steps reaches <code class="docutils literal notranslate"><span class="pre">max_steps</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Convergence check:</strong> evaluate the constraints and the maximum violation
+<span class="math notranslate nohighlight">\(v = \max_j \max(g_j, 0)\)</span>. If <span class="math notranslate nohighlight">\(v \le\)</span> <code class="docutils literal notranslate"><span class="pre">violation_tol</span></code>, stop.</p></li>
+<li><p><strong>Multiplier update:</strong>
+<span class="math notranslate nohighlight">\(\lambda_j \leftarrow \max\left(\lambda_j + \mu w_j g_j,\, 0\right)\)</span>.</p></li>
+<li><p><strong>Penalty update:</strong> if the violation did not decrease sufficiently, i.e.,
+<span class="math notranslate nohighlight">\(v &gt;\)</span> <code class="docutils literal notranslate"><span class="pre">violation_decrease_ratio</span></code> <span class="math notranslate nohighlight">\(\times\, v_\mathrm{prev}\)</span>, increase the
+penalty: <span class="math notranslate nohighlight">\(\mu \leftarrow \min(\)</span> <code class="docutils literal notranslate"><span class="pre">penalty_growth</span></code> <span class="math notranslate nohighlight">\(\times\, \mu,\)</span>
+<code class="docutils literal notranslate"><span class="pre">penalty_max</span></code> <span class="math notranslate nohighlight">\()\)</span>.</p></li>
+<li><p>If the total number of steps is below <code class="docutils literal notranslate"><span class="pre">max_steps</span></code>, return to step 2.</p></li>
+</ol>
+<p>The Adam optimizer state is carried across outer iterations. The progress of each outer
+iteration (step count, loss, maximum violation, and penalty) is printed to the console.</p>
+</section>
+<section id="solver-settings">
+<h3>Solver Settings<a class="headerlink" href="#solver-settings" title="Link to this heading"></a></h3>
+<p>The solver behavior is controlled by the following <code class="docutils literal notranslate"><span class="pre">Config</span></code> fields, in addition to the
+<code class="docutils literal notranslate"><span class="pre">max_steps</span></code> argument of <a class="reference internal" href="generated/fuellib.simulate.inverse.solve.html#fuellib.simulate.inverse.solve" title="fuellib.simulate.inverse.solve"><code class="xref py py-func docutils literal notranslate"><span class="pre">solve()</span></code></a>
+(default 100,000) and the <code class="docutils literal notranslate"><span class="pre">log_every</span></code> argument (default 1000), which sets the number
+of steps between records of the additive composition and mass fraction histories:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Setting</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">learning_rate</span></code></p></td>
+<td><p>1e-2</p></td>
+<td><p>Adam learning rate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_inner_steps</span></code></p></td>
+<td><p>2000</p></td>
+<td><p>Max Adam steps per outer iteration.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stall_window</span></code></p></td>
+<td><p>200</p></td>
+<td><p>Steps over which the loss change is measured.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stall_rtol</span></code></p></td>
+<td><p>1e-6</p></td>
+<td><p>Relative loss change below which the inner loop
+is considered stalled.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">violation_tol</span></code></p></td>
+<td><p>1e-4</p></td>
+<td><p>Max normalized violation counted as satisfied.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">penalty_init</span></code></p></td>
+<td><p>1.0</p></td>
+<td><p>Initial penalty <span class="math notranslate nohighlight">\(\mu\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">penalty_growth</span></code></p></td>
+<td><p>10.0</p></td>
+<td><p>Factor by which <span class="math notranslate nohighlight">\(\mu\)</span> grows.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">penalty_max</span></code></p></td>
+<td><p>1e8</p></td>
+<td><p>Upper limit on <span class="math notranslate nohighlight">\(\mu\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">violation_decrease_ratio</span></code></p></td>
+<td><p>0.25</p></td>
+<td><p>Required ratio of the new to the previous max
+violation; <span class="math notranslate nohighlight">\(\mu\)</span> grows if it isn’t met.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="packaged-configs">
+<h3>Packaged Configs<a class="headerlink" href="#packaged-configs" title="Link to this heading"></a></h3>
+<p>The inverse design routine currently comes with a pre-packaged configuration describing ASTM D7566 fuel
+specifications<a class="footnote-reference brackets" href="#footcite-astm-d7566-26" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>, including:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Temperature</p></th>
+<th class="head"><p>Minimum</p></th>
+<th class="head"><p>Maximum</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Density</span></code></p></td>
+<td><p>15 °C</p></td>
+<td><p>775.0 kg/m³</p></td>
+<td><p>840.0 kg/m³</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p><code class="docutils literal notranslate"><span class="pre">Viscosity</span></code></p></td>
+<td><p>-20 °C</p></td>
+<td><p>-</p></td>
+<td><p>8.0 mm²/s</p></td>
+</tr>
+<tr class="row-even"><td><p>-40 °C</p></td>
+<td><p>-</p></td>
+<td><p>12.0 mm²/s</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="results">
+<h3>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h3>
+<p>On completion, <a class="reference internal" href="generated/fuellib.simulate.inverse.solve.html#fuellib.simulate.inverse.solve" title="fuellib.simulate.inverse.solve"><code class="xref py py-func docutils literal notranslate"><span class="pre">solve()</span></code></a> prints any constraints that
+remain violated along with the final blend density and viscosity at each constraint
+temperature. It returns a <a class="reference internal" href="generated/fuellib.simulate.inverse.models.Solution.html#fuellib.simulate.inverse.models.Solution" title="fuellib.simulate.inverse.models.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> containing
+the optimized blend (<code class="docutils literal notranslate"><span class="pre">blend</span></code>) and the additive (<code class="docutils literal notranslate"><span class="pre">additive</span></code>) as copies of the fuel’s
+<code class="docutils literal notranslate"><span class="pre">gcData</span></code> DataFrame with updated <code class="docutils literal notranslate"><span class="pre">Weight</span> <span class="pre">%</span></code> columns, the additive mass fraction in the
+blend (<code class="docutils literal notranslate"><span class="pre">additive_fraction</span></code>), and histories of the additive composition and mass fraction.
+<a class="reference internal" href="generated/fuellib.simulate.inverse.models.Solution.html#fuellib.simulate.inverse.models.Solution.save" title="fuellib.simulate.inverse.models.Solution.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> writes the blend, additive, and
+blend ratio to files. The optimized blend can be used to create a new
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Fuel</span></code> (see <a class="reference internal" href="tutorials-custom-fuels.html"><span class="doc">Adding Custom Fuels</span></a>).</p>
+<div class="docutils container" id="id5">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-nannoolal-estimation-2009" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Yash Nannoolal, Jürgen Rarey, and Deresh Ramjugernath. Estimation of pure component properties. Part 4: Estimation of the saturated liquid viscosity of non-electrolyte organic compounds via group contributions and group interactions. <em>Fluid Phase Equilibria</em>, 281(2):97–119, July 2009. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S0378381209000624">https://linkinghub.elsevier.com/retrieve/pii/S0378381209000624</a> (visited on 2026-10-19), <a class="reference external" href="https://doi.org/10.1016/j.fluid.2009.02.016">doi:10.1016/j.fluid.2009.02.016</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-viswanath-viscosity-2007" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>D. S. Viswanath and Dabir S. Viswanath. <em>Viscosity of Liquids: Theory, Estimation, Experiment, and Data</em>. Physica-Verlag NetLibrary, Inc. [distributor], Heidelberg Boulder, 2007. ISBN 978-1-4020-5482-2.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-kendall-viscosity-1917" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>James Kendall and Kenneth Potter Monroe. THE VISCOSITY OF LIQUIDS. II. THE VISCOSITY-COMPOSITION CURVE FOR IDEAL LIQUID MIXTURES. $^\textrm 1$. <em>Journal of the American Chemical Society</em>, 39(9):1787–1802, September 1917. URL: <a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/ja02254a001">https://pubs.acs.org/doi/abs/10.1021/ja02254a001</a> (visited on 2024-08-13), <a class="reference external" href="https://doi.org/10.1021/ja02254a001">doi:10.1021/ja02254a001</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-astm-d7566-26" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>ASTM International. ASTM D7566-26a: Specification for Aviation Turbine Fuel Containing Synthesized Hydrocarbons. URL: <a class="reference external" href="http://www.astm.org/cgi-bin/resolver.cgi?D7566-26">http://www.astm.org/cgi-bin/resolver.cgi?D7566-26</a> (visited on 2026-10-29), <a class="reference external" href="https://doi.org/10.1520/D7566-26">doi:10.1520/D7566-26</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gcm.html" class="btn btn-neutral float-left" title="Group Contribution Method Abstraction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="units.html" class="btn btn-neutral float-right" title="Units" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

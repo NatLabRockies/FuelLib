@@ -1,0 +1,33 @@
+fuellib.simulate.inverse.models.Solution
+========================================
+
+.. currentmodule:: fuellib.simulate.inverse.models
+
+.. autoclass:: Solution
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Solution.blend
+      ~Solution.additive
+      ~Solution.additive_fraction
+      ~Solution.additive_history
+      ~Solution.additive_fraction_history
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Solution.save
+   
+   

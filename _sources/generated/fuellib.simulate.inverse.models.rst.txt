@@ -1,0 +1,16 @@
+﻿fuellib.simulate.inverse.models
+===============================
+
+.. automodule:: fuellib.simulate.inverse.models
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Config
+      Problem
+      Solution
+   

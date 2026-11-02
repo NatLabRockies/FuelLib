@@ -1,0 +1,16 @@
+﻿fuellib.simulate.inverse.mixing
+===============================
+
+.. automodule:: fuellib.simulate.inverse.mixing
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      density
+      viscosity
+   

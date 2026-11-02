@@ -1,0 +1,6 @@
+fuellib.gcm.unifac.Q
+====================
+
+.. currentmodule:: fuellib.gcm.unifac
+
+.. autofunction:: Q

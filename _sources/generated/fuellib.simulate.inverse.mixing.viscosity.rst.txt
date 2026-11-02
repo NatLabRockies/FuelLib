@@ -1,0 +1,6 @@
+fuellib.simulate.inverse.mixing.viscosity
+=========================================
+
+.. currentmodule:: fuellib.simulate.inverse.mixing
+
+.. autofunction:: viscosity

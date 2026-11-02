@@ -1,0 +1,56 @@
+fuellib.simulate.inverse.constraints.BaseConstraint
+===================================================
+
+.. currentmodule:: fuellib.simulate.inverse.constraints
+
+.. autoclass:: BaseConstraint
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseConstraint.model_computed_fields
+      ~BaseConstraint.model_config
+      ~BaseConstraint.model_extra
+      ~BaseConstraint.model_fields
+      ~BaseConstraint.model_fields_set
+      ~BaseConstraint.weight
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~BaseConstraint.construct
+      ~BaseConstraint.copy
+      ~BaseConstraint.dict
+      ~BaseConstraint.from_orm
+      ~BaseConstraint.json
+      ~BaseConstraint.model_construct
+      ~BaseConstraint.model_copy
+      ~BaseConstraint.model_dump
+      ~BaseConstraint.model_dump_json
+      ~BaseConstraint.model_json_schema
+      ~BaseConstraint.model_parametrized_name
+      ~BaseConstraint.model_post_init
+      ~BaseConstraint.model_rebuild
+      ~BaseConstraint.model_validate
+      ~BaseConstraint.model_validate_json
+      ~BaseConstraint.model_validate_strings
+      ~BaseConstraint.parse_file
+      ~BaseConstraint.parse_obj
+      ~BaseConstraint.parse_raw
+      ~BaseConstraint.schema
+      ~BaseConstraint.schema_json
+      ~BaseConstraint.update_forward_refs
+      ~BaseConstraint.validate
+   
+   

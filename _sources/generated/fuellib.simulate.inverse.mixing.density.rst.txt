@@ -1,0 +1,6 @@
+fuellib.simulate.inverse.mixing.density
+=======================================
+
+.. currentmodule:: fuellib.simulate.inverse.mixing
+
+.. autofunction:: density
