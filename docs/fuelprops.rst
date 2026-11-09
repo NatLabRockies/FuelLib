@@ -758,6 +758,46 @@ components\ :footcite:p:`kim_designing_2023`, so the mixture :math:`DCN` should 
 The graph neural network models of Kim et al. for predicting cetane numbers are available at
 `BioE-KimLab/CNpred <https://github.com/BioE-KimLab/CNpred>`_.
 
+Mixture aromatics content
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_aromatics_content
+   :noindex:
+
+The aromatics content is the total liquid volume percent of aromatic compounds in the mixture,
+
+.. math::
+   \phi_{\textit{aro}} = 100 \sum_{i \in \mathcal{A}} \phi_i, \qquad
+   \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
+
+where :math:`\mathcal{A}` is the set of compounds whose
+:attr:`~fuellib.fuel.Fuel.hc_type` is ``"aromatic"`` (any compound containing an aromatic
+ring, including cycloaromatics and diaromatics), and :math:`\rho_i` is the component liquid
+density evaluated at standard temperature (``constants.T_stp``). The result is in vol%,
+directly comparable with aromatics specifications (e.g., ASTM D1319).
+
+Mixture naphthalenes content
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: fuellib.fuel.Fuel.mixture_naphthalenes_content
+   :noindex:
+
+The naphthalenes content is the total liquid volume percent of naphthalene and alkylated
+naphthalenes in the mixture,
+
+.. math::
+   \phi_{\textit{naph}} = 100 \sum_{i \in \mathcal{N}} \phi_i, \qquad
+   \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
+
+where :math:`\mathcal{N}` is the set of compounds flagged by
+:func:`~fuellib.rdk.mol.has_naphthalene`, and :math:`\rho_i` is the component liquid
+density evaluated at standard temperature (``constants.T_stp``). A compound is flagged
+when its RDKit molecule contains the
+naphthalene core (two fused aromatic six-membered rings) and its fused ring system
+contains exactly two rings. Larger fused systems (e.g., anthracene) and partially
+saturated systems (e.g., tetralin) are not counted. Naphthalenes are a subset of the
+aromatics, so :math:`\phi_{\textit{naph}} \le \phi_{\textit{aro}}`. The result is in vol%.
+
 Reference Compounds for Jet Fuels
 ---------------------------------
 

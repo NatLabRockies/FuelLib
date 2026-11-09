@@ -8,6 +8,19 @@ release workflow to parse release entries in this file.
 ## [Unreleased]
 
 ### Added
+- `helpers.mass_fractions_to_volume_fractions` and `Fuel.Y2V`, converting mass fractions to volume fractions using the component liquid densities at a given temperature.
+- `mixture.aromatics_content` and `Fuel.mixture_aromatics_content`, returning the aromatics content of the mixture in volume percent evaluated at standard temperature.
+- `mixture.naphthalenes_content` and `Fuel.mixture_naphthalenes_content`, returning the naphthalene and alkylated naphthalene content of the mixture in volume percent evaluated at standard temperature.
+- `rdk.mol.has_naphthalene` to identify naphthalene and alkylated naphthalenes (two fused aromatic six-membered rings).
+- Tests for `Fuel.Y2V`, `Fuel.mixture_aromatics_content`, and `Fuel.mixture_naphthalenes_content`.
+- `fuelprops.rst` documents the mixture aromatics and naphthalenes content.
+
+### Changed
+- Minimum `ty` development dependency raised to `>=0.0.100`, and `# ty: ignore[unresolved-attribute]` comments in `rdk/mol.py` renamed to `missing-attribute` following the rule rename in ty 0.0.100.
+
+## [3.1.2] - 2026-11-09
+
+### Added
 - `mixture.smoke_point` and `Fuel.mixture_smoke_point`, estimating the smoke point from the mixture yield sooting index and the stoichiometric air requirement. The `correlation` option selects fitted NJFCP coefficients (default) or the McEnally correlation.
 - `Fuel.metadata` attribute containing additional fuel information parsed from `fuel_metadata.yaml`, if available.
 - Three new single-component fuels for testing purposes. Bundled properties primarily include dynamic viscosity.

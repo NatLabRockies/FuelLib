@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
+from ..rdk import mol
 from ..utils import Units, constants, types
 from . import components, helpers
 
@@ -828,3 +829,50 @@ def derived_cetane_number(
     tot_vol = np.sum(Yi / rho_i)
     vol_frac = (Yi / rho_i) / tot_vol
     return Units.Quantity(np.sum(vol_frac * dcn_i.magnitude), "")
+
+
+def aromatics_content(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+) -> types.Quantity0D:
+    """Calculate the aromatics content of the fuel mixture.
+
+    Sums the liquid volume fractions (evaluated at standard temperature) of all
+    components classified as aromatic by `fuel.hc_type`.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        Aromatics content of the mixture in volume percent.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
+    is_aromatic = np.array(fuel.hc_type) == "aromatic"
+    return Units.Quantity(np.sum(Vi.magnitude[is_aromatic]), "").to("percent")
+
+
+def naphthalenes_content(
+    fuel: "Fuel",
+    Yi: types.Quantity1D | None = None,
+) -> types.Quantity0D:
+    """Calculate the naphthalenes content of the fuel mixture.
+
+    Sums the liquid volume fractions (evaluated at standard temperature) of all
+    components identified as naphthalene or alkylated naphthalenes by
+    `fuellib.rdk.mol.has_naphthalene`.
+
+    Args:
+        fuel: Fuel object.
+        Yi: Mass fractions of each compound in the mixture.
+            Defaults to `fuel.Y_0` (initial mass fractions).
+
+    Returns:
+        Naphthalenes content of the mixture in volume percent.
+    """
+    Yi = Yi if Yi is not None else fuel.Y_0
+    Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
+    is_naphthalene = np.array([mol.has_naphthalene(m) for m in fuel.rdkit_mols])
+    return Units.Quantity(np.sum(Vi.magnitude[is_naphthalene]), "").to("percent")
