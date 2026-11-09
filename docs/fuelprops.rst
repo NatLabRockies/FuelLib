@@ -790,9 +790,9 @@ naphthalenes in the mixture,
    \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
 
 where :math:`\mathcal{N}` is the set of compounds flagged by
-:attr:`~fuellib.fuel.Fuel.is_naphthalene`, and :math:`\rho_i` is the component liquid
+:func:`~fuellib.rdk.mol.has_naphthalene`, and :math:`\rho_i` is the component liquid
 density evaluated at standard temperature (``constants.T_stp``). A compound is flagged
-by :func:`~fuellib.rdk.mol.has_naphthalene` when its RDKit molecule contains the
+when its RDKit molecule contains the
 naphthalene core (two fused aromatic six-membered rings) and its fused ring system
 contains exactly two rings. Larger fused systems (e.g., anthracene) and partially
 saturated systems (e.g., tetralin) are not counted. Naphthalenes are a subset of the

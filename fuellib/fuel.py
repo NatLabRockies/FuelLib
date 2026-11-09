@@ -486,15 +486,6 @@ class Fuel:
                 hc_types.append("n-alkane")
         return hc_types
 
-    @cached_property
-    def is_naphthalene(self) -> np.ndarray:
-        """Whether each compound in the fuel mixture is a naphthalene.
-
-        Naphthalene and its alkylated derivatives are flagged (see
-        `fuellib.rdk.mol.has_naphthalene`).
-        """
-        return np.array([mol.has_naphthalene(m) for m in self.rdkit_mols], dtype=bool)
-
     @property
     def fam(self) -> types.Array1D:
         """Hydrocarbon family codes for thermal conductivity.

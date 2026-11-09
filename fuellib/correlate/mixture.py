@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
+from ..rdk import mol
 from ..utils import Units, constants, types
 from . import components, helpers
 
@@ -861,7 +862,7 @@ def naphthalenes_content(
 
     Sums the liquid volume fractions (evaluated at standard temperature) of all
     components identified as naphthalene or alkylated naphthalenes by
-    `fuel.is_naphthalene`.
+    `fuellib.rdk.mol.has_naphthalene`.
 
     Args:
         fuel: Fuel object.
@@ -873,4 +874,5 @@ def naphthalenes_content(
     """
     Yi = Yi if Yi is not None else fuel.Y_0
     Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
-    return Units.Quantity(np.sum(Vi.magnitude[fuel.is_naphthalene]), "").to("percent")
+    is_naphthalene = np.array([mol.has_naphthalene(m) for m in fuel.rdkit_mols])
+    return Units.Quantity(np.sum(Vi.magnitude[is_naphthalene]), "").to("percent")
