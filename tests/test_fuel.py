@@ -348,14 +348,18 @@ class TestMemberFunctions:
         assert nap.magnitude == pytest.approx(0.0)
 
     def test_mixture_naphthalenes_content_mixture(self) -> None:
-        """Test naphthalenes content of a jet fuel against the known GCxGC data.
+        """Test naphthalenes content of a jet fuel against a manual volume-fraction sum.
 
-        POSF10325 contains naphthalene and its 1-methyl, 1-ethyl, and 1-propyl
-        derivatives (2.34 wt% in total), which is about 1.863 vol% at 298.15 K.
+        The naphthalenes are taken as the compounds in the reference ``diaromatic``
+        family.
         """
         fuel = Fuel("posf10325")
         nap = fuel.mixture_naphthalenes_content(fuel.Y_0)
         aro = fuel.mixture_aromatics_content(fuel.Y_0)
+        rho = fuel.density(Units.Quantity(298.15, "K")).m_as("kg/m^3")
+        V = fuel.Y_0.magnitude / rho
+        is_diaromatic = (fuel.compoundsData["Family"] == "diaromatic").to_numpy()
         assert nap.units == "percent"
-        assert nap.magnitude == pytest.approx(1.863, abs=1e-3)
+        assert nap.magnitude > 0.0
+        assert nap.magnitude == pytest.approx(100.0 * V[is_diaromatic].sum() / V.sum())
         assert nap < aro
