@@ -287,3 +287,74 @@ class TestMemberFunctions:
         Yi = fuel.X2Y(Xi)
         Xi_roundtrip = fuel.Y2X(Yi)
         assert Xi_roundtrip.magnitude == pytest.approx(Xi.magnitude)
+
+    def test_Y2V_single_compound(self) -> None:
+        """Test Y2V for a fuel with a single compound."""
+        fuel = Fuel("decane")
+        Yi = Units.Quantity(np.array([1.0]), "dimensionless")
+        Vi = fuel.Y2V(Yi, Units.Quantity(298.15, "K"))
+        assert Vi.units == "dimensionless"
+        assert Vi.magnitude == pytest.approx([1.0])
+
+    def test_Y2V_multi_compound(self) -> None:
+        """Test Y2V for a fuel with multiple compounds against a manual calculation."""
+        fuel = Fuel("heptane-decane")
+        T = Units.Quantity(298.15, "K")
+        Yi = Units.Quantity(np.array([0.25, 0.75]), "dimensionless")
+        Vi = fuel.Y2V(Yi, T)
+        rho = fuel.density(T).m_as("kg/m^3")
+        V = Yi.magnitude / rho
+        assert Vi.units == "dimensionless"
+        assert Vi.magnitude == pytest.approx(V / V.sum())
+        assert Vi.magnitude.sum() == pytest.approx(1.0)
+
+    def test_Y2V_zero_mass_fractions(self) -> None:
+        """Test Y2V returns zeros when total mass fraction is zero."""
+        fuel = Fuel("heptane-decane")
+        Yi = Units.Quantity(np.array([0.0, 0.0]), "dimensionless")
+        Vi = fuel.Y2V(Yi, Units.Quantity(298.15, "K"))
+        assert Vi.magnitude == pytest.approx([0.0, 0.0])
+
+    @pytest.mark.parametrize(
+        "fuel_name, expected",
+        [("decane", 0.0), ("heptane-decane", 0.0), ("toluene", 100.0)],
+    )
+    def test_mixture_aromatics_content_pure(
+        self, fuel_name: str, expected: float
+    ) -> None:
+        """Test aromatics content for fuels with no or only aromatic compounds."""
+        fuel = Fuel(fuel_name)
+        aro = fuel.mixture_aromatics_content(fuel.Y_0)
+        assert aro.units == "percent"
+        assert aro.magnitude == pytest.approx(expected)
+
+    def test_mixture_aromatics_content_mixture(self) -> None:
+        """Test aromatics content of a jet fuel against a manual volume-fraction sum."""
+        fuel = Fuel("posf10325")
+        aro = fuel.mixture_aromatics_content(fuel.Y_0).m_as("percent")
+        rho = fuel.density(Units.Quantity(298.15, "K")).m_as("kg/m^3")
+        V = fuel.Y_0.magnitude / rho
+        is_aromatic = np.array(fuel.hc_type) == "aromatic"
+        expected = 100.0 * V[is_aromatic].sum() / V.sum()
+        assert 0.0 < aro < 100.0
+        assert aro == pytest.approx(expected)
+
+    @pytest.mark.parametrize("fuel_name", ["decane", "heptane-decane", "toluene"])
+    def test_mixture_naphthalenes_content_none(self, fuel_name: str) -> None:
+        """Test naphthalenes content is zero for fuels without naphthalenes."""
+        fuel = Fuel(fuel_name)
+        nap = fuel.mixture_naphthalenes_content(fuel.Y_0)
+        assert nap.units == "percent"
+        assert nap.magnitude == pytest.approx(0.0)
+
+    def test_mixture_naphthalenes_content_mixture(self) -> None:
+        """Test naphthalenes content of a jet fuel against a manual volume-fraction sum."""
+        fuel = Fuel("posf10325")
+        nap = fuel.mixture_naphthalenes_content(fuel.Y_0).m_as("percent")
+        aro = fuel.mixture_aromatics_content(fuel.Y_0).m_as("percent")
+        rho = fuel.density(Units.Quantity(298.15, "K")).m_as("kg/m^3")
+        V = fuel.Y_0.magnitude / rho
+        expected = 100.0 * V[fuel.is_naphthalene].sum() / V.sum()
+        assert fuel.is_naphthalene.any()
+        assert 0.0 < nap <= aro
+        assert nap == pytest.approx(expected)
