@@ -251,9 +251,6 @@ def count_aromatic_rings(mol: Mol) -> int:
     )
 
 
-_NAPHTHALENE_CORE = Chem.MolFromSmarts("c1ccc2ccccc2c1")
-
-
 def has_naphthalene(mol: Mol) -> bool:
     """Check if `mol` is naphthalene or an alkylated naphthalene.
 
@@ -268,7 +265,8 @@ def has_naphthalene(mol: Mol) -> bool:
     Returns:
         True if the molecule is a naphthalene, False otherwise.
     """
-    return mol.HasSubstructMatch(_NAPHTHALENE_CORE) and has_fused_rings(
+    naphthalene_core = Chem.MolFromSmarts("c1ccc2ccccc2c1")
+    return mol.HasSubstructMatch(naphthalene_core) and has_fused_rings(
         mol, number_of_rings=2
     )
 
