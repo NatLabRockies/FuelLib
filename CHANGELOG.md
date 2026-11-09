@@ -7,6 +7,8 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [3.1.2] - 2026-11-09
+
 ### Added
 - `mixture.smoke_point` and `Fuel.mixture_smoke_point`, estimating the smoke point from the mixture yield sooting index and the stoichiometric air requirement. The `correlation` option selects fitted NJFCP coefficients (default) or the McEnally correlation.
 - `Fuel.metadata` attribute containing additional fuel information parsed from `fuel_metadata.yaml`, if available.
