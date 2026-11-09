@@ -486,6 +486,15 @@ class Fuel:
                 hc_types.append("n-alkane")
         return hc_types
 
+    @cached_property
+    def is_naphthalene(self) -> np.ndarray:
+        """Whether each compound in the fuel mixture is a naphthalene.
+
+        Naphthalene and its alkylated derivatives are flagged (see
+        `fuellib.rdk.mol.has_naphthalene`).
+        """
+        return np.array([mol.has_naphthalene(m) for m in self.rdkit_mols], dtype=bool)
+
     @property
     def fam(self) -> types.Array1D:
         """Hydrocarbon family codes for thermal conductivity.
@@ -577,6 +586,18 @@ class Fuel:
             Mole fractions of the compounds (shape: num_compounds,).
         """
         return correlate.helpers.mass_fractions_to_mole_fractions(self, Yi)
+
+    def Y2V(self, Yi: types.Quantity1D, T: types.Quantity0D) -> types.Quantity1D:
+        """Convert mass fractions (Yi) to volume fractions (Vi).
+
+        Args:
+            Yi: Mass fractions of each compound.
+            T: Temperature at which to evaluate the mixture density.
+
+        Returns:
+            Volume fractions of the compounds (shape: num_compounds,).
+        """
+        return correlate.helpers.mass_fractions_to_volume_fractions(self, Yi, T)
 
     def density(
         self, T: types.Quantity0D, comp_idx: int | None = None
@@ -1135,6 +1156,34 @@ class Fuel:
             Mixture derived cetane number.
         """
         return correlate.mixture.derived_cetane_number(self, Yi, T_ref=T_ref)
+
+    def mixture_aromatics_content(
+        self,
+        Yi: types.Quantity1D,
+    ) -> types.Quantity0D:
+        """Calculate aromatics content of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+
+        Returns:
+            Mixture aromatics content in volume percent.
+        """
+        return correlate.mixture.aromatics_content(self, Yi)
+
+    def mixture_naphthalenes_content(
+        self,
+        Yi: types.Quantity1D,
+    ) -> types.Quantity0D:
+        """Calculate naphthalenes content of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound in the mixture.
+
+        Returns:
+            Mixture naphthalenes content in volume percent.
+        """
+        return correlate.mixture.naphthalenes_content(self, Yi)
 
 
 __all__ = ["Fuel"]
