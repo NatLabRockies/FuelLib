@@ -7,6 +7,14 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Added
+- `helpers.mass_fractions_to_volume_fractions` and `Fuel.Y2V`, converting mass fractions to volume fractions using the component liquid densities at a given temperature.
+- `mixture.aromatics_content` and `Fuel.mixture_aromatics_content`, returning the aromatics content of the mixture in volume percent evaluated at standard temperature.
+- `mixture.naphthalenes_content` and `Fuel.mixture_naphthalenes_content`, returning the naphthalene and alkylated naphthalene content of the mixture in volume percent evaluated at standard temperature.
+- `rdk.mol.has_naphthalene` to identify naphthalene and alkylated naphthalenes (two fused aromatic six-membered rings).
+- Tests for `Fuel.Y2V`, `Fuel.mixture_aromatics_content`, and `Fuel.mixture_naphthalenes_content`.
+- `fuelprops.rst` documents the mixture aromatics and naphthalenes content.
+
 ## [3.1.2] - 2026-11-09
 
 ### Added
