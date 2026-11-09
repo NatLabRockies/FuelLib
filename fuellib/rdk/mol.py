@@ -9,7 +9,7 @@ from scipy.sparse.csgraph import connected_components
 
 from ..utils import types
 
-RDLogger.DisableLog("rdApp.warning")  # Disable non-critical RDKit warnings  # ty: ignore[unresolved-attribute]
+RDLogger.DisableLog("rdApp.warning")  # Disable non-critical RDKit warnings  # ty: ignore[missing-attribute]
 
 
 # Instantiation functions
@@ -287,8 +287,8 @@ def molecular_weight(mol: Mol, *, exact: bool = False) -> float:
         Molecular weight of the molecule in atomic mass units (amu).
     """
     if exact:
-        return Descriptors.ExactMolWt(mol)  # ty: ignore[unresolved-attribute]
-    return Descriptors.MolWt(mol)  # ty: ignore[unresolved-attribute]
+        return Descriptors.ExactMolWt(mol)  # ty: ignore[missing-attribute]
+    return Descriptors.MolWt(mol)  # ty: ignore[missing-attribute]
 
 
 __all__ = [

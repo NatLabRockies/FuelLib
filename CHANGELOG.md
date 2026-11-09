@@ -15,6 +15,9 @@ release workflow to parse release entries in this file.
 - Tests for `Fuel.Y2V`, `Fuel.mixture_aromatics_content`, and `Fuel.mixture_naphthalenes_content`.
 - `fuelprops.rst` documents the mixture aromatics and naphthalenes content.
 
+### Changed
+- Minimum `ty` development dependency raised to `>=0.0.100`, and `# ty: ignore[unresolved-attribute]` comments in `rdk/mol.py` renamed to `missing-attribute` following the rule rename in ty 0.0.100.
+
 ## [3.1.2] - 2026-11-09
 
 ### Added
