@@ -9,7 +9,7 @@ from scipy.sparse.csgraph import connected_components
 
 from ..utils import types
 
-RDLogger.DisableLog("rdApp.warning")  # Disable non-critical RDKit warnings  # ty: ignore[unresolved-attribute]
+RDLogger.DisableLog("rdApp.warning")  # Disable non-critical RDKit warnings  # ty: ignore[missing-attribute]
 
 
 # Instantiation functions
@@ -251,6 +251,26 @@ def count_aromatic_rings(mol: Mol) -> int:
     )
 
 
+def has_naphthalene(mol: Mol) -> bool:
+    """Check if `mol` is naphthalene or an alkylated naphthalene.
+
+    The molecule must contain the naphthalene core (two fused aromatic six-membered
+    rings) and its fused ring system must contain exactly two rings. Larger fused
+    systems (e.g., anthracene) and partially saturated systems (e.g., tetralin) are
+    not counted.
+
+    Args:
+        mol: RDKit Mol object.
+
+    Returns:
+        True if the molecule is a naphthalene, False otherwise.
+    """
+    naphthalene_core = Chem.MolFromSmarts("c1ccc2ccccc2c1")
+    return mol.HasSubstructMatch(naphthalene_core) and has_fused_rings(
+        mol, number_of_rings=2
+    )
+
+
 # Molecular property calculations
 def molecular_weight(mol: Mol, *, exact: bool = False) -> float:
     """Calculate the molecular weight of `mol`.
@@ -267,8 +287,8 @@ def molecular_weight(mol: Mol, *, exact: bool = False) -> float:
         Molecular weight of the molecule in atomic mass units (amu).
     """
     if exact:
-        return Descriptors.ExactMolWt(mol)  # ty: ignore[unresolved-attribute]
-    return Descriptors.MolWt(mol)  # ty: ignore[unresolved-attribute]
+        return Descriptors.ExactMolWt(mol)  # ty: ignore[missing-attribute]
+    return Descriptors.MolWt(mol)  # ty: ignore[missing-attribute]
 
 
 __all__ = [
@@ -278,6 +298,7 @@ __all__ = [
     "has_aromatic",
     "has_branch",
     "has_double_bond",
+    "has_naphthalene",
     "has_ring",
     "inchi",
     "molecular_weight",
