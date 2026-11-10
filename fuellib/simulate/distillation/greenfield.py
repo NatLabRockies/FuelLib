@@ -836,16 +836,15 @@ class Thermo:
         # Tabulate the temperature-dependent properties once and interpolate them
         # with cubic splines
         T_grid = np.arange(200.0, fuel.Tb.to("K").magnitude.max() + 250.0, 1.0)
-        T_col = Units.Quantity(T_grid[:, None], "K")
-        ln_P_sat = np.log(
-            components.saturated_vapor_pressure(fuel, T_col).to("Pa").magnitude
-        )
-        Cp_l = (
-            components
-            .molar_specific_heat_capacity(fuel, T_col)
-            .to("J/(mol*K)")
-            .magnitude
-        )
+        T_quantities = [Units.Quantity(float(T), "K") for T in T_grid]
+        ln_P_sat = np.log([
+            components.saturated_vapor_pressure(fuel, T).to("Pa").magnitude
+            for T in T_quantities
+        ])
+        Cp_l = np.array([
+            components.molar_specific_heat_capacity(fuel, T).to("J/(mol*K)").magnitude
+            for T in T_quantities
+        ])
         # Cap Tr below the singularity of eq. (19) at Tr = 1
         Tr = np.minimum(T_grid[:, None] / Tc, 0.95)
         Cp_v = _eq_19(Cp_l, Tr, omega)
@@ -907,6 +906,42 @@ class Thermo:
             C^0_p,v in J/(mol*K) for each compound.
         """
         return self._Cp_v(T)
+
+    def mixture_dH_vap(self, x: types.Array1D, T: float) -> float:
+        """Mole-fraction-weighted molar enthalpy of vaporization.
+
+        Args:
+            x: Mole fractions.
+            T: Temperature in K.
+
+        Returns:
+            Mixture dH_vap in J/mol.
+        """
+        return float(x @ self.dH_vap(T))
+
+    def mixture_Cp_l(self, x: types.Array1D, T: float) -> float:
+        """Mole-fraction-weighted liquid molar heat capacity.
+
+        Args:
+            x: Mole fractions.
+            T: Temperature in K.
+
+        Returns:
+            Mixture C_p,l in J/(mol*K).
+        """
+        return float(x @ self.Cp_l(T))
+
+    def mixture_Cp_v(self, x: types.Array1D, T: float) -> float:
+        """Mole-fraction-weighted ideal-gas molar heat capacity.
+
+        Args:
+            x: Mole fractions.
+            T: Temperature in K.
+
+        Returns:
+            Mixture C^0_p,v in J/(mol*K).
+        """
+        return float(x @ self.Cp_v(T))
 
     def ln_gamma(self, x: types.Array1D, T: float) -> types.Array1D:
         """Natural log of the liquid activity coefficients.
@@ -1146,8 +1181,8 @@ def distill(
         # Adaptive step: at most 2% of the flask contents per step
         dt = dt_max if D1_prev == 0.0 else min(dt_max, 0.02 * W / D1_prev)
         Cp1_l = x @ thermo.Cp_l(T1)
-        dH_vap1 = y @ thermo.dH_vap(T1)
-        Cp1_v = y @ thermo.Cp_v(T1)
+        dH_vap1 = thermo.mixture_dH_vap(y, T1)
+        Cp1_v = thermo.mixture_Cp_v(y, T1)
         # Largest vapor rate the heater can supply
         D1_max = Q1 / dH_vap1
         # Lowest stage-2 temperature: the bubble point of the flask vapor, reached
@@ -1163,10 +1198,10 @@ def distill(
             xW_new = _eq_2(xW, y, R2, y, D1, dt)
             T1_new, y_new = thermo.bubble_point(xW_new / xW_new.sum(), T1)
         else:
-            Cp2_l = y @ thermo.Cp_l(T2_min)
+            Cp2_l = thermo.mixture_Cp_l(y, T2_min)
             # Vapor rate that stage 2 condenses completely at T2_min (eq. (8))
             D1_total = _eq_8(
-                Cp1_v, T1, T2_min, y @ thermo.dH_vap(T2_min), Q2_at(T2_min), 1.0
+                Cp1_v, T1, T2_min, thermo.mixture_dH_vap(y, T2_min), Q2_at(T2_min), 1.0
             )
             W_Cp1_l_dT1dt = _eq_5(D1_total, Cp2_l, T2_min, T1, D1_total, dH_vap1, Q1)
             if W_Cp1_l_dT1dt <= 0.0:
@@ -1193,11 +1228,16 @@ def distill(
                     """
                     R2_over_D1, u, v = thermo.flash(y, T2)
                     D1 = _eq_8(
-                        Cp1_v, T1, T2, u @ thermo.dH_vap(T2), Q2_at(T2), R2_over_D1
+                        Cp1_v,
+                        T1,
+                        T2,
+                        thermo.mixture_dH_vap(u, T2),
+                        Q2_at(T2),
+                        R2_over_D1,
                     )
                     R2 = R2_over_D1 * D1
                     W_Cp1_l_dT1dt = _eq_5(
-                        R2, u @ thermo.Cp_l(T2), T2, T1, D1, dH_vap1, Q1
+                        R2, thermo.mixture_Cp_l(u, T2), T2, T1, D1, dH_vap1, Q1
                     )
                     if D1 > D1_max:
                         # More vapor than the heater can supply
@@ -1243,7 +1283,7 @@ def distill(
         record(t, (collected @ v_L) / V0, T3, T1, T2, xW / xW.sum())
 
         # Keep the collection rate within the mandated band
-        rate = D2 * (v @ v_L)
+        rate = float(D2 * (v @ v_L))
         Q1 = _adjust_heating_rate(Q1, rate, rate_min, rate_max, dt)
 
     t_arr, vol, T_vap, T_l, T_c, Q, X = (np.array(a) for a in zip(*records))
