@@ -1,14 +1,14 @@
 # FuelLib
-![GitHub Release](https://img.shields.io/github/v/release/NatLabRockies/FuelLib?logo=github)
-![PyPI - Version](https://img.shields.io/pypi/v/fuellib?logo=pypi)
+[![GitHub Release](https://img.shields.io/github/v/release/NatLabRockies/FuelLib?logo=github)](https://github.com/NatLabRockies/FuelLib/releases)
+[![PyPI - Version](https://img.shields.io/pypi/v/fuellib?logo=pypi)](https://pypi.org/project/fuellib/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fuellib?logo=pypi)
 
 
 ![CI](https://github.com/NatLabRockies/FuelLib/workflows/FuelLib-CI/badge.svg)
-![Documentation](https://github.com/NatLabRockies/FuelLib/workflows/FuelLib-Docs/badge.svg)
+[![Documentation](https://github.com/NatLabRockies/FuelLib/workflows/FuelLib-Docs/badge.svg)](https://natlabrockies.github.io/FuelLib/)
 
 [![DOI Badge](https://img.shields.io/badge/DOI-10.11578/dc.20250317.1-blue)](https://doi.org/10.11578/dc.20250317.1)
-![GitHub License](https://img.shields.io/github/license/NatLabRockies/FuelLib)
+[![GitHub License](https://img.shields.io/github/license/NatLabRockies/FuelLib)](https://github.com/NatLabRockies/FuelLib/blob/main/LICENSE)
 
 
 # Overview
