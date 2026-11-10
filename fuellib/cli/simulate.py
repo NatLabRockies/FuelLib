@@ -49,7 +49,9 @@ def _d86_greenfield(fuels: list[Fuel]) -> Figure:
     """
     ax = None
     for fuel in fuels:
-        ax = greenfield.distill(fuel).plot(ax=ax, label=fuel.name, data=_d86_data(fuel))
+        ax = greenfield.distill(fuel).plot(
+            ax=ax, label=fuel.name, temperature_units="celsius", data=_d86_data(fuel)
+        )
     return plt.gcf()
 
 
