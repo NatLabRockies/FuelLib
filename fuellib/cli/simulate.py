@@ -8,51 +8,21 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 from fuellib.fuel import Fuel
-from fuellib.simulate.distillation import greenfield
-from fuellib.utils import Units, types
-
-
-def _d86_data(fuel: Fuel) -> tuple[types.Quantity1D, types.Quantity1D] | None:
-    """Measured D86 curve of a fuel from its properties data.
-
-    Distillation rows store the D86 temperature in ``Temp`` and the recovered volume
-    in ``Property_Value``.
-
-    Args:
-        fuel: Fuel object.
-
-    Returns:
-        Recovered volume fractions and D86 temperatures, or None if the fuel has no
-        distillation data.
-    """
-    if fuel.propData is None:
-        return None
-    df = fuel.propData[fuel.propData["Property"] == "Distillation"]
-    if df.empty:
-        return None
-    # pint does not define "percentage"
-    vol_units = df["Property_Units"].iloc[0].replace("percentage", "percent")
-    vol = Units.Quantity(df["Property_Value"].to_numpy(float), vol_units)
-    T = Units.Quantity(df["Temp"].to_numpy(float), df["Temp_Units"].iloc[0])
-    return vol, T
+from fuellib.utils import plotting
 
 
 def _d86_greenfield(fuels: list[Fuel]) -> Figure:
     """Simulate the ASTM D86 distillation curve with the Greenfield et al. model.
 
     Args:
-        fuels: Fuel objects, overlaid on the same axes and labeled by name, with
-            their measured D86 curves if available.
+        fuels: Fuel objects, overlaid on the same axes with the colors, symbols
+            and legend labels of ``fl-plt-props``, with their measured D86 curves
+            if available.
 
     Returns:
         Figure with the D86 curves.
     """
-    ax = None
-    for fuel in fuels:
-        ax = greenfield.distill(fuel).plot(
-            ax=ax, label=fuel.name, temperature_units="celsius", data=_d86_data(fuel)
-        )
-    return plt.gcf()
+    return plotting.plot_distillation(fuels)
 
 
 SIMULATIONS: dict[str, Callable[[list[Fuel]], Figure]] = {

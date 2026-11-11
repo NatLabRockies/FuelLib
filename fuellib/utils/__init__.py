@@ -1,6 +1,6 @@
 """Type aliases and unit handling for FuelLib."""
 
-from . import constants, types, utility
+from . import color_maps, constants, plotting, types, utility
 from .types import Units
 
-__all__ = ["Units", "constants", "types", "utility"]
+__all__ = ["Units", "color_maps", "constants", "plotting", "types", "utility"]

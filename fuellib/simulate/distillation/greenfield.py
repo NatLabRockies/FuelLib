@@ -8,16 +8,14 @@ the paper's notation. The model is documented in ``docs/distillation.rst``.
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, overload
 
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import MultipleLocator
 from scipy.interpolate import CubicSpline
 from scipy.optimize import brentq
 
 from ... import constants
 from ...correlate import components, helpers
 from ...gcm import unifac
-from ...utils import Units, types
+from ...utils import Units, plotting, types
 from ...utils.types import quantity_field
 
 if TYPE_CHECKING:
@@ -39,23 +37,6 @@ CP_AIR = 0.79 * N2_COEFFS + 0.21 * O2_COEFFS
 """Coefficients of air (79 mol% N2, 21 mol% O2), Greenfield et al. (1998) eq. (18)."""
 HEATING_TIME_CONSTANT = 30.0
 """Time constant in s for adjusting the heating rate."""
-
-_PLOT_COLORS = (
-    "#2980B9",
-    "#e74c3c",
-    "#27ae60",
-    "#8e44ad",
-    "#f39c12",
-    "#1abc9c",
-    "#c0392b",
-    "#16a085",
-    "#d35400",
-)
-"""Line colors of successive D86 curves on the same axes."""
-_PLOT_MARKERS = ("o", "s", "D", "^", "v", "p")
-"""Symbols of the measured data of successive D86 curves on the same axes."""
-_PLOT_T_STEP = 50.0
-"""Spacing of the major temperature ticks and rounding of the temperature limits."""
 
 
 @dataclass(frozen=True)
@@ -131,12 +112,16 @@ class D86Result:
         label: str | None = None,
         temperature_units: str = "K",
         data: tuple[types.Quantity1D, types.Quantity1D] | None = None,
+        color: str | None = None,
+        marker: str | None = None,
+        data_label: str | None = None,
     ) -> "Axes":
         """Plot the D86 curve (D86 temperature vs. volume percent recovered).
 
         Only the distillation period (recovered volume > 0) is plotted. Pass the
         returned axes to further calls to overlay several curves; each new curve
-        takes the next color and the temperature limits cover all curves.
+        takes the next color of ``fl_blue_4`` and the temperature limits cover all
+        curves. See :func:`fuellib.utils.plotting.plot_d86`.
 
         Args:
             ax: Axes to plot on.
@@ -147,67 +132,28 @@ class D86Result:
             temperature_units: Units of the temperature axis (e.g. ``"degC"``).
                 Defaults to ``"K"``.
             data: Measured recovered volume fractions and D86 temperatures, plotted
-                as symbols in the color of the curve and labeled
-                ``"Data: {label}"``.
+                as symbols in the color of the curve.
                 Defaults to None.
+            color: Color of the curve and the data symbols.
+                Defaults to the next color of ``fl_blue_4``.
+            marker: Marker style of the measured data.
+                Defaults to the next style of the cycle.
+            data_label: Legend entry of the measured data.
+                Defaults to ``"Data: {label}"``.
 
         Returns:
             Axes containing the plot.
         """
-        if ax is None:
-            _, ax = plt.subplots(figsize=(7.5, 5.5), constrained_layout=True)
-        vol = 100.0 * self.volume_recovered.to("dimensionless").magnitude
-        T = self.T_vapor.to(temperature_units).magnitude
-        recovering = vol > 0.0
-        # Data are scatter collections, so the number of lines counts the curves
-        n_curves = len(ax.lines)
-        color = _PLOT_COLORS[n_curves % len(_PLOT_COLORS)]
-        ax.plot(
-            vol[recovering],
-            T[recovering],
-            color=color,
-            linestyle="-",
-            linewidth=4.0,
+        return plotting.plot_d86(
+            self,
+            ax,
             label=label,
+            temperature_units=temperature_units,
+            data=data,
+            color=color,
+            marker=marker,
+            data_label=data_label,
         )
-        if data is not None:
-            vol_data, T_data = data
-            ax.scatter(
-                100.0 * vol_data.to("dimensionless").magnitude,
-                T_data.to(temperature_units).magnitude,
-                facecolors=color,
-                marker=_PLOT_MARKERS[n_curves % len(_PLOT_MARKERS)],
-                s=75.0,
-                zorder=5,
-                clip_on=False,  # Show the symbols at 0% and 100% in full
-                label=f"Data: {label}" if label is not None else None,
-            )
-
-        # Labels
-        ax.set_xlabel("Volume recovered [%]", fontsize=18)
-        ax.set_ylabel(f"Temperature [{Units.Unit(temperature_units):~P}]", fontsize=18)
-
-        # Limits: full recovery range, temperatures rounded to the major tick step
-        ax.set_xlim(0.0, 100.0)
-        T_lo, T_hi = ax.dataLim.intervaly
-        ax.set_ylim(
-            _PLOT_T_STEP * np.floor(T_lo / _PLOT_T_STEP),
-            _PLOT_T_STEP * (np.floor(T_hi / _PLOT_T_STEP) + 1.0),
-        )
-
-        # Ticks
-        ax.xaxis.set_major_locator(MultipleLocator(20.0))
-        ax.yaxis.set_major_locator(MultipleLocator(_PLOT_T_STEP))
-        ax.tick_params(labelsize=18)
-
-        # Grid and legend
-        ax.grid(alpha=0.3)
-        _, labels = ax.get_legend_handles_labels()
-        if labels:
-            ax.legend(
-                loc="upper center", bbox_to_anchor=(0.5, -0.15), fontsize=18, ncol=2
-            )
-        return ax
 
 
 # ---------------------------------------------------------------------------------
