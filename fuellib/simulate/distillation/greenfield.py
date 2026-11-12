@@ -477,7 +477,7 @@ def _eq_24(Vc: types.Array1D) -> types.Array2D:
     Returns:
         Vc_ij in m^3/mol.
     """
-    return ((Vc[:, None] ** (1 / 3) + Vc[None, :] ** (1 / 3)) / 2.0) ** 3
+    return 0.125 * ((Vc[:, None] ** (1 / 3) + Vc[None, :] ** (1 / 3)) / 2.0) ** 3
 
 
 def _eq_25(Zc: types.Array1D) -> types.Array2D:
