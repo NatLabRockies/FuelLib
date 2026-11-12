@@ -17,28 +17,9 @@ paper.
 Usage
 -----
 
-.. code-block:: python
-
-   import numpy as np
-   import fuellib as fl
-   from fuellib.simulate.distillation.greenfield import D86Apparatus, distill
-
-   fuel = fl.Fuel("heptane-decane")
-   result = distill(fuel)
-
-   # D86 temperature (K) at 10%, 50%, and 90% recovered
-   T10, T50, T90 = result.temperature_at(np.array([0.1, 0.5, 0.9])).magnitude
-
-   # Variants of the model
-   partial = distill(fuel, air_cstr=False)  # no air-filled CSTR
-   ideal = distill(fuel, ideal_solution=True, ideal_vapor=True)
-
-   # Different apparatus parameters
-   result = distill(fuel, apparatus=D86Apparatus(air_volume=fl.Units.Quantity(100.0, "cm^3")))
-
-   # Plot and compare D86 curves (volume % recovered vs. D86 temperature)
-   ax = result.plot(label="Full model", temperature_units="degC")
-   ideal.plot(ax=ax, label="Ideal", temperature_units="degC")
+See the :doc:`Simulating Distillation tutorial <tutorials-distillation>` for how to
+run the simulation, change the model variants and apparatus parameters, and plot and
+compare D86 curves.
 
 Model
 -----

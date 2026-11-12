@@ -113,8 +113,10 @@ class D86Result:
         temperature_units: str = "K",
         data: tuple[types.Quantity1D, types.Quantity1D] | None = None,
         color: str | None = None,
+        linestyle: str = "-",
         marker: str | None = None,
         data_label: str | None = None,
+        default_ymin: bool = True,
     ) -> "Axes":
         """Plot the D86 curve (D86 temperature vs. volume percent recovered).
 
@@ -136,10 +138,15 @@ class D86Result:
                 Defaults to None.
             color: Color of the curve and the data symbols.
                 Defaults to the next color of ``fl_blue_4``.
+            linestyle: Line style of the curve (e.g. ``"--"``).
+                Defaults to ``"-"``.
             marker: Marker style of the measured data.
                 Defaults to the next style of the cycle.
             data_label: Legend entry of the measured data.
                 Defaults to ``"Data: {label}"``.
+            default_ymin: Whether the lower temperature limit defaults to the
+                standard temperature. If False, it is the tick below the data.
+                Defaults to True.
 
         Returns:
             Axes containing the plot.
@@ -151,8 +158,10 @@ class D86Result:
             temperature_units=temperature_units,
             data=data,
             color=color,
+            linestyle=linestyle,
             marker=marker,
             data_label=data_label,
+            default_ymin=default_ymin,
         )
 
 

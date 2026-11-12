@@ -114,15 +114,15 @@ For example, we can display the fuel name, the components in the fuel, the initi
     # Display fuel name, components, initial composition, and critical temperature
     print(f"Fuel name: {fuel.name}")
     print(f"Fuel components: {fuel.compounds}")
-    print(f"Initial composition: {fuel.Y_0}")
-    print(f"Critical temperature: {fuel.Tc}")
+    print(f"Initial composition: {fuel.Y_0:~P.4f}")
+    print(f"Critical temperature: {fuel.Tc:~P.2f}") # ~P for "pretty" pint unit formatting
 
 .. code-block:: none
 
     >> Fuel name: heptane-decane
     >> Fuel components: ['n-heptane', 'n-decane']
     >> Initial composition: [0.7375 0.2625]
-    >> Critical temperature: [549.8559805147336 623.6905158181833] kelvin
+    >> Critical temperature: [549.86 623.69] K
 
 Note that the units for critical temperature are included as `fuel.Tc` returns a `pint.Quantity[np.ndarray]`. Next, we can calculate any of the component- or mixture-level properties using the 
 ``fuel`` object. For example, we can calculate the saturated vapor pressure
@@ -133,14 +133,14 @@ for each component and the mixture at a given temperature:
     # Calculate the saturated vapor pressure at 320 K
     T = fl.Units.Quantity(320, "K") # Temperature as a pint.Quantity
     p_sat_i = fuel.psat(T)
-    p_sat_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
-    print(f"Saturated vapor pressure at {T} K: {p_sat_i}")
-    print(f"Mixture saturated vapor pressure at {T} K: {p_sat_mix}")
+    p_vap_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
+    print(f"Saturated vapor pressure at {T:~P}: {p_sat_i:~P.2f}")
+    print(f"Mixture vapor pressure at {T:~P}: {p_vap_mix:~P.2f}")
 
 .. code-block:: none
 
-    >> Saturated vapor pressure at 320 K: [13735.84605413   673.28876023] pascal
-    >> Mixture saturated vapor pressure at 320 K: 11117.84926875165 pascal
+    >> Saturated vapor pressure at 320 K: [13735.85 673.29] Pa
+    >> Mixture saturated vapor pressure at 320 K: 11117.77 Pa
 
 The following links provide more information on the :ref:`eq-GCM-correlations` and
 the :ref:`eq-mixture-properties` that can be calculated using the ``groupContribution`` object.

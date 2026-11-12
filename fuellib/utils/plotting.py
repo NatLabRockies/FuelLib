@@ -622,8 +622,10 @@ def plot_d86(
     temperature_units: str = "K",
     data: tuple[types.Quantity1D, types.Quantity1D] | None = None,
     color: str | None = None,
+    linestyle: str = "-",
     marker: str | None = None,
     data_label: str | None = None,
+    default_ymin: bool = True,
 ) -> "Axes":
     """Plot a simulated D86 curve (D86 temperature vs. volume percent recovered).
 
@@ -631,7 +633,7 @@ def plot_d86(
     axes to further calls to overlay several curves; each new curve takes the next
     color of ``fl_blue_4`` and the temperature limits cover all curves. The
     temperature axis starts at the standard temperature, or at the tick below the
-    data if they are colder.
+    data if they are colder (or always, if ``default_ymin`` is False).
 
     Args:
         result: Simulated D86 curve.
@@ -647,10 +649,15 @@ def plot_d86(
             Defaults to None.
         color: Color of the curve and the data symbols.
             Defaults to the next color of ``fl_blue_4``.
+        linestyle: Line style of the curve (e.g. ``"--"``).
+            Defaults to ``"-"``.
         marker: Marker style of the measured data.
             Defaults to the next style of the cycle.
         data_label: Legend entry of the measured data.
             Defaults to ``"Data: {label}"``.
+        default_ymin: Whether the lower temperature limit defaults to the standard
+            temperature. If False, it is the tick below the data.
+            Defaults to True.
 
     Returns:
         Axes containing the plot.
@@ -672,7 +679,7 @@ def plot_d86(
         vol[recovering],
         T[recovering],
         color=color,
-        linestyle="-",
+        linestyle=linestyle,
         linewidth=4.0,
         label=label,
     )
@@ -698,7 +705,7 @@ def plot_d86(
     ax.set_xlim(0.0, 100.0)
     T_lo, T_hi = ax.dataLim.intervaly
     T_min = float(_D86_T_MIN.to(temperature_units).magnitude)
-    if T_lo < T_min:
+    if T_lo < T_min or not default_ymin:
         T_min = _D86_T_STEP * np.floor(T_lo / _D86_T_STEP)
     ax.set_ylim(
         T_min,
@@ -728,7 +735,7 @@ def plot_d86(
     return ax
 
 
-def _d86_data(fuel: "fl.Fuel") -> tuple[types.Quantity1D, types.Quantity1D] | None:
+def d86_data(fuel: "fl.Fuel") -> tuple[types.Quantity1D, types.Quantity1D] | None:
     """Get the measured D86 curve of a fuel from its properties data.
 
     Distillation rows store the D86 temperature in ``Temp`` and the recovered volume
@@ -760,6 +767,7 @@ def plot_distillation(
     leg: Sequence[str] | None = None,
     temperature_units: str = "celsius",
     cmap: str | Colormap = FL_BLUE_4,
+    air_cstr: bool = True,
 ) -> "Figure":
     """Simulate and plot the ASTM D86 distillation curves of fuels.
 
@@ -781,6 +789,11 @@ def plot_distillation(
         cmap: Colormap or name of a registered colormap for the fuels without a fixed
             color (see :func:`get_line_spec`).
             Defaults to ``FL_BLUE_4``.
+        air_cstr: Whether to include the air-filled CSTR in the simulation (see
+            :func:`~fuellib.simulate.distillation.greenfield.distill`). Without it,
+            the lower temperature limit is the tick below the data, instead of the
+            standard temperature.
+            Defaults to True.
 
     Returns:
         Figure with the D86 curves.
@@ -798,14 +811,15 @@ def plot_distillation(
     for i, (fuel, legend_label) in enumerate(zip(loaded, legend_labels, strict=True)):
         color, marker = get_line_spec(fuel.name, i, cmap)
         plot_d86(
-            greenfield.distill(fuel),
+            greenfield.distill(fuel, air_cstr=air_cstr),
             ax,
             label=f"FuelLib: {legend_label}",
             temperature_units=temperature_units,
-            data=_d86_data(fuel),
+            data=d86_data(fuel),
             color=color,
             marker=marker,
             data_label=f"Data: {legend_label}",
+            default_ymin=air_cstr,
         )
 
     if title:

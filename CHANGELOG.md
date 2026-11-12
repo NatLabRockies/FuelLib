@@ -14,8 +14,9 @@ release workflow to parse release entries in this file.
 - `rdk.mol.has_naphthalene` to identify naphthalene and alkylated naphthalenes (two fused aromatic six-membered rings).
 - Tests for `Fuel.Y2V`, `Fuel.mixture_aromatics_content`, and `Fuel.mixture_naphthalenes_content`.
 - `fuelprops.rst` documents the mixture aromatics and naphthalenes content.
-- `fuellib.utils.plotting` (re-exported as `fuellib.plotting`) with `plot_composition`, `plot_mixture_properties`, `plot_d86`, and `plot_distillation`, the plotting functions behind `fl-plt-comp`, `fl-plt-props`, and `fl-simulate`, plus the helpers `get_line_spec` and `format_legend_label`. `plot_distillation` returns the figure without saving or showing it.
+- `fuellib.utils.plotting` (re-exported as `fuellib.plotting`) with `plot_composition`, `plot_mixture_properties`, `plot_d86`, and `plot_distillation`, the plotting functions behind `fl-plt-comp`, `fl-plt-props`, and `fl-simulate`, plus the helpers `get_line_spec`, `format_legend_label`, and `d86_data` (measured D86 curve of a fuel). `plot_distillation` returns the figure without saving or showing it. `plot_distillation` and `fl-simulate` take `air_cstr` / `--no-air-cstr` to exclude the air-filled CSTR (which also drops the default lower temperature limit of the plot), and `D86Result.plot` and `plot_d86` take a `linestyle` and `default_ymin`.
 - `fuellib.utils.color_maps` (re-exported as `fuellib.color_maps`) with the `fl_blue_4` and `fl_pastel_18` colormaps, registered with Matplotlib on import, the fixed `FUEL_COLORS` of specific fuels, and `cycle_color`.
+- Simulating Distillation tutorial (`docs/tutorials-distillation.rst` and `tutorials/distillation.py`), moved from the usage example of `distillation.rst`.
 
 ### Changed
 - The plotting functions moved from `fuellib.cli.plotting` to `fuellib.utils.plotting`. The `fl-plt-comp`, `fl-plt-props`, and `fl-simulate` commands are unchanged, and `D86Result.plot` delegates to `plot_d86`.
