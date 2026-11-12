@@ -1,5 +1,5 @@
-ASTM D86 Distillation Simulation
-================================
+Simulated Distillation 
+======================
 
 The module :mod:`fuellib.simulate.distillation.greenfield` simulates the ASTM D86
 distillation test with the macroscopic model of
@@ -422,8 +422,15 @@ al.\ :footcite:p:`greenfield_macroscopic_1998`,
    k = -5.696 \times 10^{-4} + 1.025 \times 10^{-4} T - 4.764 \times 10^{-8} T^2 + 1.330 \times 10^{-11} T^3 \tag{34}
 
 .. math::
+   :nowrap:
 
-   \mathrm{Pr} = 8.123 \times 10^{-1} - 2.948 \times 10^{-4} T - 9.443 \times 10^{-7} T^2 + 3.584 \times 10^{-9} T^3 - 3.827 \times 10^{-12} T^4 + 1.373 \times 10^{-15} T^5 \tag{35}
+   \begin{equation}
+   \begin{aligned}
+   \mathrm{Pr} &= 8.123 \times 10^{-1} - 2.948 \times 10^{-4} T - 9.443 \times 10^{-7} T^2 \\
+   &\quad + 3.584 \times 10^{-9} T^3 - 3.827 \times 10^{-12} T^4 + 1.373 \times 10^{-15} T^5
+   \end{aligned}
+   \tag{35}
+   \end{equation}
 
 .. math::
 
