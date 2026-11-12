@@ -118,8 +118,8 @@ measured data for the simulated test (``Distillation`` rows for
 
 .. code-block:: bash
 
-    fl-simulate d86_greenfield -f heptane-decane                   # Show the plot
-    fl-simulate d86_greenfield -f heptane-decane -o d86.png        # Export the plot
+    fl-simulate d86_greenfield -f heptane_decane                   # Show the plot
+    fl-simulate d86_greenfield -f heptane_decane -o d86.png        # Export the plot
     fl-simulate d86_greenfield -f posf10264 posf10325 posf10289    # Compare fuels
     fl-simulate d86_greenfield -f my-fuel -dir customFuels --no-use-ref-props
 

@@ -10,6 +10,7 @@ release workflow to parse release entries in this file.
 ### Changed
 - **Breaking:** file and directory names now use snake_case. In `fuellib/data` (and in custom fuel data directories passed as `fuelDataDir`), `gcData/` is now `gc_data/`, `propertiesData/` is now `properties_data/`, and `refCompounds.csv`, `refGani.csv`, `refNannoolal.csv`, and `refUNIFAC.csv` are now `ref_compounds.csv`, `ref_gani.csv`, `ref_nannoolal.csv`, and `ref_unifac.csv`. The old names are no longer read, so custom fuel data must be renamed. The `Fuel` API names are unchanged.
 - `tests/baselinePredictions/` renamed to `tests/baseline_predictions/`.
+- **Breaking:** the bundled fuels `hefa-came`, `hefa-mfat`, `hefa-tall`, `jet-a`, and `heptane-decane` were renamed to `hefa_came`, `hefa_mfat`, `hefa_tall`, `jet_a`, and `heptane_decane` (`gc_data/{name}.csv` and their `fuel_metadata.yaml` entries), and `properties_data/hefa-jet-a-blends.csv` to `hefa_jet_a_blends.csv`. Fuel names passed to `Fuel` and the CLI must use the new names.
 - `tutorials/hefaBlends.py` renamed to `tutorials/hefa_blends.py` and `tutorials/customFuel.py` renamed to `tutorials/custom_fuel.py`; `tutorials/decompose_cg.py` removed.
 - The tutorial pages `docs/tutorials-*.rst` renamed to `docs/tutorials_*.rst`, so the page URLs change from `tutorials-basic.html` to `tutorials_basic.html`, etc.
 

@@ -62,10 +62,10 @@ def test_pele_default_deposition_species():
     ]:
         with tempfile.TemporaryDirectory() as tmpdir:
             run_export_command(
-                ["fl-export-pele", "-f", "heptane-decane", *options],
+                ["fl-export-pele", "-f", "heptane_decane", *options],
                 output_dir=tmpdir,
             )
-            output_file = os.path.join(tmpdir, "sprayPropsGCM_heptane-decane.inp")
+            output_file = os.path.join(tmpdir, "sprayPropsGCM_heptane_decane.inp")
             with open(output_file) as output:
                 lines = output.readlines()
 

@@ -22,7 +22,7 @@ Basic example
 
    import fuellib as fl
 
-   fuel = fl.Fuel("heptane-decane")
+   fuel = fl.Fuel("heptane_decane")
 
    # Properties on the Fuel object are pint.Quantity values and print with units
    print(f"Critical temperature: {fuel.Tc:.2f}")

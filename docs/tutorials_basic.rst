@@ -87,19 +87,19 @@ the remaining branch with a single CH3 group bonded to a CH2 group is not define
 Basic Usage
 ^^^^^^^^^^^
 
-To demonstrate the usage of FuelLib, we will use the fuel "heptane-decane", which is a 
+To demonstrate the usage of FuelLib, we will use the fuel "heptane_decane", which is a 
 binary mixture of heptane and decane. The initial weight percentage composition is 73.75% 
 heptane and 26.25% decane, and the group decompositions of both compounds are provided in
 `ref_gani.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/data/ref_gani.csv>`_.
 The following tutorial is included in the `FuelLib/tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_
-as ``basic.py``. To begin, we will import the necessary modules and create a ``fuel`` object for the two component fuel "heptane-decane": 
+as ``basic.py``. To begin, we will import the necessary modules and create a ``fuel`` object for the two component fuel "heptane_decane": 
 
 .. code-block:: python
 
     import fuellib as fl
 
-    # Create a fuel object for the fuel "heptane-decane"
-    fuel = fl.Fuel("heptane-decane")
+    # Create a fuel object for the fuel "heptane_decane"
+    fuel = fl.Fuel("heptane_decane")
 
 Upon initialization, the ``fuel`` object will read the GCxGC composition and match each compound to the 
 reference compound and group decomposition tables. Fundamental properties at standard conditions for each component 
@@ -119,7 +119,7 @@ For example, we can display the fuel name, the components in the fuel, the initi
 
 .. code-block:: none
 
-    >> Fuel name: heptane-decane
+    >> Fuel name: heptane_decane
     >> Fuel components: ['n-heptane', 'n-decane']
     >> Initial composition: [0.7375 0.2625]
     >> Critical temperature: [549.86 623.69] K

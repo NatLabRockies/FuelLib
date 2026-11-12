@@ -41,7 +41,7 @@ FUEL_MARKERS = {
     "heptane": "D",
     "posf10264": "D",
     "posf11498": "^",
-    "jet-a": "v",
+    "jet_a": "v",
     "hefa": "p",
 }
 """Marker styles of fuel data, matched by substring of the lowercase fuel name."""
@@ -106,10 +106,10 @@ def format_legend_label(fuel_name: str) -> str:
         Legend label of the fuel.
     """
     if "hefa" in fuel_name.lower():
-        return fuel_name.upper()
+        return fuel_name.upper().replace("_", "-")
     if "posf" in fuel_name.lower():
         return fuel_name[4:].upper()
-    return fuel_name.capitalize()
+    return fuel_name.capitalize().replace("_", "-")
 
 
 def get_line_spec(
