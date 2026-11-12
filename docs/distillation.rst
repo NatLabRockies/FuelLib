@@ -17,7 +17,7 @@ paper.
 Usage
 -----
 
-See the :doc:`Simulating Distillation tutorial <tutorials-distillation>` for how to
+See the :doc:`Simulating Distillation tutorial <tutorials_distillation>` for how to
 run the simulation, change the model variants and apparatus parameters, and plot and
 compare D86 curves.
 

@@ -10,12 +10,12 @@ print(f"Number of compounds: {fuel.num_compounds}")
 
 # To use a custom fuel, create a directory structure like:
 # customFuels/fuelData/
-#   ├── gcData/
+#   ├── gc_data/
 #   │   └── myFuel.csv
-#   ├── propertiesData/  (optional)
+#   ├── properties_data/  (optional)
 #   │   └── myFuel.csv
-#   ├── refCompounds.csv  (optional, defaults to fuellib/data/refCompounds.csv)
-#   └── refGani.csv  (optional, defaults to fuellib/data/refGani.csv)
+#   ├── ref_compounds.csv  (optional, defaults to fuellib/data/ref_compounds.csv)
+#   └── ref_gani.csv  (optional, defaults to fuellib/data/ref_gani.csv)
 #
 # Then load it with:
 custom_fuel = fl.Fuel("myFuel", fuelDataDir="customFuels/fuelData")

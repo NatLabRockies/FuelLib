@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-from baselinePredictions import generate_baseline
+from baseline_predictions import generate_baseline
 from fuellib import Fuel, Units, correlate
 
 

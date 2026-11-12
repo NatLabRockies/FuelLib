@@ -110,7 +110,7 @@ class Fuel:
             msg = f"Fuel data directory does not exist: {self.fuelDataDir}"
             raise FileNotFoundError(msg)
 
-        gcFile: Path = self.fuelDataDir / "gcData" / f"{name}.csv"
+        gcFile: Path = self.fuelDataDir / "gc_data" / f"{name}.csv"
         if not gcFile.exists():
             msg = f"GCxGC data file does not exist: {gcFile}"
             raise FileNotFoundError(msg)
@@ -182,7 +182,7 @@ class Fuel:
         )
         """UNIFAC group decompositions for each matched compound."""
 
-        propFilePath = self.fuelDataDir / "propertiesData" / f"{name}.csv"
+        propFilePath = self.fuelDataDir / "properties_data" / f"{name}.csv"
         self.propData: DataFrame | None = (
             pd.read_csv(propFilePath) if propFilePath.exists() else None
         )

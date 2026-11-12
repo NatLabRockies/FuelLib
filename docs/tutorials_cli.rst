@@ -14,7 +14,7 @@ The plotting CLI provides quick visualization of fuel composition and properties
     fl-plt-comp -f FUEL_NAME [OPTIONS]      # Plot composition
     fl-plt-props -f FUEL_NAME [OPTIONS]     # Plot properties vs temperature
 
-If experimental data is available for the fuel in ``propertiesData/{fuel_name}.csv``, it will be included in the plots for comparison with GCM predictions.
+If experimental data is available for the fuel in ``properties_data/{fuel_name}.csv``, it will be included in the plots for comparison with GCM predictions.
 
 Examples:
 
@@ -80,8 +80,8 @@ SMILES Decomposition
 ~~~~~~~~~~~~~~~~~~~~
 
 Decompose SMILES strings into the Constantinou-Gani groups used in
-``refGani.csv`` (default), the Nannoolal groups used in
-``refNannoolal.csv``, or the UNIFAC subgroups used in ``refUNIFAC.csv``:
+``ref_gani.csv`` (default), the Nannoolal groups used in
+``ref_nannoolal.csv``, or the UNIFAC subgroups used in ``ref_unifac.csv``:
 
 .. code-block:: bash
 
@@ -112,7 +112,7 @@ Simulations
 ~~~~~~~~~~~
 
 Simulate a fuel test for one or more fuels and plot the results. Multiple fuels are
-overlaid on the same plot with a legend. If ``propertiesData/{fuel_name}.csv`` has
+overlaid on the same plot with a legend. If ``properties_data/{fuel_name}.csv`` has
 measured data for the simulated test (``Distillation`` rows for
 ``d86_greenfield``), it is plotted as symbols in the color of the fuel's curve:
 
@@ -144,7 +144,7 @@ FuelLib provides exporters for generating fuel property files for use in CFD sim
     fl-export-pele -f FUEL_NAME [OPTIONS]        # PelePhysics
     fl-export-converge -f FUEL_NAME [OPTIONS]    # CONVERGE
 
-Additional information and examples for using the exporters can be found in the `Exporting Properties for Pele <tutorials-export-pele.html>`_ and `Exporting Properties for CONVERGE <tutorials-export-converge.html>`_ tutorials.
+Additional information and examples for using the exporters can be found in the `Exporting Properties for Pele <tutorials_export_pele.html>`_ and `Exporting Properties for CONVERGE <tutorials_export_converge.html>`_ tutorials.
 
 Developer Tools
 ~~~~~~~~~~~~~~~

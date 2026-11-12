@@ -7,6 +7,14 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Breaking:** file and directory names now use snake_case. In `fuellib/data` (and in custom fuel data directories passed as `fuelDataDir`), `gcData/` is now `gc_data/`, `propertiesData/` is now `properties_data/`, and `refCompounds.csv`, `refGani.csv`, `refNannoolal.csv`, and `refUNIFAC.csv` are now `ref_compounds.csv`, `ref_gani.csv`, `ref_nannoolal.csv`, and `ref_unifac.csv`. The old names are no longer read, so custom fuel data must be renamed. The `Fuel` API names are unchanged.
+- `tests/baselinePredictions/` renamed to `tests/baseline_predictions/`.
+- `tutorials/hefaBlends.py` renamed to `tutorials/hefa_blends.py` and `tutorials/customFuel.py` renamed to `tutorials/custom_fuel.py`; `tutorials/decompose_cg.py` removed.
+- The tutorial pages `docs/tutorials-*.rst` renamed to `docs/tutorials_*.rst`, so the page URLs change from `tutorials-basic.html` to `tutorials_basic.html`, etc.
+
+## [3.1.3] - 2026-11-12
+
 ### Added
 - `helpers.mass_fractions_to_volume_fractions` and `Fuel.Y2V`, converting mass fractions to volume fractions using the component liquid densities at a given temperature.
 - `mixture.aromatics_content` and `Fuel.mixture_aromatics_content`, returning the aromatics content of the mixture in volume percent evaluated at standard temperature.

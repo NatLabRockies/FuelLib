@@ -10,7 +10,7 @@ import fuellib as fl
 # Calculate mixture properties from the group contribution properties
 # -----------------------------------------------------------------------------
 
-# HEFA fuels from various feedstocks (see data/propertiesData for fuels)
+# HEFA fuels from various feedstocks (see data/properties_data for fuels)
 fuel_names = ["hefa-mfat", "hefa-came", "hefa-tall"]
 conv_fuel_name = "jet-a"
 blends = fl.Units.Quantity(

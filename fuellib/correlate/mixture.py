@@ -720,7 +720,7 @@ def yield_sooting_index(
         msg = (
             "Yield sooting index is unavailable for components:\n"
             f"{', '.join(np.array(fuel.compounds)[~valid])}\n"
-            "Consider adding data to `refCompounds.csv`."
+            "Consider adding data to `ref_compounds.csv`."
         )
         raise ValueError(msg)
     if not np.any(valid):

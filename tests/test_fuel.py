@@ -58,30 +58,30 @@ class TestParsing:
         self, tmp_path: Path
     ) -> None:
         """Custom rows override bundled rows by InChI without dropping bundled rows."""
-        (tmp_path / "gcData").mkdir()
-        pd.read_csv(DEFAULT_DATA_DIR / "gcData" / "heptane-decane.csv").to_csv(
-            tmp_path / "gcData" / "heptane-decane.csv", index=False
+        (tmp_path / "gc_data").mkdir()
+        pd.read_csv(DEFAULT_DATA_DIR / "gc_data" / "heptane-decane.csv").to_csv(
+            tmp_path / "gc_data" / "heptane-decane.csv", index=False
         )
 
-        customRef = pd.read_csv(DEFAULT_DATA_DIR / "refCompounds.csv")
+        customRef = pd.read_csv(DEFAULT_DATA_DIR / "ref_compounds.csv")
         customRef = customRef.loc[customRef["Reference Compound"].eq("n-decane")].copy()
         customRef.loc[:, "SMILES"] = "C(C)CCCCCCCC"
         customRef.loc[:, "DCN_Value"] = 999.0
-        customRef.to_csv(tmp_path / "refCompounds.csv", index=False)
+        customRef.to_csv(tmp_path / "ref_compounds.csv", index=False)
 
-        customGani = pd.read_csv(DEFAULT_DATA_DIR / "refGani.csv")
+        customGani = pd.read_csv(DEFAULT_DATA_DIR / "ref_gani.csv")
         customGani = customGani.loc[
             customGani["Reference Compound"].eq("n-decane")
         ].copy()
         customGani.loc[:, "CH3"] = 99
-        customGani.to_csv(tmp_path / "refGani.csv", index=False)
+        customGani.to_csv(tmp_path / "ref_gani.csv", index=False)
 
-        customNannoolal = pd.read_csv(DEFAULT_DATA_DIR / "refNannoolal.csv")
+        customNannoolal = pd.read_csv(DEFAULT_DATA_DIR / "ref_nannoolal.csv")
         customNannoolal = customNannoolal.loc[
             customNannoolal["Reference Compound"].eq("n-decane")
         ].copy()
         customNannoolal.loc[:, "CH3-(ne)"] = 99
-        customNannoolal.to_csv(tmp_path / "refNannoolal.csv", index=False)
+        customNannoolal.to_csv(tmp_path / "ref_nannoolal.csv", index=False)
 
         fuel = Fuel("heptane-decane", fuelDataDir=tmp_path)
 

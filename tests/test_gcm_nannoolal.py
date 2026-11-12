@@ -8,12 +8,12 @@ from fuellib import DEFAULT_DATA_DIR, Fuel, Units
 from fuellib.correlate import components, mixture
 from fuellib.gcm.nannoolal import TABLE, decompose
 
-REF_COMPOUNDS = pd.read_csv(DEFAULT_DATA_DIR / "refCompounds.csv").set_index(
+REF_COMPOUNDS = pd.read_csv(DEFAULT_DATA_DIR / "ref_compounds.csv").set_index(
     "Reference Compound"
 )
 REF_NANNOOLAL = (
     pd
-    .read_csv(DEFAULT_DATA_DIR / "refNannoolal.csv")
+    .read_csv(DEFAULT_DATA_DIR / "ref_nannoolal.csv")
     .set_index("Reference Compound")
     .fillna(0)
     .astype(int)
@@ -21,13 +21,13 @@ REF_NANNOOLAL = (
 
 
 def test_reference_names_match_ref_compounds():
-    """Every refNannoolal compound should be named as in refCompounds."""
+    """Every ref_nannoolal compound should be named as in ref_compounds."""
     missing = REF_NANNOOLAL.index.difference(REF_COMPOUNDS.index)
-    assert missing.empty, f"Not in refCompounds.csv: {list(missing)}"
+    assert missing.empty, f"Not in ref_compounds.csv: {list(missing)}"
 
 
 def test_reference_groups_match_gcm_table():
-    """Every refNannoolal group column should be a row of the GCM table."""
+    """Every ref_nannoolal group column should be a row of the GCM table."""
     missing = REF_NANNOOLAL.columns.difference(TABLE.index)
     assert missing.empty, f"Not in nannoolal.csv: {list(missing)}"
 

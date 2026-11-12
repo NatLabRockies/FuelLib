@@ -75,7 +75,7 @@ and plotted as symbols in the color of the curve.
 
 The simulated curves of several fuels can also be plotted together with their measured
 data using :func:`fuellib.utils.plotting.plot_distillation` or the ``fl-simulate``
-command (see :doc:`tutorials-cli`).
+command (see :doc:`tutorials_cli`).
 
 .. figure:: /figures/distillation_posf10325_variants.png
    :width: 420pt

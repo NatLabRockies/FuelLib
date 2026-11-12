@@ -13,7 +13,7 @@ from .core import GCMRegistry
 if TYPE_CHECKING:
     from ..fuel import Fuel
 
-# Subgroup names as columns (duplicate "CHO" becomes "CHO.1", matching refUnifac.csv)
+# Subgroup names as columns (duplicate "CHO" becomes "CHO.1", matching ref_unifac.csv)
 _RAW = pd.read_csv(Path(__file__).with_suffix(".csv"), header=1, index_col=0)
 TABLE = _RAW.loc[["R", "Q"]].astype(float)
 MAIN_GROUP = _RAW.loc["Main Group No."].astype(int)
