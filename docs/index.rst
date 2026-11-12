@@ -71,6 +71,7 @@ Development tools (Sphinx, Ruff, ty, pytest) are available for developers instal
    distillation
    units
    tutorials
+   validation
    sourcecode   
    development
 

@@ -38,7 +38,7 @@ The first two commands provide the following plots for the specified fuels, whil
 
    Compositional information of Jet A (POSF10325).
 
-.. figure:: /figures/mixture_properties_posf10264_posf10325_posf10289.png
+.. figure:: /figures/props_posf10264_posf10325_posf10289.png
    :width: 600pt
    :align: center
 
