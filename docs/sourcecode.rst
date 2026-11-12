@@ -17,6 +17,8 @@ FuelLib File Organization
         - ``constants.py``: physical constants and reference values (Boltzmann, Avogadro, gas constant, standard temperature, and air properties)
         - ``utility.py``: utility functions for mixing rules, droplet calculations, and Lennard-Jones conversions (re-exported as ``fuellib.utility``)
         - ``types.py``: unit-aware type aliases and the ``Units`` registry
+        - ``plotting.py``: functions to plot fuel composition, mixture properties, and simulated D86 distillation curves (re-exported as ``fuellib.plotting``)
+        - ``color_maps.py``: the ``fl_blue_4`` and ``fl_pastel_18`` colormaps (registered with Matplotlib) and the colors of specific fuels
 
     - **gcm**: subpackage implementing the Group Contribution Method (GCM) abstraction
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
@@ -34,6 +36,9 @@ FuelLib File Organization
         - ``components.py``: correlations for individual compound properties (e.g. density, viscosity, vapor pressure, surface tension, thermal conductivity, flash point, lower heating value)
         - ``mixture.py``: correlations for mixture properties computed from component properties and mixing rules (e.g. density, viscosity, freeze point, flash point, heat of combustion, yield sooting index, derived cetane number)
         - ``helpers.py``: shared helper functions for mixing rules and mass/mole fraction conversions
+
+    - **simulate**: subpackage with simulations of fuel tests
+        - ``distillation/greenfield.py``: ASTM D86 distillation curve model of Greenfield et al. (1998) (see :doc:`distillation`)
 
     - **rdk**: subpackage with `RDKit <https://www.rdkit.org/docs/>`_-based molecular utilities
         - ``mol.py``: functions for instantiating RDKit ``Mol`` objects from SMILES/InChI strings and for computing molecular formulas, atom counts, structural checks (aromaticity, rings, fused rings, aromatic ring counts, double bonds, branching), and molecular weight
@@ -58,9 +63,10 @@ FuelLib File Organization
     - **cli:** subpackage with command-line interface tools for data conversion and analysis
     
         - ``convert.py``: temperature and Lennard-Jones conversion utilities (CLI: ``fl-C2K``, ``fl-K2C``, ``fl-C2F``, ``fl-F2C``, ``fl-F2K``, ``fl-K2F``, ``fl-eps2K``)
-        - ``plotting.py``: plotting utilities for composition and properties
+        - ``plotting.py``: command-line wrappers around the functions in ``utils/plotting.py`` (CLI: ``fl-plt-comp``, ``fl-plt-props``)
         - ``fuel_manager.py``: fuel manager utility
         - ``decomp_smiles.py``: SMILES group-decomposition utility (CLI: ``fl-decomp-smiles``)
+        - ``simulate.py``: fuel test simulations with plots of the results (CLI: ``fl-simulate``)
         - ``build_docs.py``: documentation builder utility
         - ``clean_docs.py``: documentation cleaner utility
         - ``format_code.py``: code formatter utility
@@ -112,3 +118,4 @@ Click on links below for the full auto-documentation of the API.
     fuellib.correlate.components
     fuellib.correlate.mixture
     fuellib.correlate.helpers
+    fuellib.simulate.distillation.greenfield

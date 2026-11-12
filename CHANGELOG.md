@@ -14,8 +14,13 @@ release workflow to parse release entries in this file.
 - `rdk.mol.has_naphthalene` to identify naphthalene and alkylated naphthalenes (two fused aromatic six-membered rings).
 - Tests for `Fuel.Y2V`, `Fuel.mixture_aromatics_content`, and `Fuel.mixture_naphthalenes_content`.
 - `fuelprops.rst` documents the mixture aromatics and naphthalenes content.
+- `fuellib.utils.plotting` (re-exported as `fuellib.plotting`) with `plot_composition`, `plot_mixture_properties`, `plot_d86`, and `plot_distillation`, the plotting functions behind `fl-plt-comp`, `fl-plt-props`, and `fl-simulate`, plus the helpers `get_line_spec`, `format_legend_label`, and `d86_data` (measured D86 curve of a fuel). `plot_distillation` returns the figure without saving or showing it. `plot_distillation` and `fl-simulate` take `air_cstr` / `--no-air-cstr` to exclude the air-filled CSTR (which also drops the default lower temperature limit of the plot), and `D86Result.plot` and `plot_d86` take a `linestyle` and `default_ymin`.
+- `fuellib.utils.color_maps` (re-exported as `fuellib.color_maps`) with the `fl_blue_4` and `fl_pastel_18` colormaps, registered with Matplotlib on import, the fixed `FUEL_COLORS` of specific fuels, and `cycle_color`.
+- Simulating Distillation tutorial (`docs/tutorials-distillation.rst` and `tutorials/distillation.py`), moved from the usage example of `distillation.rst`.
 
 ### Changed
+- The plotting functions moved from `fuellib.cli.plotting` to `fuellib.utils.plotting`. The `fl-plt-comp`, `fl-plt-props`, and `fl-simulate` commands are unchanged, and `D86Result.plot` delegates to `plot_d86`.
+- The default plot colors are the `fl_blue_4` colormap, and posf11498 is purple.
 - Minimum `ty` development dependency raised to `>=0.0.100`, and `# ty: ignore[unresolved-attribute]` comments in `rdk/mol.py` renamed to `missing-attribute` following the rule rename in ty 0.0.100.
 
 ## [3.1.2] - 2026-11-09
@@ -30,6 +35,7 @@ release workflow to parse release entries in this file.
 - `data/refUNIFAC.csv` with UNIFAC subgroup decompositions of the reference compounds, loaded into `Fuel.refUnifac` and `Fuel.unifacDecomp`.
 - `tests/test_gcm_unifac.py` covering the UNIFAC tables, decompositions, and activity coefficients.
 - Hayer et al. (2025) reference in `refs.bib`.
+- `fl-simulate` CLI (`cli/simulate.py`) that runs a fuel test simulation (currently `d86_greenfield`) for one or more fuels and exports or shows a plot of the results, overlaying multiple fuels with a legend and plotting measured data from `propertiesData` as symbols, if available.
 - `gcm.rst`, `refcompounds.rst`, `fuelprops.rst`, `sourcecode.rst`, `tutorials-basic.rst`, `tutorials-cli.rst`, and `tutorials-custom-fuels.rst` document the `unifac` GCM and `refUNIFAC.csv`.
 
 ### Changed

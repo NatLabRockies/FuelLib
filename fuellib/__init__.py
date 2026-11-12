@@ -26,17 +26,19 @@ from .data._data_locator import (
 )
 from .data._reference_data import DEFAULT_DATA_DIR
 from .fuel import Fuel
-from .utils import Units, constants, utility
+from .utils import Units, color_maps, constants, plotting, utility
 
 __all__ = [
     "DEFAULT_DATA_DIR",
     "Fuel",
     "Units",
+    "color_maps",
     "constants",
     "correlate",
     "get_data_dir",
     "get_fueldata_dir",
     "get_fueldata_gc_dir",
     "get_fueldata_props_dir",
+    "plotting",
     "utility",
 ]

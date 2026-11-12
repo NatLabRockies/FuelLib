@@ -9,6 +9,7 @@ This section provides tutorials on how to use the FuelLib library.
    tutorials-basic
    tutorials-cli
    tutorials-custom-fuels
+   tutorials-distillation
    tutorials-export-pele
    tutorials-export-converge
 
