@@ -1,0 +1,36 @@
+fuellib.simulate.distillation.greenfield.D86Apparatus
+=====================================================
+
+.. currentmodule:: fuellib.simulate.distillation.greenfield
+
+.. autoclass:: D86Apparatus
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~D86Apparatus.pressure
+      ~D86Apparatus.T_room
+      ~D86Apparatus.charge_volume
+      ~D86Apparatus.air_volume
+      ~D86Apparatus.cylinder_heat_capacity
+      ~D86Apparatus.column_length
+      ~D86Apparatus.column_diameter
+      ~D86Apparatus.collection_rate_min
+      ~D86Apparatus.collection_rate_max
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   

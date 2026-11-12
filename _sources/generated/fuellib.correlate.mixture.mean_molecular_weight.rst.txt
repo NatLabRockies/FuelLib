@@ -1,0 +1,6 @@
+fuellib.correlate.mixture.mean\_molecular\_weight
+=================================================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: mean_molecular_weight

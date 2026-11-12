@@ -1,0 +1,6 @@
+fuellib.simulate.distillation.greenfield.distill
+================================================
+
+.. currentmodule:: fuellib.simulate.distillation.greenfield
+
+.. autofunction:: distill

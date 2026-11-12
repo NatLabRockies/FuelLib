@@ -1,0 +1,6 @@
+fuellib.rdk.mol.count\_aromatic\_rings
+======================================
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: count_aromatic_rings

@@ -1,0 +1,6 @@
+fuellib.rdk.mol.inchi
+=====================
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: inchi

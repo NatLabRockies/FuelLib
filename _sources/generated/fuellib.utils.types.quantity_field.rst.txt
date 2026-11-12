@@ -1,0 +1,6 @@
+fuellib.utils.types.quantity\_field
+===================================
+
+.. currentmodule:: fuellib.utils.types
+
+.. autofunction:: quantity_field
