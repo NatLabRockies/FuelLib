@@ -7,6 +7,8 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [3.1.3] - 2026-11-12
+
 ### Added
 - `helpers.mass_fractions_to_volume_fractions` and `Fuel.Y2V`, converting mass fractions to volume fractions using the component liquid densities at a given temperature.
 - `mixture.aromatics_content` and `Fuel.mixture_aromatics_content`, returning the aromatics content of the mixture in volume percent evaluated at standard temperature.
