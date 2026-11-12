@@ -8,11 +8,11 @@ import pandas as pd
 
 from fuellib.utils import Units
 from fuellib import Fuel, correlate
-from baselinePredictions.generate_baseline import method_map
+from baseline_predictions.generate_baseline import method_map
 
 # Locate the tests baseline directory
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
-TESTS_BASELINE_DIR = os.path.join(TESTS_DIR, "baselinePredictions")
+TESTS_BASELINE_DIR = os.path.join(TESTS_DIR, "baseline_predictions")
 
 BOLD = "\033[1;1m"
 RED = "\033[31m"
@@ -24,7 +24,7 @@ STOP = "\033[0m"
 class MixtureTestCase(unittest.TestCase):
     """Test class for verifying the accuracy of mixture predictions."""
 
-    data_dir = Path(__file__).parent / "baselinePredictions"
+    data_dir = Path(__file__).parent / "baseline_predictions"
     base_file = data_dir / "mixture_baseline.csv"
     base_data = pd.read_csv(base_file, float_precision="round_trip")
 

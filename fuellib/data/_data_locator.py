@@ -24,7 +24,7 @@ def _get_props_dir_for_fueldata(fuel_data_dir: str) -> str | None:
     Returns:
         Path to the properties directory, or None if not found.
     """
-    props_dir = os.path.join(fuel_data_dir, "propertiesData")
+    props_dir = os.path.join(fuel_data_dir, "properties_data")
     return props_dir if os.path.isdir(props_dir) else None
 
 
@@ -47,9 +47,9 @@ def get_fueldata_gc_dir() -> str:
     """Get the path to FuelLib's GC data subdirectory.
 
     Returns:
-        Absolute path to embedded data/gcData directory.
+        Absolute path to embedded data/gc_data directory.
     """
-    return os.path.join(get_fueldata_dir(), "gcData")
+    return os.path.join(get_fueldata_dir(), "gc_data")
 
 
 def get_fueldata_props_dir() -> str | None:
@@ -58,6 +58,6 @@ def get_fueldata_props_dir() -> str | None:
     This directory is optional.
 
     Returns:
-        Absolute path to embedded data/propertiesData directory, or None if not found.
+        Absolute path to embedded data/properties_data directory, or None if not found.
     """
     return _get_props_dir_for_fueldata(get_fueldata_dir())

@@ -11,12 +11,12 @@ from fuellib import DEFAULT_DATA_DIR, Fuel, Units
 from fuellib.gcm import unifac
 from fuellib.gcm.unifac import AMN, MAIN_GROUP, TABLE, decompose
 
-REF_COMPOUNDS = pd.read_csv(DEFAULT_DATA_DIR / "refCompounds.csv").set_index(
+REF_COMPOUNDS = pd.read_csv(DEFAULT_DATA_DIR / "ref_compounds.csv").set_index(
     "Reference Compound"
 )
 REF_UNIFAC = (
     pd
-    .read_csv(DEFAULT_DATA_DIR / "refUNIFAC.csv")
+    .read_csv(DEFAULT_DATA_DIR / "ref_unifac.csv")
     .set_index("Reference Compound")
     .fillna(0)
     .astype(int)
@@ -120,13 +120,13 @@ def test_registered_gcm():
 
 
 def test_reference_names_match_ref_compounds():
-    """Every refUNIFAC compound should be named as in refCompounds."""
+    """Every ref_unifac compound should be named as in ref_compounds."""
     missing = REF_UNIFAC.index.difference(REF_COMPOUNDS.index)
-    assert missing.empty, f"Not in refCompounds.csv: {list(missing)}"
+    assert missing.empty, f"Not in ref_compounds.csv: {list(missing)}"
 
 
 def test_reference_groups_match_gcm_table():
-    """Every refUNIFAC group column should be a column of the GCM table."""
+    """Every ref_unifac group column should be a column of the GCM table."""
     missing = REF_UNIFAC.columns.difference(TABLE.columns)
     assert missing.empty, f"Not in unifac.csv: {list(missing)}"
 

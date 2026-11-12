@@ -24,7 +24,7 @@ FuelLib File Organization
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
-        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM; hydrocarbon families are read from ``refCompounds.csv`` via the fuel's ``compoundsData``
+        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM; hydrocarbon families are read from ``ref_compounds.csv`` via the fuel's ``compoundsData``
         - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
         - ``nannoolal.py``: Nannoolal et al. (2009) viscosity group contributions (``dBv``, ``Tv``) registered against the ``nannoolal`` GCM, and automated SMILES decomposition into Nannoolal groups
         - ``nannoolal.csv``: group-contribution coefficient table used by ``nannoolal.py``
@@ -47,12 +47,12 @@ FuelLib File Organization
 
         - ``_data_locator.py``: internal module for locating and validating fuel data directories
         - ``_reference_data.py``: internal module for loading the reference tables and merging custom tables found in a fuel data directory
-        - ``refCompounds.csv``: reference compounds (``Family``, ``Carbon Number``, ``Reference Compound``, ``SMILES``) and their optional measured properties (``{Property}_Value``, ``_Error``, ``_Units``, ``_Source``, ``_Notes``)
-        - ``refGani.csv``: functional group decompositions of the reference compounds
-        - ``refNannoolal.csv``: Nannoolal group decompositions of the reference compounds
-        - ``refUNIFAC.csv``: UNIFAC subgroup decompositions of the reference compounds
-        - **gcData:** directory containing a collection of GCxGC compositional data by weight percentages (``{fuel_name}.csv``)
-        - **propertiesData:** directory containing measurement or predicted data used for validation
+        - ``ref_compounds.csv``: reference compounds (``Family``, ``Carbon Number``, ``Reference Compound``, ``SMILES``) and their optional measured properties (``{Property}_Value``, ``_Error``, ``_Units``, ``_Source``, ``_Notes``)
+        - ``ref_gani.csv``: functional group decompositions of the reference compounds
+        - ``ref_nannoolal.csv``: Nannoolal group decompositions of the reference compounds
+        - ``ref_unifac.csv``: UNIFAC subgroup decompositions of the reference compounds
+        - **gc_data:** directory containing a collection of GCxGC compositional data by weight percentages (``{fuel_name}.csv``)
+        - **properties_data:** directory containing measurement or predicted data used for validation
         - ``fuel_metadata.yaml``: YAML file with source information and other optional metadata for each fuel (loaded into ``Fuel.metadata``)
     
     - **exporters:** subpackage with CLI exporters for generating fuel properties
@@ -73,21 +73,22 @@ FuelLib File Organization
 
 - **tests:**  directory containing CI unit tests for FuelLib. The CI test checks if the cumulative error of property predictions of a new proposed model are less than or equal to the current model.
     
-    - **baselinePredictions:** directory that contains baseline predictions and script ``generate_baseline.py`` for generating baseline predictions for CI testing.
+    - **baseline_predictions:** directory that contains baseline predictions and script ``generate_baseline.py`` for generating baseline predictions for CI testing.
     - ``test_accuracy.py``: unit test used in CI for verifying new model predictions preserve accuracy
     - ``test_source_docstrings.py``: documentation contract test that checks public source functions include required docstring fields (``:param:``, ``:type:``, ``:return:``, ``:rtype:``).
     - ``test_api.py``: combined API/signature and function-evaluation test that checks public fuellib module and class method signatures for unexpected API drift and runs representative FuelLib smoke evaluations.
     - ``test_cli_utilities.py``: unit test for utility functions and CLI commands including temperature conversion and transport property calculations.
     - ``test_hc_identification.py``: unit test for hydrocarbon classification logic.
-    - ``test_gcm_gani.py``: unit tests for the ``gani`` GCM, including comparison of RDKit SMILES decompositions with ``refGani.csv``.
-    - ``test_gcm_nannoolal.py``: unit tests for the ``nannoolal`` GCM, including comparison of RDKit SMILES decompositions with ``refNannoolal.csv`` and the Nannoolal viscosity correlations.
-    - ``test_gcm_unifac.py``: unit tests for the ``unifac`` GCM, including comparison of RDKit SMILES decompositions with ``refUNIFAC.csv`` and checks of the UNIFAC 2.0 activity coefficients.
+    - ``test_gcm_gani.py``: unit tests for the ``gani`` GCM, including comparison of RDKit SMILES decompositions with ``ref_gani.csv``.
+    - ``test_gcm_nannoolal.py``: unit tests for the ``nannoolal`` GCM, including comparison of RDKit SMILES decompositions with ``ref_nannoolal.csv`` and the Nannoolal viscosity correlations.
+    - ``test_gcm_unifac.py``: unit tests for the ``unifac`` GCM, including comparison of RDKit SMILES decompositions with ``ref_unifac.csv`` and checks of the UNIFAC 2.0 activity coefficients.
     - ``test_cli_decomp_smiles.py``: unit tests for the ``fl-decomp-smiles`` command.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 
     - ``basic.py``: example script that demonstrates basic usage of FuelLib
-    - ``hefaBlends.py``: example script that calculates properties of HEFA:Jet-A blends
+    - ``hefa_blends.py``: example script that calculates properties of HEFA:Jet-A blends
+    - ``custom_fuel.py``: example script that loads a custom fuel from a user-provided data directory
 
 Public API
 ----------

@@ -50,7 +50,7 @@ def smiles_series_to_inchi(smiles: Series) -> Series:
 def load_ref_compounds(data_dir: Path) -> DataFrame:
     """Load bundled reference compounds and apply custom overrides.
 
-    If `data_dir` contains a `refCompounds.csv` file, its rows are added to the bundled
+    If `data_dir` contains a `ref_compounds.csv` file, its rows are added to the bundled
     table. Custom rows replace bundled rows when their SMILES strings resolve to the
     same InChI, allowing alternative valid SMILES representations for the same
     compound.
@@ -61,8 +61,8 @@ def load_ref_compounds(data_dir: Path) -> DataFrame:
     Returns:
         The bundled reference-compound table with custom additions and overrides.
     """
-    default_data = pd.read_csv(DEFAULT_DATA_DIR / "refCompounds.csv")
-    custom_path = _find_custom_ref_path(data_dir, "refCompounds.csv")
+    default_data = pd.read_csv(DEFAULT_DATA_DIR / "ref_compounds.csv")
+    custom_path = _find_custom_ref_path(data_dir, "ref_compounds.csv")
     if custom_path is None:
         return default_data
 
@@ -94,8 +94,9 @@ def load_ref_decomp(
 ) -> DataFrame:
     """Load GCM decompositions and apply name-based overrides.
 
-    If `data_dir` contains a `ref{method}.csv` file, its rows are added to the bundled
-    table, replacing bundled rows with the same `Reference Compound` value.
+    If `data_dir` contains a `ref_{method}.csv` file (lowercase `method`), its
+    rows are added to the bundled table, replacing bundled rows with the same
+    `Reference Compound` value.
 
     Args:
         data_dir: Directory containing custom fuel data.
@@ -105,7 +106,7 @@ def load_ref_decomp(
         The bundled method-specific decomposition table with custom additions and
         overrides.
     """
-    file_name = f"ref{method}.csv"
+    file_name = f"ref_{method.lower()}.csv"
     default_data = pd.read_csv(DEFAULT_DATA_DIR / file_name)
     custom_path = _find_custom_ref_path(data_dir, file_name)
     if custom_path is None:

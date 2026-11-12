@@ -36,7 +36,7 @@ Multicomponent Fuels
 Fuel Blends
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /figures/hefaBlends.png
+.. figure:: /figures/hefa_blends.png
    :width: 400pt
    :align: center
    

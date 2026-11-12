@@ -54,7 +54,7 @@ functions for ``MW``, ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``Hf``,
 ``Gf``, ``Hv_stp``, ``omega``, ``Vm_stp``, ``Cp_stp``, ``Cp_B``, ``Cp_C``,
 ``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Note that
 properties such as :attr:`~fuellib.fuel.Fuel.Tm` are not the raw ``gani`` predictions: they use
-reference values from ``refCompounds.csv`` when available
+reference values from ``ref_compounds.csv`` when available
 (see :ref:`sec-reference-properties`) and fall back to ``gani`` otherwise.
 Group-contribution
 coefficients are read from ``fuellib/gcm/gani.csv`` into a module-level
@@ -75,7 +75,7 @@ group in the table:
 
 A :class:`ValueError` is raised if the SMILES cannot be parsed or an atom is not
 matched to a first-order group. The same functionality is available from the
-command line as ``fl-decomp-smiles`` (see :doc:`tutorials-cli`).
+command line as ``fl-decomp-smiles`` (see :doc:`tutorials_cli`).
 
 .. warning::
    Automated decompositions must be verified. A known shortcoming is indene,
@@ -180,7 +180,7 @@ The ``boehm`` method
 is used by :func:`~fuellib.correlate.mixture.freeze_point_boehm`.
 
 Each compound's hydrocarbon family is read from the ``Family`` column of
-``refCompounds.csv`` (available as ``fuel.compoundsData["Family"]``). The families
+``ref_compounds.csv`` (available as ``fuel.compoundsData["Family"]``). The families
 are ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``,
 ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, and ``diaromatic``. The fusion entropy is
 then a linear function of the carbon number :math:`n_{C,i}`, with parameters
@@ -219,7 +219,7 @@ Both are dimensionless sums. The corrections for the number of heavy atoms
 and the normal boiling point are applied by
 :func:`~fuellib.correlate.components.dynamic_viscosity_nannoolal` (see
 :doc:`fuelprops`). The decomposition matrix :math:`\mathbf{N}` contains both
-first- and second-order groups and is read from ``refNannoolal.csv`` as
+first- and second-order groups and is read from ``ref_nannoolal.csv`` as
 :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`.
 
 Some groups have no published viscosity contribution. Groups stored as
@@ -248,7 +248,7 @@ structural checks: the number of hydrogens (``No hydrogen``,
 benzene rings (counted only when a single pair type is present). A
 :class:`ValueError` is raised if the SMILES cannot be parsed or an atom is not
 matched to a first-order group. The same functionality is available as
-``fl-decomp-smiles --method nannoolal`` (see :doc:`tutorials-cli`).
+``fl-decomp-smiles --method nannoolal`` (see :doc:`tutorials_cli`).
 
 .. code-block:: python
 
@@ -274,7 +274,7 @@ table obtained with machine learning. The parameters are read from two files:
 
 The decomposition matrix :math:`\boldsymbol{\nu}`, where :math:`\nu_{ki}` is
 the number of subgroups :math:`k` in compound :math:`i`, is read from
-``refUNIFAC.csv`` as :attr:`~fuellib.fuel.Fuel.unifacDecomp`. Two properties
+``ref_unifac.csv`` as :attr:`~fuellib.fuel.Fuel.unifacDecomp`. Two properties
 are registered with the ``"unifac"`` :class:`~fuellib.gcm.core.GCM`:
 
 - ``R``: the compound volume parameter :math:`r_i = \sum_k \nu_{ki} R_k`.
@@ -355,7 +355,7 @@ Only the hydrocarbon subgroups are matched, in order of priority: ``ACCH3``,
 ``CH=C``, ``C=C``, ``CH3``, ``CH2``, ``CH``, and ``C``. A :class:`ValueError` is
 raised if the SMILES cannot be parsed or an atom is not matched to a subgroup,
 for example a heteroatom. The same functionality is available as
-``fl-decomp-smiles --method unifac`` (see :doc:`tutorials-cli`).
+``fl-decomp-smiles --method unifac`` (see :doc:`tutorials_cli`).
 
 Registering a new property
 ---------------------------
@@ -405,17 +405,17 @@ A completely new method can likewise be registered with
 :class:`~fuellib.fuel.Fuel` ties into the registry through the following members:
 
 - :attr:`~fuellib.fuel.Fuel.ganiDecomp`: the group decomposition (from
-  ``refGani.csv``) of each compound in the mixture, in the same order as
+  ``ref_gani.csv``) of each compound in the mixture, in the same order as
   ``fuel.compounds``. Each compound in the GCxGC data must be present in the
   reference tables, otherwise a ``ValueError`` is raised when the ``Fuel`` is
   created.
 - :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`: the Nannoolal group
-  decomposition (from ``refNannoolal.csv``) of each compound, used by the
+  decomposition (from ``ref_nannoolal.csv``) of each compound, used by the
   ``nannoolal`` method. Each compound must also be present in this table.
 - :attr:`~fuellib.fuel.Fuel.unifacDecomp`: the UNIFAC subgroup decomposition
-  (from ``refUNIFAC.csv``) of each compound, used by the ``unifac`` method.
+  (from ``ref_unifac.csv``) of each compound, used by the ``unifac`` method.
   Each compound must also be present in this table.
-- :attr:`~fuellib.fuel.Fuel.compoundsData`: the rows of ``refCompounds.csv``
+- :attr:`~fuellib.fuel.Fuel.compoundsData`: the rows of ``ref_compounds.csv``
   matched to the GCxGC data, including the hydrocarbon ``Family`` used by the
   ``boehm`` method.
 - Cached properties such as :attr:`~fuellib.fuel.Fuel.Tc`,
@@ -426,7 +426,7 @@ A completely new method can likewise be registered with
   ``gani_gcm.predict(...)`` or ``boehm_gcm.predict(...)`` the first time they are
   accessed. Properties that can be measured (``Tc``, ``Pc``, ``Vc``, ``Tm``,
   ``Tb``, ``Hf_stp``, ``Hv_stp``, ``Vm_stp``, ``omega``) take reference values
-  from ``refCompounds.csv`` where available unless ``useRefProperties=False``.
+  from ``ref_compounds.csv`` where available unless ``useRefProperties=False``.
 
 .. code-block:: python
 

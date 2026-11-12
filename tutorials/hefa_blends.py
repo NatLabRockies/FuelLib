@@ -10,9 +10,9 @@ import fuellib as fl
 # Calculate mixture properties from the group contribution properties
 # -----------------------------------------------------------------------------
 
-# HEFA fuels from various feedstocks (see data/propertiesData for fuels)
-fuel_names = ["hefa-mfat", "hefa-came", "hefa-tall"]
-conv_fuel_name = "jet-a"
+# HEFA fuels from various feedstocks (see data/properties_data for fuels)
+fuel_names = ["hefa_mfat", "hefa_came", "hefa_tall"]
+conv_fuel_name = "jet_a"
 blends = fl.Units.Quantity(
     np.linspace(0, 100, 100), "%"
 )  # Weight percentages of HEFA in blend
@@ -42,7 +42,7 @@ def linespecs(name):
 # Legend labels for plotting
 def leglab(name):
     if "hefa" in name:
-        return name.upper()
+        return name.upper().replace("_", "-")
     else:
         return "Jet-A"
 
@@ -60,7 +60,7 @@ def getPredAndData(fuel_name, prop_name, blend):
     fuel = fl.Fuel(fuel_name)
     jetA = fl.Fuel(conv_fuel_name)
 
-    data_file = "hefa-jet-a-blends.csv"
+    data_file = "hefa_jet_a_blends.csv"
     data_path = os.path.join(fl.get_fueldata_props_dir(), data_file)
     data_units = pd.read_csv(data_path, nrows=1)
     data = pd.read_csv(data_path, skiprows=[1])

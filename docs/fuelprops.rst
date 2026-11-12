@@ -682,7 +682,7 @@ Mixture yield sooting index
    :noindex:
 
 The yield sooting index :math:`YSI` is a dimensionless measure of a fuel's tendency to soot.
-The component values :math:`YSI_i` are reference data from ``refCompounds.csv``, primarily
+The component values :math:`YSI_i` are reference data from ``ref_compounds.csv``, primarily
 from the Yield Sooting Index Database of McEnally et al.\ :footcite:p:`mcenally_yield_2017`, and are
 available as :attr:`~fuellib.fuel.Fuel.YSI` (see :ref:`sec-reference-properties`); they are
 not predicted by FuelLib. The mixture value is the mole-fraction weighted average
@@ -738,7 +738,7 @@ Mixture derived cetane number
    :noindex:
 
 The derived cetane number :math:`DCN` is a dimensionless measure of ignition quality.
-The component values :math:`DCN_i` are reference data from ``refCompounds.csv`` and are
+The component values :math:`DCN_i` are reference data from ``ref_compounds.csv`` and are
 available as :attr:`~fuellib.fuel.Fuel.DCN` (see :ref:`sec-reference-properties`); they are
 not predicted by FuelLib. The mixture value is computed with a linear liquid volume-fraction
 mixing rule,
@@ -810,7 +810,7 @@ Reference Property Data
 -----------------------
 
 Measured properties of pure compounds can replace group-contribution predictions.
-These data are stored directly in ``fuellib/data/refCompounds.csv``. Each compound has the columns
+These data are stored directly in ``fuellib/data/ref_compounds.csv``. Each compound has the columns
 ``Family``, ``Carbon Number``, ``Reference Compound``, and ``SMILES``, followed by a block of five columns
 for each property: ``{Property}_Value``, ``{Property}_Error``, ``{Property}_Units``, ``{Property}_Source``,
 and ``{Property}_Notes``. Blank values indicate that no reference data are available for that compound.
@@ -843,10 +843,10 @@ are not predicted by FuelLib, so they are always taken from the reference data.
 
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
 from its ``SMILES``; the matched rows are available as :attr:`~fuellib.fuel.Fuel.compoundsData`, and the
-group decompositions from ``refGani.csv``, ``refNannoolal.csv``, and ``refUNIFAC.csv`` as
+group decompositions from ``ref_gani.csv``, ``ref_nannoolal.csv``, and ``ref_unifac.csv`` as
 :attr:`~fuellib.fuel.Fuel.ganiDecomp`, :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`, and
-:attr:`~fuellib.fuel.Fuel.unifacDecomp`. Custom tables are read from ``refCompounds.csv``, ``refGani.csv``,
-``refNannoolal.csv``, and ``refUNIFAC.csv`` in the ``fuelDataDir`` passed to :class:`~fuellib.fuel.Fuel` (see :doc:`tutorials-custom-fuels`). Each custom table is merged
+:attr:`~fuellib.fuel.Fuel.unifacDecomp`. Custom tables are read from ``ref_compounds.csv``, ``ref_gani.csv``,
+``ref_nannoolal.csv``, and ``ref_unifac.csv`` in the ``fuelDataDir`` passed to :class:`~fuellib.fuel.Fuel` (see :doc:`tutorials_custom_fuels`). Each custom table is merged
 with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
 the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
 bundled compound; a Gani, Nannoolal, or UNIFAC decomposition duplicate is identified by its ``Reference Compound``.

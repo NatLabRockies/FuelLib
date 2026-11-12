@@ -1,7 +1,7 @@
 import fuellib as fl
 
-# Create a fuel object for the fuel "heptane-decane"
-fuel = fl.Fuel("heptane-decane")
+# Create a fuel object for the fuel "heptane_decane"
+fuel = fl.Fuel("heptane_decane")
 
 # Display fuel name, components, initial composition, and critical temperature
 print(f"Fuel name: {fuel.name}")

@@ -39,21 +39,21 @@ fuels:
     description: Atypical alternative fuel from NJFCP. Isoparaffinic-only with low density, average viscosity, and a flat distillation curve.
 
   # HEFA Fuels (Hydroprocessed Esters and Fatty Acids)
-  hefa-came:
+  hefa_came:
     name: HEFA-CAME
     category: SATF
     source: Vozka et al. (2018)
     reference: https://doi.org/10.1021/acs.energyfuels.8b02787
     description: HEFA-SPK from camelina oil feedstock
   
-  hefa-mfat:
+  hefa_mfat:
     name: HEFA-MFAT
     category: SATF
     source: Vozka et al. (2018)
     reference: https://doi.org/10.1021/acs.energyfuels.8b02787
     description: HEFA from mixed fat feedstock
   
-  hefa-tall:
+  hefa_tall:
     name: HEFA-TALL
     category: SATF
     source: Vozka et al. (2018)
@@ -61,7 +61,7 @@ fuels:
     description: HEFA from tallow feedstock
 
   # Jet-A (Conventional Jet Fuel)
-  jet-a:
+  jet_a:
     name: Jet-A
     category: Conventional
     source: Vozka et al. (2018)
@@ -90,7 +90,7 @@ fuels:
     reference: null
     description: 100% n-heptane
   
-  heptane-decane:
+  heptane_decane:
     name: n-Heptane/n-Decane Blend
     category: Simple
     source: null

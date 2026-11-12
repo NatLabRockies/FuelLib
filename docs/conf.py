@@ -83,14 +83,14 @@ REF_COMPOUND_COLUMNS = ["Family", "Carbon Number", "Reference Compound", "SMILES
 
 
 def write_ref_compounds_table(app):
-    """Write a trimmed copy of refCompounds.csv for display in the docs."""
-    source = os.path.join(PROJECT_ROOT, "fuellib", "data", "refCompounds.csv")
+    """Write a trimmed copy of ref_compounds.csv for display in the docs."""
+    source = os.path.join(PROJECT_ROOT, "fuellib", "data", "ref_compounds.csv")
     out_dir = os.path.join(DOCS_DIR, "generated")
     os.makedirs(out_dir, exist_ok=True)
     with (
         open(source, newline="", encoding="utf-8-sig") as f_in,
         open(
-            os.path.join(out_dir, "refCompounds_table.csv"),
+            os.path.join(out_dir, "ref_compounds_table.csv"),
             "w",
             newline="",
             encoding="utf-8",

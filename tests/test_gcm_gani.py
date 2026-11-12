@@ -235,9 +235,9 @@ class GaniReferenceDecompositionTestCase(unittest.TestCase):
 
     def test_reference_decomposition(self):
         """Test that the RDKit decomposition matches tabulated Gani data."""
-        df_refs = pd.read_csv(Path(DEFAULT_DATA_DIR) / "refCompounds.csv")
+        df_refs = pd.read_csv(Path(DEFAULT_DATA_DIR) / "ref_compounds.csv")
         df_gani = pd.read_csv(
-            Path(DEFAULT_DATA_DIR) / "refGani.csv", skipinitialspace=True
+            Path(DEFAULT_DATA_DIR) / "ref_gani.csv", skipinitialspace=True
         )
         df_gani.columns = df_gani.columns.str.strip()
         df_gani["Reference Compound"] = df_gani["Reference Compound"].str.strip()
@@ -252,7 +252,7 @@ class GaniReferenceDecompositionTestCase(unittest.TestCase):
             missing_groups = counts.index.difference(df_gani.columns)
             if len(missing_groups):
                 raise KeyError(
-                    f"Groups {list(missing_groups)} not found in refGani columns"
+                    f"Groups {list(missing_groups)} not found in ref_gani columns"
                 )
             rows[name] = counts.reindex(df_gani.columns, fill_value=0)
 
@@ -263,11 +263,11 @@ class GaniReferenceDecompositionTestCase(unittest.TestCase):
         common = df_new.index.intersection(df_gani.index)
         missing = df_new.index.difference(df_gani.index)
         if len(missing):
-            print("Compounds not in refGani:", list(missing))
+            print("Compounds not in ref_gani:", list(missing))
 
         diff = df_new.loc[common] - df_gani.loc[common].astype(int)
         mismatched = diff.index[(diff != 0).any(axis=1)]
-        lines = [f"{len(mismatched)}/{len(common)} compounds do not match refGani."]
+        lines = [f"{len(mismatched)}/{len(common)} compounds do not match ref_gani."]
         for name in mismatched:
             cols = diff.columns[diff.loc[name] != 0]
             lines.append(

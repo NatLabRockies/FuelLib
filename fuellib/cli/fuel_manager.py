@@ -22,7 +22,7 @@ except ImportError:
 def load_fuel_metadata(fuel_data_dir=None):
     """Load fuel metadata from YAML file if available.
 
-    :param fuel_data_dir: Optional directory containing fuel data (parent of gcData/
+    :param fuel_data_dir: Optional directory containing fuel data (parent of gc_data/
                          and fuel_metadata.yaml).
                          If None, loads from embedded FuelLib data.
     :type fuel_data_dir: str, optional
@@ -68,7 +68,7 @@ def list_fuels_main():
         "--fuel-data-dir",
         default=None,
         metavar="PATH",
-        help="Directory containing fuel data (with gcData/ and, optionally, fuel_metadata.yaml). "
+        help="Directory containing fuel data (with gc_data/ and, optionally, fuel_metadata.yaml). "
         "If not specified, uses embedded FuelLib data.",
     )
     parser.add_argument(
@@ -84,11 +84,11 @@ def list_fuels_main():
         fuel_data_dir = fl.get_fueldata_gc_dir()
         metadata_dir = None  # Use embedded metadata
     else:
-        fuel_data_dir = os.path.join(args.fuel_data_dir, "gcData")
+        fuel_data_dir = os.path.join(args.fuel_data_dir, "gc_data")
         metadata_dir = args.fuel_data_dir  # Load metadata from same custom directory
 
     try:
-        # List all fuel files in the gcData directory
+        # List all fuel files in the gc_data directory
         if not os.path.exists(fuel_data_dir):
             print(f"Error: Fuel data directory not found: {fuel_data_dir}")
             sys.exit(1)
