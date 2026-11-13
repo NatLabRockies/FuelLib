@@ -99,9 +99,13 @@ class TestHCIdentification:
         # === Test 1: nC matches reference formula ===
         mismatches = []
         formulas = (
-            fuel.comps.formulas if fuel.comps.formulas is not None else [None] * fuel.num_compounds
+            fuel.comps.formulas
+            if fuel.comps.formulas is not None
+            else [None] * fuel.num_compounds
         )
-        for compound, formula, nc_calc in zip(fuel.comps.names, formulas, fuel.comps.num_c):
+        for compound, formula, nc_calc in zip(
+            fuel.comps.names, formulas, fuel.comps.num_c
+        ):
             if not formula or pd.isna(formula):
                 continue
 
@@ -121,9 +125,13 @@ class TestHCIdentification:
         # === Test 2: nH matches reference formula ===
         mismatches = []
         formulas = (
-            fuel.comps.formulas if fuel.comps.formulas is not None else [None] * fuel.num_compounds
+            fuel.comps.formulas
+            if fuel.comps.formulas is not None
+            else [None] * fuel.num_compounds
         )
-        for compound, formula, nh_calc in zip(fuel.comps.names, formulas, fuel.comps.num_h):
+        for compound, formula, nh_calc in zip(
+            fuel.comps.names, formulas, fuel.comps.num_h
+        ):
             if not formula or pd.isna(formula):
                 continue
 
@@ -157,7 +165,9 @@ class TestHCIdentification:
         # === Test 4: hc_type matches formula-derived expectations ===
         mismatches = []
         formulas = (
-            fuel.comps.formulas if fuel.comps.formulas is not None else [None] * fuel.num_compounds
+            fuel.comps.formulas
+            if fuel.comps.formulas is not None
+            else [None] * fuel.num_compounds
         )
         for compound, formula, hc_type_calc in zip(
             fuel.comps.names, formulas, fuel.comps.hc_type
@@ -179,7 +189,9 @@ class TestHCIdentification:
 
         # === Test 5: Aromatic compounds identified ===
         formulas = (
-            fuel.comps.formulas if fuel.comps.formulas is not None else [None] * fuel.num_compounds
+            fuel.comps.formulas
+            if fuel.comps.formulas is not None
+            else [None] * fuel.num_compounds
         )
         aromatic_names = {
             compound
@@ -259,7 +271,9 @@ class TestHCIdentification:
         print(f"✓ iso-alkane compounds identified correctly ({isoalkane_count} found)")
 
         # === Test 8: Alkene compounds identified ===
-        alkene_names = {compound for compound in fuel.comps.names if "Alkene" in compound}
+        alkene_names = {
+            compound for compound in fuel.comps.names if "Alkene" in compound
+        }
 
         mismatches = []
         for compound, hc_type in zip(fuel.comps.names, fuel.comps.hc_type):

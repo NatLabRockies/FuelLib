@@ -20,21 +20,6 @@ class Mixture:
         self._fuel: Fuel = fuel
 
     # -------------------------------------------------------------------------
-    # Non-temperature-dependent properties
-    # -------------------------------------------------------------------------
-    def mw(self, Yi: types.Quantity1D | None = None) -> types.Quantity0D:
-        """Calculate the mean molecular weight of the mixture.
-
-        Args:
-            Yi: Mass fractions of each compound.
-                Defaults to `fuel.y0` (initial mass fractions).
-
-        Returns:
-            Mean molecular weight of the mixture in kg/mol.
-        """
-        return correlate.mixture.mean_molecular_weight(self._fuel, Yi)
-
-    # -------------------------------------------------------------------------
     # Temperature-dependent properties
     # -------------------------------------------------------------------------
     # NOTE: Cannot make Yi optional in mixture functions because switching the order of
@@ -201,6 +186,18 @@ class Mixture:
     # -------------------------------------------------------------------------
     # Fuel properties
     # -------------------------------------------------------------------------
+    def mw(self, Yi: types.Quantity1D | None = None) -> types.Quantity0D:
+        """Calculate the mean molecular weight of the mixture.
+
+        Args:
+            Yi: Mass fractions of each compound.
+                Defaults to `fuel.y0` (initial mass fractions).
+
+        Returns:
+            Mean molecular weight of the mixture in kg/mol.
+        """
+        return correlate.mixture.mean_molecular_weight(self._fuel, Yi)
+
     def t_freeze(self, Yi: types.Quantity1D, *, alpha: float = 1.0) -> types.Quantity0D:
         """Calculate freeze point of the mixture.
 
