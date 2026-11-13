@@ -195,7 +195,7 @@ def create_individual_compounds_dataframe(fuel, compound_names, converter):
     Cp_A = gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
     Cp_B = gani_gcm.predict("Cp_B", fuel).to("J/(mol*K)") / fuel.comps.mw
     Cp_C = gani_gcm.predict("Cp_C", fuel).to("J/(mol*K)") / fuel.comps.mw
-    Lv_stp = (fuel.comps.hv_stp / fuel.comps.mw).to("J/kg")
+    Lv_stp = (gani_gcm.predict("Hv_stp", fuel).to("J/mol") / fuel.comps.mw).to("J/kg")
 
     return pd.DataFrame({
         "Compound": compound_names,
