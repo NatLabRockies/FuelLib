@@ -125,7 +125,7 @@ provided :math:`T` in K unless noted otherwise.
    :math:`p_{v,i}`                Pa                     Vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`k_i`                    W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
-   :math:`T_{fp,i}`               K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
+   :math:`T_{\textit{flash},i}`   K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
    :math:`LHV_i`                  J/kg                   Lower heating value.
    =============================  =====================  ===============================================================
 
@@ -396,19 +396,19 @@ Flash point
 .. automethod:: fuellib.fuel.components.Components.t_flash
    :noindex:
 
-Two correlations are available for the flash point :math:`T_{fp,i}` of each compound,
+Two correlations are available for the flash point :math:`T_{\textit{flash},i}` of each compound,
 both based on the Constantinou-Gani normal boiling point :math:`T_{b,i}`.
 The Alqaheem and Riazi\ :footcite:p:`alqaheem_flash_2017` correlation takes the flash point as a fixed fraction
 of the boiling point:
 
 .. math::
-   T_{fp,i} = 0.70 \, T_{b,i}.
+   T_{\textit{flash},i} = 0.70 \, T_{b,i}.
 
 The modified group-contribution correlation of Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015` adds a
 group-contribution term:
 
 .. math::
-   T_{fp,i} = 12.14 + 0.73 \, T_{b,i} + \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \phi_k,
+   T_{\textit{flash},i} = 12.14 + 0.73 \, T_{b,i} + \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \phi_k,
 
 where :math:`\phi_k` are the group contributions registered as the ``alibakhshi_phi``
 property of the ``gani`` GCM (:doc:`gcm`).
@@ -465,21 +465,21 @@ are used throughout this section.
    :widths: auto
    :align: center
    
-   ========================  ===============  =====================
-   Symbol                    Units            Description
-   ========================  ===============  =====================
-   :math:`\rho`              kg/m\ :sup:`3`   Density
-   :math:`\nu`               m\ :sup:`2`/s    Kinematic viscosity
-   :math:`p_v`               Pa               Vapor pressure
-   :math:`\sigma`            N/m              Surface tension
-   :math:`k`                 W/m/K            Thermal conductivity
-   :math:`T_{fr}`            K                Freeze point
-   :math:`T_{fp}`            K                Flash point
-   :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
-   :math:`YSI`               --               Yield sooting index
-   :math:`SP`                mm               Smoke point
-   :math:`DCN`               --               Derived cetane number
-   ========================  ===============  =====================
+   ============================  ===============  =====================
+   Symbol                        Units            Description
+   ============================  ===============  =====================
+   :math:`\rho`                  kg/m\ :sup:`3`   Density
+   :math:`\nu`                   m\ :sup:`2`/s    Kinematic viscosity
+   :math:`p_v`                   Pa               Vapor pressure
+   :math:`\sigma`                N/m              Surface tension
+   :math:`k`                     W/m/K            Thermal conductivity
+   :math:`T_{\textit{freeze}}`   K                Freeze point
+   :math:`T_{\textit{flash}}`    K                Flash point
+   :math:`\Delta H^\circ_c`      J/kg             Heat of combustion
+   :math:`YSI`                   --               Yield sooting index
+   :math:`SP`                    mm               Smoke point
+   :math:`DCN`                   --               Derived cetane number
+   ============================  ===============  =====================
 
 .. _tab-mass-mole-fracs:
 
@@ -637,7 +637,7 @@ where
 .. math::
    \Delta S_{\textit{mix},j} &= -\frac{R}{X_j}\big[(1 - X_j)\ln(1 - X_j) + X_j \ln X_j\big], \\
    \Delta H_{\textit{fus},j} &= T_{m,j} \, \Delta S_{\textit{fus},j}, \\
-   \Delta\tilde{C}_{p,j} &= -0.35 \, \tilde{C}_{p,\ell,j}(298.15 \text{ K}),
+   \Delta\tilde{C}_{p,j} &= -0.35 \, \tilde{C}_{p,\textit{stp},j},
 
 :math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.components.Components.tm` (a reference value
 when available, otherwise the Constantinou-Gani prediction; see :ref:`sec-reference-properties`),
@@ -654,16 +654,16 @@ Mixture flash point
 .. automethod:: fuellib.fuel.mixture.Mixture.t_flash
    :noindex:
 
-The mixture flash point is computed from the component flash points :math:`T_{fp,i}`
+The mixture flash point is computed from the component flash points :math:`T_{\textit{flash},i}`
 (see Flash point above) with either a linear mass-fraction mixing rule,
 
 .. math::
-   T_{fp} = \sum_{i=1}^{N_c} Y_i T_{fp,i},
+   T_{\textit{flash}} = \sum_{i=1}^{N_c} Y_i T_{\textit{flash},i},
 
-or the ideal Liaw-Chiu\ :footcite:p:`liaw_general_2006` mixing rule (default), which solves for :math:`T_{fp}` such that
+or the ideal Liaw-Chiu\ :footcite:p:`liaw_general_2006` mixing rule (default), which solves for :math:`T_{\textit{flash}}` such that
 
 .. math::
-   \sum_{i=1}^{N_c} X_i \frac{p_{v,i}(T_{fp})}{p_{v,i}(T_{fp,i})} = 1,
+   \sum_{i=1}^{N_c} X_i \frac{p_{v,i}(T_{\textit{flash}})}{p_{v,i}(T_{\textit{flash},i})} = 1,
 
 where :math:`p_{v,i}` is evaluated with the Lee-Kesler correlation. This
 mixing rule does not model nonideal liquid activity coefficients.
