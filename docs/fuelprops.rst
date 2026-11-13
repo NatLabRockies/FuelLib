@@ -124,7 +124,7 @@ provided :math:`T` in K unless noted otherwise.
    :math:`C_{p,i}`                J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
    :math:`p_{v,i}`                Pa                     Vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
-   :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
+   :math:`k_i`                    W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
    :math:`T_{fp,i}`               K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
    :math:`LHV_i`                  J/kg                   Lower heating value.
    =============================  =====================  ===============================================================
@@ -352,7 +352,7 @@ Thermal conductivity for each compound is computed according to the method of
 Latini et al. as summarized in Poling's\ :footcite:p:`poling_properties_2001` book:
 
 .. math:: 
-   \lambda_i = \frac{A_i(1 - T_{r,i})^{0.38}}{T_{r,i}^{1/6}}.
+   k_i = \frac{A_i(1 - T_{r,i})^{0.38}}{T_{r,i}^{1/6}}.
 
 The constant :math:`A_i` is defined by:
 
@@ -472,7 +472,7 @@ are used throughout this section.
    :math:`\nu`               m\ :sup:`2`/s    Kinematic viscosity
    :math:`p_v`               Pa               Vapor pressure
    :math:`\sigma`            N/m              Surface tension
-   :math:`\lambda`           W/m/K            Thermal conductivity
+   :math:`k`                 W/m/K            Thermal conductivity
    :math:`T_{fr}`            K                Freeze point
    :math:`T_{fp}`            K                Flash point
    :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
@@ -615,7 +615,7 @@ The thermal conductivity of the mixture is calculated using the power law method
 Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 
 .. math::
-   \lambda = \bigg(\sum_{i=1}^{N_c} Y_i \lambda_i^{-2} \bigg)^{-1/2}.
+   k = \bigg(\sum_{i=1}^{N_c} Y_i k_i^{-2} \bigg)^{-1/2}.
 
 Mixture freeze point
 ^^^^^^^^^^^^^^^^^^^^
