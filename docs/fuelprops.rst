@@ -477,7 +477,7 @@ are used throughout this section.
    :math:`T_{fp}`            K                Flash point
    :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
    :math:`YSI`               --               Yield sooting index
-   :math: `SP`               mm               Smoke point
+   :math:`SP`                mm               Smoke point
    :math:`DCN`               --               Derived cetane number
    ========================  ===============  =====================
 
