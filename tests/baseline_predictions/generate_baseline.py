@@ -128,12 +128,12 @@ def update_baseline(
 
     new_rows = []
     for fuel_name in selected_fuels:
-        fuel = Fuel(fuel_name, useRefProperties=useRefProperties)
-        if fuel.propData is None:
+        fuel = Fuel(fuel_name, use_ref_props=useRefProperties)
+        if fuel.prop_data is None:
             msg = f"No property data found for fuel '{fuel_name}'."
             raise ValueError(msg)
 
-        props_data = fuel.propData
+        props_data = fuel.prop_data
         for prop_name in props_data["Property"].unique():
             prop_data = props_data[props_data["Property"] == prop_name]
             if (

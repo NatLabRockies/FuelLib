@@ -381,7 +381,7 @@ def test_ln_gamma_fuel(posf10325: Fuel):
 
     # Default Yi is the initial composition
     np.testing.assert_allclose(
-        unifac.ln_gamma(posf10325, T, posf10325.Y_0).magnitude, ln_g.magnitude
+        unifac.ln_gamma(posf10325, T, posf10325.y0).magnitude, ln_g.magnitude
     )
 
     # Temperature units are converted
@@ -392,7 +392,7 @@ def test_ln_gamma_fuel(posf10325: Fuel):
     )
 
     # Matches the kernel called with mole fractions
-    x = posf10325.Y2X(posf10325.Y_0).to("dimensionless").magnitude
+    x = posf10325.comps.y2x(posf10325.y0).to("dimensionless").magnitude
     np.testing.assert_allclose(
         ln_g.magnitude,
         unifac.ln_gamma_x(x, 300.0, *unifac.parameters(posf10325)),
