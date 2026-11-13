@@ -104,8 +104,8 @@ Run ``uv lock`` to regenerate ``uv.lock`` after changing dependencies in
 Working with Units (pint)
 --------------------------
 
-FuelLib's public API is unit-aware: physical quantities (e.g. ``Fuel.MW``,
-``Fuel.Tc``, ``Fuel.Pc``) are `pint <https://pint.readthedocs.io>`_
+FuelLib's public API is unit-aware: physical quantities (e.g. ``Fuel.comps.mw``,
+``Fuel.comps.tc``, ``Fuel.comps.pc``) are `pint <https://pint.readthedocs.io>`_
 ``Quantity`` objects rather than bare ``float``/``np.ndarray`` values. When
 contributing new code that creates or consumes physical quantities:
 

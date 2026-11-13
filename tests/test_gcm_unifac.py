@@ -26,8 +26,8 @@ REF_UNIFAC = (
 def _params(*smiles: str):
     """UNIFAC parameters for a mixture of the given SMILES strings."""
     decomp = pd.concat([decompose(s) for s in smiles])
-    # parameters() only reads `fuel.unifacDecomp`, so a lightweight stand-in suffices
-    return unifac.parameters(cast(Fuel, SimpleNamespace(unifacDecomp=decomp)))
+    # parameters() only reads `fuel._unifac_decomp`, so a lightweight stand-in suffices
+    return unifac.parameters(cast(Fuel, SimpleNamespace(_unifac_decomp=decomp)))
 
 
 def _ln_gamma_combinatorial_reference(x, nu, Rk, Qk):
@@ -381,7 +381,7 @@ def test_ln_gamma_fuel(posf10325: Fuel):
 
     # Default Yi is the initial composition
     np.testing.assert_allclose(
-        unifac.ln_gamma(posf10325, T, posf10325.Y_0).magnitude, ln_g.magnitude
+        unifac.ln_gamma(posf10325, T, posf10325.y0).magnitude, ln_g.magnitude
     )
 
     # Temperature units are converted
@@ -392,7 +392,7 @@ def test_ln_gamma_fuel(posf10325: Fuel):
     )
 
     # Matches the kernel called with mole fractions
-    x = posf10325.Y2X(posf10325.Y_0).to("dimensionless").magnitude
+    x = posf10325.comps.y2x(posf10325.y0).to("dimensionless").magnitude
     np.testing.assert_allclose(
         ln_g.magnitude,
         unifac.ln_gamma_x(x, 300.0, *unifac.parameters(posf10325)),

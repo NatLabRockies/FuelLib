@@ -66,10 +66,10 @@ def droplet_mass(
     volume = droplet_volume(r)
     if volume > 0:
         return (
-            volume / (fuel.molar_liquid_vol(T) @ Yi_magnitude) * Yi_magnitude * fuel.MW
+            volume / (fuel.comps.vm(T) @ Yi_magnitude) * Yi_magnitude * fuel.comps.mw
         ).to("kg")
     else:
-        return Units.Quantity(np.zeros_like(fuel.MW.magnitude), "kg")
+        return Units.Quantity(np.zeros_like(fuel.comps.mw.magnitude), "kg")
 
 
 def epsilon_to_characteristic_temperature(epsilon_j_per_mol: float) -> types.Quantity0D:

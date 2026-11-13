@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit
 
+from ..gcm.gani import gani_gcm
 from ..gcm.nannoolal import nannoolal_gcm
 from ..rdk import mol
 from ..utils import Units, constants, types
@@ -25,7 +26,7 @@ def molar_liquid_volume(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """
     Tstp = Units.Quantity(298, "K")
     T = T.to("K")
-    Tc = fuel.Tc.to("K")
+    Tc = fuel.comps.tc.to("K")
     phi = np.zeros_like(Tc.magnitude)
     for i in range(len(Tc)):
         if T > Tc[i]:
@@ -34,8 +35,8 @@ def molar_liquid_volume(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
             phi[i] = (1 - (T / Tc[i])) ** (2.0 / 7.0) - (1 - (Tstp / Tc[i])) ** (
                 2.0 / 7.0
             )
-    z = 0.29056 - 0.08775 * fuel.omega
-    return fuel.Vm_stp * z**phi
+    z = 0.29056 - 0.08775 * fuel.comps.omega
+    return fuel.comps.vm_stp * z**phi
 
 
 def density(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
@@ -48,10 +49,10 @@ def density(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     Returns:
         Density of each compound in kg/m^3.
     """
-    return (fuel.MW / molar_liquid_volume(fuel, T)).to("kg/m^3")
+    return (fuel.comps.mw / molar_liquid_volume(fuel, T)).to("kg/m^3")
 
 
-def kinematic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def viscosity_kinematic_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Calculate the kinematic viscosity using Dutt's equation.
 
     Uses Dutt's equation (4.23) from "Viscosity of Liquids". The equation
@@ -66,13 +67,13 @@ def kinematic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantit
     """
     # Convert temperature to Celsius
     T: float = T.to("celsius").magnitude
-    Tb = fuel.Tb.to("celsius").magnitude
+    Tb = fuel.comps.tb.to("celsius").magnitude
     # RHS of Dutt's equation (4.23) in Viscosity of Liquids
     rhs = -3.0171 + (442.78 + 1.6452 * Tb) / (T + 239 - 0.19 * Tb)
     return Units.Quantity(np.exp(rhs), "mm^2/s").to("m^2/s")
 
 
-def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def viscosity_dynamic_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Calculate the dynamic viscosity using Dutt's equation.
 
     Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
@@ -84,12 +85,12 @@ def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1
     Returns:
         Dynamic viscosity in Pa*s.
     """
-    nu_i = kinematic_viscosity_dutt(fuel, T)
+    nu_i = viscosity_kinematic_dutt(fuel, T)
     rho_i = density(fuel, T)
     return (nu_i * rho_i).to("Pa*s")
 
 
-def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def viscosity_dynamic_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Calculate the dynamic viscosity using Nannoolal (2009) GCM.
 
     Uses equation (6) from Nannoolal (2009).
@@ -102,12 +103,12 @@ def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quan
         Component dynamic viscosities in Pa*s.
     """
     T_mag = T.to("kelvin").magnitude
-    Tb_mag = fuel.Tb.to("kelvin").magnitude
+    Tb_mag = fuel.comps.tb.to("kelvin").magnitude
     dBvi = nannoolal_gcm.predict("dBv", fuel).magnitude
     Tvi = nannoolal_gcm.predict("Tv", fuel).magnitude
     ni = np.array([
         sum(n for atom, n in mol.atom_counts(m).items() if atom != "H")
-        for m in fuel.rdkit_mols
+        for m in fuel.comps.rdkit_mols
     ])
     dBvi = dBvi / (ni**-2.5635 + 0.0685) + 3.7777
     Tvi = 21.8444 * np.sqrt(Tb_mag) + Tvi**0.9315 / (ni**0.6577 + 4.9259) - 231.1361
@@ -116,7 +117,7 @@ def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quan
     return Units.Quantity(eta, "Pa*s")
 
 
-def kinematic_viscosity_nannoolal(
+def viscosity_kinematic_nannoolal(
     fuel: "Fuel", T: types.Quantity0D
 ) -> types.Quantity1D:
     """Calculate the kinematic viscosity using Nannoolal (2009) GCM.
@@ -130,12 +131,12 @@ def kinematic_viscosity_nannoolal(
     Returns:
         Component kinematic viscosities in m^2/s.
     """
-    eta = dynamic_viscosity_nannoolal(fuel, T)
+    eta = viscosity_dynamic_nannoolal(fuel, T)
     rho = density(fuel, T)
     return (eta / rho).to("m^2/s")
 
 
-def molar_specific_heat_capacity(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def specific_heat_capacity_molar(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Compute molar specific heat capacity at a given temperature.
 
     Args:
@@ -147,11 +148,14 @@ def molar_specific_heat_capacity(fuel: "Fuel", T: types.Quantity0D) -> types.Qua
     """
     T = T.to("K")
     theta = (T - Units.Quantity(298, "K")) / Units.Quantity(700, "K")
-    cp = fuel.Cp_stp + fuel.Cp_B * theta + fuel.Cp_C * theta**2
+    cp_stp = gani_gcm.predict("Cp_stp", fuel)
+    cp_b = gani_gcm.predict("Cp_B", fuel)
+    cp_c = gani_gcm.predict("Cp_C", fuel)
+    cp = cp_stp + cp_b * theta + cp_c * theta**2
     return cp.to("J/(mol*K)")
 
 
-def molar_specific_heat_capacity_ruzicka(
+def specific_heat_capacity_molar_ruzicka(
     fuel: "Fuel", T: types.Quantity0D
 ) -> types.Quantity1D:
     """Compute molar specific heat capacity in J/mol/K at a given temperature.
@@ -166,14 +170,14 @@ def molar_specific_heat_capacity_ruzicka(
         Molar specific heat capacity in J/mol/K.
     """
     Tr = T.to("K") / 100.0
-    rd_A, rd_B, rd_D = fuel.RD_coeffs
+    rd_A = gani_gcm.predict("rd_A", fuel)
+    rd_B = gani_gcm.predict("rd_B", fuel)
+    rd_D = gani_gcm.predict("rd_D", fuel)
     cp_molar = constants.R * (rd_A + rd_B * Tr + rd_D * Tr**2)
     return cp_molar.to("J/(mol*K)")
 
 
-def liquid_mass_specific_heat_capacity(
-    fuel: "Fuel", T: types.Quantity0D
-) -> types.Quantity1D:
+def specific_heat_capacity_mass(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
 
     Args:
@@ -184,12 +188,12 @@ def liquid_mass_specific_heat_capacity(
         Mass specific heat capacity in J/kg/K.
     """
     T = T.to("K")
-    MW = fuel.MW
-    cp = molar_specific_heat_capacity(fuel, T)
+    MW = fuel.comps.mw
+    cp = specific_heat_capacity_molar(fuel, T)
     return (cp / MW).to("J/(kg*K)")
 
 
-def liquid_mass_specific_heat_capacity_ruzicka(
+def specific_heat_capacity_mass_ruzicka(
     fuel: "Fuel", T: types.Quantity0D
 ) -> types.Quantity1D:
     """Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
@@ -203,17 +207,17 @@ def liquid_mass_specific_heat_capacity_ruzicka(
     Returns:
         Mass specific heat capacity in J/kg/K.
     """
-    cp_molar = molar_specific_heat_capacity_ruzicka(fuel, T)
-    return (cp_molar / fuel.MW).to("J/(kg*K)")
+    cp_molar = specific_heat_capacity_molar_ruzicka(fuel, T)
+    return (cp_molar / fuel.comps.mw).to("J/(kg*K)")
 
 
-def saturated_vapor_pressure(
+def vapor_pressure(
     fuel: "Fuel",
     T: types.Quantity0D,
     *,
     correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
 ) -> types.Quantity1D:
-    """Compute saturated vapor pressure (P_sat).
+    """Compute vapor pressure.
 
     Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
@@ -223,12 +227,12 @@ def saturated_vapor_pressure(
         correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
 
     Returns:
-        Saturated vapor pressure in Pa.
+        Vapor pressure in Pa.
     """
     T = T.to("K")
-    Tr = T / fuel.Tc
-    Pc = fuel.Pc
-    omega = fuel.omega
+    Tr = T / fuel.comps.tc
+    Pc = fuel.comps.pc
+    omega = fuel.comps.omega
 
     if correlation.casefold() == "Ambrose-Walton".casefold():
         # May cause trouble at high temperatures
@@ -264,7 +268,7 @@ def saturated_vapor_pressure(
     return (Pc * rhs).to("Pa")
 
 
-def saturated_vapor_pressure_antoine_coeffs(
+def vapor_pressure_antoine_coeffs(
     fuel: "Fuel",
     Tvals: types.Quantity1D | None = None,
     *,
@@ -335,7 +339,7 @@ def saturated_vapor_pressure_antoine_coeffs(
     # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
     # unit independent. "mks" (meter-kilogram-second) and "cgs"
     # D is the Pa-to-target-unit conversion factor, applied only when evaluating
-    # psat(T) = D * 10**(A - B/(T + C)) in Pele.
+    # pvap(T) = D * 10**(A - B/(T + C)) in Pele.
     D = Units.Quantity(1, "Pa").to(units)
 
     # Fit Antoine coefficients for each compound
@@ -345,12 +349,12 @@ def saturated_vapor_pressure_antoine_coeffs(
     for i in range(fuel.num_compounds):
         # Update T if not specified
         if Tvals is None:
-            T = Units.Quantity(np.linspace(273.15, fuel.Tb[i].magnitude, 20), "K")
+            T = Units.Quantity(np.linspace(273.15, fuel.comps.tb[i].magnitude, 20), "K")
         T_magnitude = T.to("K").magnitude
         Pvals = np.zeros_like(T_magnitude)
         for k in range(len(T)):
             Pvals[k] = (
-                saturated_vapor_pressure(fuel, T[k], correlation=correlation)[i]
+                vapor_pressure(fuel, T[k], correlation=correlation)[i]
                 .to("Pa")
                 .magnitude
             )
@@ -362,33 +366,46 @@ def saturated_vapor_pressure_antoine_coeffs(
     return A, B, C, D
 
 
-def latent_heat_vaporization(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
-    """Calculate latent heat of vaporization adjusted for temperature.
+def enthalpy_vaporization_molar(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate molar enthalpy of vaporization adjusted for temperature.
 
     Args:
         fuel: Fuel object.
         T: Temperature to compute property.
 
     Returns:
-        Latent heat of vaporization in J/kg.
+        Molar enthalpy of vaporization in J/mol.
     """
     T = T.to("K")
-    Tc = fuel.Tc.to("K")
-    Tb = fuel.Tb.to("K")
-    Lv_stp = fuel.Lv_stp.to("J/kg")
+    Tc = fuel.comps.tc.to("K")
+    Tb = fuel.comps.tb.to("K")
+    hv_stp = fuel.comps.hv_stp.to("J/mol")
 
     # Reduced temperatures
     Tr = T / Tc
     Trb = Tb / Tc
 
-    Lvi = Units.Quantity(np.zeros_like(Tc.magnitude), "J/kg")
+    hvi = Units.Quantity(np.zeros_like(Tc.magnitude), "J/mol")
     for i in range(len(Tc)):
         if T > Tc[i]:
-            Lvi.magnitude[i] = 0.0
+            hvi.magnitude[i] = 0.0
         else:
-            Lvi[i] = Lv_stp[i] * (((1.0 - Tr[i]) / (1.0 - Trb[i])) ** 0.38)
+            hvi[i] = hv_stp[i] * (((1.0 - Tr[i]) / (1.0 - Trb[i])) ** 0.38)
 
-    return Lvi
+    return hvi
+
+
+def enthalpy_vaporization_mass(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate mass-based enthalpy of vaporization adjusted for temperature.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+
+    Returns:
+        Mass-bass enthalpy of vaporization in J/kg.
+    """
+    return (enthalpy_vaporization_molar(fuel, T) / fuel.comps.mw).to("J/kg")
 
 
 def diffusion_coeffs_wilke(
@@ -430,15 +447,17 @@ def diffusion_coeffs_wilke(
 
     # Method of Tee for calculating liquid sigma and epsilon
     if correlation.casefold() == "Tee".casefold():
-        sigma_i = fuel.sigma.to("angstrom").magnitude
-        epsilonByKB_i = fuel.epsilonByKB.to("K").magnitude
+        sigma_i = fuel.comps.lj_sigma.to("angstrom").magnitude
+        epsilonByKB_i = fuel.comps.lj_eps_by_kb.to("K").magnitude
     else:
         # Method of Wilke & Lee calculating liquid sigma and epsilon
-        Vmb_i = np.zeros_like(fuel.Tb.magnitude)
+        Vmb_i = np.zeros_like(fuel.comps.tb.magnitude)
         for n in range(fuel.num_compounds):
-            Vmb_i[n] = molar_liquid_volume(fuel, fuel.Tb[n])[n].to("cm^3/mol").magnitude
+            Vmb_i[n] = (
+                molar_liquid_volume(fuel, fuel.comps.tb[n])[n].to("cm^3/mol").magnitude
+            )
         sigma_i = 1.18 * Vmb_i ** (1 / 3)  # Angstroms, Poling (11-4.2)
-        epsilonByKB_i = 1.15 * fuel.Tb.to("K").magnitude  # K, Poling (11-4.3)
+        epsilonByKB_i = 1.15 * fuel.comps.tb.to("K").magnitude  # K, Poling (11-4.3)
 
     # Compute binary sigma and epsilon
     sigma_gas: float = sigma_gas.magnitude
@@ -467,7 +486,7 @@ def diffusion_coeffs_wilke(
 
     # Convert molecular weights from kg/mol to g/mol then calculate M_AB
     MW_gas: float = MW_gas.magnitude
-    MW_i = fuel.MW.to("g/mol").magnitude
+    MW_i = fuel.comps.mw.to("g/mol").magnitude
     M_AB_i = 2 * (MW_i * MW_gas) / (MW_i + MW_gas)  # g/mol, see Poling (11-3.1)
 
     # Pressure is already in bar.
@@ -502,10 +521,10 @@ def surface_tension(
         Surface tension in N/m.
     """
     T = T.to("K")
-    Tc = fuel.Tc.to("K").magnitude
-    Pc = fuel.Pc.to("Pa").magnitude
-    Tb = fuel.Tb.to("K").magnitude
-    omega = fuel.omega.magnitude
+    Tc = fuel.comps.tc.to("K").magnitude
+    Pc = fuel.comps.pc.to("Pa").magnitude
+    Tb = fuel.comps.tb.to("K").magnitude
+    omega = fuel.comps.omega.magnitude
 
     Tr = T.magnitude / Tc
     Pc = Pc * 1e-5  # convert from Pa to bar
@@ -542,10 +561,10 @@ def thermal_conductivity_latini(
         Thermal conductivity in W/m/K.
     """
     T = T.to("K")
-    MW = fuel.MW.to("kg/mol").magnitude
-    Tc = fuel.Tc.to("K").magnitude
-    Tb = fuel.Tb.to("K").magnitude
-    fam = fuel.fam
+    MW = fuel.comps.mw.to("kg/mol").magnitude
+    Tc = fuel.comps.tc.to("K").magnitude
+    Tb = fuel.comps.tb.to("K").magnitude
+    fam = fuel.comps.fam
 
     Astar = 0.00350 + np.zeros_like(Tc)
     alpha = 1.2
@@ -583,7 +602,7 @@ def flash_point_alqaheem(fuel: "Fuel") -> types.Quantity1D:
     Returns:
         Component flash points in K.
     """
-    return 0.70 * fuel.Tb
+    return 0.70 * fuel.comps.tb
 
 
 def flash_point_alibakhshi(fuel: "Fuel") -> types.Quantity1D:
@@ -595,7 +614,8 @@ def flash_point_alibakhshi(fuel: "Fuel") -> types.Quantity1D:
     Returns:
         Component flash points in K.
     """
-    return Units.Quantity(12.14, "K") + 0.73 * fuel.Tb + fuel.phi
+    phi = gani_gcm.predict("alibakhshi_phi", fuel).to("K")
+    return Units.Quantity(12.14, "K") + 0.73 * fuel.comps.tb + phi
 
 
 def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
@@ -613,5 +633,12 @@ def lower_heating_value(fuel: "Fuel") -> types.Quantity1D:
     """
     dH_form_co2 = Units.Quantity(-393.51, "kJ/mol")  # At 298.15 K
     dH_form_h2o = Units.Quantity(-241.83, "kJ/mol")  # At 298.15 K
-    Hf_liq = (fuel.Hf_stp - fuel.Hv_stp).to("J/mol")
-    return -(fuel.nC * dH_form_co2 + 0.5 * fuel.nH * dH_form_h2o - Hf_liq) / fuel.MW
+    Hf_liq = (fuel.comps.hf_stp - fuel.comps.hv_stp).to("J/mol")
+    return (
+        -(
+            fuel.comps.num_c * dH_form_co2
+            + 0.5 * fuel.comps.num_h * dH_form_h2o
+            - Hf_liq
+        )
+        / fuel.comps.mw
+    )

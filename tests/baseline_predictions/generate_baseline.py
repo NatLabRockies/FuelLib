@@ -51,12 +51,12 @@ fuel_names = {
 
 method_map = {
     "density": correlate.mixture.density,
-    "viscosity": correlate.mixture.kinematic_viscosity_nannoolal,
-    "vaporpressure": correlate.mixture.saturated_vapor_pressure,
-    "dynamicviscosity": correlate.mixture.dynamic_viscosity_nannoolal,
+    "viscosity": correlate.mixture.viscosity_kinematic_nannoolal,
+    "vaporpressure": correlate.mixture.vapor_pressure,
+    "dynamicviscosity": correlate.mixture.viscosity_dynamic_nannoolal,
     "surfacetension": correlate.mixture.surface_tension,
     "thermalconductivity": correlate.mixture.thermal_conductivity_latini,
-    "cp": correlate.components.molar_specific_heat_capacity,
+    "cp": correlate.components.specific_heat_capacity_molar,
     "freezepoint": correlate.mixture.freeze_point_boehm,
     "flashpoint": correlate.mixture.flash_point_alibakhshi,
     "heatofcombustion": correlate.mixture.heat_of_combustion,
@@ -128,12 +128,12 @@ def update_baseline(
 
     new_rows = []
     for fuel_name in selected_fuels:
-        fuel = Fuel(fuel_name, useRefProperties=useRefProperties)
-        if fuel.propData is None:
+        fuel = Fuel(fuel_name, use_ref_props=useRefProperties)
+        if fuel.prop_data is None:
             msg = f"No property data found for fuel '{fuel_name}'."
             raise ValueError(msg)
 
-        props_data = fuel.propData
+        props_data = fuel.prop_data
         for prop_name in props_data["Property"].unique():
             prop_data = props_data[props_data["Property"] == prop_name]
             if (

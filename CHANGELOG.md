@@ -7,12 +7,42 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Added
+- `fuel.components.Components`, available as `Fuel.comps`, with the per-component properties of `Fuel` as cached, snake_case attributes: `tc`, `pc`, `vc`, `tm`, `tb`, `hf_stp`, `hv_stp`, `vm_stp`, `omega`, `ysi`, `dcn`, `gf_stp`, `lj_eps_by_kb`, `lj_sigma`, `names`, `smiles`, `pelephysics_keys`, `rdkit_mols`, `num_c`, `num_h`, `mw`, `formulas`, `hc_type`, and `fam`. It also provides the temperature-dependent component methods `rho`, `nu`, `mu`, `cp`, `pvap`, `pvap_antoine_coeffs`, `vm`, `hv`, `d`, `sigma`, `k`, and `t_flash`. `Components.cp` and `Components.hv` take a `basis` of `"mass"` (default, J/kg/K and J/kg) or `"molar"` (J/mol/K and J/mol).
+- `fuel.mixture.Mixture`, available as `Fuel.mix`, with the mixture methods of `Fuel` under the same symbolic names as `Components` (no cached attributes): `rho`, `nu`, `mu`, `pvap`, `pvap_antoine_coeffs`, `sigma`, `k`, `t_freeze`, `t_flash`, `lhv`, `ysi`, `smoke_point`, `dcn`, `aromatics`, and `naphthalenes`. It also provides the composition conversions `mw` (mean molecular weight), `mass2y`, `mass2x`, `x2y`, `y2x`, and `y2v`.
+- `Fuel(data_dir=..., use_ref_props=...)` and the snake_case attributes `Fuel.data_dir`, `Fuel.gc_data`, `Fuel.y0`, `Fuel.components_data`, and `Fuel.prop_data`.
+- `DEFAULT_DATA_DIR` is re-exported from `fuellib.fuel`.
+- API documentation pages for `fuellib.fuel.core`, `fuellib.fuel.components`, and `fuellib.fuel.mixture`.
+
+### Fixed
+- `correlate.mixture.density` is annotated as returning a `Quantity0D` (the mixture density is a scalar).
+
+### Deprecated
+- All deprecated members below emit a `DeprecationWarning` and return the same values as in 3.1.3.
+- `Fuel(fuelDataDir=...)` and `Fuel(useRefProperties=...)`, which are aliases of `data_dir` and `use_ref_props`.
+- `Fuel.fuelDataDir`, `Fuel.gcData`, `Fuel.Y_0`, `Fuel.compoundsData`, and `Fuel.propData`, which forward to `Fuel.data_dir`, `Fuel.gc_data`, `Fuel.y0`, `Fuel.components_data`, and `Fuel.prop_data`.
+- `Fuel.useRefProperties`, `Fuel.compounds`, `Fuel.smiles`, `Fuel.pelephysics_keys`, `Fuel.refCompounds`, `Fuel.ganiDecomp`, `Fuel.nannoolalDecomp`, and `Fuel.unifacDecomp`, which forward to `Fuel._use_ref_props`, `Fuel.comps.names`, `Fuel.comps.smiles`, `Fuel.comps.pelephysics_keys`, `Fuel._ref_comps`, `Fuel._gani_decomp`, `Fuel._nannoolal_decomp`, and `Fuel._unifac_decomp`. `Fuel.refGani`, `Fuel.refNannoolal`, and `Fuel.refUnifac` forward to the full reference tables `Fuel._ref_gani`, `Fuel._ref_nannoolal`, and `Fuel._ref_unifac`.
+- The component properties of `Fuel`, which forward to `Fuel.comps`: `Tc` -> `tc`, `Pc` -> `pc`, `Vc` -> `vc`, `Tm` -> `tm`, `Tb` -> `tb`, `Hf_stp` -> `hf_stp`, `Hv_stp` -> `hv_stp`, `Vm_stp` -> `vm_stp`, `omega` -> `omega`, `YSI` -> `ysi`, `DCN` -> `dcn`, `Gf_stp` -> `gf_stp`, `epsilonByKB` -> `lj_eps_by_kb`, `sigma` -> `lj_sigma`, `rdkit_mols` -> `rdkit_mols`, `nC` -> `num_c`, `nH` -> `num_h`, `MW` -> `mw`, `formulas` -> `formulas`, `hc_type` -> `hc_type`, and `fam` -> `fam`.
+- `Fuel.Cp_stp` and `Fuel.Lv_stp`. Use `gani_gcm.predict("Cp_stp", fuel)` and `fuel.comps.hv_stp / fuel.comps.mw`, or `Fuel.comps.cp(T, basis="molar")` and `Fuel.comps.hv(T)` for temperature-dependent values.
+- The temperature-dependent component methods of `Fuel`, which forward to `Fuel.comps`: `density` -> `rho`, `viscosity_kinematic` -> `nu`, `viscosity_dynamic` -> `mu`, `Cp` -> `cp(basis="molar")`, `Cl` -> `cp(basis="mass")`, `psat` -> `pvap`, `psat_antoine_coeffs` -> `pvap_antoine_coeffs`, `molar_liquid_vol` -> `vm`, `latent_heat_vaporization` -> `hv`, `diffusion_coeff` -> `d`, `surface_tension` -> `sigma`, `thermal_conductivity` -> `k`, and `flash_point` -> `t_flash`.
+- `Fuel.mean_molecular_weight`, `Fuel.mass2Y`, `Fuel.mass2X`, `Fuel.X2Y`, `Fuel.Y2X`, and `Fuel.Y2V`, which forward to `Fuel.mix.mw` and `Fuel.comps.mass2y`, `mass2x`, `x2y`, `y2x`, and `y2v`.
+- `Fuel.mixture_*` methods, which forward to `Fuel.mix`: `mixture_density` -> `rho`, `mixture_kinematic_viscosity` -> `nu`, `mixture_dynamic_viscosity` -> `mu`, `mixture_vapor_pressure` -> `pvap`, `mixture_vapor_pressure_antoine_coeffs` -> `pvap_antoine_coeffs`, `mixture_surface_tension` -> `sigma`, `mixture_thermal_conductivity` -> `k`, `mixture_freeze_point` -> `t_freeze`, `mixture_flash_point` -> `t_flash`, `mixture_heat_of_combustion` -> `lhv`, `mixture_yield_sooting_index` -> `ysi`, `mixture_smoke_point` -> `smoke_point`, `mixture_derived_cetane_number` -> `dcn`, `mixture_aromatics_content` -> `aromatics`, and `mixture_naphthalenes_content` -> `naphthalenes`.
+
 ### Changed
+- **Breaking:** the viscosity functions in `correlate.components` and `correlate.mixture` are renamed to `viscosity_<kinematic|dynamic>_<method>`: `kinematic_viscosity_{dutt,nannoolal}` -> `viscosity_kinematic_{dutt,nannoolal}` and `dynamic_viscosity_{dutt,nannoolal}` -> `viscosity_dynamic_{dutt,nannoolal}`.
+- **Breaking:** `saturated_vapor_pressure` and `saturated_vapor_pressure_antoine_coeffs` in `correlate.components` and `correlate.mixture` are renamed to `vapor_pressure` and `vapor_pressure_antoine_coeffs`.
+- `fuellib/fuel.py` split into the `fuellib.fuel` package: `fuel.core` (`Fuel`), `fuel.components` (`Components`), and `fuel.mixture` (`Mixture`). `from fuellib import Fuel` and `from fuellib.fuel import Fuel` are unchanged.
+- **Technically Breaking**: The deprecated `Fuel` attributes are read-only properties, so assigning to them (e.g. `fuel.Y_0 = ...`) raises `AttributeError`. Assign to the new attributes (e.g. `fuel.y0`) instead.
+- `correlate`, `gcm`, `exporters`, `simulate`, and `utils` use `Fuel.comps` and `Fuel.mix` instead of the deprecated `Fuel` attributes, so library calls no longer emit deprecation warnings.
+- Documentation and tutorials use `Fuel.comps` and `Fuel.mix`; `fuelprops` documents the `Components` and `Mixture` methods instead of the deprecated `Fuel` methods.
 - **Breaking:** file and directory names now use snake_case. In `fuellib/data` (and in custom fuel data directories passed as `fuelDataDir`), `gcData/` is now `gc_data/`, `propertiesData/` is now `properties_data/`, and `refCompounds.csv`, `refGani.csv`, `refNannoolal.csv`, and `refUNIFAC.csv` are now `ref_compounds.csv`, `ref_gani.csv`, `ref_nannoolal.csv`, and `ref_unifac.csv`. The old names are no longer read, so custom fuel data must be renamed. The `Fuel` API names are unchanged.
 - `tests/baselinePredictions/` renamed to `tests/baseline_predictions/`.
 - **Breaking:** the bundled fuels `hefa-came`, `hefa-mfat`, `hefa-tall`, `jet-a`, and `heptane-decane` were renamed to `hefa_came`, `hefa_mfat`, `hefa_tall`, `jet_a`, and `heptane_decane` (`gc_data/{name}.csv` and their `fuel_metadata.yaml` entries), and `properties_data/hefa-jet-a-blends.csv` to `hefa_jet_a_blends.csv`. Fuel names passed to `Fuel` and the CLI must use the new names.
 - `tutorials/hefaBlends.py` renamed to `tutorials/hefa_blends.py` and `tutorials/customFuel.py` renamed to `tutorials/custom_fuel.py`; `tutorials/decompose_cg.py` removed.
 - The tutorial pages `docs/tutorials-*.rst` renamed to `docs/tutorials_*.rst`, so the page URLs change from `tutorials-basic.html` to `tutorials_basic.html`, etc.
+
+### Removed
+- **BREAKING**: `Fuel.RD_coeffs`, `Fuel.Cp_B`, `Fuel.Cp_C`, `Fuel.dS_fus`, and `Fuel.phi`. Call `gani_gcm.predict(...)` (`"rd_A"`, `"rd_B"`, `"rd_D"`, `"Cp_B"`, `"Cp_C"`, `"alibakhshi_phi"`) or `boehm_gcm.predict("dS_fus", fuel)` directly; `correlate.components`, `correlate.mixture`, and `exporters.pele` now do so.
 
 ## [3.1.3] - 2026-11-12
 

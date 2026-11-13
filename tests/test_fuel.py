@@ -21,7 +21,7 @@ class TestParsing:
     def test_gcxgc_data_loading(self, fuel_name: str, num_compounds: int) -> None:
         """Test that the GCxGC data is correctly loaded for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert fuel.gcData.shape[0] == num_compounds
+        assert fuel.gc_data.shape[0] == num_compounds
 
     @pytest.mark.parametrize(
         "fuel_name, num_compounds",
@@ -30,17 +30,17 @@ class TestParsing:
     def test_Y_0_loading(self, fuel_name: str, num_compounds: int) -> None:
         """Test that the initial mass fractions (Y_0) are correctly loaded for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert fuel.Y_0 is not None
-        assert fuel.Y_0.magnitude.shape[0] == num_compounds
-        assert fuel.Y_0.units == ""
-        assert pytest.approx(fuel.Y_0.magnitude.sum(), abs=1e-8) == 1.0
+        assert fuel.y0 is not None
+        assert fuel.y0.magnitude.shape[0] == num_compounds
+        assert fuel.y0.units == ""
+        assert pytest.approx(fuel.y0.magnitude.sum(), abs=1e-8) == 1.0
 
     def test_pelephysics_keys(self) -> None:
         """Test that the PelePhysics keys are correctly loaded for each compound in the fuel mixture."""
         fuel = Fuel("posf10325")
-        assert fuel.pelephysics_keys is not None
-        assert len(fuel.pelephysics_keys) == fuel.num_compounds
-        assert all(isinstance(key, str) for key in fuel.pelephysics_keys)
+        assert fuel.comps.pelephysics_keys is not None
+        assert len(fuel.comps.pelephysics_keys) == fuel.num_compounds
+        assert all(isinstance(key, str) for key in fuel.comps.pelephysics_keys)
 
     @pytest.mark.parametrize(
         "fuel_name",
@@ -83,15 +83,15 @@ class TestParsing:
         customNannoolal.loc[:, "CH3-(ne)"] = 99
         customNannoolal.to_csv(tmp_path / "ref_nannoolal.csv", index=False)
 
-        fuel = Fuel("heptane_decane", fuelDataDir=tmp_path)
+        fuel = Fuel("heptane_decane", data_dir=tmp_path)
 
-        assert fuel.compounds == ["n-heptane", "n-decane"]
-        assert fuel.refCompounds["Reference Compound"].eq("n-decane").sum() == 1
-        assert fuel.refGani["Reference Compound"].eq("n-decane").sum() == 1
-        assert fuel.refNannoolal["Reference Compound"].eq("n-decane").sum() == 1
-        assert fuel.compoundsData.loc[1, "DCN_Value"] == 999.0
-        assert fuel.ganiDecomp.loc[1, "CH3"] == 99
-        assert fuel.nannoolalDecomp.loc[1, "CH3-(ne)"] == 99
+        assert fuel.comps.names == ["n-heptane", "n-decane"]
+        assert fuel._ref_comps["Reference Compound"].eq("n-decane").sum() == 1
+        assert fuel._ref_gani["Reference Compound"].eq("n-decane").sum() == 1
+        assert fuel._ref_nannoolal["Reference Compound"].eq("n-decane").sum() == 1
+        assert fuel.components_data.loc[1, "DCN_Value"] == 999.0
+        assert fuel._gani_decomp.loc[1, "CH3"] == 99
+        assert fuel._nannoolal_decomp.loc[1, "CH3-(ne)"] == 99
 
 
 class TestRDKitProperties:
@@ -104,8 +104,8 @@ class TestRDKitProperties:
     def test_rdkit_mols(self, fuel_name: str) -> None:
         """Test that the RDKit molecule objects are correctly created for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert len(fuel.rdkit_mols) == fuel.num_compounds
-        assert all(mol is not None for mol in fuel.rdkit_mols)
+        assert len(fuel.comps.rdkit_mols) == fuel.num_compounds
+        assert all(mol is not None for mol in fuel.comps.rdkit_mols)
 
     @pytest.mark.parametrize(
         "fuel_name, expected_nC, expected_nH",
@@ -116,10 +116,10 @@ class TestRDKitProperties:
     ) -> None:
         """Test the number of carbon atoms for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert isinstance(fuel.nC, np.ndarray)
-        assert isinstance(fuel.nH, np.ndarray)
-        assert fuel.nC.tolist() == expected_nC
-        assert fuel.nH.tolist() == expected_nH
+        assert isinstance(fuel.comps.num_c, np.ndarray)
+        assert isinstance(fuel.comps.num_h, np.ndarray)
+        assert fuel.comps.num_c.tolist() == expected_nC
+        assert fuel.comps.num_h.tolist() == expected_nH
 
     @pytest.mark.parametrize(
         "fuel_name, expected_MW",
@@ -128,8 +128,8 @@ class TestRDKitProperties:
     def test_MW(self, fuel_name: str, expected_MW: list[float]) -> None:
         """Test the molecular weights of the compounds in the fuel mixture and valid conversion to g/mol."""
         fuel = Fuel(fuel_name)
-        assert fuel.MW.units == "kg/mol"
-        MW = fuel.MW.to("g/mol").magnitude
+        assert fuel.comps.mw.units == "kg/mol"
+        MW = fuel.comps.mw.to("g/mol").magnitude
         assert MW == pytest.approx(expected_MW)
 
     @pytest.mark.parametrize(
@@ -139,7 +139,7 @@ class TestRDKitProperties:
     def test_hc_type(self, fuel_name: str, expected_hc_type: list[str]) -> None:
         """Test the hydrocarbon types for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert fuel.hc_type == expected_hc_type
+        assert fuel.comps.hc_type == expected_hc_type
 
     @pytest.mark.parametrize(
         "fuel_name, expected_fam",
@@ -148,7 +148,7 @@ class TestRDKitProperties:
     def test_fam(self, fuel_name: str, expected_fam: list[int]) -> None:
         """Test the family (number of carbon and hydrogen atoms) for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert np.array_equal(fuel.fam, expected_fam)
+        assert np.array_equal(fuel.comps.fam, expected_fam)
 
     @pytest.mark.parametrize(
         "fuel_name, num_compounds",
@@ -157,7 +157,7 @@ class TestRDKitProperties:
     def test_num_atoms(self, fuel_name: str, num_compounds: int) -> None:
         """Test the number of carbon and hydrogen atoms for each compound in the fuel mixture."""
         fuel = Fuel(fuel_name)
-        assert len(fuel.Tc) == num_compounds
+        assert len(fuel.comps.tc) == num_compounds
 
 
 class TestMemberFunctions:
@@ -172,14 +172,14 @@ class TestMemberFunctions:
     ) -> None:
         """Test the mean_molecular_weight member function of the Fuel class."""
         fuel = Fuel(fuel_name)
-        MW = fuel.mean_molecular_weight(fuel.Y_0)
+        MW = fuel.mix.mw(fuel.y0)
         assert pytest.approx(MW.to("g/mol").magnitude, abs=1e-2) == expected_mean_MW
 
     def test_mass2Y_single_compound(self) -> None:
         """Test mass2Y for a fuel with a single compound."""
         fuel = Fuel("decane")
         mass = Units.Quantity(np.array([2.5]), "kg")
-        Yi = fuel.mass2Y(mass)
+        Yi = fuel.comps.mass2y(mass)
         assert Yi.units == "dimensionless"
         assert Yi.magnitude == pytest.approx([1.0])
 
@@ -187,7 +187,7 @@ class TestMemberFunctions:
         """Test mass2Y for a fuel with multiple compounds."""
         fuel = Fuel("heptane_decane")
         mass = Units.Quantity(np.array([1.0, 3.0]), "kg")
-        Yi = fuel.mass2Y(mass)
+        Yi = fuel.comps.mass2y(mass)
         assert Yi.units == "dimensionless"
         assert Yi.magnitude == pytest.approx([0.25, 0.75])
         assert Yi.magnitude.sum() == pytest.approx(1.0)
@@ -196,14 +196,14 @@ class TestMemberFunctions:
         """Test mass2Y returns zeros when total mass is zero."""
         fuel = Fuel("heptane_decane")
         mass = Units.Quantity(np.array([0.0, 0.0]), "kg")
-        Yi = fuel.mass2Y(mass)
+        Yi = fuel.comps.mass2y(mass)
         assert Yi.magnitude == pytest.approx([0.0, 0.0])
 
     def test_mass2X_single_compound(self) -> None:
         """Test mass2X for a fuel with a single compound."""
         fuel = Fuel("decane")
         mass = Units.Quantity(np.array([2.5]), "kg")
-        Xi = fuel.mass2X(mass)
+        Xi = fuel.comps.mass2x(mass)
         assert Xi.units == "dimensionless"
         assert Xi.magnitude == pytest.approx([1.0])
 
@@ -211,8 +211,8 @@ class TestMemberFunctions:
         """Test mass2X for a fuel with multiple compounds against a manual calculation."""
         fuel = Fuel("heptane_decane")
         mass = Units.Quantity(np.array([1.0, 1.0]), "kg")
-        Xi = fuel.mass2X(mass)
-        MW = fuel.MW.to("kg/mol").magnitude
+        Xi = fuel.comps.mass2x(mass)
+        MW = fuel.comps.mw.to("kg/mol").magnitude
         num_mole = mass.magnitude / MW
         expected_Xi = num_mole / num_mole.sum()
         assert Xi.units == "dimensionless"
@@ -223,14 +223,14 @@ class TestMemberFunctions:
         """Test mass2X returns zeros when total moles are zero."""
         fuel = Fuel("heptane_decane")
         mass = Units.Quantity(np.array([0.0, 0.0]), "kg")
-        Xi = fuel.mass2X(mass)
+        Xi = fuel.comps.mass2x(mass)
         assert Xi.magnitude == pytest.approx([0.0, 0.0])
 
     def test_X2Y_single_compound(self) -> None:
         """Test X2Y for a fuel with a single compound."""
         fuel = Fuel("decane")
         Xi = Units.Quantity(np.array([1.0]), "dimensionless")
-        Yi = fuel.X2Y(Xi)
+        Yi = fuel.comps.x2y(Xi)
         assert Yi.units == "dimensionless"
         assert Yi.magnitude == pytest.approx([1.0])
 
@@ -238,8 +238,8 @@ class TestMemberFunctions:
         """Test X2Y for a fuel with multiple compounds against a manual calculation."""
         fuel = Fuel("heptane_decane")
         Xi = Units.Quantity(np.array([0.5, 0.5]), "dimensionless")
-        Yi = fuel.X2Y(Xi)
-        MW = fuel.MW.to("kg/mol").magnitude
+        Yi = fuel.comps.x2y(Xi)
+        MW = fuel.comps.mw.to("kg/mol").magnitude
         mass = MW * Xi.magnitude
         expected_Yi = mass / mass.sum()
         assert Yi.units == "dimensionless"
@@ -250,14 +250,14 @@ class TestMemberFunctions:
         """Test X2Y returns zeros when total mass is zero."""
         fuel = Fuel("heptane_decane")
         Xi = Units.Quantity(np.array([0.0, 0.0]), "dimensionless")
-        Yi = fuel.X2Y(Xi)
+        Yi = fuel.comps.x2y(Xi)
         assert Yi.magnitude == pytest.approx([0.0, 0.0])
 
     def test_Y2X_single_compound(self) -> None:
         """Test Y2X for a fuel with a single compound."""
         fuel = Fuel("decane")
         Yi = Units.Quantity(np.array([1.0]), "dimensionless")
-        Xi = fuel.Y2X(Yi)
+        Xi = fuel.comps.y2x(Yi)
         assert Xi.units == "dimensionless"
         assert Xi.magnitude == pytest.approx([1.0])
 
@@ -265,9 +265,9 @@ class TestMemberFunctions:
         """Test Y2X for a fuel with multiple compounds against a manual calculation."""
         fuel = Fuel("heptane_decane")
         Yi = Units.Quantity(np.array([0.25, 0.75]), "dimensionless")
-        Xi = fuel.Y2X(Yi)
-        Mbar = fuel.mean_molecular_weight(Yi)
-        MW = fuel.MW.to("kg/mol")
+        Xi = fuel.comps.y2x(Yi)
+        Mbar = fuel.mix.mw(Yi)
+        MW = fuel.comps.mw.to("kg/mol")
         expected_Xi = (Mbar * Yi / MW).magnitude
         assert Xi.units == "dimensionless"
         assert Xi.magnitude == pytest.approx(expected_Xi)
@@ -277,22 +277,22 @@ class TestMemberFunctions:
         """Test Y2X returns zeros when total mass fraction is zero."""
         fuel = Fuel("heptane_decane")
         Yi = Units.Quantity(np.array([0.0, 0.0]), "dimensionless")
-        Xi = fuel.Y2X(Yi)
+        Xi = fuel.comps.y2x(Yi)
         assert Xi.magnitude == pytest.approx([0.0, 0.0])
 
     def test_X2Y_Y2X_roundtrip(self) -> None:
         """Test that converting mole fractions to mass fractions and back is consistent."""
         fuel = Fuel("heptane_decane")
         Xi = Units.Quantity(np.array([0.3, 0.7]), "dimensionless")
-        Yi = fuel.X2Y(Xi)
-        Xi_roundtrip = fuel.Y2X(Yi)
+        Yi = fuel.comps.x2y(Xi)
+        Xi_roundtrip = fuel.comps.y2x(Yi)
         assert Xi_roundtrip.magnitude == pytest.approx(Xi.magnitude)
 
     def test_Y2V_single_compound(self) -> None:
         """Test Y2V for a fuel with a single compound."""
         fuel = Fuel("decane")
         Yi = Units.Quantity(np.array([1.0]), "dimensionless")
-        Vi = fuel.Y2V(Yi, Units.Quantity(298.15, "K"))
+        Vi = fuel.comps.y2v(Yi, Units.Quantity(298.15, "K"))
         assert Vi.units == "dimensionless"
         assert Vi.magnitude == pytest.approx([1.0])
 
@@ -301,8 +301,8 @@ class TestMemberFunctions:
         fuel = Fuel("heptane_decane")
         T = Units.Quantity(298.15, "K")
         Yi = Units.Quantity(np.array([0.25, 0.75]), "dimensionless")
-        Vi = fuel.Y2V(Yi, T)
-        rho = fuel.density(T).m_as("kg/m^3")
+        Vi = fuel.comps.y2v(Yi, T)
+        rho = fuel.comps.rho(T).m_as("kg/m^3")
         V = Yi.magnitude / rho
         assert Vi.units == "dimensionless"
         assert Vi.magnitude == pytest.approx(V / V.sum())
@@ -312,7 +312,7 @@ class TestMemberFunctions:
         """Test Y2V returns zeros when total mass fraction is zero."""
         fuel = Fuel("heptane_decane")
         Yi = Units.Quantity(np.array([0.0, 0.0]), "dimensionless")
-        Vi = fuel.Y2V(Yi, Units.Quantity(298.15, "K"))
+        Vi = fuel.comps.y2v(Yi, Units.Quantity(298.15, "K"))
         assert Vi.magnitude == pytest.approx([0.0, 0.0])
 
     @pytest.mark.parametrize(
@@ -324,17 +324,17 @@ class TestMemberFunctions:
     ) -> None:
         """Test aromatics content for fuels with no or only aromatic compounds."""
         fuel = Fuel(fuel_name)
-        aro = fuel.mixture_aromatics_content(fuel.Y_0)
+        aro = fuel.mix.aromatics(fuel.y0)
         assert aro.units == "percent"
         assert aro.magnitude == pytest.approx(expected)
 
     def test_mixture_aromatics_content_mixture(self) -> None:
         """Test aromatics content of a jet fuel against a manual volume-fraction sum."""
         fuel = Fuel("posf10325")
-        aro = fuel.mixture_aromatics_content(fuel.Y_0).m_as("percent")
-        rho = fuel.density(Units.Quantity(298.15, "K")).m_as("kg/m^3")
-        V = fuel.Y_0.magnitude / rho
-        is_aromatic = np.array(fuel.hc_type) == "aromatic"
+        aro = fuel.mix.aromatics(fuel.y0).m_as("percent")
+        rho = fuel.comps.rho(Units.Quantity(298.15, "K")).m_as("kg/m^3")
+        V = fuel.y0.magnitude / rho
+        is_aromatic = np.array(fuel.comps.hc_type) == "aromatic"
         expected = 100.0 * V[is_aromatic].sum() / V.sum()
         assert 0.0 < aro < 100.0
         assert aro == pytest.approx(expected)
@@ -343,7 +343,7 @@ class TestMemberFunctions:
     def test_mixture_naphthalenes_content_none(self, fuel_name: str) -> None:
         """Test naphthalenes content is zero for fuels without naphthalenes."""
         fuel = Fuel(fuel_name)
-        nap = fuel.mixture_naphthalenes_content(fuel.Y_0)
+        nap = fuel.mix.naphthalenes(fuel.y0)
         assert nap.units == "percent"
         assert nap.magnitude == pytest.approx(0.0)
 
@@ -354,11 +354,11 @@ class TestMemberFunctions:
         family.
         """
         fuel = Fuel("posf10325")
-        nap = fuel.mixture_naphthalenes_content(fuel.Y_0)
-        aro = fuel.mixture_aromatics_content(fuel.Y_0)
-        rho = fuel.density(Units.Quantity(298.15, "K")).m_as("kg/m^3")
-        V = fuel.Y_0.magnitude / rho
-        is_diaromatic = (fuel.compoundsData["Family"] == "diaromatic").to_numpy()
+        nap = fuel.mix.naphthalenes(fuel.y0)
+        aro = fuel.mix.aromatics(fuel.y0)
+        rho = fuel.comps.rho(Units.Quantity(298.15, "K")).m_as("kg/m^3")
+        V = fuel.y0.magnitude / rho
+        is_diaromatic = (fuel.components_data["Family"] == "diaromatic").to_numpy()
         assert nap.units == "percent"
         assert nap.magnitude > 0.0
         assert nap.magnitude == pytest.approx(100.0 * V[is_diaromatic].sum() / V.sum())
