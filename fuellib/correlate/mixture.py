@@ -138,7 +138,7 @@ def density(
     return Yi @ rho_i
 
 
-def kinematic_viscosity_dutt(
+def viscosity_kinematic_dutt(
     fuel: "Fuel",
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
@@ -161,7 +161,7 @@ def kinematic_viscosity_dutt(
         Mixture kinematic viscosity in m^2/s.
     """
     Yi = Yi if Yi is not None else fuel.y0
-    nu_i = components.kinematic_viscosity_dutt(fuel, T).to("m^2/s")
+    nu_i = components.viscosity_kinematic_dutt(fuel, T).to("m^2/s")
     # Calculate mole fractions for each species
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
     if mixing_rule.casefold() == "Arrhenius".casefold():
@@ -172,7 +172,7 @@ def kinematic_viscosity_dutt(
         return kendall_monroe(Xi, nu_i)
 
 
-def dynamic_viscosity_dutt(
+def viscosity_dynamic_dutt(
     fuel: "Fuel",
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
@@ -193,12 +193,12 @@ def dynamic_viscosity_dutt(
         Mixture dynamic viscosity in Pa*s.
     """
     Yi = Yi if Yi is not None else fuel.y0
-    nu = kinematic_viscosity_dutt(fuel, T, Yi, mixing_rule=mixing_rule)
+    nu = viscosity_kinematic_dutt(fuel, T, Yi, mixing_rule=mixing_rule)
     rho = density(fuel, T, Yi)
     return (rho * nu).to("Pa*s")
 
 
-def kinematic_viscosity_nannoolal(
+def viscosity_kinematic_nannoolal(
     fuel: "Fuel",
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
@@ -221,7 +221,7 @@ def kinematic_viscosity_nannoolal(
         Mixture kinematic viscosity in m^2/s.
     """
     Yi = Yi if Yi is not None else fuel.y0
-    nu_i = components.kinematic_viscosity_nannoolal(fuel, T).to("m^2/s")
+    nu_i = components.viscosity_kinematic_nannoolal(fuel, T).to("m^2/s")
     # Calculate mole fractions for each species
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
     if mixing_rule.casefold() == "Arrhenius".casefold():
@@ -232,7 +232,7 @@ def kinematic_viscosity_nannoolal(
         return kendall_monroe(Xi, nu_i)
 
 
-def dynamic_viscosity_nannoolal(
+def viscosity_dynamic_nannoolal(
     fuel: "Fuel",
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
@@ -253,7 +253,7 @@ def dynamic_viscosity_nannoolal(
         Mixture dynamic viscosity in Pa*s.
     """
     Yi = Yi if Yi is not None else fuel.y0
-    nu = kinematic_viscosity_nannoolal(fuel, T, Yi, mixing_rule=mixing_rule)
+    nu = viscosity_kinematic_nannoolal(fuel, T, Yi, mixing_rule=mixing_rule)
     rho = density(fuel, T, Yi)
     return (rho * nu).to("Pa*s")
 

@@ -131,11 +131,11 @@ class Mixture:
             ValueError: If `correlation` is not Dutt or Nannoolal.
         """
         if correlation.casefold() == "dutt":
-            return correlate.mixture.kinematic_viscosity_dutt(
+            return correlate.mixture.viscosity_kinematic_dutt(
                 self._fuel, T, Yi, mixing_rule=mixing_rule
             )
         if correlation.casefold() == "nannoolal":
-            return correlate.mixture.kinematic_viscosity_nannoolal(
+            return correlate.mixture.viscosity_kinematic_nannoolal(
                 self._fuel, T, Yi, mixing_rule=mixing_rule
             )
         raise ValueError(f"Unknown viscosity correlation: {correlation!r}")
@@ -164,11 +164,11 @@ class Mixture:
             ValueError: If `correlation` is not Dutt or Nannoolal.
         """
         if correlation.casefold() == "dutt":
-            return correlate.mixture.dynamic_viscosity_dutt(
+            return correlate.mixture.viscosity_dynamic_dutt(
                 self._fuel, T, Yi, mixing_rule=mixing_rule
             )
         if correlation.casefold() == "nannoolal":
-            return correlate.mixture.dynamic_viscosity_nannoolal(
+            return correlate.mixture.viscosity_dynamic_nannoolal(
                 self._fuel, T, Yi, mixing_rule=mixing_rule
             )
         raise ValueError(f"Unknown viscosity correlation: {correlation!r}")

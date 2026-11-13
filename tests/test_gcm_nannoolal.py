@@ -56,17 +56,17 @@ def test_viscosity(fuel_name: str):
     fuel = Fuel(fuel_name)
     T = Units.Quantity(298.15, "K")
 
-    mu_i = components.dynamic_viscosity_nannoolal(fuel, T)
+    mu_i = components.viscosity_dynamic_nannoolal(fuel, T)
 
-    nu_i = components.kinematic_viscosity_nannoolal(fuel, T)
+    nu_i = components.viscosity_kinematic_nannoolal(fuel, T)
     for prop, units in [(mu_i, "Pa*s"), (nu_i, "m^2/s")]:
         assert prop.check(units)
         assert prop.magnitude.shape == (fuel.num_compounds,)
         assert np.all(np.isfinite(prop.magnitude))
         assert np.all(prop.magnitude > 0)
 
-    mu = mixture.dynamic_viscosity_nannoolal(fuel, T)
-    nu = mixture.kinematic_viscosity_nannoolal(fuel, T)
+    mu = mixture.viscosity_dynamic_nannoolal(fuel, T)
+    nu = mixture.viscosity_kinematic_nannoolal(fuel, T)
     for prop, units in [(mu, "Pa*s"), (nu, "m^2/s")]:
         assert prop.check(units)
         assert np.ndim(prop.magnitude) == 0

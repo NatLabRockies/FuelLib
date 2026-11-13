@@ -52,7 +52,7 @@ def density(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     return (fuel.comps.mw / molar_liquid_volume(fuel, T)).to("kg/m^3")
 
 
-def kinematic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def viscosity_kinematic_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Calculate the kinematic viscosity using Dutt's equation.
 
     Uses Dutt's equation (4.23) from "Viscosity of Liquids". The equation
@@ -73,7 +73,7 @@ def kinematic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantit
     return Units.Quantity(np.exp(rhs), "mm^2/s").to("m^2/s")
 
 
-def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def viscosity_dynamic_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Calculate the dynamic viscosity using Dutt's equation.
 
     Uses Dutt's equation (4.23) for kinematic viscosity, combined with density.
@@ -85,12 +85,12 @@ def dynamic_viscosity_dutt(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1
     Returns:
         Dynamic viscosity in Pa*s.
     """
-    nu_i = kinematic_viscosity_dutt(fuel, T)
+    nu_i = viscosity_kinematic_dutt(fuel, T)
     rho_i = density(fuel, T)
     return (nu_i * rho_i).to("Pa*s")
 
 
-def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def viscosity_dynamic_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Calculate the dynamic viscosity using Nannoolal (2009) GCM.
 
     Uses equation (6) from Nannoolal (2009).
@@ -117,7 +117,7 @@ def dynamic_viscosity_nannoolal(fuel: "Fuel", T: types.Quantity0D) -> types.Quan
     return Units.Quantity(eta, "Pa*s")
 
 
-def kinematic_viscosity_nannoolal(
+def viscosity_kinematic_nannoolal(
     fuel: "Fuel", T: types.Quantity0D
 ) -> types.Quantity1D:
     """Calculate the kinematic viscosity using Nannoolal (2009) GCM.
@@ -131,7 +131,7 @@ def kinematic_viscosity_nannoolal(
     Returns:
         Component kinematic viscosities in m^2/s.
     """
-    eta = dynamic_viscosity_nannoolal(fuel, T)
+    eta = viscosity_dynamic_nannoolal(fuel, T)
     rho = density(fuel, T)
     return (eta / rho).to("m^2/s")
 

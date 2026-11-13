@@ -217,7 +217,7 @@ are registered:
 
 Both are dimensionless sums. The corrections for the number of heavy atoms
 and the normal boiling point are applied by
-:func:`~fuellib.correlate.components.dynamic_viscosity_nannoolal` (see
+:func:`~fuellib.correlate.components.viscosity_dynamic_nannoolal` (see
 :doc:`fuelprops`). The decomposition matrix :math:`\mathbf{N}` contains both
 first- and second-order groups and is read from ``ref_nannoolal.csv`` as
 ``Fuel._nannoolal_decomp``.

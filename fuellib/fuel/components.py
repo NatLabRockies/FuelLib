@@ -333,9 +333,9 @@ class Components:
             ValueError: If `correlation` is not Dutt or Nannoolal.
         """
         if correlation.casefold() == "dutt":
-            nu_i = correlate.components.kinematic_viscosity_dutt(self._fuel, T)
+            nu_i = correlate.components.viscosity_kinematic_dutt(self._fuel, T)
         elif correlation.casefold() == "nannoolal":
-            nu_i = correlate.components.kinematic_viscosity_nannoolal(self._fuel, T)
+            nu_i = correlate.components.viscosity_kinematic_nannoolal(self._fuel, T)
         else:
             raise ValueError(f"Unknown viscosity correlation: {correlation!r}")
         return nu_i[comp_idx] if comp_idx is not None else nu_i
@@ -362,9 +362,9 @@ class Components:
             ValueError: If `correlation` is not Dutt or Nannoolal.
         """
         if correlation.casefold() == "dutt":
-            mu_i = correlate.components.dynamic_viscosity_dutt(self._fuel, T)
+            mu_i = correlate.components.viscosity_dynamic_dutt(self._fuel, T)
         elif correlation.casefold() == "nannoolal":
-            mu_i = correlate.components.dynamic_viscosity_nannoolal(self._fuel, T)
+            mu_i = correlate.components.viscosity_dynamic_nannoolal(self._fuel, T)
         else:
             raise ValueError(f"Unknown viscosity correlation: {correlation!r}")
         return mu_i[comp_idx] if comp_idx is not None else mu_i
