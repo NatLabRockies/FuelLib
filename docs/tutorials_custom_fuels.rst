@@ -27,7 +27,7 @@ Create a fuel data directory with this structure:
 
 **Optional:**
 
-- ``properties_data/{fuel_name}.csv``: measured property data (one file per fuel) loaded into ``Fuel.propData``.
+- ``properties_data/{fuel_name}.csv``: measured property data (one file per fuel) loaded into ``Fuel.prop_data``.
 - ``ref_compounds.csv``, ``ref_gani.csv``, ``ref_nannoolal.csv``, and ``ref_unifac.csv``: custom reference compound and group decomposition tables. When present, each table supplements FuelLib's built-in table; it does not replace it. If a file is absent, FuelLib uses the built-in table in ``fuellib/data``.
 - ``fuel_metadata.yaml``: display name, source, and other documentation for each fuel, keyed by fuel name under a top-level ``fuels`` entry. The entry for a fuel is loaded into ``Fuel.metadata`` (``None`` if the file or entry is absent).
 
@@ -75,19 +75,19 @@ See the `Basic Usage tutorial <tutorials_basic.html#decomposing-fuel-components-
 Using Custom Fuels
 ------------------
 
-Once your custom fuel directory is set up, you can use it like any built-in fuel by specifying the ``fuelDataDir`` when creating a fuel object. Custom reference tables are only read from ``fuelDataDir``, so they must follow the directory structure above:
+Once your custom fuel directory is set up, you can use it like any built-in fuel by specifying the ``data_dir`` when creating a fuel object. Custom reference tables are only read from ``data_dir``, so they must follow the directory structure above:
 
 .. code-block:: python
 
     import fuellib as fl
 
     # Load a custom fuel
-    fuel = fl.Fuel("new-saf", fuelDataDir="/path/to/customFuels")
+    fuel = fl.Fuel("new-saf", data_dir="/path/to/customFuels")
 
     # Calculate the saturated vapor pressure at 320 K
     T = fl.Units.Quantity(320, "K") # Temperature as a pint.Quantity
-    p_sat_i = fuel.psat(T)
-    p_sat_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
+    p_sat_i = fuel.comps.pvap(T)
+    p_sat_mix = fuel.mix.pvap(fuel.y0, T)
 
 Tips and Best Practices
 -----------------------

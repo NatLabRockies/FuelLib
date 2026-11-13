@@ -11,7 +11,10 @@ FuelLib File Organization
 - **docs:** directory containing the documentation source files
 - **fuellib:** main package directory containing:
 
-    - ``fuel.py``: core :class:`~fuellib.fuel.Fuel` class for Group Contribution Method calculations, including loading of GCxGC data and matching of compounds to the reference data tables
+    - **fuel**: subpackage containing the :class:`~fuellib.fuel.core.Fuel` class (re-exported as ``fuellib.Fuel``)
+        - ``core.py``: core :class:`~fuellib.fuel.core.Fuel` class for Group Contribution Method calculations, including loading of GCxGC data and matching of compounds to the reference data tables, plus deprecated aliases of the pre-``comps``/``mix`` API
+        - ``components.py``: :class:`~fuellib.fuel.components.Components` class (``Fuel.comps``) with the per-component properties (critical properties, reference-only and structural properties) and temperature-dependent methods
+        - ``mixture.py``: :class:`~fuellib.fuel.mixture.Mixture` class (``Fuel.mix``) with the composition conversions and mixture-property methods
 
     - **utils**: subpackage with shared utilities
         - ``constants.py``: physical constants and reference values (Boltzmann, Avogadro, gas constant, standard temperature, and air properties)
@@ -24,7 +27,7 @@ FuelLib File Organization
         - ``core.py``: ``GCM``/``GCMRegistry`` classes for registering and evaluating property functions
         - ``gani.py``: Constantinou-Gani (and extended) property implementations registered against the ``gani`` GCM
         - ``gani.csv``: group-contribution coefficient table used by ``gani.py``
-        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM; hydrocarbon families are read from ``ref_compounds.csv`` via the fuel's ``compoundsData``
+        - ``boehm.py``: Boehm (2022) fusion-entropy (``dS_fus``) implementation registered against the ``boehm`` GCM; hydrocarbon families are read from ``ref_compounds.csv`` via the fuel's ``components_data``
         - ``boehm.csv``: per-family ``dS_fus`` parameters used by ``boehm.py``
         - ``nannoolal.py``: Nannoolal et al. (2009) viscosity group contributions (``dBv``, ``Tv``) registered against the ``nannoolal`` GCM, and automated SMILES decomposition into Nannoolal groups
         - ``nannoolal.csv``: group-contribution coefficient table used by ``nannoolal.py``
@@ -106,7 +109,9 @@ Click on links below for the full auto-documentation of the API.
 .. autosummary::
     :toctree: generated
 
-    fuellib.fuel
+    fuellib.fuel.core
+    fuellib.fuel.components
+    fuellib.fuel.mixture
     fuellib.utils.constants
     fuellib.utils.utility
     fuellib.utils.types

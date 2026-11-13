@@ -4,8 +4,8 @@ import fuellib as fl
 fuel = fl.Fuel("posf10264")
 
 print(f"Fuel: {fuel.name}")
-print(f"Fuel data directory: {fuel.fuelDataDir}")
-print(f"Properties data available: {fuel.propData is not None}")
+print(f"Fuel data directory: {fuel.data_dir}")
+print(f"Properties data available: {fuel.prop_data is not None}")
 print(f"Number of compounds: {fuel.num_compounds}")
 
 # To use a custom fuel, create a directory structure like:
@@ -18,12 +18,12 @@ print(f"Number of compounds: {fuel.num_compounds}")
 #   └── ref_gani.csv  (optional, defaults to fuellib/data/ref_gani.csv)
 #
 # Then load it with:
-custom_fuel = fl.Fuel("myFuel", fuelDataDir="customFuels/fuelData")
+custom_fuel = fl.Fuel("myFuel", data_dir="customFuels/fuelData")
 
 # After loading, the fuel object has the correct directory path:
-custom_fuel.fuelDataDir
+custom_fuel.data_dir
 
 print(f"\nFuel: {custom_fuel.name}")
-print(f"Fuel data directory: {custom_fuel.fuelDataDir}")
-print(f"Properties data available: {custom_fuel.propData is not None}")
+print(f"Fuel data directory: {custom_fuel.data_dir}")
+print(f"Properties data available: {custom_fuel.prop_data is not None}")
 print(f"Number of compounds: {custom_fuel.num_compounds}")

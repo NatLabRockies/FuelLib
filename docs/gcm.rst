@@ -5,8 +5,8 @@ The :mod:`fuellib.gcm` module provides a generic, extensible framework for
 registering and evaluating Group Contribution Method (GCM) property
 predictions. It decouples the definition of individual property formulas
 (such as the Constantinou-Gani correlations described in
-:doc:`fuelprops`) from the :class:`~fuellib.fuel.Fuel` class, so new
-methods or properties can be added without modifying ``fuel.py``.
+:doc:`fuelprops`) from the :class:`~fuellib.fuel.core.Fuel` class, so new
+methods or properties can be added without modifying the ``fuellib.fuel`` package.
 
 Core concepts
 -------------
@@ -53,7 +53,7 @@ it registers a ``"gani"`` :class:`~fuellib.gcm.core.GCM` with
 functions for ``MW``, ``Tc``, ``Pc``, ``Vc``, ``Tb``, ``Tm``, ``Hf``,
 ``Gf``, ``Hv_stp``, ``omega``, ``Vm_stp``, ``Cp_stp``, ``Cp_B``, ``Cp_C``,
 ``rd_A``, ``rd_B``, ``rd_D``, and ``alibakhshi_phi``. Note that
-properties such as :attr:`~fuellib.fuel.Fuel.Tm` are not the raw ``gani`` predictions: they use
+properties such as :attr:`~fuellib.fuel.components.Components.tm` are not the raw ``gani`` predictions: they use
 reference values from ``ref_compounds.csv`` when available
 (see :ref:`sec-reference-properties`) and fall back to ``gani`` otherwise.
 Group-contribution
@@ -180,7 +180,7 @@ The ``boehm`` method
 is used by :func:`~fuellib.correlate.mixture.freeze_point_boehm`.
 
 Each compound's hydrocarbon family is read from the ``Family`` column of
-``ref_compounds.csv`` (available as ``fuel.compoundsData["Family"]``). The families
+``ref_compounds.csv`` (available as ``fuel.components_data["Family"]``). The families
 are ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``,
 ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, and ``diaromatic``. The fusion entropy is
 then a linear function of the carbon number :math:`n_{C,i}`, with parameters
@@ -196,7 +196,7 @@ of 56.5 J/mol/K.
 
 .. code-block:: python
 
-   fuel.dS_fus   # Quantity1D in J/(mol*K), evaluated via boehm_gcm.predict("dS_fus", fuel)
+   boehm_gcm.predict("dS_fus", fuel)   # Quantity1D in J/(mol*K)
 
 The ``nannoolal`` method
 ------------------------
@@ -220,7 +220,7 @@ and the normal boiling point are applied by
 :func:`~fuellib.correlate.components.dynamic_viscosity_nannoolal` (see
 :doc:`fuelprops`). The decomposition matrix :math:`\mathbf{N}` contains both
 first- and second-order groups and is read from ``ref_nannoolal.csv`` as
-:attr:`~fuellib.fuel.Fuel.nannoolalDecomp`.
+``Fuel._nannoolal_decomp``.
 
 Some groups have no published viscosity contribution. Groups stored as
 ``0.0`` (``>C=C=C<``, ``-C#C-C#C-``, ``C2C-CC2``, and ``Ortho-pair(s)``)
@@ -274,7 +274,7 @@ table obtained with machine learning. The parameters are read from two files:
 
 The decomposition matrix :math:`\boldsymbol{\nu}`, where :math:`\nu_{ki}` is
 the number of subgroups :math:`k` in compound :math:`i`, is read from
-``ref_unifac.csv`` as :attr:`~fuellib.fuel.Fuel.unifacDecomp`. Two properties
+``ref_unifac.csv`` as ``Fuel._unifac_decomp``. Two properties
 are registered with the ``"unifac"`` :class:`~fuellib.gcm.core.GCM`:
 
 - ``R``: the compound volume parameter :math:`r_i = \sum_k \nu_{ki} R_k`.
@@ -319,7 +319,7 @@ residual part.
 
 :func:`fuellib.gcm.unifac.ln_gamma` evaluates :math:`\ln \gamma_i` for a fuel at
 temperature ``T``. The composition is given as liquid mass fractions ``Yi``
-(default: :attr:`~fuellib.fuel.Fuel.Y_0`) and converted to mole fractions.
+(default: :attr:`~fuellib.fuel.core.Fuel.y0`) and converted to mole fractions.
 For repeated evaluations, such as in a solver loop,
 :func:`~fuellib.gcm.unifac.parameters` collects the arrays
 :math:`\boldsymbol{\nu}`, :math:`R_k`, :math:`Q_k`, and :math:`a_{mn}` for the
@@ -336,7 +336,7 @@ plain NumPy arrays from mole fractions and a temperature in K:
    unifac.ln_gamma(fuel, Units.Quantity(300.0, "K"))   # dimensionless Quantity1D
 
    params = unifac.parameters(fuel)
-   x = fuel.Y2X(fuel.Y_0).to("dimensionless").magnitude
+   x = fuel.mix.y2x(fuel.y0).to("dimensionless").magnitude
    unifac.ln_gamma_x(x, 300.0, *params)                # NumPy array
 
 :func:`fuellib.gcm.unifac.decompose` builds a UNIFAC decomposition from a SMILES
@@ -362,9 +362,9 @@ Registering a new property
 
 New properties can be added to an existing GCM (or a new one) with the
 :meth:`~fuellib.gcm.core.GCM.register_property` decorator. A property
-function must accept a :class:`~fuellib.fuel.Fuel` and return a
+function must accept a :class:`~fuellib.fuel.core.Fuel` and return a
 :data:`~fuellib.utils.types.Quantity1D` with one value per compound in
-``fuel.compounds``:
+``fuel.comps.names``:
 
 .. code-block:: python
 
@@ -375,7 +375,7 @@ function must accept a :class:`~fuellib.fuel.Fuel` and return a
    @gani_gcm.register_property
    def my_new_property(fuel: "Fuel") -> types.Quantity1D:
        """Predict some new property from the Gani decomposition."""
-       nij = fuel.ganiDecomp.to_numpy()
+       nij = fuel._gani_decomp.to_numpy()
        coeffs = ...  # derive coefficients, e.g. from a new table row
        value = ...  # apply the correlation
        return Units.Quantity(value, "K")
@@ -383,7 +383,7 @@ function must accept a :class:`~fuellib.fuel.Fuel` and return a
 The function is registered under its (lowercased) ``__name__``, so it
 immediately becomes available via ``gani_gcm.predict("my_new_property",
 fuel)`` and, once a corresponding cached property is added to
-:class:`~fuellib.fuel.Fuel`, as an attribute of the fuel object.
+:class:`~fuellib.fuel.components.Components`, as an attribute of ``fuel.comps``.
 
 A completely new method can likewise be registered with
 :meth:`~fuellib.gcm.core.GCMRegistry.register`:
@@ -402,42 +402,45 @@ A completely new method can likewise be registered with
 ``Fuel`` integration
 ---------------------
 
-:class:`~fuellib.fuel.Fuel` ties into the registry through the following members:
+:class:`~fuellib.fuel.core.Fuel` ties into the registry through the following members:
 
-- :attr:`~fuellib.fuel.Fuel.ganiDecomp`: the group decomposition (from
+- ``Fuel._gani_decomp``: the group decomposition (from
   ``ref_gani.csv``) of each compound in the mixture, in the same order as
-  ``fuel.compounds``. Each compound in the GCxGC data must be present in the
+  ``fuel.comps.names``. Each compound in the GCxGC data must be present in the
   reference tables, otherwise a ``ValueError`` is raised when the ``Fuel`` is
   created.
-- :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`: the Nannoolal group
+- ``Fuel._nannoolal_decomp``: the Nannoolal group
   decomposition (from ``ref_nannoolal.csv``) of each compound, used by the
   ``nannoolal`` method. Each compound must also be present in this table.
-- :attr:`~fuellib.fuel.Fuel.unifacDecomp`: the UNIFAC subgroup decomposition
+- ``Fuel._unifac_decomp``: the UNIFAC subgroup decomposition
   (from ``ref_unifac.csv``) of each compound, used by the ``unifac`` method.
   Each compound must also be present in this table.
-- :attr:`~fuellib.fuel.Fuel.compoundsData`: the rows of ``ref_compounds.csv``
+- ``Fuel.components_data``: the rows of ``ref_compounds.csv``
   matched to the GCxGC data, including the hydrocarbon ``Family`` used by the
   ``boehm`` method.
-- Cached properties such as :attr:`~fuellib.fuel.Fuel.Tc`,
-  :attr:`~fuellib.fuel.Fuel.Pc`, :attr:`~fuellib.fuel.Fuel.Tb`,
-  :attr:`~fuellib.fuel.Fuel.Cp_stp`, :attr:`~fuellib.fuel.Fuel.dS_fus`,
-  :attr:`~fuellib.fuel.Fuel.RD_coeffs`, and :attr:`~fuellib.fuel.Fuel.phi`
-  that evaluate the corresponding registered property with
-  ``gani_gcm.predict(...)`` or ``boehm_gcm.predict(...)`` the first time they are
-  accessed. Properties that can be measured (``Tc``, ``Pc``, ``Vc``, ``Tm``,
+- Cached properties of :attr:`fuel.comps <fuellib.fuel.core.Fuel.comps>` such as
+  :attr:`~fuellib.fuel.components.Components.tc`,
+  :attr:`~fuellib.fuel.components.Components.pc`, and
+  :attr:`~fuellib.fuel.components.Components.tb` that
+  evaluate the corresponding registered property with ``gani_gcm.predict(...)``
+  the first time they are accessed.
+  Prediction-only coefficients (``Cp_stp``, ``Cp_B``, ``Cp_C``, ``rd_A``,
+  ``rd_B``, ``rd_D``, ``alibakhshi_phi``, and ``dS_fus``) are not cached on the
+  fuel; call ``gani_gcm.predict(...)`` or ``boehm_gcm.predict(...)`` directly.
+  Properties that can be measured (``Tc``, ``Pc``, ``Vc``, ``Tm``,
   ``Tb``, ``Hf_stp``, ``Hv_stp``, ``Vm_stp``, ``omega``) take reference values
-  from ``ref_compounds.csv`` where available unless ``useRefProperties=False``.
+  from ``ref_compounds.csv`` where available unless ``use_ref_props=False``.
 
 .. code-block:: python
 
    fuel = Fuel("decane")
 
-   fuel.ganiDecomp      # DataFrame, one row per compound
-   fuel.nannoolalDecomp # DataFrame, one row per compound
-   fuel.unifacDecomp    # DataFrame, one row per compound
-   fuel.compoundsData   # DataFrame of matched reference compounds
-   fuel.Tc              # Quantity1D of critical temperatures
-   fuel.dS_fus          # Quantity1D of fusion entropies (boehm)
+   fuel._gani_decomp       # DataFrame, one row per compound
+   fuel._nannoolal_decomp  # DataFrame, one row per compound
+   fuel._unifac_decomp     # DataFrame, one row per compound
+   fuel.components_data    # DataFrame of matched reference compounds
+   fuel.comps.tc           # Quantity1D of critical temperatures
+   boehm_gcm.predict("dS_fus", fuel)  # Quantity1D of fusion entropies
 
 Previously, ``Fuel.get_property``, ``Fuel.gcm_properties``, and ``Fuel.gani_decomp``
 were used to access these values. They have been replaced by the attributes above, so

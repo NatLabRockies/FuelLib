@@ -141,7 +141,7 @@ provided :math:`T` in K unless noted otherwise.
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.viscosity_kinematic
+.. automethod:: fuellib.fuel.components.Components.nu
    :noindex:
 
 The kinematic viscosity of the *i-th* compound of the fuel, 
@@ -184,7 +184,7 @@ Groups without a published contribution are discussed in :doc:`gcm`.
 Latent heat of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.latent_heat_vaporization
+.. automethod:: fuellib.fuel.components.Components.lv
    :noindex:
 
 The latent heat of vaporization for each compound at standard pressure and 
@@ -203,7 +203,7 @@ temperature\ :footcite:p:`govindaraju_group_2016`:
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.molar_liquid_vol
+.. automethod:: fuellib.fuel.components.Components.vm
    :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using 
@@ -228,7 +228,7 @@ where
 Density
 ^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.density
+.. automethod:: fuellib.fuel.components.Components.rho
    :noindex:
 
 The density of the *i-th* compound is given by
@@ -240,7 +240,7 @@ The density of the *i-th* compound is given by
 Mass specific heat capacity of the liquid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.Cl
+.. automethod:: fuellib.fuel.components.Components.cp
    :noindex:
 
 The mass specific heat capacity for each compound at standard pressure temperature is calculated from the molar specific heat capacity as:
@@ -260,7 +260,7 @@ properties of the ``gani`` GCM (:doc:`gcm`):
 Saturated vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.psat
+.. automethod:: fuellib.fuel.components.Components.pvap
    :noindex:
 
 The saturated vapor pressure for each compound is calculated as a function of 
@@ -292,7 +292,7 @@ The Ambrose-Walton\ :footcite:p:`ambrose_vapour_1989` correlation sets:
 
 with :math:`\tau_i = 1 - T_{r,i}`.
 
-.. automethod:: fuellib.fuel.Fuel.psat_antoine_coeffs
+.. automethod:: fuellib.fuel.components.Components.pvap_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -311,7 +311,7 @@ for additional information.
 Surface tension
 ^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.surface_tension
+.. automethod:: fuellib.fuel.components.Components.sigma
    :noindex:
 
 Surface tension for each compound is approximated using the relation:
@@ -334,7 +334,7 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.thermal_conductivity
+.. automethod:: fuellib.fuel.components.Components.k
    :noindex:
 
 Thermal conductivity for each compound is computed according to the method of 
@@ -382,7 +382,7 @@ and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
 Flash point
 ^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.flash_point
+.. automethod:: fuellib.fuel.components.Components.t_flash
    :noindex:
 
 Two correlations are available for the flash point :math:`T_{fp,i}` of each compound,
@@ -518,7 +518,7 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 Mixture density
 ^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_density
+.. automethod:: fuellib.fuel.mixture.Mixture.rho
    :noindex:
 
 The mixture's density is calculated as:
@@ -531,7 +531,7 @@ The mixture's density is calculated as:
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_kinematic_viscosity
+.. automethod:: fuellib.fuel.mixture.Mixture.nu
    :noindex:
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
@@ -556,7 +556,7 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_vapor_pressure
+.. automethod:: fuellib.fuel.mixture.Mixture.pvap
    :noindex:
 
 The vapor pressure of the mixture is calculated according to Raoult's law:
@@ -565,7 +565,7 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 
    p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.
 
-.. automethod:: fuellib.fuel.Fuel.mixture_vapor_pressure_antoine_coeffs
+.. automethod:: fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -584,7 +584,7 @@ for additional information.
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_surface_tension
+.. automethod:: fuellib.fuel.mixture.Mixture.sigma
    :noindex:
 
 The surface tension of the mixture is calculated using the :ref:`conventional-mixing-rules`
@@ -597,7 +597,7 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_thermal_conductivity
+.. automethod:: fuellib.fuel.mixture.Mixture.k
    :noindex:
 
 The thermal conductivity of the mixture is calculated using the power law method of 
@@ -609,7 +609,7 @@ Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 Mixture freeze point
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_freeze_point
+.. automethod:: fuellib.fuel.mixture.Mixture.t_freeze
    :noindex:
 
 The freeze point of the mixture is estimated with the solid-liquid equilibrium model
@@ -628,7 +628,7 @@ where
    \Delta H_{\textit{fus},j} &= T_{m,j} \, \Delta S_{\textit{fus},j}, \\
    \Delta C_{p,j} &= -0.35 \, C_{p,\ell,j}(298.15 \text{ K}),
 
-:math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.Fuel.Tm` (a reference value
+:math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.components.Components.tm` (a reference value
 when available, otherwise the Constantinou-Gani prediction; see :ref:`sec-reference-properties`),
 :math:`\Delta S_{\textit{fus},j}`
 is provided by the ``boehm`` GCM (see :doc:`gcm`), and :math:`\alpha` is an optional
@@ -640,7 +640,7 @@ does not capture cooling rate, supercooling, or solid-phase nonideality.
 Mixture flash point
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_flash_point
+.. automethod:: fuellib.fuel.mixture.Mixture.t_flash
    :noindex:
 
 The mixture flash point is computed from the component flash points :math:`T_{fp,i}`
@@ -660,7 +660,7 @@ mixing rule does not model nonideal liquid activity coefficients.
 Mixture heat of combustion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_heat_of_combustion
+.. automethod:: fuellib.fuel.mixture.Mixture.lhv
    :noindex:
 
 The mixture heat of combustion :math:`\Delta H^\circ_c` is reported per unit mass as the
@@ -678,13 +678,13 @@ estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter te
 Mixture yield sooting index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_yield_sooting_index
+.. automethod:: fuellib.fuel.mixture.Mixture.ysi
    :noindex:
 
 The yield sooting index :math:`YSI` is a dimensionless measure of a fuel's tendency to soot.
 The component values :math:`YSI_i` are reference data from ``ref_compounds.csv``, primarily
 from the Yield Sooting Index Database of McEnally et al.\ :footcite:p:`mcenally_yield_2017`, and are
-available as :attr:`~fuellib.fuel.Fuel.YSI` (see :ref:`sec-reference-properties`); they are
+available as :attr:`~fuellib.fuel.components.Components.ysi` (see :ref:`sec-reference-properties`); they are
 not predicted by FuelLib. The mixture value is the mole-fraction weighted average
 
 .. math::
@@ -696,7 +696,7 @@ component. Mass fractions are converted to mole fractions using the component mo
 Mixture smoke point
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_smoke_point
+.. automethod:: fuellib.fuel.mixture.Mixture.smoke_point
    :noindex:
 
 The mixture smoke point :math:`SP` is estimated from the mixture
@@ -734,12 +734,12 @@ is raised if :math:`YSI` is unavailable for any component, is not positive, or i
 Mixture derived cetane number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_derived_cetane_number
+.. automethod:: fuellib.fuel.mixture.Mixture.dcn
    :noindex:
 
 The derived cetane number :math:`DCN` is a dimensionless measure of ignition quality.
 The component values :math:`DCN_i` are reference data from ``ref_compounds.csv`` and are
-available as :attr:`~fuellib.fuel.Fuel.DCN` (see :ref:`sec-reference-properties`); they are
+available as :attr:`~fuellib.fuel.components.Components.dcn` (see :ref:`sec-reference-properties`); they are
 not predicted by FuelLib. The mixture value is computed with a linear liquid volume-fraction
 mixing rule,
 
@@ -761,7 +761,7 @@ The graph neural network models of Kim et al. for predicting cetane numbers are 
 Mixture aromatics content
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_aromatics_content
+.. automethod:: fuellib.fuel.mixture.Mixture.aromatics
    :noindex:
 
 The aromatics content is the total liquid volume percent of aromatic compounds in the mixture,
@@ -771,7 +771,7 @@ The aromatics content is the total liquid volume percent of aromatic compounds i
    \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
 
 where :math:`\mathcal{A}` is the set of compounds whose
-:attr:`~fuellib.fuel.Fuel.hc_type` is ``"aromatic"`` (any compound containing an aromatic
+:attr:`~fuellib.fuel.components.Components.hc_type` is ``"aromatic"`` (any compound containing an aromatic
 ring, including cycloaromatics and diaromatics), and :math:`\rho_i` is the component liquid
 density evaluated at standard temperature (``constants.T_stp``). The result is in vol%,
 directly comparable with aromatics specifications (e.g., ASTM D1319).
@@ -779,7 +779,7 @@ directly comparable with aromatics specifications (e.g., ASTM D1319).
 Mixture naphthalenes content
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_naphthalenes_content
+.. automethod:: fuellib.fuel.mixture.Mixture.naphthalenes
    :noindex:
 
 The naphthalenes content is the total liquid volume percent of naphthalene and alkylated
@@ -819,34 +819,34 @@ and ``{Property}_Notes``. Blank values indicate that no reference data are avail
 ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. The following properties are
 supported:
 
-=============  =======================================  =====================================================
-Property       Attribute                                Behavior       
-=============  =======================================  =====================================================
-``Tc``         :attr:`~fuellib.fuel.Fuel.Tc`            Reference value, else group-contribution prediction
-``Pc``         :attr:`~fuellib.fuel.Fuel.Pc`            Reference value, else group-contribution prediction
-``Vc``         :attr:`~fuellib.fuel.Fuel.Vc`            Reference value, else group-contribution prediction
-``Tm``         :attr:`~fuellib.fuel.Fuel.Tm`            Reference value, else group-contribution prediction
-``Tb``         :attr:`~fuellib.fuel.Fuel.Tb`            Reference value, else group-contribution prediction
-``Hf_STP``     :attr:`~fuellib.fuel.Fuel.Hf_stp`        Reference value, else group-contribution prediction
-``Hv_STP``     :attr:`~fuellib.fuel.Fuel.Hv_stp`        Reference value, else group-contribution prediction
-``Vm_STP``     :attr:`~fuellib.fuel.Fuel.Vm_stp`        Reference value, else group-contribution prediction
-``Omega``      :attr:`~fuellib.fuel.Fuel.omega`         Reference value, else group-contribution prediction
-``YSI``        :attr:`~fuellib.fuel.Fuel.YSI`           Reference only; raises ``ValueError`` if missing
-``DCN``        :attr:`~fuellib.fuel.Fuel.DCN`           Reference only; raises ``ValueError`` if missing
-=============  =======================================  =====================================================
+=============  ====================================================  =====================================================
+Property       Attribute                                             Behavior
+=============  ====================================================  =====================================================
+``Tc``         :attr:`~fuellib.fuel.components.Components.tc`        Reference value, else group-contribution prediction
+``Pc``         :attr:`~fuellib.fuel.components.Components.pc`        Reference value, else group-contribution prediction
+``Vc``         :attr:`~fuellib.fuel.components.Components.vc`        Reference value, else group-contribution prediction
+``Tm``         :attr:`~fuellib.fuel.components.Components.tm`        Reference value, else group-contribution prediction
+``Tb``         :attr:`~fuellib.fuel.components.Components.tb`        Reference value, else group-contribution prediction
+``Hf_STP``     :attr:`~fuellib.fuel.components.Components.hf_stp`    Reference value, else group-contribution prediction
+``Hv_STP``     :attr:`~fuellib.fuel.components.Components.hv_stp`    Reference value, else group-contribution prediction
+``Vm_STP``     :attr:`~fuellib.fuel.components.Components.vm_stp`    Reference value, else group-contribution prediction
+``Omega``      :attr:`~fuellib.fuel.components.Components.omega`     Reference value, else group-contribution prediction
+``YSI``        :attr:`~fuellib.fuel.components.Components.ysi`       Reference only; raises ``ValueError`` if missing
+``DCN``        :attr:`~fuellib.fuel.components.Components.dcn`       Reference only; raises ``ValueError`` if missing
+=============  ====================================================  =====================================================
 
 Reference values are converted from the stated ``{Property}_Units`` to the attribute's units. Measured
 values are used for properties in the first group on a compound-by-compound basis, so a single fuel can mix
-reference values and predictions. Pass ``useRefProperties=False`` to :class:`~fuellib.fuel.Fuel` to use
+reference values and predictions. Pass ``use_ref_props=False`` to :class:`~fuellib.fuel.core.Fuel` to use
 only the group-contribution predictions. ``YSI`` (Yield Sooting Index) and ``DCN`` (derived cetane number)
 are not predicted by FuelLib, so they are always taken from the reference data.
 
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
-from its ``SMILES``; the matched rows are available as :attr:`~fuellib.fuel.Fuel.compoundsData`, and the
+from its ``SMILES``; the matched rows are available as ``Fuel.components_data``, and the
 group decompositions from ``ref_gani.csv``, ``ref_nannoolal.csv``, and ``ref_unifac.csv`` as
-:attr:`~fuellib.fuel.Fuel.ganiDecomp`, :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`, and
-:attr:`~fuellib.fuel.Fuel.unifacDecomp`. Custom tables are read from ``ref_compounds.csv``, ``ref_gani.csv``,
-``ref_nannoolal.csv``, and ``ref_unifac.csv`` in the ``fuelDataDir`` passed to :class:`~fuellib.fuel.Fuel` (see :doc:`tutorials_custom_fuels`). Each custom table is merged
+``Fuel._gani_decomp``, ``Fuel._nannoolal_decomp``, and
+``Fuel._unifac_decomp``. Custom tables are read from ``ref_compounds.csv``, ``ref_gani.csv``,
+``ref_nannoolal.csv``, and ``ref_unifac.csv`` in the ``data_dir`` passed to :class:`~fuellib.fuel.core.Fuel` (see :doc:`tutorials_custom_fuels`). Each custom table is merged
 with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
 the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
 bundled compound; a Gani, Nannoolal, or UNIFAC decomposition duplicate is identified by its ``Reference Compound``.

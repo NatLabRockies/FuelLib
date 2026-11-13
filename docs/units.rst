@@ -25,18 +25,18 @@ Basic example
    fuel = fl.Fuel("heptane_decane")
 
    # Properties on the Fuel object are pint.Quantity values and print with units
-   print(f"Critical temperature: {fuel.Tc:.2f}")
+   print(f"Critical temperature: {fuel.comps.tc:.2f}")
 
    # Convert to another unit with `.to(...)`
-   print(f"Critical temperature (°C): {fuel.Tc.to('celsius'):.2f}")
+   print(f"Critical temperature (°C): {fuel.comps.tc.to('celsius'):.2f}")
 
    # Get the raw numeric value with `.magnitude`
-   print(f"Critical temperature, magnitude only: {fuel.Tc.magnitude}")
+   print(f"Critical temperature, magnitude only: {fuel.comps.tc.magnitude}")
 
    # Build your own quantity using the shared registry, then pass it to a
    # temperature-dependent correlation
    T = fl.Units.Quantity(320.0, "K")
-   p_sat_i = fuel.psat(T)
+   p_sat_i = fuel.comps.pvap(T)
    print(f"Saturated vapor pressure at {T}: {p_sat_i:.2f}")
 
 Arithmetic between quantities automatically combines/cancels units, and pint

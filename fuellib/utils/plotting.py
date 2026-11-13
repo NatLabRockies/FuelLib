@@ -212,19 +212,19 @@ def plot_composition(
         os.makedirs(output_dir)
 
     # Load the fuel
-    fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, data_dir=fuel_data_dir)
 
     # Create DataFrame with compound data and carbon numbers from fuel object
     df = pd.DataFrame({
-        "Compound": fuel.compounds,
-        "Weight %": fuel.Y_0.magnitude * 100,
-        "Family": fuel.hc_type,
-        "nC": fuel.nC,
+        "Compound": fuel.comps.names,
+        "Weight %": fuel.y0.magnitude * 100,
+        "Family": fuel.comps.hc_type,
+        "nC": fuel.comps.num_c,
     })
 
     # Get unique families from the fuel data in canonical order
     canonical_order = ["n-alkane", "iso-alkane", "cyclo-alkane", "aromatic", "alkene"]
-    unique_families = list(np.unique(fuel.hc_type))
+    unique_families = list(np.unique(fuel.comps.hc_type))
     family_names = [f for f in canonical_order if f in unique_families]
 
     # Remove rows with weight % <= 0.01
@@ -405,15 +405,15 @@ def _predictions_and_data(
         temperatures in degC, predicted property values, and the units of the
         property values.
     """
-    fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, data_dir=fuel_data_dir)
 
     # Try to load experimental data
     T_data = Units.Quantity([], "celsius")
     prop_units = _DEFAULT_UNITS.get(prop_name, "dimensionless")
     prop_data = Units.Quantity([], prop_units)
-    if fuel.propData is not None:
+    if fuel.prop_data is not None:
         try:
-            data = fuel.propData
+            data = fuel.prop_data
             data = data[
                 (data["Property"] == prop_name)
                 & data["Temp"].notna()
@@ -459,20 +459,20 @@ def _predictions_and_data(
         ).to("K")
 
     pred = Units.Quantity(np.zeros_like(T_pred.magnitude), prop_units)
-    Y_li = fuel.Y_0
+    Y_li = fuel.y0
 
     for i, T in enumerate(T_pred):
         try:
             if prop_name == "Density":
-                pred[i] = fuel.mixture_density(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.rho(Y_li, T).to(prop_units)
             elif prop_name == "VaporPressure":
-                pred[i] = fuel.mixture_vapor_pressure(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.pvap(Y_li, T).to(prop_units)
             elif prop_name == "Viscosity":
-                pred[i] = fuel.mixture_kinematic_viscosity(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.nu(Y_li, T).to(prop_units)
             elif prop_name == "SurfaceTension":
-                pred[i] = fuel.mixture_surface_tension(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.sigma(Y_li, T).to(prop_units)
             elif prop_name == "ThermalConductivity":
-                pred[i] = fuel.mixture_thermal_conductivity(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.k(Y_li, T).to(prop_units)
         except (ValueError, TypeError, RuntimeError):
             pred.magnitude[i] = np.nan
 
@@ -748,9 +748,9 @@ def d86_data(fuel: "fl.Fuel") -> tuple[types.Quantity1D, types.Quantity1D] | Non
         Recovered volume fractions and D86 temperatures, or None if the fuel has no
         distillation data.
     """
-    if fuel.propData is None:
+    if fuel.prop_data is None:
         return None
-    df = fuel.propData[fuel.propData["Property"] == "Distillation"]
+    df = fuel.prop_data[fuel.prop_data["Property"] == "Distillation"]
     if df.empty:
         return None
     # pint does not define "percentage"
@@ -802,7 +802,7 @@ def plot_distillation(
     from ..simulate.distillation import greenfield
 
     loaded = [
-        fl.Fuel(fuel, fuelDataDir=fuel_data_dir) if isinstance(fuel, str) else fuel
+        fl.Fuel(fuel, data_dir=fuel_data_dir) if isinstance(fuel, str) else fuel
         for fuel in fuels
     ]
     legend_labels = _resolve_legend_labels([fuel.name for fuel in loaded], leg)

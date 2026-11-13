@@ -26,8 +26,8 @@ REF_UNIFAC = (
 def _params(*smiles: str):
     """UNIFAC parameters for a mixture of the given SMILES strings."""
     decomp = pd.concat([decompose(s) for s in smiles])
-    # parameters() only reads `fuel.unifacDecomp`, so a lightweight stand-in suffices
-    return unifac.parameters(cast(Fuel, SimpleNamespace(unifacDecomp=decomp)))
+    # parameters() only reads `fuel._unifac_decomp`, so a lightweight stand-in suffices
+    return unifac.parameters(cast(Fuel, SimpleNamespace(_unifac_decomp=decomp)))
 
 
 def _ln_gamma_combinatorial_reference(x, nu, Rk, Qk):

@@ -12,6 +12,7 @@ from scipy import stats as st
 
 import fuellib as fl
 
+from ..gcm.gani import gani_gcm
 from ..utils import Units
 
 # Default data directory - use fuellib's embedded data
@@ -191,26 +192,27 @@ def create_individual_compounds_dataframe(fuel, compound_names, converter):
     # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
     # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
-    Cp_A = fuel.Cp_stp / fuel.MW
-    Cp_B = fuel.Cp_B / fuel.MW
-    Cp_C = fuel.Cp_C / fuel.MW
+    Cp_A = gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
+    Cp_B = gani_gcm.predict("Cp_B", fuel).to("J/(mol*K)") / fuel.comps.mw
+    Cp_C = gani_gcm.predict("Cp_C", fuel).to("J/(mol*K)") / fuel.comps.mw
+    Lv_stp = (fuel.comps.hv_stp / fuel.comps.mw).to("J/kg")
 
     return pd.DataFrame({
         "Compound": compound_names,
-        "Family": fuel.fam,
-        "Y_0": fuel.Y_0,
-        "MW": list(fuel.MW),
-        "Tc": list(fuel.Tc),
-        "Pc": list(fuel.Pc),
-        "Vc": list(fuel.Vc),
-        "Tb": list(fuel.Tb),
-        "omega": list(fuel.omega),
-        "Vm_stp": list(fuel.Vm_stp),
+        "Family": fuel.comps.fam,
+        "Y_0": fuel.y0,
+        "MW": list(fuel.comps.mw),
+        "Tc": list(fuel.comps.tc),
+        "Pc": list(fuel.comps.pc),
+        "Vc": list(fuel.comps.vc),
+        "Tb": list(fuel.comps.tb),
+        "omega": list(fuel.comps.omega),
+        "Vm_stp": list(fuel.comps.vm_stp),
         "Cp_A": list(Cp_A),
         "Cp_B": list(Cp_B),
         "Cp_C": list(Cp_C),
         "Cp_stp": list(Cp_A),  # For PeleMP model
-        "Lv_stp": list(fuel.Lv_stp),
+        "Lv_stp": list(Lv_stp),
     })
 
 
@@ -234,27 +236,37 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
     # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
     # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
-    X = fuel.Y2X(fuel.Y_0)
-    Cp_A = fl.correlate.mixture.arithmetic(X, fuel.Cp_stp / fuel.MW)
-    Cp_B = fl.correlate.mixture.arithmetic(X, fuel.Cp_B / fuel.MW)
-    Cp_C = fl.correlate.mixture.arithmetic(X, fuel.Cp_C / fuel.MW)
+    X = fuel.mix.y2x(fuel.y0)
+    Cp_A = fl.correlate.mixture.arithmetic(
+        X, gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
+    )
+    Cp_B = fl.correlate.mixture.arithmetic(
+        X, gani_gcm.predict("Cp_B", fuel).to("J/(mol*K)") / fuel.comps.mw
+    )
+    Cp_C = fl.correlate.mixture.arithmetic(
+        X, gani_gcm.predict("Cp_C", fuel).to("J/(mol*K)") / fuel.comps.mw
+    )
 
     return pd.DataFrame({
         "Compound": [export_mix_name],
-        "Family": [st.mode(fuel.fam).mode],
+        "Family": [st.mode(fuel.comps.fam).mode],
         "Y_0": [1.0],
-        "MW": [fuel.mean_molecular_weight(fuel.Y_0)],
-        "Tc": [fl.correlate.mixture.arithmetic(X, fuel.Tc)],
-        "Pc": [fl.correlate.mixture.arithmetic(X, fuel.Pc)],
-        "Vc": [fl.correlate.mixture.arithmetic(X, fuel.Vc)],
-        "Tb": [fl.correlate.mixture.arithmetic(X, fuel.Tb)],
-        "omega": [fl.correlate.mixture.arithmetic(X, fuel.omega)],
-        "Vm_stp": [fl.correlate.mixture.arithmetic(X, fuel.Vm_stp)],
+        "MW": [fuel.mix.mw(fuel.y0)],
+        "Tc": [fl.correlate.mixture.arithmetic(X, fuel.comps.tc)],
+        "Pc": [fl.correlate.mixture.arithmetic(X, fuel.comps.pc)],
+        "Vc": [fl.correlate.mixture.arithmetic(X, fuel.comps.vc)],
+        "Tb": [fl.correlate.mixture.arithmetic(X, fuel.comps.tb)],
+        "omega": [fl.correlate.mixture.arithmetic(X, fuel.comps.omega)],
+        "Vm_stp": [fl.correlate.mixture.arithmetic(X, fuel.comps.vm_stp)],
         "Cp_A": [Cp_A],
         "Cp_B": [Cp_B],
         "Cp_C": [Cp_C],
         "Cp_stp": [Cp_A],  # For MP model: Cp_stp = Cp_A
-        "Lv_stp": [fl.correlate.mixture.arithmetic(X, fuel.Lv_stp)],
+        "Lv_stp": [
+            fl.correlate.mixture.arithmetic(
+                X, (fuel.comps.hv_stp / fuel.comps.mw).to("J/kg")
+            )
+        ],
     })
 
 
@@ -344,29 +356,29 @@ def export_pele(
 
     # Check if PelePhysics keys are available
     if use_pp_keys:
-        if fuel.pelephysics_keys is not None:
+        if fuel.comps.pelephysics_keys is not None:
             print(
                 "\nPelePhysics keys found in GCxGC data, please ensure consistency with PelePhysics mechanism."
             )
-            compound_names = fuel.pelephysics_keys
+            compound_names = fuel.comps.pelephysics_keys
         else:
             print(
                 "\nWarning: PelePhysics keys not found in GCxGC data. Using compound names instead."
             )
             compound_names = (
-                fuel.gcData["GC-Bin"].tolist()
-                if "GC-Bin" in fuel.gcData.columns
-                else list(fuel.compounds)
+                fuel.gc_data["GC-Bin"].tolist()
+                if "GC-Bin" in fuel.gc_data.columns
+                else list(fuel.comps.names)
             )
     else:
-        if fuel.pelephysics_keys is not None:
+        if fuel.comps.pelephysics_keys is not None:
             print(
                 "\nWarning: PelePhysics keys found in GCxGC data, but not used. Using compound names instead."
             )
         compound_names = (
-            fuel.gcData["GC-Bin"].tolist()
-            if "GC-Bin" in fuel.gcData.columns
-            else list(fuel.compounds)
+            fuel.gc_data["GC-Bin"].tolist()
+            if "GC-Bin" in fuel.gc_data.columns
+            else list(fuel.comps.names)
         )
 
     # Check there are no spaces in compound_names
@@ -435,9 +447,9 @@ def export_pele(
         # Calculate density at 298.15 K
         ref_T = Units.Quantity(298.15, "K")
         if export_mix:
-            rho = fuel.mixture_density(fuel.Y_0, ref_T)
+            rho = fuel.mix.rho(fuel.y0, ref_T)
         else:
-            rho = fuel.density(ref_T)
+            rho = fuel.comps.rho(ref_T)
         df["rho"] = [rho] if export_mix else list(rho)
 
         # Get Antoine coefficients
@@ -448,11 +460,13 @@ def export_pele(
                     psat_B,
                     psat_C,
                     psat_D,
-                ) = fuel.mixture_vapor_pressure_antoine_coeffs(fuel.Y_0, units=units)
-                rho = fuel.mixture_density(fuel.Y_0, ref_T)
+                ) = fuel.mix.pvap_antoine_coeffs(fuel.y0, units=units)
+                rho = fuel.mix.rho(fuel.y0, ref_T)
             else:
-                psat_A, psat_B, psat_C, psat_D = fuel.psat_antoine_coeffs(units=units)
-                rho = fuel.density(ref_T)
+                psat_A, psat_B, psat_C, psat_D = fuel.comps.pvap_antoine_coeffs(
+                    units=units
+                )
+                rho = fuel.comps.rho(ref_T)
 
             df["psat_A"] = psat_A
             df["psat_B"] = psat_B
@@ -603,7 +617,7 @@ def main():
         nargs="+",  # Accepts one or more values
         default=None,
         metavar="NAME",
-        help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.compounds).",
+        help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.comps.names).",
     )
 
     # Optional argument for using PelePhysics key
@@ -686,15 +700,15 @@ def main():
     print(f"    Fuel data directory: {fuel_data_dir}")
 
     # Create the groupContribution object for the specified fuel
-    fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, data_dir=fuel_data_dir)
     if dep_fuel_names is None and not export_mix:
-        if use_pp_keys and fuel.pelephysics_keys is not None:
-            dep_fuel_names = list(fuel.pelephysics_keys)
+        if use_pp_keys and fuel.comps.pelephysics_keys is not None:
+            dep_fuel_names = list(fuel.comps.pelephysics_keys)
         else:
             dep_fuel_names = (
-                fuel.gcData["GC-Bin"].tolist()
-                if "GC-Bin" in fuel.gcData.columns
-                else list(fuel.compounds)
+                fuel.gc_data["GC-Bin"].tolist()
+                if "GC-Bin" in fuel.gc_data.columns
+                else list(fuel.comps.names)
             )
 
     # Export properties for Pele

@@ -36,7 +36,7 @@ Each row of the GCxGC file is matched to a compound in the reference data tables
 
 Rows are matched by ``Reference Compound`` name first (case-insensitive) and then by the InChI derived from ``SMILES``. A ``ValueError`` listing the unmatched rows is raised if any GCxGC compound is missing from the reference tables, so new compounds must first be added to the reference tables (see the `Adding Custom Fuels <tutorials_custom_fuels.html>`_ tutorial). Many examples can be found in the `fuellib/data <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data>`_ directory in the repository.
 
-Optionally, measured property data can be provided in ``properties_data/<fuel_name>.csv``. It is loaded into ``Fuel.propData`` and used for validation and plotting.
+Optionally, measured property data can be provided in ``properties_data/<fuel_name>.csv``. It is loaded into ``Fuel.prop_data`` and used for validation and plotting.
 
 Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -103,19 +103,19 @@ as ``basic.py``. To begin, we will import the necessary modules and create a ``f
 
 Upon initialization, the ``fuel`` object will read the GCxGC composition and match each compound to the 
 reference compound and group decomposition tables. Fundamental properties at standard conditions for each component 
-of the fuel (e.g., ``fuel.Tc``, ``fuel.Pc``, ``fuel.Tb``) are evaluated lazily on first access and returned as 
+of the fuel (e.g., ``fuel.comps.tc``, ``fuel.comps.pc``, ``fuel.comps.tb``) are evaluated lazily on first access and returned as 
 vectors (pint quantities for unit checking), as described in :ref:`eq-GCM-properties`. When measured values for a 
 compound are available in ``ref_compounds.csv`` they are used in place of the group-contribution prediction 
-(see :ref:`sec-reference-properties`); pass ``useRefProperties=False`` to :class:`~fuellib.fuel.Fuel` to use only predictions.
+(see :ref:`sec-reference-properties`); pass ``use_ref_props=False`` to :class:`~fuellib.fuel.core.Fuel` to use only predictions.
 For example, we can display the fuel name, the components in the fuel, the initial composition, and the critical temperature for each component: 
 
 .. code-block:: python
 
     # Display fuel name, components, initial composition, and critical temperature
     print(f"Fuel name: {fuel.name}")
-    print(f"Fuel components: {fuel.compounds}")
-    print(f"Initial composition: {fuel.Y_0:~P.4f}")
-    print(f"Critical temperature: {fuel.Tc:~P.2f}") # ~P for "pretty" pint unit formatting
+    print(f"Fuel components: {fuel.comps.names}")
+    print(f"Initial composition: {fuel.y0:~P.4f}")
+    print(f"Critical temperature: {fuel.comps.tc:~P.2f}") # ~P for "pretty" pint unit formatting
 
 .. code-block:: none
 
@@ -124,16 +124,18 @@ For example, we can display the fuel name, the components in the fuel, the initi
     >> Initial composition: [0.7375 0.2625]
     >> Critical temperature: [549.86 623.69] K
 
-Note that the units for critical temperature are included as `fuel.Tc` returns a `pint.Quantity[np.ndarray]`. Next, we can calculate any of the component- or mixture-level properties using the 
-``fuel`` object. For example, we can calculate the saturated vapor pressure
+Note that the units for critical temperature are included as `fuel.comps.tc` returns a `pint.Quantity[np.ndarray]`. Next, we can calculate any of the component- or mixture-level properties using the 
+``fuel`` object: component properties are available through ``fuel.comps``
+(:class:`~fuellib.fuel.components.Components`) and mixture properties through ``fuel.mix``
+(:class:`~fuellib.fuel.mixture.Mixture`). For example, we can calculate the saturated vapor pressure
 for each component and the mixture at a given temperature:
 
 .. code-block:: python
 
     # Calculate the saturated vapor pressure at 320 K
     T = fl.Units.Quantity(320, "K") # Temperature as a pint.Quantity
-    p_sat_i = fuel.psat(T)
-    p_vap_mix = fuel.mixture_vapor_pressure(fuel.Y_0, T)
+    p_sat_i = fuel.comps.pvap(T)
+    p_vap_mix = fuel.mix.pvap(fuel.y0, T)
     print(f"Saturated vapor pressure at {T:~P}: {p_sat_i:~P.2f}")
     print(f"Mixture vapor pressure at {T:~P}: {p_vap_mix:~P.2f}")
 

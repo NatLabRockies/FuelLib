@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 from scipy.optimize import curve_fit, root
 
+from ..gcm.boehm import boehm_gcm
 from ..rdk import mol
 from ..utils import Units, constants, types
 from . import components, helpers
@@ -106,13 +107,13 @@ def mean_molecular_weight(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Mean molecular weight of the mixture in kg/mol.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
-    MW = fuel.MW.to("kg/mol")  # Can't be None after `rdkit` implementation
+    Yi = Yi if Yi is not None else fuel.y0
+    MW = fuel.comps.mw.to("kg/mol")  # Can't be None after `rdkit` implementation
     return 1 / np.sum(Yi / MW)
 
 
@@ -120,19 +121,19 @@ def density(
     fuel: "Fuel",
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
-) -> types.Quantity1D:
+) -> types.Quantity0D:
     """Calculate mixture density.
 
     Args:
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Mixture density in kg/m^3.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     rho_i = components.density(fuel, T).to("kg/m^3")
     return Yi @ rho_i
 
@@ -152,14 +153,14 @@ def kinematic_viscosity_dutt(
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
 
     Returns:
         Mixture kinematic viscosity in m^2/s.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     nu_i = components.kinematic_viscosity_dutt(fuel, T).to("m^2/s")
     # Calculate mole fractions for each species
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
@@ -184,14 +185,14 @@ def dynamic_viscosity_dutt(
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
 
     Returns:
         Mixture dynamic viscosity in Pa*s.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     nu = kinematic_viscosity_dutt(fuel, T, Yi, mixing_rule=mixing_rule)
     rho = density(fuel, T, Yi)
     return (rho * nu).to("Pa*s")
@@ -212,14 +213,14 @@ def kinematic_viscosity_nannoolal(
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
 
     Returns:
         Mixture kinematic viscosity in m^2/s.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     nu_i = components.kinematic_viscosity_nannoolal(fuel, T).to("m^2/s")
     # Calculate mole fractions for each species
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
@@ -244,14 +245,14 @@ def dynamic_viscosity_nannoolal(
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
 
     Returns:
         Mixture dynamic viscosity in Pa*s.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     nu = kinematic_viscosity_nannoolal(fuel, T, Yi, mixing_rule=mixing_rule)
     rho = density(fuel, T, Yi)
     return (rho * nu).to("Pa*s")
@@ -270,14 +271,14 @@ def saturated_vapor_pressure(
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
             Defaults to "Lee-Kesler".
 
     Returns:
         Mixture saturated vapor pressure in Pa.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     # Mole fraction for each compound
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
     # Saturated vapor pressure for each compound (Pa)
@@ -303,7 +304,7 @@ def saturated_vapor_pressure_antoine_coeffs(
         Tvals: Temperature range or nodes for Antoine fit in Kelvin.
             Defaults to [273.15, min(Tb_mix)].
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         units: Units for pressure in fit.
             Defaults to "mks" (Pa).
         correlation: Correlation method.
@@ -315,7 +316,7 @@ def saturated_vapor_pressure_antoine_coeffs(
     Raises:
         ValueError: If units or Tvals are invalid.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     if units == "cgs":
         units = "dyne/cm^2"
     elif units == "mks":
@@ -330,7 +331,7 @@ def saturated_vapor_pressure_antoine_coeffs(
     if Tvals is None:
         print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
         Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
-        Tb = arithmetic(Xi, fuel.Tb)
+        Tb = arithmetic(Xi, fuel.comps.tb)
         T = Units.Quantity(np.linspace(273.15, np.min(Tb.to("K").magnitude), 20), "K")
     elif len(Tvals) == 2:
         T = Units.Quantity(np.linspace(Tvals[0].magnitude, Tvals[1].magnitude, 20), "K")
@@ -394,14 +395,14 @@ def surface_tension(
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         correlation: Correlation method ("Pitzer" or "Brock-Bird").
             Defaults to "Brock-Bird".
 
     Returns:
         Mixture surface tension in N/m.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
     # Surface tension for each compound (N/m)
     sti = components.surface_tension(fuel, T, correlation=correlation)
@@ -421,12 +422,12 @@ def thermal_conductivity_latini(
         fuel: Fuel object.
         T: Temperature to compute property.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Thermal conductivity in W/m/K.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     tci = components.thermal_conductivity_latini(fuel, T).to("W/(m*K)").magnitude
     tc = np.sum(Yi.magnitude * tci ** (-2)) ** (-0.5)
     return Units.Quantity(tc, "W/(m*K)")
@@ -443,7 +444,7 @@ def freeze_point_boehm(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         alpha: Scaling applied to the ideal mixing-entropy term.
             Defaults to 1.0 (classical ideal-solution entropy term).
 
@@ -453,21 +454,21 @@ def freeze_point_boehm(
     Raises:
         RuntimeError: If the root finder fails to converge.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     Xi = (
         helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
     )
 
     R = constants.R.to("J/(mol*K)")
-    Tm = fuel.Tm.to("K")
-    dS_fus = fuel.dS_fus.to("J/(mol*K)")
+    Tm = fuel.comps.tm.to("K")
+    dS_fus = boehm_gcm.predict("dS_fus", fuel).to("J/(mol*K)")
     dH_fus = Tm * dS_fus
     dCp = (
         -0.35
         * components.liquid_mass_specific_heat_capacity_ruzicka(
             fuel, Units.Quantity(298.15, "K")
         )
-        * fuel.MW
+        * fuel.comps.mw
     ).to("J/(mol*K)")
 
     # Ideal mixing entropy for each compound at its mole fraction in the
@@ -607,14 +608,14 @@ def flash_point_alqaheem(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixing rule to use.
             Defaults to "Liaw".
 
     Returns:
         Mixture flash point in K.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     T_fpi = components.flash_point_alqaheem(fuel)
     if mixing_rule.casefold() == "linear".casefold():
         return np.sum(Yi * T_fpi)
@@ -625,9 +626,9 @@ def flash_point_alqaheem(
     Xi = (
         helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
     )
-    Tc = fuel.Tc.to("K").magnitude
-    Pc = fuel.Pc.magnitude
-    omega = fuel.omega.magnitude
+    Tc = fuel.comps.tc.to("K").magnitude
+    Pc = fuel.comps.pc.magnitude
+    omega = fuel.comps.omega.magnitude
     Tf_i = T_fpi.to("K").magnitude
 
     T_flash = _liaw_chiu_flash_point(Xi, Tf_i, Tc, Pc, omega)
@@ -645,14 +646,14 @@ def flash_point_alibakhshi(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixing rule to use.
             Defaults to "Liaw".
 
     Returns:
         Mixture flash point in K.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     T_fpi = components.flash_point_alibakhshi(fuel)
     if mixing_rule.casefold() == "linear".casefold():
         return np.sum(Yi * T_fpi)
@@ -663,9 +664,9 @@ def flash_point_alibakhshi(
     Xi = (
         helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
     )
-    Tc = fuel.Tc.to("K").magnitude
-    Pc = fuel.Pc.magnitude
-    omega = fuel.omega.magnitude
+    Tc = fuel.comps.tc.to("K").magnitude
+    Pc = fuel.comps.pc.magnitude
+    omega = fuel.comps.omega.magnitude
     Tf_i = T_fpi.to("K").magnitude
 
     T_flash = _liaw_chiu_flash_point(Xi, Tf_i, Tc, Pc, omega)
@@ -683,12 +684,12 @@ def heat_of_combustion(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Heat of combustion of the mixture in J/kg.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     lhv_i = components.lower_heating_value(fuel).to("J/kg")
     return np.sum(Yi * lhv_i)
 
@@ -704,7 +705,7 @@ def yield_sooting_index(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Yield sooting index of the mixture.
@@ -712,14 +713,14 @@ def yield_sooting_index(
     Raises:
         ValueError: If yield sooting index is unavailable for any component.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless")
-    ysi_i = fuel.YSI
+    ysi_i = fuel.comps.ysi
     valid = ~np.isnan(ysi_i.magnitude)
     if not np.all(valid):
         msg = (
             "Yield sooting index is unavailable for components:\n"
-            f"{', '.join(np.array(fuel.compounds)[~valid])}\n"
+            f"{', '.join(np.array(fuel.comps.names)[~valid])}\n"
             "Consider adding data to `ref_compounds.csv`."
         )
         raise ValueError(msg)
@@ -743,7 +744,7 @@ def smoke_point(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         correlation: Fit coefficients to use: "McEnally" or "NJFCP".
             Defaults to "NJFCP".
 
@@ -770,14 +771,14 @@ def smoke_point(
         )
         raise ValueError(msg)
     a, b = coefficients[correlation.casefold()]
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
     ysi = yield_sooting_index(fuel, Yi).magnitude
     if not ysi > 0:
         msg = f"Mixture yield sooting index must be positive to compute SP, got {ysi}."
         raise ValueError(msg)
     X_O2_air = 0.209  # Mole fraction of O2 in air
-    S_i = (fuel.nC + fuel.nH / 4.0) / X_O2_air
+    S_i = (fuel.comps.num_c + fuel.comps.num_h / 4.0) / X_O2_air
     S = np.sum(Xi.magnitude * S_i) / np.sum(Xi.magnitude)
     denom = ysi / S - a
     if denom <= 0:
@@ -804,7 +805,7 @@ def derived_cetane_number(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         T_ref: Reference temperature for liquid densities.
             Required for converting mass fractions to volume fractions.
 
@@ -814,14 +815,14 @@ def derived_cetane_number(
     Raises:
         ValueError: If derived cetane number is unavailable for any component.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
-    dcn_i = fuel.DCN
+    Yi = Yi if Yi is not None else fuel.y0
+    dcn_i = fuel.comps.dcn
     rho_i = components.density(fuel, T_ref).magnitude
     valid = ~np.isnan(dcn_i.magnitude)
     if not np.all(valid):
         msg = (
             "Derived cetane number is unavailable for components:\n"
-            f"{', '.join(np.array(fuel.compounds)[~valid])}"
+            f"{', '.join(np.array(fuel.comps.names)[~valid])}"
         )
         raise ValueError(msg)
     if not np.any(valid):
@@ -838,19 +839,19 @@ def aromatics_content(
     """Calculate the aromatics content of the fuel mixture.
 
     Sums the liquid volume fractions (evaluated at standard temperature) of all
-    components classified as aromatic by `fuel.hc_type`.
+    components classified as aromatic by `fuel.comps.hc_type`.
 
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Aromatics content of the mixture in volume percent.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
-    is_aromatic = np.array(fuel.hc_type) == "aromatic"
+    is_aromatic = np.array(fuel.comps.hc_type) == "aromatic"
     return Units.Quantity(np.sum(Vi.magnitude[is_aromatic]), "").to("percent")
 
 
@@ -867,12 +868,12 @@ def naphthalenes_content(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the mixture.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Naphthalenes content of the mixture in volume percent.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
-    is_naphthalene = np.array([mol.has_naphthalene(m) for m in fuel.rdkit_mols])
+    is_naphthalene = np.array([mol.has_naphthalene(m) for m in fuel.comps.rdkit_mols])
     return Units.Quantity(np.sum(Vi.magnitude[is_naphthalene]), "").to("percent")

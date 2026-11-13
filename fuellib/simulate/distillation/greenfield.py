@@ -783,14 +783,14 @@ class Thermo:
         self.ideal_solution: bool = ideal_solution
         self.ideal_vapor: bool = ideal_vapor
 
-        Tc = fuel.Tc.to("K").magnitude
-        Pc = fuel.Pc.to("Pa").magnitude
-        omega = fuel.omega.to("dimensionless").magnitude
-        Vc = fuel.Vc.to("m^3/mol").magnitude
+        Tc = fuel.comps.tc.to("K").magnitude
+        Pc = fuel.comps.pc.to("Pa").magnitude
+        omega = fuel.comps.omega.to("dimensionless").magnitude
+        Vc = fuel.comps.vc.to("m^3/mol").magnitude
 
         # Tabulate the temperature-dependent properties once and interpolate them
         # with cubic splines
-        T_grid = np.arange(200.0, fuel.Tb.to("K").magnitude.max() + 250.0, 1.0)
+        T_grid = np.arange(200.0, fuel.comps.tb.to("K").magnitude.max() + 250.0, 1.0)
         T_quantities = [Units.Quantity(float(T), "K") for T in T_grid]
         ln_P_sat = np.log([
             components.saturated_vapor_pressure(fuel, T).to("Pa").magnitude
@@ -1027,7 +1027,7 @@ def distill(
     Args:
         fuel: Fuel object.
         Yi: Mass fractions of each compound in the charge.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
         apparatus: Apparatus and procedure parameters.
             Defaults to `D86Apparatus()`.
         ideal_solution: Whether to neglect liquid-phase nonideality (gamma_i = 1).
@@ -1051,7 +1051,7 @@ def distill(
         ValueError: If the fuel boils below room temperature.
         RuntimeError: If the simulation fails to reach the end condition.
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     app = apparatus if apparatus is not None else D86Apparatus()
     # Extract apparatus/simulation parameters and convert to SI units.
     P = app.pressure.to("Pa").magnitude
@@ -1087,7 +1087,7 @@ def distill(
     W0 = xW.sum()
 
     # Initial bubble point of the charge (eq. (10))
-    T1_bubble, y = thermo.bubble_point(x0, float(x0 @ fuel.Tb.to("K").magnitude))
+    T1_bubble, y = thermo.bubble_point(x0, float(x0 @ fuel.comps.tb.to("K").magnitude))
     if T1_bubble <= T_room:
         msg = (
             f"Initial bubble point ({T1_bubble:.1f} K) is not above room temperature "
