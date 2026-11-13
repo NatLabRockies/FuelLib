@@ -391,9 +391,9 @@ class Components:
             ValueError: If `basis` is not "mass" or "molar".
         """
         if basis.casefold() == "mass":
-            cp = correlate.components.liquid_mass_specific_heat_capacity(self._fuel, T)
+            cp = correlate.components.specific_heat_capacity_mass(self._fuel, T)
         elif basis.casefold() == "molar":
-            cp = correlate.components.molar_specific_heat_capacity(self._fuel, T)
+            cp = correlate.components.specific_heat_capacity_molar(self._fuel, T)
         else:
             raise ValueError(f"Unknown heat capacity basis: {basis!r}")
         return cp[comp_idx] if comp_idx is not None else cp

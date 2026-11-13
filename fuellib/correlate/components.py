@@ -136,7 +136,7 @@ def kinematic_viscosity_nannoolal(
     return (eta / rho).to("m^2/s")
 
 
-def molar_specific_heat_capacity(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+def specific_heat_capacity_molar(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Compute molar specific heat capacity at a given temperature.
 
     Args:
@@ -155,7 +155,7 @@ def molar_specific_heat_capacity(fuel: "Fuel", T: types.Quantity0D) -> types.Qua
     return cp.to("J/(mol*K)")
 
 
-def molar_specific_heat_capacity_ruzicka(
+def specific_heat_capacity_molar_ruzicka(
     fuel: "Fuel", T: types.Quantity0D
 ) -> types.Quantity1D:
     """Compute molar specific heat capacity in J/mol/K at a given temperature.
@@ -177,9 +177,7 @@ def molar_specific_heat_capacity_ruzicka(
     return cp_molar.to("J/(mol*K)")
 
 
-def liquid_mass_specific_heat_capacity(
-    fuel: "Fuel", T: types.Quantity0D
-) -> types.Quantity1D:
+def specific_heat_capacity_mass(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
     """Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
 
     Args:
@@ -191,11 +189,11 @@ def liquid_mass_specific_heat_capacity(
     """
     T = T.to("K")
     MW = fuel.comps.mw
-    cp = molar_specific_heat_capacity(fuel, T)
+    cp = specific_heat_capacity_molar(fuel, T)
     return (cp / MW).to("J/(kg*K)")
 
 
-def liquid_mass_specific_heat_capacity_ruzicka(
+def specific_heat_capacity_mass_ruzicka(
     fuel: "Fuel", T: types.Quantity0D
 ) -> types.Quantity1D:
     """Compute liquid mass specific heat capacity in J/kg/K at a given temperature.
@@ -209,7 +207,7 @@ def liquid_mass_specific_heat_capacity_ruzicka(
     Returns:
         Mass specific heat capacity in J/kg/K.
     """
-    cp_molar = molar_specific_heat_capacity_ruzicka(fuel, T)
+    cp_molar = specific_heat_capacity_molar_ruzicka(fuel, T)
     return (cp_molar / fuel.comps.mw).to("J/(kg*K)")
 
 

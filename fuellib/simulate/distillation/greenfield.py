@@ -797,7 +797,7 @@ class Thermo:
             for T in T_quantities
         ])
         Cp_l = np.array([
-            components.molar_specific_heat_capacity(fuel, T).to("J/(mol*K)").magnitude
+            components.specific_heat_capacity_molar(fuel, T).to("J/(mol*K)").magnitude
             for T in T_quantities
         ])
         # Cap Tr below the singularity of eq. (19) at Tr = 1

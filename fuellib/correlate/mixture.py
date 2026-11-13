@@ -465,7 +465,7 @@ def freeze_point_boehm(
     dH_fus = Tm * dS_fus
     dCp = (
         -0.35
-        * components.liquid_mass_specific_heat_capacity_ruzicka(
+        * components.specific_heat_capacity_mass_ruzicka(
             fuel, Units.Quantity(298.15, "K")
         )
         * fuel.comps.mw
