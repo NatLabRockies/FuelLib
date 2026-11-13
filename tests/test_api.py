@@ -32,7 +32,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
             print(f"\n{fuel_name.upper()}:")
 
             with self.subTest(fuel=fuel_name):
-                Yi = fuel.Y_0.copy()
+                Yi = fuel.y0.copy()
                 self.assertAlmostEqual(np.sum(Yi), 1.0)
 
                 # Utility functions (run per fuel for consistent CI grouping)
@@ -44,24 +44,24 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 )
                 print("    ✓ utility.droplet_volume")
 
-                Xi = fuel.Y2X(Yi)
+                Xi = fuel.comps.y2x(Yi)
                 self._assert_finite_and_positive(
-                    fl.utility.mixing_rule(fuel.Tc, Xi, pseudo_prop="arithmetic")
+                    fl.utility.mixing_rule(fuel.comps.tc, Xi, pseudo_prop="arithmetic")
                 )
                 print("    ✓ utility.mixing_rule (arithmetic)")
                 self._assert_finite_and_positive(
-                    fl.utility.mixing_rule(fuel.Tc, Xi, pseudo_prop="geometric")
+                    fl.utility.mixing_rule(fuel.comps.tc, Xi, pseudo_prop="geometric")
                 )
                 print("    ✓ utility.mixing_rule (geometric)")
                 self._assert_finite_and_positive(
-                    fl.correlate.mixture.arithmetic(Xi, fuel.Tc)
+                    fl.correlate.mixture.arithmetic(Xi, fuel.comps.tc)
                 )
                 print("    ✓ correlate.mixture.arithmetic")
                 self._assert_finite_and_positive(
-                    fl.correlate.mixture.geometric(Xi, fuel.Tc)
+                    fl.correlate.mixture.geometric(Xi, fuel.comps.tc)
                 )
                 print("    ✓ correlate.mixture.geometric")
-                component_nu = fuel.viscosity_kinematic(self.T)
+                component_nu = fuel.comps.nu(self.T)
                 self._assert_finite_and_positive(
                     fl.correlate.mixture.arrhenius(Xi, component_nu)
                 )
@@ -75,8 +75,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 print("  Composition Conversions:")
                 methods_to_test = [
                     (
-                        "mean_molecular_weight",
-                        lambda fuel=fuel, Yi=Yi: fuel.mean_molecular_weight(Yi),
+                        "mix.mw",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.mw(Yi),
                     ),
                 ]
                 for method_name, method_call in methods_to_test:
@@ -88,64 +88,68 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                         print(f"    ✗ {method_name}: {e}")
                         raise
 
-                Yi_back = fuel.X2Y(Xi)
+                Yi_back = fuel.comps.x2y(Xi)
                 self.assertTrue(np.allclose(Yi, Yi_back, rtol=1e-10, atol=1e-12))
-                print("    ✓ Y2X/X2Y roundtrip")
+                print("    ✓ y2x/x2y roundtrip")
 
                 mass = Units.Quantity(Yi.magnitude * 1.0e-6, "kg")
                 self.assertTrue(
-                    np.allclose(fuel.mass2Y(mass), Yi, rtol=1e-10, atol=1e-12)
+                    np.allclose(fuel.comps.mass2y(mass), Yi, rtol=1e-10, atol=1e-12)
                 )
-                print("    ✓ mass2Y")
+                print("    ✓ mass2y")
 
-                Xi_from_mass = fuel.mass2X(mass)
+                Xi_from_mass = fuel.comps.mass2x(mass)
                 self.assertTrue(np.allclose(np.sum(Xi_from_mass), 1.0))
-                print("    ✓ mass2X")
+                print("    ✓ mass2x")
 
                 # Component properties (all components and explicit component index)
                 print("  Component Properties (both all and indexed):")
                 component_methods = [
-                    "density",
-                    "viscosity_kinematic",
-                    "viscosity_dynamic",
-                    "Cp",
-                    "Cl",
-                    "psat",
-                    "molar_liquid_vol",
-                    "latent_heat_vaporization",
-                    "surface_tension",
-                    "thermal_conductivity",
+                    ("rho", {}),
+                    ("nu", {}),
+                    ("mu", {}),
+                    ("cp", {"basis": "molar"}),
+                    ("cp", {"basis": "mass"}),
+                    ("pvap", {}),
+                    ("vm", {}),
+                    ("hv", {"basis": "molar"}),
+                    ("hv", {"basis": "mass"}),
+                    ("sigma", {}),
+                    ("k", {}),
                 ]
-                for method_name in component_methods:
-                    method = getattr(fuel, method_name)
-                    self._assert_finite_and_positive(method(self.T))
-                    self._assert_finite_and_positive(method(self.T, comp_idx=0))
-                    print(f"    ✓ {method_name}")
+                for method_name, kwargs in component_methods:
+                    method = getattr(fuel.comps, method_name)
+                    self._assert_finite_and_positive(method(self.T, **kwargs))
+                    self._assert_finite_and_positive(
+                        method(self.T, comp_idx=0, **kwargs)
+                    )
+                    label = f"{method_name}({', '.join(f'{k}={v!r}' for k, v in kwargs.items())})"
+                    print(f"    ✓ {label}")
 
                 # Alternate correlation branches
                 print("  Alternate Correlations:")
                 alt_methods = [
                     (
-                        "psat (Ambrose-Walton)",
-                        lambda fuel=fuel: fuel.psat(
+                        "pvap (Ambrose-Walton)",
+                        lambda fuel=fuel: fuel.comps.pvap(
                             self.T, correlation="Ambrose-Walton"
                         ),
                     ),
                     (
-                        "surface_tension (Pitzer)",
-                        lambda fuel=fuel: fuel.surface_tension(
+                        "sigma (Pitzer)",
+                        lambda fuel=fuel: fuel.comps.sigma(
                             self.T, correlation="Pitzer"
                         ),
                     ),
                     (
-                        "diffusion_coeff (Tee)",
-                        lambda fuel=fuel: fuel.diffusion_coeff(
+                        "d (Tee)",
+                        lambda fuel=fuel: fuel.comps.d(
                             self.p, self.T, correlation="Tee"
                         ),
                     ),
                     (
-                        "diffusion_coeff (Wilke)",
-                        lambda fuel=fuel: fuel.diffusion_coeff(
+                        "d (Wilke)",
+                        lambda fuel=fuel: fuel.comps.d(
                             self.p, self.T, correlation="Wilke"
                         ),
                     ),
@@ -155,7 +159,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                     print(f"    ✓ {method_name}")
 
                 # Antoine coefficient fits (individual compounds)
-                A, B, C, D = fuel.psat_antoine_coeffs(
+                A, B, C, D = fuel.comps.pvap_antoine_coeffs(
                     Tvals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="mks",
                     correlation="Lee-Kesler",
@@ -169,10 +173,10 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 self._assert_finite_and_positive(B)
                 self._assert_finite_and_positive(D)
                 self.assertTrue(np.all(np.isfinite(C)))
-                print("    ✓ psat_antoine_coeffs (individual)")
+                print("    ✓ pvap_antoine_coeffs (individual)")
 
                 # Antoine coefficient fits (mixture)
-                A_mix, B_mix, C_mix, D_mix = fuel.mixture_vapor_pressure_antoine_coeffs(
+                A_mix, B_mix, C_mix, D_mix = fuel.mix.pvap_antoine_coeffs(
                     Yi,
                     Tvals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="cgs",
@@ -181,62 +185,58 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 # A, B, D must be positive; C can be negative (it's a temperature offset)
                 self._assert_finite_and_positive([A_mix, B_mix, D_mix])
                 self.assertTrue(np.isfinite(C_mix))
-                print("    ✓ mixture_vapor_pressure_antoine_coeffs")
+                print("    ✓ mix.pvap_antoine_coeffs")
 
                 # Mixture properties
                 print("  Mixture Properties:")
                 mixture_methods = [
                     (
-                        "mixture_density",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_density(Yi, self.T),
+                        "mix.rho",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.rho(Yi, self.T),
                     ),
                     (
-                        "mixture_kinematic_viscosity (Kendall-Monroe)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_kinematic_viscosity(
+                        "mix.nu (Kendall-Monroe)",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.nu(
                             Yi, self.T, mixing_rule="Kendall-Monroe"
                         ),
                     ),
                     (
-                        "mixture_kinematic_viscosity (Arrhenius)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_kinematic_viscosity(
+                        "mix.nu (Arrhenius)",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.nu(
                             Yi, self.T, mixing_rule="Arrhenius"
                         ),
                     ),
                     (
-                        "mixture_dynamic_viscosity",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_dynamic_viscosity(
-                            Yi, self.T
-                        ),
+                        "mix.mu",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.mu(Yi, self.T),
                     ),
                     (
-                        "mixture_vapor_pressure (Lee-Kesler)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_vapor_pressure(
+                        "mix.pvap (Lee-Kesler)",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.pvap(
                             Yi, self.T, correlation="Lee-Kesler"
                         ),
                     ),
                     (
-                        "mixture_vapor_pressure (Ambrose-Walton)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_vapor_pressure(
+                        "mix.pvap (Ambrose-Walton)",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.pvap(
                             Yi, self.T, correlation="Ambrose-Walton"
                         ),
                     ),
                     (
-                        "mixture_surface_tension (Brock-Bird)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_surface_tension(
+                        "mix.sigma (Brock-Bird)",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.sigma(
                             Yi, self.T, correlation="Brock-Bird"
                         ),
                     ),
                     (
-                        "mixture_surface_tension (Pitzer)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_surface_tension(
+                        "mix.sigma (Pitzer)",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.sigma(
                             Yi, self.T, correlation="Pitzer"
                         ),
                     ),
                     (
-                        "mixture_thermal_conductivity",
-                        lambda fuel=fuel, Yi=Yi: fuel.mixture_thermal_conductivity(
-                            Yi, self.T
-                        ),
+                        "mix.k",
+                        lambda fuel=fuel, Yi=Yi: fuel.mix.k(Yi, self.T),
                     ),
                 ]
                 for method_name, method_call in mixture_methods:
@@ -247,7 +247,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 print("  Droplet Properties:")
                 r = Units.Quantity(2.0e-5, "m")
                 m = fl.utility.droplet_mass(fuel, r, Yi, self.T)
-                self.assertEqual(m.shape, fuel.MW.shape)
+                self.assertEqual(m.shape, fuel.comps.mw.shape)
                 self.assertTrue(np.all(m >= 0.0))
                 self.assertTrue(
                     np.allclose(
@@ -315,84 +315,83 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
         fuel = fl.Fuel(name="heptane")
 
         # Define some common variables for the tests.
-        Yi = fuel.Y_0
-        mass = fl.Units.Quantity(fuel.MW.magnitude * 100.0, "kg")
+        Yi = fuel.y0
+        mass = fl.Units.Quantity(fuel.comps.mw.magnitude * 100.0, "kg")
         temp = fl.Units.Quantity(298.15, "K")
         temps = fl.Units.Quantity([298.15, 300.0, 310.0], "K")
         press = fl.Units.Quantity(101325.0, "Pa")
         # List of FuelLib.fuel methods to check for API persistence.
         to_check = [
-            partial(fuel.__getattribute__("mean_molecular_weight"), Yi=Yi),
-            partial(fuel.__getattribute__("mass2X"), mass=mass),
-            partial(fuel.__getattribute__("mass2Y"), mass=mass),
-            partial(fuel.__getattribute__("density"), T=temp, comp_idx=0),
-            partial(fuel.__getattribute__("viscosity_kinematic"), T=temp, comp_idx=0),
-            partial(fuel.__getattribute__("viscosity_dynamic"), T=temp, comp_idx=0),
-            partial(fuel.__getattribute__("Cl"), T=temp, comp_idx=0),
-            partial(fuel.__getattribute__("Cp"), T=temp, comp_idx=0),
+            partial(fuel.mix.mw, Yi=Yi),
+            partial(fuel.comps.mass2x, mass=mass),
+            partial(fuel.comps.mass2y, mass=mass),
+            partial(fuel.comps.rho, T=temp, comp_idx=0),
+            partial(fuel.comps.nu, T=temp, comp_idx=0),
+            partial(fuel.comps.mu, T=temp, comp_idx=0),
+            partial(fuel.comps.cp, T=temp, comp_idx=0, basis="mass"),
+            partial(fuel.comps.cp, T=temp, comp_idx=0, basis="molar"),
             partial(
-                fuel.__getattribute__("psat"),
+                fuel.comps.pvap,
                 T=temp,
                 comp_idx=0,
                 correlation="Lee-Kesler",
             ),
             partial(
-                fuel.__getattribute__("psat_antoine_coeffs"),
+                fuel.comps.pvap_antoine_coeffs,
                 Tvals=temps,
                 units="mks",
                 correlation="Lee-Kesler",
             ),
-            partial(fuel.__getattribute__("molar_liquid_vol"), T=temp, comp_idx=0),
+            partial(fuel.comps.vm, T=temp, comp_idx=0),
+            partial(fuel.comps.hv, T=temp, comp_idx=0, basis="mass"),
+            partial(fuel.comps.hv, T=temp, comp_idx=0, basis="molar"),
             partial(
-                fuel.__getattribute__("latent_heat_vaporization"), T=temp, comp_idx=0
-            ),
-            partial(
-                fuel.__getattribute__("diffusion_coeff"),
+                fuel.comps.d,
                 p=press,
                 T=temp,
                 correlation="Tee",
             ),
             partial(
-                fuel.__getattribute__("surface_tension"),
+                fuel.comps.sigma,
                 T=temp,
                 comp_idx=0,
                 correlation="Brock-Bird",
             ),
-            partial(fuel.__getattribute__("thermal_conductivity"), T=temp, comp_idx=0),
-            partial(fuel.__getattribute__("mixture_density"), Yi=Yi, T=temp),
+            partial(fuel.comps.k, T=temp, comp_idx=0),
+            partial(fuel.mix.rho, Yi=Yi, T=temp),
             partial(
-                fuel.__getattribute__("mixture_kinematic_viscosity"),
+                fuel.mix.nu,
                 Yi=Yi,
                 T=temp,
                 mixing_rule="Kendall-Monroe",
             ),
             partial(
-                fuel.__getattribute__("mixture_dynamic_viscosity"),
+                fuel.mix.mu,
                 Yi=Yi,
                 T=temp,
                 mixing_rule="Kendall-Monroe",
             ),
             partial(
-                fuel.__getattribute__("mixture_vapor_pressure"),
+                fuel.mix.pvap,
                 Yi=Yi,
                 T=temp,
                 correlation="Lee-Kesler",
             ),
             partial(
-                fuel.__getattribute__("mixture_vapor_pressure_antoine_coeffs"),
+                fuel.mix.pvap_antoine_coeffs,
                 Yi=Yi,
                 Tvals=temps,
                 units="cgs",
                 correlation="Lee-Kesler",
             ),
             partial(
-                fuel.__getattribute__("mixture_surface_tension"),
+                fuel.mix.sigma,
                 Yi=Yi,
                 T=temp,
                 correlation="Brock-Bird",
             ),
             partial(
-                fuel.__getattribute__("mixture_thermal_conductivity"),
+                fuel.mix.k,
                 Yi=Yi,
                 T=temp,
             ),

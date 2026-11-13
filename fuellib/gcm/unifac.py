@@ -283,5 +283,5 @@ def ln_gamma(
     """
     Yi = Yi if Yi is not None else fuel.y0
     T_K = T.to("K").magnitude
-    x = fuel.mix.y2x(Yi).to("dimensionless").magnitude
+    x = fuel.comps.y2x(Yi).to("dimensionless").magnitude
     return Units.Quantity(ln_gamma_x(x, T_K, *parameters(fuel)), "")

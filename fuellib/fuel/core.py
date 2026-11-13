@@ -158,14 +158,6 @@ class Fuel:
             msg = f"GCxGC data must contain 'Weight %' column. File: {gc_file}"
             raise ValueError(msg)
 
-        y0 = self.gc_data["Weight %"].to_numpy(float)
-        self.y0: types.Quantity1D = (
-            Units.Quantity(y0 / sum(y0), "")
-            if sum(y0) > 0
-            else Units.Quantity(np.zeros_like(y0), "")
-        )
-        """Normalized weight fractions from the GCxGC data."""
-
         self._ref_comps: pd.DataFrame = load_ref_compounds(self.data_dir)
         """Reference compounds and their properties (bundled plus custom)."""
         self.components_data: pd.DataFrame = _match_gc_to_ref(
@@ -220,12 +212,25 @@ class Fuel:
         self.mix: Mixture = Mixture(self)
         """Mixture attribute for the fuel."""
 
+        y0 = self.gc_data["Weight %"].to_numpy(float)
+        self.y0: types.Quantity1D = (
+            Units.Quantity(y0 / sum(y0), "")
+            if sum(y0) > 0
+            else Units.Quantity(np.zeros_like(y0), "")
+        )
+        """Normalized weight fractions from the GCxGC data."""
+
+        self.x0: types.Quantity1D = self.comps.y2x(self.y0)
+        """Normalized mole fractions from the GCxGC data."""
+
     @property
     def num_compounds(self: Self) -> int:
         """Number of components in the fuel."""
         return len(self.components_data)
 
+    # -------------------------------------------------------------------------
     # Deprecated properties for backward compatibility
+    # -------------------------------------------------------------------------
     @property
     def useRefProperties(self: Self) -> bool:
         """Deprecated. Use `_use_ref_props` instead."""
@@ -810,49 +815,49 @@ class Fuel:
         return self.mix.mw(Yi)
 
     def mass2Y(self: Self, mass: types.Quantity1D) -> types.Quantity1D:
-        """Deprecated. Use `mix.mass2y` instead.
+        """Deprecated. Use `comps.mass2y` instead.
 
         Returns:
             Mass fractions of the compounds (shape: num_compounds,).
         """
-        _warn_deprecated("mass2Y", "mix.mass2y")
-        return self.mix.mass2y(mass)
+        _warn_deprecated("mass2Y", "comps.mass2y")
+        return self.comps.mass2y(mass)
 
     def mass2X(self: Self, mass: types.Quantity1D) -> types.Quantity1D:
-        """Deprecated. Use `mix.mass2x` instead.
+        """Deprecated. Use `comps.mass2x` instead.
 
         Returns:
             Mole fractions of the compounds (shape: num_compounds,).
         """
-        _warn_deprecated("mass2X", "mix.mass2x")
-        return self.mix.mass2x(mass)
+        _warn_deprecated("mass2X", "comps.mass2x")
+        return self.comps.mass2x(mass)
 
     def X2Y(self: Self, Xi: types.Quantity1D) -> types.Quantity1D:
-        """Deprecated. Use `mix.x2y` instead.
+        """Deprecated. Use `comps.x2y` instead.
 
         Returns:
             Mass fractions of the compounds (shape: num_compounds,).
         """
-        _warn_deprecated("X2Y", "mix.x2y")
-        return self.mix.x2y(Xi)
+        _warn_deprecated("X2Y", "comps.x2y")
+        return self.comps.x2y(Xi)
 
     def Y2X(self: Self, Yi: types.Quantity1D) -> types.Quantity1D:
-        """Deprecated. Use `mix.y2x` instead.
+        """Deprecated. Use `comps.y2x` instead.
 
         Returns:
             Mole fractions of the compounds (shape: num_compounds,).
         """
-        _warn_deprecated("Y2X", "mix.y2x")
-        return self.mix.y2x(Yi)
+        _warn_deprecated("Y2X", "comps.y2x")
+        return self.comps.y2x(Yi)
 
     def Y2V(self: Self, Yi: types.Quantity1D, T: types.Quantity0D) -> types.Quantity1D:
-        """Deprecated. Use `mix.y2v` instead.
+        """Deprecated. Use `comps.y2v` instead.
 
         Returns:
             Volume fractions of the compounds (shape: num_compounds,).
         """
-        _warn_deprecated("Y2V", "mix.y2v")
-        return self.mix.y2v(Yi, T)
+        _warn_deprecated("Y2V", "comps.y2v")
+        return self.comps.y2v(Yi, T)
 
     # Deprecated mixture methods for backward compatibility
     def mixture_density(

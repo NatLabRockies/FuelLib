@@ -358,7 +358,7 @@ def vapor_pressure_antoine_coeffs(
     # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
     # unit independent. "mks" (meter-kilogram-second) and "cgs"
     # D is the Pa-to-target-unit conversion factor, applied only when evaluating
-    # psat(T) = D * 10**(A - B/(T + C)) in Pele.
+    # pvap(T) = D * 10**(A - B/(T + C)) in Pele.
     D = Units.Quantity(1, "Pa").to(units)
 
     T_magnitude = T.to("K").magnitude
@@ -525,7 +525,7 @@ def _liaw_chiu_flash_point(
     """Solve the ideal Liaw-Chiu mixture flash-point criterion.
 
     Solves for the mixture flash point T such that
-    sum(Xi * psat(T) / psat(Tf_i)) = 1, where psat is evaluated with the
+    sum(Xi * pvap(T) / pvap(Tf_i)) = 1, where pvap is evaluated with the
     Lee-Kesler correlation for each compound at its own critical properties.
     A scipy root finder is used in place of the fixed-point iteration used
     in the original reference implementation.
@@ -544,7 +544,7 @@ def _liaw_chiu_flash_point(
         RuntimeError: If the root finder fails to converge.
     """
 
-    def _psat_lee_kesler(
+    def _pvap_lee_kesler(
         T: types.Array1D | float,
         Tc: types.Array1D,
         Pc: types.Array1D,
@@ -569,7 +569,7 @@ def _liaw_chiu_flash_point(
         f1 = 15.2518 - (15.6875 / Tr) - 13.4721 * np.log(Tr) + 0.43577 * (Tr**6)
         return Pc * np.exp(f0 + omega * f1)
 
-    psat_ref = _psat_lee_kesler(Tf_i, Tc, Pc, omega)
+    pvap_ref = _pvap_lee_kesler(Tf_i, Tc, Pc, omega)
 
     def residual(T: types.Array1D) -> types.Array1D:
         """Residual of the ideal Liaw-Chiu mixture flash-point criterion.
@@ -580,8 +580,8 @@ def _liaw_chiu_flash_point(
         Returns:
             Residual of the flash-point criterion.
         """
-        psat_T = _psat_lee_kesler(T[0], Tc, Pc, omega)
-        return np.array([np.sum(Xi * psat_T / psat_ref) - 1.0])
+        pvap_T = _pvap_lee_kesler(T[0], Tc, Pc, omega)
+        return np.array([np.sum(Xi * pvap_T / pvap_ref) - 1.0])
 
     T0 = np.sum(Xi * Tf_i)
     sol = root(residual, [T0])
@@ -617,7 +617,7 @@ def flash_point_alqaheem(
         return np.sum(Yi * T_fpi)
 
     # Liaw-Chiu mixing rule: solve for the mixture flash point T such that
-    # sum(Xi * psat(T) / psat(Tf_i)) = 1, where psat is evaluated with the
+    # sum(Xi * pvap(T) / pvap(Tf_i)) = 1, where pvap is evaluated with the
     # Lee-Kesler correlation for each compound at its own critical properties.
     Xi = (
         helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
@@ -655,7 +655,7 @@ def flash_point_alibakhshi(
         return np.sum(Yi * T_fpi)
 
     # Liaw-Chiu mixing rule: solve for the mixture flash point T such that
-    # sum(Xi * psat(T) / psat(Tf_i)) = 1, where psat is evaluated with the
+    # sum(Xi * pvap(T) / pvap(Tf_i)) = 1, where pvap is evaluated with the
     # Lee-Kesler correlation for each compound at its own critical properties.
     Xi = (
         helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude

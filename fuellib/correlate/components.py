@@ -339,7 +339,7 @@ def vapor_pressure_antoine_coeffs(
     # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
     # unit independent. "mks" (meter-kilogram-second) and "cgs"
     # D is the Pa-to-target-unit conversion factor, applied only when evaluating
-    # psat(T) = D * 10**(A - B/(T + C)) in Pele.
+    # pvap(T) = D * 10**(A - B/(T + C)) in Pele.
     D = Units.Quantity(1, "Pa").to(units)
 
     # Fit Antoine coefficients for each compound

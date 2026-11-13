@@ -20,7 +20,7 @@ class Mixture:
         self._fuel: Fuel = fuel
 
     # -------------------------------------------------------------------------
-    # Composition conversions
+    # Non-temperature-dependent properties
     # -------------------------------------------------------------------------
     def mw(self, Yi: types.Quantity1D | None = None) -> types.Quantity0D:
         """Calculate the mean molecular weight of the mixture.
@@ -33,62 +33,6 @@ class Mixture:
             Mean molecular weight of the mixture in kg/mol.
         """
         return correlate.mixture.mean_molecular_weight(self._fuel, Yi)
-
-    def mass2y(self, mass: types.Quantity1D) -> types.Quantity1D:
-        """Convert mass of each component to mass fractions (Yi).
-
-        Args:
-            mass: Mass of each compound.
-
-        Returns:
-            Mass fractions of the compounds (shape: num_compounds,).
-        """
-        return correlate.helpers.mass_to_mass_fractions(self._fuel, mass)
-
-    def mass2x(self, mass: types.Quantity1D) -> types.Quantity1D:
-        """Convert mass of each component to mole fractions (Xi).
-
-        Args:
-            mass: Mass of each compound.
-
-        Returns:
-            Mole fractions of the compounds (shape: num_compounds,).
-        """
-        return correlate.helpers.mass_to_mole_fractions(self._fuel, mass)
-
-    def x2y(self, Xi: types.Quantity1D) -> types.Quantity1D:
-        """Convert mole fractions (Xi) to mass fractions (Yi).
-
-        Args:
-            Xi: Mole fractions of each compound.
-
-        Returns:
-            Mass fractions of the compounds (shape: num_compounds,).
-        """
-        return correlate.helpers.mole_fractions_to_mass_fractions(self._fuel, Xi)
-
-    def y2x(self, Yi: types.Quantity1D) -> types.Quantity1D:
-        """Convert mass fractions (Yi) to mole fractions (Xi).
-
-        Args:
-            Yi: Mass fractions of each compound.
-
-        Returns:
-            Mole fractions of the compounds (shape: num_compounds,).
-        """
-        return correlate.helpers.mass_fractions_to_mole_fractions(self._fuel, Yi)
-
-    def y2v(self, Yi: types.Quantity1D, T: types.Quantity0D) -> types.Quantity1D:
-        """Convert mass fractions (Yi) to volume fractions (Vi).
-
-        Args:
-            Yi: Mass fractions of each compound.
-            T: Temperature at which to evaluate the mixture density.
-
-        Returns:
-            Volume fractions of the compounds (shape: num_compounds,).
-        """
-        return correlate.helpers.mass_fractions_to_volume_fractions(self._fuel, Yi, T)
 
     # -------------------------------------------------------------------------
     # Temperature-dependent properties

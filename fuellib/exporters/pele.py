@@ -236,7 +236,7 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
     # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
     # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
-    X = fuel.mix.y2x(fuel.y0)
+    X = fuel.comps.y2x(fuel.y0)
     Cp_A = fl.correlate.mixture.arithmetic(
         X, gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
     )

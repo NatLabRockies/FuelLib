@@ -336,7 +336,7 @@ plain NumPy arrays from mole fractions and a temperature in K:
    unifac.ln_gamma(fuel, Units.Quantity(300.0, "K"))   # dimensionless Quantity1D
 
    params = unifac.parameters(fuel)
-   x = fuel.mix.y2x(fuel.y0).to("dimensionless").magnitude
+   x = fuel.comps.y2x(fuel.y0).to("dimensionless").magnitude
    unifac.ln_gamma_x(x, 300.0, *params)                # NumPy array
 
 :func:`fuellib.gcm.unifac.decompose` builds a UNIFAC decomposition from a SMILES

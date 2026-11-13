@@ -300,7 +300,7 @@ def export_converge(
 
         for k, Temp in enumerate(T_array):
             Y_li = fuel.y0
-            X_li = fuel.mix.y2x(Y_li)
+            X_li = fuel.comps.y2x(Y_li)
 
             # Standard mixing rules for properties
             rho[k] = fuel.mix.rho(Y_li, Temp)  # kg/m^3
@@ -380,8 +380,10 @@ def export_converge(
         T = Units.Quantity(np.linspace(temp_min.magnitude, temp_max.magnitude, nT), "K")
 
         # Estimate freezing point and critical temp of mixture
-        T_freeze = fl.correlate.mixture.arithmetic(fuel.mix.y2x(fuel.y0), fuel.comps.tm)
-        T_crit = fl.correlate.mixture.arithmetic(fuel.mix.y2x(fuel.y0), fuel.comps.tc)
+        T_freeze = fl.correlate.mixture.arithmetic(
+            fuel.comps.y2x(fuel.y0), fuel.comps.tm
+        )
+        T_crit = fl.correlate.mixture.arithmetic(fuel.comps.y2x(fuel.y0), fuel.comps.tc)
 
         print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
         print(f"Min freezing temp min(Tm_i): {min(fuel.comps.tm):.2f} K")
@@ -468,7 +470,7 @@ def export_converge(
             "Index": range(len(fuel.comps.names)),
             "Component": fuel.comps.names,
             "Mass Fraction": fuel.y0,
-            "Mole Fraction": fuel.mix.y2x(fuel.y0),
+            "Mole Fraction": fuel.comps.y2x(fuel.y0),
             converter.labels["molecular_weight"]: fuel.comps.mw.to("kg/mol").magnitude,
         }
         export_properties_to_csv(composition_file, composition_data)
