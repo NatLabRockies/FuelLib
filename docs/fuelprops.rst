@@ -23,6 +23,12 @@ mixture such as density, viscosity, vapor pressure, surface tension, and thermal
 outlines the properties for the *i-th* compound in a mixture, which depends on 
 the *k-th* first-order and *j-th* second-order group contributions.
 
+A tilde denotes a molar property (e.g., :math:`\tilde{C}_{p,i}` in J/mol/K and
+:math:`\Delta\tilde{H}_{v,i}` in J/mol), while the same symbol without a tilde denotes the
+corresponding mass-based property (e.g., :math:`C_{p,i}` in J/kg/K and
+:math:`\Delta H_{v,i}` in J/kg). The group-contribution parameters (e.g., :math:`h_{v1k}`)
+follow the notation of the original publications.
+
 .. _tab-GCM-properties:
 
 Table of GCM properties
@@ -32,22 +38,22 @@ Table of GCM properties
    :widths: auto
    :align: center
 
-   ====================================  =====================  ===========================================  ====================  ===========================================================
-   Property                              Units                  Group Contributions                          Units                 Description
-   ====================================  =====================  ===========================================  ====================  ===========================================================
-   :math:`M_{w,i}`                       kg/mol                 :math:`m_{w1k}`                              g/mol                 Molecular weight.
-   :math:`T_{c,i}`                       K                      :math:`t_{c1k}`, :math:`t_{c2j}`             1                     Critical temperature\ :footcite:p:`constantinou_new_1994`.
-   :math:`p_{c,i}`                       Pa                     :math:`p_{c1k}`, :math:`p_{c2j}`             bar\ :sup:`-0.5`      Critical pressure\ :footcite:p:`constantinou_new_1994`.
-   :math:`V_{c,i}`                       m\ :sup:`3`\ /mol      :math:`v_{c1k}`, :math:`v_{c2j}`             m\ :sup:`3`\ /kmol    Critical volume\ :footcite:p:`constantinou_new_1994`.
-   :math:`T_{b,i}`                       K                      :math:`t_{b1k}`, :math:`t_{b2j}`             1                     Normal boiling point\ :footcite:p:`constantinou_new_1994`.
-   :math:`T_{m,i}`                       K                      :math:`t_{m1k}`, :math:`t_{m2j}`             1                     Normal melting point\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta H_{f,i}`                J/mol                  :math:`h_{f1k}`, :math:`h_{f2j}`             kJ/mol                Enthalpy of formation at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta G_{f,i}`                J/mol                  :math:`g_{f1k}`, :math:`g_{f2j}`             kJ/mol                Standard Gibbs free energy at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta H_{v,\textit{stp},i}`   J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\omega_i`                      1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
-   :math:`V_{m,\textit{stp},i}`          m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
-   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
-   ====================================  =====================  ===========================================  ====================  ===========================================================
+   ============================================  =====================  ===========================================  ====================  ===========================================================
+   Property                                      Units                  Group Contributions                          Units                 Description
+   ============================================  =====================  ===========================================  ====================  ===========================================================
+   :math:`M_{w,i}`                               kg/mol                 :math:`m_{w1k}`                              g/mol                 Molecular weight.
+   :math:`T_{c,i}`                               K                      :math:`t_{c1k}`, :math:`t_{c2j}`             1                     Critical temperature\ :footcite:p:`constantinou_new_1994`.
+   :math:`p_{c,i}`                               Pa                     :math:`p_{c1k}`, :math:`p_{c2j}`             bar\ :sup:`-0.5`      Critical pressure\ :footcite:p:`constantinou_new_1994`.
+   :math:`V_{c,i}`                               m\ :sup:`3`\ /mol      :math:`v_{c1k}`, :math:`v_{c2j}`             m\ :sup:`3`\ /kmol    Critical volume\ :footcite:p:`constantinou_new_1994`.
+   :math:`T_{b,i}`                               K                      :math:`t_{b1k}`, :math:`t_{b2j}`             1                     Normal boiling point\ :footcite:p:`constantinou_new_1994`.
+   :math:`T_{m,i}`                               K                      :math:`t_{m1k}`, :math:`t_{m2j}`             1                     Normal melting point\ :footcite:p:`constantinou_new_1994`.
+   :math:`\Delta\tilde{H}_{f,i}`                 J/mol                  :math:`h_{f1k}`, :math:`h_{f2j}`             kJ/mol                Enthalpy of formation at 298 K\ :footcite:p:`constantinou_new_1994`.
+   :math:`\Delta\tilde{G}_{f,i}`                 J/mol                  :math:`g_{f1k}`, :math:`g_{f2j}`             kJ/mol                Standard Gibbs free energy at 298 K\ :footcite:p:`constantinou_new_1994`.
+   :math:`\Delta\tilde{H}_{v,\textit{stp},i}`    J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
+   :math:`\omega_i`                              1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
+   :math:`V_{m,\textit{stp},i}`                  m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
+   :math:`\tilde{C}_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
+   ============================================  =====================  ===========================================  ====================  ===========================================================
 
 .. _eq-GCM-properties:
 
@@ -74,12 +80,12 @@ follows\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimat
    V_{c,i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}      v_{c2j} \bigg] -0.00435 \Bigg)\times 10^{-3}, \\
    T_{b,i} &= 204.359 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{b1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{b2j}\bigg],\\
    T_{m,i} &= 102.425 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{m1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{m2j}\bigg],\\
-   \Delta H_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
-   \Delta G_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
-   \Delta H_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
+   \Delta\tilde{H}_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
+   \Delta\tilde{G}_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
+   \Delta\tilde{H}_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
    \omega_i &= 0.4085 \bigg[ \ln \Big(  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big) \bigg]^{1/0.5050}, \\
    V_{m,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
-   C_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \\
+   \tilde{C}_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \\
        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \\
        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
    \theta &= \frac{T - 298.15}{700}
@@ -110,11 +116,12 @@ provided :math:`T` in K unless noted otherwise.
    =============================  =====================  ===============================================================
    :math:`\nu_i`                  m\ :sup:`2`\ /s        Kinematic viscosity\ :footcite:p:`viswanath_viscosity_2007`.
    :math:`\mu_i`                  Pa s                   Dynamic viscosity from the Nannoolal GCM\ :footcite:p:`nannoolal_estimation_2009`.
-   :math:`L_{v,\textit{stp},i}`   J/kg                   Latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
-   :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
+   :math:`\Delta\tilde{H}_{v,i}`  J/mol                  Temperature-adjusted molar enthalpy of vaporization\ :footcite:p:`govindaraju_group_2016`.
+   :math:`\Delta H_{v,i}`         J/kg                   Temperature-adjusted mass-based enthalpy of vaporization\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
-   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
+   :math:`\tilde{C}_{p,i}`        J/mol/K                Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
+   :math:`C_{p,i}`                J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
    :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
@@ -181,23 +188,24 @@ Groups without a published contribution are discussed in :doc:`gcm`.
 
 
 
-Latent heat of vaporization
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Enthalpy of vaporization
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.lv
+.. automethod:: fuellib.fuel.components.Components.hv
    :noindex:
 
-The latent heat of vaporization for each compound at standard pressure and 
-temperature is calculated from the enthalpy of vaporization as:
-
-.. math::
-   L_{v,\textit{stp},i} = \frac{\Delta H_{v,\textit{stp},i}}{M_{w,i}}.
-
-The heat of vaporization for each compound is then adjusted for variations in 
+The molar enthalpy of vaporization for each compound at standard pressure and 
+temperature, :math:`\Delta\tilde{H}_{v,\textit{stp},i}`, is adjusted for variations in 
 temperature\ :footcite:p:`govindaraju_group_2016`:
 
 .. math::
-   L_{v,i} = L_{v,\textit{stp},i} \bigg(\frac{1 - T_{r,i}}{1-T_{r,b,i}} \bigg)^{0.38}.
+   \Delta\tilde{H}_{v,i} = \Delta\tilde{H}_{v,\textit{stp},i} \bigg(\frac{1 - T_{r,i}}{1-T_{r,b,i}} \bigg)^{0.38}.
+
+The mass-based enthalpy of vaporization (``basis="mass"``, default) is obtained by dividing by the 
+molecular weight:
+
+.. math::
+   \Delta H_{v,i} = \frac{\Delta\tilde{H}_{v,i}}{M_{w,i}}.
 
 
 Liquid molar volume
@@ -237,23 +245,26 @@ The density of the *i-th* compound is given by
    \rho_i = \frac{M_{w,i}}{V_{m,i}}.
 
 
-Mass specific heat capacity of the liquid
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Specific heat capacity of the liquid
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automethod:: fuellib.fuel.components.Components.cp
    :noindex:
 
-The mass specific heat capacity for each compound at standard pressure temperature is calculated from the molar specific heat capacity as:
+The molar specific heat capacity, :math:`\tilde{C}_{p,i}` (``basis="molar"``), is evaluated from the 
+group contribution expansion in :math:`\theta = (T - 298)/700` (:doc:`gcm`). 
+The mass specific heat capacity (``basis="mass"``, default) is obtained by dividing by the 
+molecular weight:
 
 .. math::
-   C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}} 
+   C_{p,i} = \dfrac{\tilde{C}_{p,i}}{M_{w,i}} 
 
 Alternatively, the Ruzicka-Domalski\ :footcite:p:`ruzicka_estimation_1993` group additivity correlation
 is available, with :math:`\theta = T / 100` (K) and the ``rd_A``, ``rd_B``, and ``rd_D``
-properties of the ``gani`` GCM (:doc:`gcm`):
+properties included in the ``gani`` GCM (:doc:`gcm`):
 
 .. math::
-   C_{p,i} = R \big(A_i + B_i \theta + D_i \theta^2\big).
+   \tilde{C}_{p,i} = R \big(A_i + B_i \theta + D_i \theta^2\big).
 
 
 
@@ -411,25 +422,25 @@ Lower heating value
    :noindex:
 
 The lower (net) heating value :math:`LHV_i` is computed from a Hess cycle using the Constantinou-Gani
-enthalpy of formation :math:`\Delta H_{f,i}` and enthalpy of vaporization
-:math:`\Delta H_{v,\textit{stp},i}`. The liquid-phase enthalpy of formation is
+enthalpy of formation :math:`\Delta\tilde{H}_{f,i}` and enthalpy of vaporization
+:math:`\Delta\tilde{H}_{v,\textit{stp},i}`. The liquid-phase enthalpy of formation is
 
 .. math::
-   \Delta H_{f,\ell,i} = \Delta H_{f,i} - \Delta H_{v,\textit{stp},i},
+   \Delta\tilde{H}_{f,\ell,i} = \Delta\tilde{H}_{f,i} - \Delta\tilde{H}_{v,\textit{stp},i},
 
 and the molar enthalpy of combustion (an exothermic, i.e. negative, quantity in J/mol) of a compound with :math:`n_{C,i}` carbon and
 :math:`n_{H,i}` hydrogen atoms (from its RDKit molecule) is
 
 .. math::
-   \Delta H_{c,i} = n_{C,i} \, \Delta H_f^{\text{CO}_2(g)}
-   + \frac{n_{H,i}}{2} \, \Delta H_f^{\text{H}_2\text{O}(g)} - \Delta H_{f,\ell,i},
+   \Delta\tilde{H}_{c,i} = n_{C,i} \, \Delta\tilde{H}_f^{\text{CO}_2(g)}
+   + \frac{n_{H,i}}{2} \, \Delta\tilde{H}_f^{\text{H}_2\text{O}(g)} - \Delta\tilde{H}_{f,\ell,i},
 
-with :math:`\Delta H_f^{\text{CO}_2(g)} = -393.51` kJ/mol and
-:math:`\Delta H_f^{\text{H}_2\text{O}(g)} = -241.83` kJ/mol at 298.15 K. The lower
+with :math:`\Delta\tilde{H}_f^{\text{CO}_2(g)} = -393.51` kJ/mol and
+:math:`\Delta\tilde{H}_f^{\text{H}_2\text{O}(g)} = -241.83` kJ/mol at 298.15 K. The lower
 heating value is then
 
 .. math::
-   LHV_i = -\frac{\Delta H_{c,i}}{M_{w,i}}.
+   LHV_i = -\frac{\Delta\tilde{H}_{c,i}}{M_{w,i}}.
 
 This estimate is valid for hydrocarbons only and does not account for
 heteroatom-containing groups.
@@ -617,16 +628,16 @@ of Boehm et al.\ :footcite:p:`boehm_blend_2022`, equation 21. For each compound 
 :math:`X_j`, the candidate freeze temperature :math:`T_j` solves
 
 .. math::
-   T_j \Big[\Delta S_{\textit{fus},j} + X_j \Delta C_{p,j} \ln\frac{T_j}{T_{m,j}}
+   T_j \Big[\Delta S_{\textit{fus},j} + X_j \Delta\tilde{C}_{p,j} \ln\frac{T_j}{T_{m,j}}
    + \alpha \, \Delta S_{\textit{mix},j}\Big]
-   = \Delta H_{\textit{fus},j} + X_j \Delta C_{p,j} (T_{m,j} - T_j),
+   = \Delta H_{\textit{fus},j} + X_j \Delta\tilde{C}_{p,j} (T_{m,j} - T_j),
 
 where
 
 .. math::
    \Delta S_{\textit{mix},j} &= -\frac{R}{X_j}\big[(1 - X_j)\ln(1 - X_j) + X_j \ln X_j\big], \\
    \Delta H_{\textit{fus},j} &= T_{m,j} \, \Delta S_{\textit{fus},j}, \\
-   \Delta C_{p,j} &= -0.35 \, C_{p,\ell,j}(298.15 \text{ K}),
+   \Delta\tilde{C}_{p,j} &= -0.35 \, \tilde{C}_{p,\ell,j}(298.15 \text{ K}),
 
 :math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.components.Components.tm` (a reference value
 when available, otherwise the Constantinou-Gani prediction; see :ref:`sec-reference-properties`),
@@ -667,7 +678,7 @@ The mixture heat of combustion :math:`\Delta H^\circ_c` is reported per unit mas
 positive magnitude of the heat released, and is computed as the mass-fraction weighted
 average of the component lower heating values
 :math:`LHV_i` (see :ref:`Lower heating value <sec-lower-heating-value>`). It is distinct
-from the molar enthalpy of combustion :math:`\Delta H_{c,i}` of a single compound:
+from the molar enthalpy of combustion :math:`\Delta\tilde{H}_{c,i}` of a single compound:
 
 .. math::
    \Delta H^\circ_c = \sum_{i=1}^{N_c} Y_i \, LHV_i.

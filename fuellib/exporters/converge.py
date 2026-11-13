@@ -310,7 +310,7 @@ def export_converge(
             thermal_conductivity[k] = fuel.mix.k(Y_li, Temp)
 
             # Generic mixing rules for latent heat and specific heat
-            Lv[k] = fl.correlate.mixture.arithmetic(X_li, fuel.comps.lv(Temp))  # J/kg
+            Lv[k] = fl.correlate.mixture.arithmetic(X_li, fuel.comps.hv(Temp))  # J/kg
             Cl[k] = fl.correlate.mixture.arithmetic(
                 X_li, fuel.comps.cp(Temp, basis="mass")
             )  # J/kg/K
@@ -346,7 +346,7 @@ def export_converge(
             pv[k] = fuel.comps.pvap(Temp, comp_idx=comp_idx)  # Pa
             surface_tension[k] = fuel.comps.sigma(Temp, comp_idx=comp_idx)  # N/m
             thermal_conductivity[k] = fuel.comps.k(Temp, comp_idx=comp_idx)
-            Lv[k] = fuel.comps.lv(Temp, comp_idx=comp_idx)  # J/kg
+            Lv[k] = fuel.comps.hv(Temp, comp_idx=comp_idx)  # J/kg
             Cl[k] = fuel.comps.cp(Temp, comp_idx=comp_idx, basis="mass")  # J/kg/K
 
         return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity

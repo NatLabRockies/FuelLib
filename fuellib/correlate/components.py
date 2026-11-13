@@ -366,33 +366,46 @@ def saturated_vapor_pressure_antoine_coeffs(
     return A, B, C, D
 
 
-def latent_heat_vaporization(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
-    """Calculate latent heat of vaporization adjusted for temperature.
+def enthalpy_vaporization_molar(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate molar enthalpy of vaporization adjusted for temperature.
 
     Args:
         fuel: Fuel object.
         T: Temperature to compute property.
 
     Returns:
-        Latent heat of vaporization in J/kg.
+        Molar enthalpy of vaporization in J/mol.
     """
     T = T.to("K")
     Tc = fuel.comps.tc.to("K")
     Tb = fuel.comps.tb.to("K")
-    Lv_stp = (fuel.comps.hv_stp / fuel.comps.mw).to("J/kg")
+    hv_stp = fuel.comps.hv_stp.to("J/mol")
 
     # Reduced temperatures
     Tr = T / Tc
     Trb = Tb / Tc
 
-    Lvi = Units.Quantity(np.zeros_like(Tc.magnitude), "J/kg")
+    hvi = Units.Quantity(np.zeros_like(Tc.magnitude), "J/mol")
     for i in range(len(Tc)):
         if T > Tc[i]:
-            Lvi.magnitude[i] = 0.0
+            hvi.magnitude[i] = 0.0
         else:
-            Lvi[i] = Lv_stp[i] * (((1.0 - Tr[i]) / (1.0 - Trb[i])) ** 0.38)
+            hvi[i] = hv_stp[i] * (((1.0 - Tr[i]) / (1.0 - Trb[i])) ** 0.38)
 
-    return Lvi
+    return hvi
+
+
+def enthalpy_vaporization_mass(fuel: "Fuel", T: types.Quantity0D) -> types.Quantity1D:
+    """Calculate mass-based enthalpy of vaporization adjusted for temperature.
+
+    Args:
+        fuel: Fuel object.
+        T: Temperature to compute property.
+
+    Returns:
+        Mass-bass enthalpy of vaporization in J/kg.
+    """
+    return (enthalpy_vaporization_molar(fuel, T) / fuel.comps.mw).to("J/kg")
 
 
 def diffusion_coeffs_wilke(

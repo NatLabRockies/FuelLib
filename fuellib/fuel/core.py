@@ -732,13 +732,13 @@ class Fuel:
         T: types.Quantity0D,
         comp_idx: int | None = None,
     ) -> types.Quantity1D:
-        """Deprecated. Use `comps.lv` instead.
+        """Deprecated. Use `comps.hv` instead.
 
         Returns:
             Latent heat of vaporization in J/kg.
         """
-        _warn_deprecated("latent_heat_vaporization", "comps.lv")
-        return self.comps.lv(T, comp_idx)
+        _warn_deprecated("latent_heat_vaporization", "comps.hv")
+        return self.comps.hv(T, comp_idx)
 
     def diffusion_coeff(
         self: Self,

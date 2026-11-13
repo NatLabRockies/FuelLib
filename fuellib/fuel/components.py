@@ -375,7 +375,7 @@ class Components:
         comp_idx: int | None = None,
         basis: Literal["mass", "molar"] = "mass",
     ) -> types.Quantity1D:
-        """Compute liquid specific heat capacity at a given temperature.
+        """Compute specific heat capacity at a given temperature.
 
         Args:
             T: Temperature to compute property.
@@ -460,19 +460,34 @@ class Components:
         vm_i = correlate.components.molar_liquid_volume(self._fuel, T)
         return vm_i[comp_idx] if comp_idx is not None else vm_i
 
-    def lv(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
-        """Calculate latent heat of vaporization adjusted for temperature.
+    def hv(
+        self,
+        T: types.Quantity0D,
+        comp_idx: int | None = None,
+        basis: Literal["mass", "molar"] = "mass",
+    ) -> types.Quantity1D:
+        """Calculate enthalpy of vaporization adjusted for temperature.
 
         Args:
             T: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
+            basis: Basis of the enthalpy of vaporization ("mass" or "molar").
+                Defaults to "mass".
 
         Returns:
-            Latent heat of vaporization in J/kg.
+            Enthalpy of vaporization in J/kg (mass basis) or J/mol (molar basis).
+
+        Raises:
+            ValueError: If `basis` is not "mass" or "molar".
         """
-        lv_i = correlate.components.latent_heat_vaporization(self._fuel, T)
-        return lv_i[comp_idx] if comp_idx is not None else lv_i
+        if basis.casefold() == "mass":
+            hv_i = correlate.components.enthalpy_vaporization_mass(self._fuel, T)
+        elif basis.casefold() == "molar":
+            hv_i = correlate.components.enthalpy_vaporization_molar(self._fuel, T)
+        else:
+            raise ValueError(f"Unknown enthalpy of vaporization basis: {basis!r}")
+        return hv_i[comp_idx] if comp_idx is not None else hv_i
 
     def d(
         self,
