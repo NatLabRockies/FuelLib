@@ -9,16 +9,18 @@ print(f"Properties data available: {fuel.prop_data is not None}")
 print(f"Number of compounds: {fuel.num_compounds}")
 
 # To use a custom fuel, create a directory structure like:
-# customFuels/fuelData/
+# custom_fuels/
 #   ├── gc_data/
 #   │   └── myFuel.csv
 #   ├── properties_data/  (optional)
 #   │   └── myFuel.csv
+#   ├── fuel_metadata.json (optional, source information for each fuel)
 #   ├── ref_compounds.csv  (optional, defaults to fuellib/data/ref_compounds.csv)
-#   └── ref_gani.csv  (optional, defaults to fuellib/data/ref_gani.csv)
-#
+#   ├── ref_gani.csv  (optional, defaults to fuellib/data/ref_gani.csv)
+#   ├── ref_nannoolal.csv  (optional, defaults to fuellib/data/ref_nannoolal.csv)
+#   └── ref_unifac.csv  (optional, defaults to fuellib/data/ref_unifac.csv)
 # Then load it with:
-custom_fuel = fl.Fuel("myFuel", data_dir="customFuels/fuelData")
+custom_fuel = fl.Fuel("myFuel", data_dir="custom_fuels")
 
 # After loading, the fuel object has the correct directory path:
 custom_fuel.data_dir
