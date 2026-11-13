@@ -211,13 +211,13 @@ def specific_heat_capacity_mass_ruzicka(
     return (cp_molar / fuel.comps.mw).to("J/(kg*K)")
 
 
-def saturated_vapor_pressure(
+def vapor_pressure(
     fuel: "Fuel",
     T: types.Quantity0D,
     *,
     correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
 ) -> types.Quantity1D:
-    """Compute saturated vapor pressure (P_sat).
+    """Compute vapor pressure.
 
     Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
@@ -227,7 +227,7 @@ def saturated_vapor_pressure(
         correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
 
     Returns:
-        Saturated vapor pressure in Pa.
+        Vapor pressure in Pa.
     """
     T = T.to("K")
     Tr = T / fuel.comps.tc
@@ -268,7 +268,7 @@ def saturated_vapor_pressure(
     return (Pc * rhs).to("Pa")
 
 
-def saturated_vapor_pressure_antoine_coeffs(
+def vapor_pressure_antoine_coeffs(
     fuel: "Fuel",
     Tvals: types.Quantity1D | None = None,
     *,
@@ -354,7 +354,7 @@ def saturated_vapor_pressure_antoine_coeffs(
         Pvals = np.zeros_like(T_magnitude)
         for k in range(len(T)):
             Pvals[k] = (
-                saturated_vapor_pressure(fuel, T[k], correlation=correlation)[i]
+                vapor_pressure(fuel, T[k], correlation=correlation)[i]
                 .to("Pa")
                 .magnitude
             )

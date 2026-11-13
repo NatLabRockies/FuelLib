@@ -179,7 +179,7 @@ class Mixture:
         T: types.Quantity0D,
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> types.Quantity0D:
-        """Calculate saturated vapor pressure of the mixture.
+        """Calculate vapor pressure of the mixture.
 
         Args:
             Yi: Mass fractions of each compound in the mixture.
@@ -187,9 +187,9 @@ class Mixture:
             correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
 
         Returns:
-            Mixture saturated vapor pressure in Pa.
+            Mixture vapor pressure in Pa.
         """
-        return correlate.mixture.saturated_vapor_pressure(
+        return correlate.mixture.vapor_pressure(
             self._fuel, T, Yi, correlation=correlation
         )
 
@@ -214,7 +214,7 @@ class Mixture:
         Returns:
             Coefficients A, B, C, D.
         """
-        return correlate.mixture.saturated_vapor_pressure_antoine_coeffs(
+        return correlate.mixture.vapor_pressure_antoine_coeffs(
             self._fuel, Tvals, Yi, units=units, correlation=correlation
         )
 

@@ -84,10 +84,10 @@ Once your custom fuel directory is set up, you can use it like any built-in fuel
     # Load a custom fuel
     fuel = fl.Fuel("new-saf", data_dir="/path/to/customFuels")
 
-    # Calculate the saturated vapor pressure at 320 K
+    # Calculate the vapor pressure at 320 K
     T = fl.Units.Quantity(320, "K") # Temperature as a pint.Quantity
-    p_sat_i = fuel.comps.pvap(T)
-    p_sat_mix = fuel.mix.pvap(fuel.y0, T)
+    pvap_i = fuel.comps.pvap(T)
+    pvap_mix = fuel.mix.pvap(fuel.y0, T)
 
 Tips and Best Practices
 -----------------------

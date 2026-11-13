@@ -30,6 +30,7 @@ release workflow to parse release entries in this file.
 
 ### Changed
 - **Breaking:** the viscosity functions in `correlate.components` and `correlate.mixture` are renamed to `viscosity_<kinematic|dynamic>_<method>`: `kinematic_viscosity_{dutt,nannoolal}` -> `viscosity_kinematic_{dutt,nannoolal}` and `dynamic_viscosity_{dutt,nannoolal}` -> `viscosity_dynamic_{dutt,nannoolal}`.
+- **Breaking:** `saturated_vapor_pressure` and `saturated_vapor_pressure_antoine_coeffs` in `correlate.components` and `correlate.mixture` are renamed to `vapor_pressure` and `vapor_pressure_antoine_coeffs`.
 - `fuellib/fuel.py` split into the `fuellib.fuel` package: `fuel.core` (`Fuel`), `fuel.components` (`Components`), and `fuel.mixture` (`Mixture`). `from fuellib import Fuel` and `from fuellib.fuel import Fuel` are unchanged.
 - **Technically Breaking**: The deprecated `Fuel` attributes are read-only properties, so assigning to them (e.g. `fuel.Y_0 = ...`) raises `AttributeError`. Assign to the new attributes (e.g. `fuel.y0`) instead.
 - `correlate`, `gcm`, `exporters`, `simulate`, and `utils` use `Fuel.comps` and `Fuel.mix` instead of the deprecated `Fuel` attributes, so library calls no longer emit deprecation warnings.

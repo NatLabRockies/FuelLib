@@ -258,14 +258,14 @@ def viscosity_dynamic_nannoolal(
     return (rho * nu).to("Pa*s")
 
 
-def saturated_vapor_pressure(
+def vapor_pressure(
     fuel: "Fuel",
     T: types.Quantity0D,
     Yi: types.Quantity1D | None = None,
     *,
     correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
 ) -> types.Quantity0D:
-    """Calculate saturated vapor pressure of the mixture.
+    """Calculate vapor pressure of the mixture.
 
     Args:
         fuel: Fuel object.
@@ -276,20 +276,18 @@ def saturated_vapor_pressure(
             Defaults to "Lee-Kesler".
 
     Returns:
-        Mixture saturated vapor pressure in Pa.
+        Mixture vapor pressure in Pa.
     """
     Yi = Yi if Yi is not None else fuel.y0
     # Mole fraction for each compound
     Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
-    # Saturated vapor pressure for each compound (Pa)
-    p_sati = components.saturated_vapor_pressure(fuel, T, correlation=correlation).to(
-        "Pa"
-    )
+    # Vapor pressure for each compound (Pa)
+    pvap_i = components.vapor_pressure(fuel, T, correlation=correlation).to("Pa")
     # Mixture vapor pressure via Raoult's law
-    return p_sati @ Xi
+    return pvap_i @ Xi
 
 
-def saturated_vapor_pressure_antoine_coeffs(
+def vapor_pressure_antoine_coeffs(
     fuel: "Fuel",
     Tvals: types.Quantity1D | None = None,
     Yi: types.Quantity1D | None = None,
@@ -297,7 +295,7 @@ def saturated_vapor_pressure_antoine_coeffs(
     units: Literal["mks", "cgs", "dyne/cm^2", "Pa"] = "mks",
     correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
 ) -> tuple[float, float, float, float]:
-    """Estimate Antoine coefficients for saturated vapor pressure of the mixture.
+    """Estimate Antoine coefficients for vapor pressure of the mixture.
 
     Args:
         fuel: Fuel object.
@@ -367,9 +365,7 @@ def saturated_vapor_pressure_antoine_coeffs(
     Pvals = np.zeros_like(T_magnitude)
     for k in range(len(T)):
         Pvals[k] = (
-            saturated_vapor_pressure(fuel, T[k], Yi, correlation=correlation)
-            .to(units)
-            .magnitude
+            vapor_pressure(fuel, T[k], Yi, correlation=correlation).to(units).magnitude
         )
 
     logP = np.log10(Pvals)
@@ -554,9 +550,9 @@ def _liaw_chiu_flash_point(
         Pc: types.Array1D,
         omega: types.Array1D,
     ) -> types.Array1D:
-        """Lee-Kesler saturated vapor pressure for each compound.
+        """Lee-Kesler vapor pressure for each compound.
 
-        Copies `components.saturated_vapor_pressure(..., correlation="lee_kesler")`
+        Copies `components.vapor_pressure(..., correlation="lee_kesler")`
         in a scipy-based root-finding context.
 
         Args:
@@ -566,7 +562,7 @@ def _liaw_chiu_flash_point(
             omega: Acentric factor of each compound.
 
         Returns:
-            Saturated vapor pressure (units follow whatever `Pc` is given in).
+            Vapor pressure (units follow whatever `Pc` is given in).
         """
         Tr = T / Tc
         f0 = 5.92714 - (6.09648 / Tr) - 1.28862 * np.log(Tr) + 0.169347 * (Tr**6)

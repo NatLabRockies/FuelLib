@@ -122,7 +122,7 @@ provided :math:`T` in K unless noted otherwise.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
    :math:`\tilde{C}_{p,i}`        J/mol/K                Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
    :math:`C_{p,i}`                J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
-   :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
+   :math:`p_{v,i}`                Pa                     Vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
    :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
    :math:`T_{fp,i}`               K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
@@ -268,21 +268,21 @@ properties included in the ``gani`` GCM (:doc:`gcm`):
 
 
 
-Saturated vapor pressure
-^^^^^^^^^^^^^^^^^^^^^^^^
+Vapor pressure
+^^^^^^^^^^^^^^
 
 .. automethod:: fuellib.fuel.components.Components.pvap
    :noindex:
 
-The saturated vapor pressure for each compound is calculated as a function of 
+The vapor pressure for each compound is calculated as a function of 
 temperature using either the Lee–Kesler method\ :footcite:p:`lee_generalized_1975` 
 or the Ambrose-Walton method\ :footcite:p:`ambrose_vapour_1989`.  Both methods solve
 
 .. math::
-   \ln p_{r,\text{sat},i} = f_i^{(0)} + \omega_i f_i^{(1)} + \omega_i^2 f_i^{(2)}
+   \ln p_{r,v,i} = f_i^{(0)} + \omega_i f_i^{(1)} + \omega_i^2 f_i^{(2)}
 
-for the reduced saturated vapor pressure for each compound, 
-:math:`p_{r,\text{sat},i} = p_{\text{sat},i}/p_{c,i}`.  
+for the reduced vapor pressure for each compound, 
+:math:`p_{r,v,i} = p_{v,i}/p_{c,i}`.  
 The default method in `FuelLib` is the Lee-Kesler method, as it is 
 more stable at higher temperatures. 
 The Lee-Kesler\ :footcite:p:`lee_generalized_1975` method defines
@@ -574,7 +574,7 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 
 .. math::
 
-   p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.
+   p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{v,i}.
 
 .. automethod:: fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs
    :noindex:
@@ -663,9 +663,9 @@ The mixture flash point is computed from the component flash points :math:`T_{fp
 or the ideal Liaw-Chiu\ :footcite:p:`liaw_general_2006` mixing rule (default), which solves for :math:`T_{fp}` such that
 
 .. math::
-   \sum_{i=1}^{N_c} X_i \frac{p_{\textit{sat},i}(T_{fp})}{p_{\textit{sat},i}(T_{fp,i})} = 1,
+   \sum_{i=1}^{N_c} X_i \frac{p_{v,i}(T_{fp})}{p_{v,i}(T_{fp,i})} = 1,
 
-where :math:`p_{\textit{sat},i}` is evaluated with the Lee-Kesler correlation. This
+where :math:`p_{v,i}` is evaluated with the Lee-Kesler correlation. This
 mixing rule does not model nonideal liquid activity coefficients.
 
 Mixture heat of combustion

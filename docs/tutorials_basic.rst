@@ -127,22 +127,22 @@ For example, we can display the fuel name, the components in the fuel, the initi
 Note that the units for critical temperature are included as `fuel.comps.tc` returns a `pint.Quantity[np.ndarray]`. Next, we can calculate any of the component- or mixture-level properties using the 
 ``fuel`` object: component properties are available through ``fuel.comps``
 (:class:`~fuellib.fuel.components.Components`) and mixture properties through ``fuel.mix``
-(:class:`~fuellib.fuel.mixture.Mixture`). For example, we can calculate the saturated vapor pressure
+(:class:`~fuellib.fuel.mixture.Mixture`). For example, we can calculate the vapor pressure
 for each component and the mixture at a given temperature:
 
 .. code-block:: python
 
-    # Calculate the saturated vapor pressure at 320 K
+    # Calculate the vapor pressure at 320 K
     T = fl.Units.Quantity(320, "K") # Temperature as a pint.Quantity
-    p_sat_i = fuel.comps.pvap(T)
+    pvap_i = fuel.comps.pvap(T)
     p_vap_mix = fuel.mix.pvap(fuel.y0, T)
-    print(f"Saturated vapor pressure at {T:~P}: {p_sat_i:~P.2f}")
+    print(f"Component vapor pressure at {T:~P}: {pvap_i:~P.2f}")
     print(f"Mixture vapor pressure at {T:~P}: {p_vap_mix:~P.2f}")
 
 .. code-block:: none
 
-    >> Saturated vapor pressure at 320 K: [13735.85 673.29] Pa
-    >> Mixture saturated vapor pressure at 320 K: 11117.77 Pa
+    >> Component vapor pressure at 320 K: [13735.85 673.29] Pa
+    >> Mixture vapor pressure at 320 K: 11117.77 Pa
 
 The following links provide more information on the :ref:`eq-GCM-correlations` and
 the :ref:`eq-mixture-properties` that can be calculated using the ``groupContribution`` object.

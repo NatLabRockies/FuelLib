@@ -793,8 +793,7 @@ class Thermo:
         T_grid = np.arange(200.0, fuel.comps.tb.to("K").magnitude.max() + 250.0, 1.0)
         T_quantities = [Units.Quantity(float(T), "K") for T in T_grid]
         ln_P_sat = np.log([
-            components.saturated_vapor_pressure(fuel, T).to("Pa").magnitude
-            for T in T_quantities
+            components.vapor_pressure(fuel, T).to("Pa").magnitude for T in T_quantities
         ])
         Cp_l = np.array([
             components.specific_heat_capacity_molar(fuel, T).to("J/(mol*K)").magnitude

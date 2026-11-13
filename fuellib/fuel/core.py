@@ -695,7 +695,7 @@ class Fuel:
         """Deprecated. Use `comps.pvap` instead.
 
         Returns:
-            Saturated vapor pressure in Pa.
+            Vapor pressure in Pa.
         """
         _warn_deprecated("psat", "comps.pvap")
         return self.comps.pvap(T, comp_idx, correlation)
@@ -907,7 +907,7 @@ class Fuel:
         """Deprecated. Use `mix.pvap` instead.
 
         Returns:
-            Mixture saturated vapor pressure in Pa.
+            Mixture vapor pressure in Pa.
         """
         _warn_deprecated("mixture_vapor_pressure", "mix.pvap")
         return self.mix.pvap(Yi, T, correlation)

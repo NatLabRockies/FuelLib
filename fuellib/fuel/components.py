@@ -404,7 +404,7 @@ class Components:
         comp_idx: int | None = None,
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> types.Quantity1D:
-        """Compute saturated vapor pressure.
+        """Compute vapor pressure.
 
         Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
@@ -416,9 +416,9 @@ class Components:
                 Defaults to "Lee-Kesler".
 
         Returns:
-            Saturated vapor pressure in Pa.
+            Vapor pressure in Pa.
         """
-        pvap = correlate.components.saturated_vapor_pressure(
+        pvap = correlate.components.vapor_pressure(
             self._fuel, T, correlation=correlation
         )
         return pvap[comp_idx] if comp_idx is not None else pvap
@@ -442,7 +442,7 @@ class Components:
         Returns:
             Coefficients A, B, C, D for each compound.
         """
-        return correlate.components.saturated_vapor_pressure_antoine_coeffs(
+        return correlate.components.vapor_pressure_antoine_coeffs(
             self._fuel, Tvals=Tvals, units=units, correlation=correlation
         )
 

@@ -36,8 +36,8 @@ Basic example
    # Build your own quantity using the shared registry, then pass it to a
    # temperature-dependent correlation
    T = fl.Units.Quantity(320.0, "K")
-   p_sat_i = fuel.comps.pvap(T)
-   print(f"Saturated vapor pressure at {T}: {p_sat_i:.2f}")
+   pvap_i = fuel.comps.pvap(T)
+   print(f"Component vapor pressure at {T}: {pvap_i:.2f}")
 
 Arithmetic between quantities automatically combines/cancels units, and pint
 raises an error if you try to combine incompatible units (e.g. adding a
