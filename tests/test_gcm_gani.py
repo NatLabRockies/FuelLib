@@ -233,6 +233,25 @@ class GaniHelperFunctionTestCase(unittest.TestCase):
 class GaniReferenceDecompositionTestCase(unittest.TestCase):
     """Verify RDKit CG decompositions against the bundled reference data."""
 
+    def test_alcohols_fail_closed_with_smiles_and_unmatched_atom_count(self):
+        """Unsupported alcohols name the Gani method, input, and uncovered oxygen."""
+        for carbon_count in range(7, 13):
+            with self.subTest(carbon_count=carbon_count):
+                smiles = "C" * carbon_count + "O"
+                message = (
+                    f"Gani decomposition failed for SMILES '{smiles}': first-order "
+                    f"groups matched {carbon_count} of {carbon_count + 1} atoms."
+                )
+
+                with self.assertRaises(ValueError) as error:
+                    decompose(smiles)
+                self.assertEqual(str(error.exception), message)
+
+    def test_supported_heptane_decomposition_is_unchanged(self):
+        """A supported hydrocarbon still decomposes to its carbon groups."""
+        groups = decompose("CCCCCCC").iloc[0]
+        self.assertEqual(groups.loc[["CH3", "CH2"]].to_dict(), {"CH3": 2, "CH2": 5})
+
     def test_reference_decomposition(self):
         """Test that the RDKit decomposition matches tabulated Gani data."""
         df_refs = pd.read_csv(Path(DEFAULT_DATA_DIR) / "ref_compounds.csv")

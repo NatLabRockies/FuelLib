@@ -120,9 +120,10 @@ def decompose(smiles: str) -> pd.DataFrame:
             matched to first order groups.
         KeyError: If a matched group is not a column of the GCM table.
     """
+    context = f"Gani decomposition failed for SMILES {smiles!r}"
     mol = Chem.MolFromSmiles(smiles)
     if not mol:
-        raise ValueError(f"Error parsing SMILES: {smiles}")
+        raise ValueError(f"{context}: RDKit could not parse the input.")
 
     atom_count = mol.GetNumAtoms()
     matched = set()
@@ -131,7 +132,7 @@ def decompose(smiles: str) -> pd.DataFrame:
     for group, smarts in order1_groups:
         query = Chem.MolFromSmarts(smarts)
         if not query:
-            msg = f"Error parsing SMARTS pattern: {smarts}"
+            msg = f"{context}: invalid SMARTS pattern {smarts!r}."
             raise ValueError(msg)
 
         matches = mol.GetSubstructMatches(query)
@@ -143,11 +144,8 @@ def decompose(smiles: str) -> pd.DataFrame:
             group1_matches.setdefault(group, []).append(set(match))
 
     if len(matched) != atom_count:
-        msg = (
-            "Not all atoms were matched to first order groups."
-            f"Matched {len(matched)} out of {atom_count} atoms."
-        )
-        raise ValueError(msg)
+        cause = f"first-order groups matched {len(matched)} of {atom_count} atoms."
+        raise ValueError(f"{context}: {cause}")
 
     matched = set()
     group2_matches = dict()
@@ -155,7 +153,7 @@ def decompose(smiles: str) -> pd.DataFrame:
     for group, smarts in order2_groups:
         query = Chem.MolFromSmarts(smarts)
         if not query:
-            msg = f"Error parsing SMARTS pattern: {smarts}"
+            msg = f"{context}: invalid SMARTS pattern {smarts!r}."
             raise ValueError(msg)
 
         matches = mol.GetSubstructMatches(query)
@@ -180,7 +178,7 @@ def decompose(smiles: str) -> pd.DataFrame:
 
     invalid = (group1_matches.keys() | group2_matches.keys()) - set(TABLE.columns)
     if invalid:
-        msg = f"Groups not found in GCM table columns: {sorted(invalid)}"
+        msg = f"{context}: groups not found in Gani table columns: {sorted(invalid)}"
         raise KeyError(msg)
 
     df = pd.DataFrame(0, index=[smiles], columns=TABLE.columns)

@@ -80,7 +80,18 @@ def decompose_smiles() -> None:
         labels.extend(names.fillna(input_df["SMILES"]))
         smiles_list.extend(input_df["SMILES"])
 
-    df = pd.concat([decompose(smiles) for smiles in smiles_list])
+    decomposed = []
+    for label, smiles in zip(labels, smiles_list, strict=True):
+        if not isinstance(smiles, str) or not smiles.strip():
+            parser.error(
+                f"Could not decompose {label!r} with {args.method}: "
+                "SMILES must be a non-empty string."
+            )
+        try:
+            decomposed.append(decompose(smiles))
+        except (KeyError, ValueError) as error:
+            parser.error(f"Could not decompose {label!r} with {args.method}: {error}")
+    df = pd.concat(decomposed)
     df.index = pd.Index(labels, name="Reference Compound")
 
     if args.out:
