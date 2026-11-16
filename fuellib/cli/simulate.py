@@ -87,8 +87,8 @@ def main() -> None:
     fuels = [
         Fuel(
             name,
-            fuelDataDir=args.fuel_data_dir,
-            useRefProperties=args.use_ref_props,
+            data_dir=args.fuel_data_dir,
+            use_ref_props=args.use_ref_props,
         )
         for name in args.fuel_names
     ]

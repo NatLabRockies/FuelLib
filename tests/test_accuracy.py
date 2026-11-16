@@ -37,7 +37,7 @@ class MixtureTestCase(unittest.TestCase):
         total_checks = 0
 
         for fuel_name in self.base_data["Fuel"].unique():
-            fuel = Fuel(fuel_name, useRefProperties=False)
+            fuel = Fuel(fuel_name, use_ref_props=False)
             fuel_data = self.base_data[self.base_data["Fuel"] == fuel_name]
 
             print(
@@ -148,7 +148,7 @@ class TestFuelMWAccuracy:
     def test_fuel_mw(self, fuel_name: str, expected_mw: float) -> None:
         """Test that the mean molecular weight of the fuel roughly matches the expected value."""
         fuel = Fuel(fuel_name)
-        mw = fuel.mean_molecular_weight(fuel.Y_0).magnitude  # kg/mol expected
+        mw = fuel.mix.mw(fuel.y0).magnitude  # kg/mol expected
         assert np.isclose(mw, expected_mw, atol=1e-4), (
             f"{fuel_name}: expected {expected_mw}, got {mw}"
         )

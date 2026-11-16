@@ -51,7 +51,7 @@ def _get_decomp(fuel: "Fuel") -> types.Array2D:
     Returns:
         The decomposition matrix as a 2D numpy array.
     """
-    decomp = fuel.unifacDecomp.reindex(columns=TABLE.columns, fill_value=0)
+    decomp = fuel._unifac_decomp.reindex(columns=TABLE.columns, fill_value=0)
     return decomp.to_numpy()
 
 
@@ -276,12 +276,12 @@ def ln_gamma(
         fuel: The fuel object containing the decomposition matrix.
         T: Temperature.
         Yi: Liquid mass fractions of each component.
-            Defaults to `fuel.Y_0` (initial mass fractions).
+            Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Natural log of the activity coefficient of each component (dimensionless).
     """
-    Yi = Yi if Yi is not None else fuel.Y_0
+    Yi = Yi if Yi is not None else fuel.y0
     T_K = T.to("K").magnitude
-    x = fuel.Y2X(Yi).to("dimensionless").magnitude
+    x = fuel.comps.y2x(Yi).to("dimensionless").magnitude
     return Units.Quantity(ln_gamma_x(x, T_K, *parameters(fuel)), "")

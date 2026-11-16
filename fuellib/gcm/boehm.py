@@ -31,11 +31,11 @@ def dS_fus(fuel: "Fuel") -> types.Quantity1D:
     Returns:
         The predicted fusion entropy (ΔS_fus) values in J/(mol*K).
     """
-    families = fuel.compoundsData["Family"]
+    families = fuel.components_data["Family"]
     result = []
     for i in range(fuel.num_compounds):
         family = families[i]
-        nC = fuel.nC[i]
+        nC = fuel.comps.num_c[i]
         if family in TABLE.index:
             row = TABLE.loc[family]
             dsFus_i = float(row["dSfus_A"]) + float(row["dSfus_B"]) * (

@@ -45,7 +45,7 @@ def _get_decomp(fuel: "Fuel") -> types.Array2D:
     Returns:
         The decomposition matrix as a 2D numpy array.
     """
-    decomp = fuel.nannoolalDecomp.reindex(columns=TABLE.index, fill_value=0)
+    decomp = fuel._nannoolal_decomp.reindex(columns=TABLE.index, fill_value=0)
     return decomp.to_numpy()
 
 

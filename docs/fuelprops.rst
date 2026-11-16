@@ -23,6 +23,12 @@ mixture such as density, viscosity, vapor pressure, surface tension, and thermal
 outlines the properties for the *i-th* compound in a mixture, which depends on 
 the *k-th* first-order and *j-th* second-order group contributions.
 
+A tilde denotes a molar property (e.g., :math:`\tilde{C}_{p,i}` in J/mol/K and
+:math:`\Delta\tilde{H}_{v,i}` in J/mol), while the same symbol without a tilde denotes the
+corresponding mass-based property (e.g., :math:`C_{p,i}` in J/kg/K and
+:math:`\Delta H_{v,i}` in J/kg). The group-contribution parameters (e.g., :math:`h_{v1k}`)
+follow the notation of the original publications.
+
 .. _tab-GCM-properties:
 
 Table of GCM properties
@@ -32,22 +38,22 @@ Table of GCM properties
    :widths: auto
    :align: center
 
-   ====================================  =====================  ===========================================  ====================  ===========================================================
-   Property                              Units                  Group Contributions                          Units                 Description
-   ====================================  =====================  ===========================================  ====================  ===========================================================
-   :math:`M_{w,i}`                       kg/mol                 :math:`m_{w1k}`                              g/mol                 Molecular weight.
-   :math:`T_{c,i}`                       K                      :math:`t_{c1k}`, :math:`t_{c2j}`             1                     Critical temperature\ :footcite:p:`constantinou_new_1994`.
-   :math:`p_{c,i}`                       Pa                     :math:`p_{c1k}`, :math:`p_{c2j}`             bar\ :sup:`-0.5`      Critical pressure\ :footcite:p:`constantinou_new_1994`.
-   :math:`V_{c,i}`                       m\ :sup:`3`\ /mol      :math:`v_{c1k}`, :math:`v_{c2j}`             m\ :sup:`3`\ /kmol    Critical volume\ :footcite:p:`constantinou_new_1994`.
-   :math:`T_{b,i}`                       K                      :math:`t_{b1k}`, :math:`t_{b2j}`             1                     Normal boiling point\ :footcite:p:`constantinou_new_1994`.
-   :math:`T_{m,i}`                       K                      :math:`t_{m1k}`, :math:`t_{m2j}`             1                     Normal melting point\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta H_{f,i}`                J/mol                  :math:`h_{f1k}`, :math:`h_{f2j}`             kJ/mol                Enthalpy of formation at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta G_{f,i}`                J/mol                  :math:`g_{f1k}`, :math:`g_{f2j}`             kJ/mol                Standard Gibbs free energy at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta H_{v,\textit{stp},i}`   J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\omega_i`                      1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
-   :math:`V_{m,\textit{stp},i}`          m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
-   :math:`C_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
-   ====================================  =====================  ===========================================  ====================  ===========================================================
+   ============================================  =====================  ===========================================  ====================  ===========================================================
+   Property                                      Units                  Group Contributions                          Units                 Description
+   ============================================  =====================  ===========================================  ====================  ===========================================================
+   :math:`M_{w,i}`                               kg/mol                 :math:`m_{w1k}`                              g/mol                 Molecular weight.
+   :math:`T_{c,i}`                               K                      :math:`t_{c1k}`, :math:`t_{c2j}`             1                     Critical temperature\ :footcite:p:`constantinou_new_1994`.
+   :math:`p_{c,i}`                               Pa                     :math:`p_{c1k}`, :math:`p_{c2j}`             bar\ :sup:`-0.5`      Critical pressure\ :footcite:p:`constantinou_new_1994`.
+   :math:`V_{c,i}`                               m\ :sup:`3`\ /mol      :math:`v_{c1k}`, :math:`v_{c2j}`             m\ :sup:`3`\ /kmol    Critical volume\ :footcite:p:`constantinou_new_1994`.
+   :math:`T_{b,i}`                               K                      :math:`t_{b1k}`, :math:`t_{b2j}`             1                     Normal boiling point\ :footcite:p:`constantinou_new_1994`.
+   :math:`T_{m,i}`                               K                      :math:`t_{m1k}`, :math:`t_{m2j}`             1                     Normal melting point\ :footcite:p:`constantinou_new_1994`.
+   :math:`\Delta\tilde{H}_{f,i}`                 J/mol                  :math:`h_{f1k}`, :math:`h_{f2j}`             kJ/mol                Enthalpy of formation at 298 K\ :footcite:p:`constantinou_new_1994`.
+   :math:`\Delta\tilde{G}_{f,i}`                 J/mol                  :math:`g_{f1k}`, :math:`g_{f2j}`             kJ/mol                Standard Gibbs free energy at 298 K\ :footcite:p:`constantinou_new_1994`.
+   :math:`\Delta\tilde{H}_{v,\textit{stp},i}`    J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
+   :math:`\omega_i`                              1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
+   :math:`V_{m,\textit{stp},i}`                  m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
+   :math:`\tilde{C}_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
+   ============================================  =====================  ===========================================  ====================  ===========================================================
 
 .. _eq-GCM-properties:
 
@@ -74,12 +80,12 @@ follows\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimat
    V_{c,i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}      v_{c2j} \bigg] -0.00435 \Bigg)\times 10^{-3}, \\
    T_{b,i} &= 204.359 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{b1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{b2j}\bigg],\\
    T_{m,i} &= 102.425 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{m1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{m2j}\bigg],\\
-   \Delta H_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
-   \Delta G_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
-   \Delta H_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
+   \Delta\tilde{H}_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
+   \Delta\tilde{G}_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
+   \Delta\tilde{H}_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
    \omega_i &= 0.4085 \bigg[ \ln \Big(  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big) \bigg]^{1/0.5050}, \\
    V_{m,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
-   C_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \\
+   \tilde{C}_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \\
        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \\
        & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
    \theta &= \frac{T - 298.15}{700}
@@ -110,15 +116,16 @@ provided :math:`T` in K unless noted otherwise.
    =============================  =====================  ===============================================================
    :math:`\nu_i`                  m\ :sup:`2`\ /s        Kinematic viscosity\ :footcite:p:`viswanath_viscosity_2007`.
    :math:`\mu_i`                  Pa s                   Dynamic viscosity from the Nannoolal GCM\ :footcite:p:`nannoolal_estimation_2009`.
-   :math:`L_{v,\textit{stp},i}`   J/kg                   Latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
-   :math:`L_{v,i}`                J/kg                   Temperature-adjusted latent heat of vaporization at 298 K\ :footcite:p:`govindaraju_group_2016`.
+   :math:`\Delta\tilde{H}_{v,i}`  J/mol                  Temperature-adjusted molar enthalpy of vaporization\ :footcite:p:`govindaraju_group_2016`.
+   :math:`\Delta H_{v,i}`         J/kg                   Temperature-adjusted mass-based enthalpy of vaporization\ :footcite:p:`govindaraju_group_2016`.
    :math:`V_{m,i}`                m\ :sup:`3`\ /mol      Temperature-adjusted liquid molar volume\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` \ :footcite:p:`govindaraju_group_2016`.
    :math:`\rho_i`                 kg/m\ :sup:`3`         Density
-   :math:`C_{\ell,i}`             J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
-   :math:`p_{sat,i}`              Pa                     Saturated vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
+   :math:`\tilde{C}_{p,i}`        J/mol/K                Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
+   :math:`C_{p,i}`                J/kg/K                 Mass specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`ruzicka_estimation_1993`.
+   :math:`p_{v,i}`                Pa                     Vapor pressure\ :footcite:p:`lee_generalized_1975` \ :footcite:p:`ambrose_vapour_1989`.
    :math:`\sigma_i`               N/m                    Surface tension\ :footcite:p:`brock_surface_1955`.
-   :math:`\lambda_i`              W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
-   :math:`T_{fp,i}`               K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
+   :math:`k_i`                    W/m/K                  Thermal conductivity\ :footcite:p:`poling_properties_2001`.
+   :math:`T_{\textit{flash},i}`   K                      Flash point (Alqaheem-Riazi\ :footcite:p:`alqaheem_flash_2017` or Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015`).
    :math:`LHV_i`                  J/kg                   Lower heating value.
    =============================  =====================  ===============================================================
 
@@ -141,7 +148,7 @@ provided :math:`T` in K unless noted otherwise.
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.viscosity_kinematic
+.. automethod:: fuellib.fuel.components.Components.nu
    :noindex:
 
 The kinematic viscosity of the *i-th* compound of the fuel, 
@@ -181,29 +188,30 @@ Groups without a published contribution are discussed in :doc:`gcm`.
 
 
 
-Latent heat of vaporization
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Enthalpy of vaporization
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.latent_heat_vaporization
+.. automethod:: fuellib.fuel.components.Components.hv
    :noindex:
 
-The latent heat of vaporization for each compound at standard pressure and 
-temperature is calculated from the enthalpy of vaporization as:
-
-.. math::
-   L_{v,\textit{stp},i} = \frac{\Delta H_{v,\textit{stp},i}}{M_{w,i}}.
-
-The heat of vaporization for each compound is then adjusted for variations in 
+The molar enthalpy of vaporization for each compound at standard pressure and 
+temperature, :math:`\Delta\tilde{H}_{v,\textit{stp},i}`, is adjusted for variations in 
 temperature\ :footcite:p:`govindaraju_group_2016`:
 
 .. math::
-   L_{v,i} = L_{v,\textit{stp},i} \bigg(\frac{1 - T_{r,i}}{1-T_{r,b,i}} \bigg)^{0.38}.
+   \Delta\tilde{H}_{v,i} = \Delta\tilde{H}_{v,\textit{stp},i} \bigg(\frac{1 - T_{r,i}}{1-T_{r,b,i}} \bigg)^{0.38}.
+
+The mass-based enthalpy of vaporization (``basis="mass"``, default) is obtained by dividing by the 
+molecular weight:
+
+.. math::
+   \Delta H_{v,i} = \frac{\Delta\tilde{H}_{v,i}}{M_{w,i}}.
 
 
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.molar_liquid_vol
+.. automethod:: fuellib.fuel.components.Components.vm
    :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using 
@@ -228,7 +236,7 @@ where
 Density
 ^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.density
+.. automethod:: fuellib.fuel.components.Components.rho
    :noindex:
 
 The density of the *i-th* compound is given by
@@ -237,41 +245,44 @@ The density of the *i-th* compound is given by
    \rho_i = \frac{M_{w,i}}{V_{m,i}}.
 
 
-Mass specific heat capacity of the liquid
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Specific heat capacity of the liquid
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.Cl
+.. automethod:: fuellib.fuel.components.Components.cp
    :noindex:
 
-The mass specific heat capacity for each compound at standard pressure temperature is calculated from the molar specific heat capacity as:
+The molar specific heat capacity, :math:`\tilde{C}_{p,i}` (``basis="molar"``), is evaluated from the 
+group contribution expansion in :math:`\theta = (T - 298)/700` (:doc:`gcm`). 
+The mass specific heat capacity (``basis="mass"``, default) is obtained by dividing by the 
+molecular weight:
 
 .. math::
-   C_{\ell,i} = \dfrac{C_{p,i}}{M_{w,i}} 
+   C_{p,i} = \dfrac{\tilde{C}_{p,i}}{M_{w,i}} 
 
 Alternatively, the Ruzicka-Domalski\ :footcite:p:`ruzicka_estimation_1993` group additivity correlation
 is available, with :math:`\theta = T / 100` (K) and the ``rd_A``, ``rd_B``, and ``rd_D``
-properties of the ``gani`` GCM (:doc:`gcm`):
+properties included in the ``gani`` GCM (:doc:`gcm`):
 
 .. math::
-   C_{p,i} = R \big(A_i + B_i \theta + D_i \theta^2\big).
+   \tilde{C}_{p,i} = R \big(A_i + B_i \theta + D_i \theta^2\big).
 
 
 
-Saturated vapor pressure
-^^^^^^^^^^^^^^^^^^^^^^^^
+Vapor pressure
+^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.psat
+.. automethod:: fuellib.fuel.components.Components.pvap
    :noindex:
 
-The saturated vapor pressure for each compound is calculated as a function of 
+The vapor pressure for each compound is calculated as a function of 
 temperature using either the Lee–Kesler method\ :footcite:p:`lee_generalized_1975` 
 or the Ambrose-Walton method\ :footcite:p:`ambrose_vapour_1989`.  Both methods solve
 
 .. math::
-   \ln p_{r,\text{sat},i} = f_i^{(0)} + \omega_i f_i^{(1)} + \omega_i^2 f_i^{(2)}
+   \ln p_{r,v,i} = f_i^{(0)} + \omega_i f_i^{(1)} + \omega_i^2 f_i^{(2)}
 
-for the reduced saturated vapor pressure for each compound, 
-:math:`p_{r,\text{sat},i} = p_{\text{sat},i}/p_{c,i}`.  
+for the reduced vapor pressure for each compound, 
+:math:`p_{r,v,i} = p_{v,i}/p_{c,i}`.  
 The default method in `FuelLib` is the Lee-Kesler method, as it is 
 more stable at higher temperatures. 
 The Lee-Kesler\ :footcite:p:`lee_generalized_1975` method defines
@@ -292,7 +303,7 @@ The Ambrose-Walton\ :footcite:p:`ambrose_vapour_1989` correlation sets:
 
 with :math:`\tau_i = 1 - T_{r,i}`.
 
-.. automethod:: fuellib.fuel.Fuel.psat_antoine_coeffs
+.. automethod:: fuellib.fuel.components.Components.pvap_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -311,7 +322,7 @@ for additional information.
 Surface tension
 ^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.surface_tension
+.. automethod:: fuellib.fuel.components.Components.sigma
    :noindex:
 
 Surface tension for each compound is approximated using the relation:
@@ -334,14 +345,14 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.thermal_conductivity
+.. automethod:: fuellib.fuel.components.Components.k
    :noindex:
 
 Thermal conductivity for each compound is computed according to the method of 
 Latini et al. as summarized in Poling's\ :footcite:p:`poling_properties_2001` book:
 
 .. math:: 
-   \lambda_i = \frac{A_i(1 - T_{r,i})^{0.38}}{T_{r,i}^{1/6}}.
+   k_i = \frac{A_i(1 - T_{r,i})^{0.38}}{T_{r,i}^{1/6}}.
 
 The constant :math:`A_i` is defined by:
 
@@ -382,22 +393,22 @@ and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
 Flash point
 ^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.flash_point
+.. automethod:: fuellib.fuel.components.Components.t_flash
    :noindex:
 
-Two correlations are available for the flash point :math:`T_{fp,i}` of each compound,
+Two correlations are available for the flash point :math:`T_{\textit{flash},i}` of each compound,
 both based on the Constantinou-Gani normal boiling point :math:`T_{b,i}`.
 The Alqaheem and Riazi\ :footcite:p:`alqaheem_flash_2017` correlation takes the flash point as a fixed fraction
 of the boiling point:
 
 .. math::
-   T_{fp,i} = 0.70 \, T_{b,i}.
+   T_{\textit{flash},i} = 0.70 \, T_{b,i}.
 
 The modified group-contribution correlation of Alibakhshi et al.\ :footcite:p:`alibakhshi_modified_2015` adds a
 group-contribution term:
 
 .. math::
-   T_{fp,i} = 12.14 + 0.73 \, T_{b,i} + \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \phi_k,
+   T_{\textit{flash},i} = 12.14 + 0.73 \, T_{b,i} + \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \phi_k,
 
 where :math:`\phi_k` are the group contributions registered as the ``alibakhshi_phi``
 property of the ``gani`` GCM (:doc:`gcm`).
@@ -411,25 +422,25 @@ Lower heating value
    :noindex:
 
 The lower (net) heating value :math:`LHV_i` is computed from a Hess cycle using the Constantinou-Gani
-enthalpy of formation :math:`\Delta H_{f,i}` and enthalpy of vaporization
-:math:`\Delta H_{v,\textit{stp},i}`. The liquid-phase enthalpy of formation is
+enthalpy of formation :math:`\Delta\tilde{H}_{f,i}` and enthalpy of vaporization
+:math:`\Delta\tilde{H}_{v,\textit{stp},i}`. The liquid-phase enthalpy of formation is
 
 .. math::
-   \Delta H_{f,\ell,i} = \Delta H_{f,i} - \Delta H_{v,\textit{stp},i},
+   \Delta\tilde{H}_{f,\ell,i} = \Delta\tilde{H}_{f,i} - \Delta\tilde{H}_{v,\textit{stp},i},
 
 and the molar enthalpy of combustion (an exothermic, i.e. negative, quantity in J/mol) of a compound with :math:`n_{C,i}` carbon and
 :math:`n_{H,i}` hydrogen atoms (from its RDKit molecule) is
 
 .. math::
-   \Delta H_{c,i} = n_{C,i} \, \Delta H_f^{\text{CO}_2(g)}
-   + \frac{n_{H,i}}{2} \, \Delta H_f^{\text{H}_2\text{O}(g)} - \Delta H_{f,\ell,i},
+   \Delta\tilde{H}_{c,i} = n_{C,i} \, \Delta\tilde{H}_f^{\text{CO}_2(g)}
+   + \frac{n_{H,i}}{2} \, \Delta\tilde{H}_f^{\text{H}_2\text{O}(g)} - \Delta\tilde{H}_{f,\ell,i},
 
-with :math:`\Delta H_f^{\text{CO}_2(g)} = -393.51` kJ/mol and
-:math:`\Delta H_f^{\text{H}_2\text{O}(g)} = -241.83` kJ/mol at 298.15 K. The lower
+with :math:`\Delta\tilde{H}_f^{\text{CO}_2(g)} = -393.51` kJ/mol and
+:math:`\Delta\tilde{H}_f^{\text{H}_2\text{O}(g)} = -241.83` kJ/mol at 298.15 K. The lower
 heating value is then
 
 .. math::
-   LHV_i = -\frac{\Delta H_{c,i}}{M_{w,i}}.
+   LHV_i = -\frac{\Delta\tilde{H}_{c,i}}{M_{w,i}}.
 
 This estimate is valid for hydrocarbons only and does not account for
 heteroatom-containing groups.
@@ -454,21 +465,21 @@ are used throughout this section.
    :widths: auto
    :align: center
    
-   ========================  ===============  =====================
-   Symbol                    Units            Description
-   ========================  ===============  =====================
-   :math:`\rho`              kg/m\ :sup:`3`   Density
-   :math:`\nu`               m\ :sup:`2`/s    Kinematic viscosity
-   :math:`p_v`               Pa               Vapor pressure
-   :math:`\sigma`            N/m              Surface tension
-   :math:`\lambda`           W/m/K            Thermal conductivity
-   :math:`T_{fr}`            K                Freeze point
-   :math:`T_{fp}`            K                Flash point
-   :math:`\Delta H^\circ_c`  J/kg             Heat of combustion
-   :math:`YSI`               --               Yield sooting index
-   :math: `SP`               mm               Smoke point
-   :math:`DCN`               --               Derived cetane number
-   ========================  ===============  =====================
+   ============================  ===============  =====================
+   Symbol                        Units            Description
+   ============================  ===============  =====================
+   :math:`\rho`                  kg/m\ :sup:`3`   Density
+   :math:`\nu`                   m\ :sup:`2`/s    Kinematic viscosity
+   :math:`p_v`                   Pa               Vapor pressure
+   :math:`\sigma`                N/m              Surface tension
+   :math:`k`                     W/m/K            Thermal conductivity
+   :math:`T_{\textit{freeze}}`   K                Freeze point
+   :math:`T_{\textit{flash}}`    K                Flash point
+   :math:`\Delta H^\circ_c`      J/kg             Heat of combustion
+   :math:`YSI`                   --               Yield sooting index
+   :math:`SP`                    mm               Smoke point
+   :math:`DCN`                   --               Derived cetane number
+   ============================  ===============  =====================
 
 .. _tab-mass-mole-fracs:
 
@@ -518,7 +529,7 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 Mixture density
 ^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_density
+.. automethod:: fuellib.fuel.mixture.Mixture.rho
    :noindex:
 
 The mixture's density is calculated as:
@@ -531,7 +542,7 @@ The mixture's density is calculated as:
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_kinematic_viscosity
+.. automethod:: fuellib.fuel.mixture.Mixture.nu
    :noindex:
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
@@ -556,16 +567,16 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_vapor_pressure
+.. automethod:: fuellib.fuel.mixture.Mixture.pvap
    :noindex:
 
 The vapor pressure of the mixture is calculated according to Raoult's law:
 
 .. math::
 
-   p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{\textit{sat},i}.
+   p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{v,i}.
 
-.. automethod:: fuellib.fuel.Fuel.mixture_vapor_pressure_antoine_coeffs
+.. automethod:: fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on 
@@ -584,7 +595,7 @@ for additional information.
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_surface_tension
+.. automethod:: fuellib.fuel.mixture.Mixture.sigma
    :noindex:
 
 The surface tension of the mixture is calculated using the :ref:`conventional-mixing-rules`
@@ -597,19 +608,19 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_thermal_conductivity
+.. automethod:: fuellib.fuel.mixture.Mixture.k
    :noindex:
 
 The thermal conductivity of the mixture is calculated using the power law method of 
 Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 
 .. math::
-   \lambda = \bigg(\sum_{i=1}^{N_c} Y_i \lambda_i^{-2} \bigg)^{-1/2}.
+   k = \bigg(\sum_{i=1}^{N_c} Y_i k_i^{-2} \bigg)^{-1/2}.
 
 Mixture freeze point
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_freeze_point
+.. automethod:: fuellib.fuel.mixture.Mixture.t_freeze
    :noindex:
 
 The freeze point of the mixture is estimated with the solid-liquid equilibrium model
@@ -617,18 +628,18 @@ of Boehm et al.\ :footcite:p:`boehm_blend_2022`, equation 21. For each compound 
 :math:`X_j`, the candidate freeze temperature :math:`T_j` solves
 
 .. math::
-   T_j \Big[\Delta S_{\textit{fus},j} + X_j \Delta C_{p,j} \ln\frac{T_j}{T_{m,j}}
+   T_j \Big[\Delta S_{\textit{fus},j} + X_j \Delta\tilde{C}_{p,j} \ln\frac{T_j}{T_{m,j}}
    + \alpha \, \Delta S_{\textit{mix},j}\Big]
-   = \Delta H_{\textit{fus},j} + X_j \Delta C_{p,j} (T_{m,j} - T_j),
+   = \Delta H_{\textit{fus},j} + X_j \Delta\tilde{C}_{p,j} (T_{m,j} - T_j),
 
 where
 
 .. math::
    \Delta S_{\textit{mix},j} &= -\frac{R}{X_j}\big[(1 - X_j)\ln(1 - X_j) + X_j \ln X_j\big], \\
    \Delta H_{\textit{fus},j} &= T_{m,j} \, \Delta S_{\textit{fus},j}, \\
-   \Delta C_{p,j} &= -0.35 \, C_{p,\ell,j}(298.15 \text{ K}),
+   \Delta\tilde{C}_{p,j} &= -0.35 \, \tilde{C}_{p,\textit{stp},j},
 
-:math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.Fuel.Tm` (a reference value
+:math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.components.Components.tm` (a reference value
 when available, otherwise the Constantinou-Gani prediction; see :ref:`sec-reference-properties`),
 :math:`\Delta S_{\textit{fus},j}`
 is provided by the ``boehm`` GCM (see :doc:`gcm`), and :math:`\alpha` is an optional
@@ -640,34 +651,34 @@ does not capture cooling rate, supercooling, or solid-phase nonideality.
 Mixture flash point
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_flash_point
+.. automethod:: fuellib.fuel.mixture.Mixture.t_flash
    :noindex:
 
-The mixture flash point is computed from the component flash points :math:`T_{fp,i}`
+The mixture flash point is computed from the component flash points :math:`T_{\textit{flash},i}`
 (see Flash point above) with either a linear mass-fraction mixing rule,
 
 .. math::
-   T_{fp} = \sum_{i=1}^{N_c} Y_i T_{fp,i},
+   T_{\textit{flash}} = \sum_{i=1}^{N_c} Y_i T_{\textit{flash},i},
 
-or the ideal Liaw-Chiu\ :footcite:p:`liaw_general_2006` mixing rule (default), which solves for :math:`T_{fp}` such that
+or the ideal Liaw-Chiu\ :footcite:p:`liaw_general_2006` mixing rule (default), which solves for :math:`T_{\textit{flash}}` such that
 
 .. math::
-   \sum_{i=1}^{N_c} X_i \frac{p_{\textit{sat},i}(T_{fp})}{p_{\textit{sat},i}(T_{fp,i})} = 1,
+   \sum_{i=1}^{N_c} X_i \frac{p_{v,i}(T_{\textit{flash}})}{p_{v,i}(T_{\textit{flash},i})} = 1,
 
-where :math:`p_{\textit{sat},i}` is evaluated with the Lee-Kesler correlation. This
+where :math:`p_{v,i}` is evaluated with the Lee-Kesler correlation. This
 mixing rule does not model nonideal liquid activity coefficients.
 
 Mixture heat of combustion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_heat_of_combustion
+.. automethod:: fuellib.fuel.mixture.Mixture.lhv
    :noindex:
 
 The mixture heat of combustion :math:`\Delta H^\circ_c` is reported per unit mass as the
 positive magnitude of the heat released, and is computed as the mass-fraction weighted
 average of the component lower heating values
 :math:`LHV_i` (see :ref:`Lower heating value <sec-lower-heating-value>`). It is distinct
-from the molar enthalpy of combustion :math:`\Delta H_{c,i}` of a single compound:
+from the molar enthalpy of combustion :math:`\Delta\tilde{H}_{c,i}` of a single compound:
 
 .. math::
    \Delta H^\circ_c = \sum_{i=1}^{N_c} Y_i \, LHV_i.
@@ -678,13 +689,13 @@ estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter te
 Mixture yield sooting index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_yield_sooting_index
+.. automethod:: fuellib.fuel.mixture.Mixture.ysi
    :noindex:
 
 The yield sooting index :math:`YSI` is a dimensionless measure of a fuel's tendency to soot.
 The component values :math:`YSI_i` are reference data from ``ref_compounds.csv``, primarily
 from the Yield Sooting Index Database of McEnally et al.\ :footcite:p:`mcenally_yield_2017`, and are
-available as :attr:`~fuellib.fuel.Fuel.YSI` (see :ref:`sec-reference-properties`); they are
+available as :attr:`~fuellib.fuel.components.Components.ysi` (see :ref:`sec-reference-properties`); they are
 not predicted by FuelLib. The mixture value is the mole-fraction weighted average
 
 .. math::
@@ -696,7 +707,7 @@ component. Mass fractions are converted to mole fractions using the component mo
 Mixture smoke point
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_smoke_point
+.. automethod:: fuellib.fuel.mixture.Mixture.smoke_point
    :noindex:
 
 The mixture smoke point :math:`SP` is estimated from the mixture
@@ -734,12 +745,12 @@ is raised if :math:`YSI` is unavailable for any component, is not positive, or i
 Mixture derived cetane number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_derived_cetane_number
+.. automethod:: fuellib.fuel.mixture.Mixture.dcn
    :noindex:
 
 The derived cetane number :math:`DCN` is a dimensionless measure of ignition quality.
 The component values :math:`DCN_i` are reference data from ``ref_compounds.csv`` and are
-available as :attr:`~fuellib.fuel.Fuel.DCN` (see :ref:`sec-reference-properties`); they are
+available as :attr:`~fuellib.fuel.components.Components.dcn` (see :ref:`sec-reference-properties`); they are
 not predicted by FuelLib. The mixture value is computed with a linear liquid volume-fraction
 mixing rule,
 
@@ -761,7 +772,7 @@ The graph neural network models of Kim et al. for predicting cetane numbers are 
 Mixture aromatics content
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_aromatics_content
+.. automethod:: fuellib.fuel.mixture.Mixture.aromatics
    :noindex:
 
 The aromatics content is the total liquid volume percent of aromatic compounds in the mixture,
@@ -771,7 +782,7 @@ The aromatics content is the total liquid volume percent of aromatic compounds i
    \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
 
 where :math:`\mathcal{A}` is the set of compounds whose
-:attr:`~fuellib.fuel.Fuel.hc_type` is ``"aromatic"`` (any compound containing an aromatic
+:attr:`~fuellib.fuel.components.Components.hc_type` is ``"aromatic"`` (any compound containing an aromatic
 ring, including cycloaromatics and diaromatics), and :math:`\rho_i` is the component liquid
 density evaluated at standard temperature (``constants.T_stp``). The result is in vol%,
 directly comparable with aromatics specifications (e.g., ASTM D1319).
@@ -779,7 +790,7 @@ directly comparable with aromatics specifications (e.g., ASTM D1319).
 Mixture naphthalenes content
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.Fuel.mixture_naphthalenes_content
+.. automethod:: fuellib.fuel.mixture.Mixture.naphthalenes
    :noindex:
 
 The naphthalenes content is the total liquid volume percent of naphthalene and alkylated
@@ -819,34 +830,34 @@ and ``{Property}_Notes``. Blank values indicate that no reference data are avail
 ``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. The following properties are
 supported:
 
-=============  =======================================  =====================================================
-Property       Attribute                                Behavior       
-=============  =======================================  =====================================================
-``Tc``         :attr:`~fuellib.fuel.Fuel.Tc`            Reference value, else group-contribution prediction
-``Pc``         :attr:`~fuellib.fuel.Fuel.Pc`            Reference value, else group-contribution prediction
-``Vc``         :attr:`~fuellib.fuel.Fuel.Vc`            Reference value, else group-contribution prediction
-``Tm``         :attr:`~fuellib.fuel.Fuel.Tm`            Reference value, else group-contribution prediction
-``Tb``         :attr:`~fuellib.fuel.Fuel.Tb`            Reference value, else group-contribution prediction
-``Hf_STP``     :attr:`~fuellib.fuel.Fuel.Hf_stp`        Reference value, else group-contribution prediction
-``Hv_STP``     :attr:`~fuellib.fuel.Fuel.Hv_stp`        Reference value, else group-contribution prediction
-``Vm_STP``     :attr:`~fuellib.fuel.Fuel.Vm_stp`        Reference value, else group-contribution prediction
-``Omega``      :attr:`~fuellib.fuel.Fuel.omega`         Reference value, else group-contribution prediction
-``YSI``        :attr:`~fuellib.fuel.Fuel.YSI`           Reference only; raises ``ValueError`` if missing
-``DCN``        :attr:`~fuellib.fuel.Fuel.DCN`           Reference only; raises ``ValueError`` if missing
-=============  =======================================  =====================================================
+=============  ====================================================  =====================================================
+Property       Attribute                                             Behavior
+=============  ====================================================  =====================================================
+``Tc``         :attr:`~fuellib.fuel.components.Components.tc`        Reference value, else group-contribution prediction
+``Pc``         :attr:`~fuellib.fuel.components.Components.pc`        Reference value, else group-contribution prediction
+``Vc``         :attr:`~fuellib.fuel.components.Components.vc`        Reference value, else group-contribution prediction
+``Tm``         :attr:`~fuellib.fuel.components.Components.tm`        Reference value, else group-contribution prediction
+``Tb``         :attr:`~fuellib.fuel.components.Components.tb`        Reference value, else group-contribution prediction
+``Hf_STP``     :attr:`~fuellib.fuel.components.Components.hf_stp`    Reference value, else group-contribution prediction
+``Hv_STP``     :attr:`~fuellib.fuel.components.Components.hv_stp`    Reference value, else group-contribution prediction
+``Vm_STP``     :attr:`~fuellib.fuel.components.Components.vm_stp`    Reference value, else group-contribution prediction
+``Omega``      :attr:`~fuellib.fuel.components.Components.omega`     Reference value, else group-contribution prediction
+``YSI``        :attr:`~fuellib.fuel.components.Components.ysi`       Reference only; raises ``ValueError`` if missing
+``DCN``        :attr:`~fuellib.fuel.components.Components.dcn`       Reference only; raises ``ValueError`` if missing
+=============  ====================================================  =====================================================
 
 Reference values are converted from the stated ``{Property}_Units`` to the attribute's units. Measured
 values are used for properties in the first group on a compound-by-compound basis, so a single fuel can mix
-reference values and predictions. Pass ``useRefProperties=False`` to :class:`~fuellib.fuel.Fuel` to use
+reference values and predictions. Pass ``use_ref_props=False`` to :class:`~fuellib.fuel.core.Fuel` to use
 only the group-contribution predictions. ``YSI`` (Yield Sooting Index) and ``DCN`` (derived cetane number)
 are not predicted by FuelLib, so they are always taken from the reference data.
 
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
-from its ``SMILES``; the matched rows are available as :attr:`~fuellib.fuel.Fuel.compoundsData`, and the
+from its ``SMILES``; the matched rows are available as ``Fuel.components_data``, and the
 group decompositions from ``ref_gani.csv``, ``ref_nannoolal.csv``, and ``ref_unifac.csv`` as
-:attr:`~fuellib.fuel.Fuel.ganiDecomp`, :attr:`~fuellib.fuel.Fuel.nannoolalDecomp`, and
-:attr:`~fuellib.fuel.Fuel.unifacDecomp`. Custom tables are read from ``ref_compounds.csv``, ``ref_gani.csv``,
-``ref_nannoolal.csv``, and ``ref_unifac.csv`` in the ``fuelDataDir`` passed to :class:`~fuellib.fuel.Fuel` (see :doc:`tutorials_custom_fuels`). Each custom table is merged
+``Fuel._gani_decomp``, ``Fuel._nannoolal_decomp``, and
+``Fuel._unifac_decomp``. Custom tables are read from ``ref_compounds.csv``, ``ref_gani.csv``,
+``ref_nannoolal.csv``, and ``ref_unifac.csv`` in the ``data_dir`` passed to :class:`~fuellib.fuel.core.Fuel` (see :doc:`tutorials_custom_fuels`). Each custom table is merged
 with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
 the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
 bundled compound; a Gani, Nannoolal, or UNIFAC decomposition duplicate is identified by its ``Reference Compound``.

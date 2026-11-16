@@ -18,8 +18,8 @@ def test_generated_values_round_trip_without_losing_float_precision(
         properties=["density"],
     )
 
-    fuel = Fuel("dodecane", useRefProperties=False)
-    prop_data = fuel.propData
+    fuel = Fuel("dodecane", use_ref_props=False)
+    prop_data = fuel.prop_data
     assert prop_data is not None
     source_row = next(
         prop_data.loc[

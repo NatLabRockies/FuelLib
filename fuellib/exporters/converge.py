@@ -171,7 +171,7 @@ def export_converge(
     else:
         # Export individual component properties and composition
         path = os.path.join(path, fuel.name)
-        components = fuel.compounds
+        components = fuel.comps.names
 
     # Initialize unit converter
     converter = UnitConverter()
@@ -259,7 +259,7 @@ def export_converge(
 
         # Handle maximum temperature warnings for mixtures
         if is_mixture:
-            T_max_allowed = min(fuel.Tc)
+            T_max_allowed = min(fuel.comps.tc)
             if np.any(T_array > T_max_allowed):
                 T_max_allowed = nearest_floor(T_array, T_max_allowed)
                 print("!" * 88)
@@ -299,21 +299,21 @@ def export_converge(
         )
 
         for k, Temp in enumerate(T_array):
-            Y_li = fuel.Y_0
-            X_li = fuel.Y2X(Y_li)
+            Y_li = fuel.y0
+            X_li = fuel.comps.y2x(Y_li)
 
             # Standard mixing rules for properties
-            rho[k] = fuel.mixture_density(Y_li, Temp)  # kg/m^3
-            mu[k] = fuel.mixture_dynamic_viscosity(Y_li, Temp)  # Pa*s
-            pv[k] = fuel.mixture_vapor_pressure(Y_li, Temp)  # Pa
-            surface_tension[k] = fuel.mixture_surface_tension(Y_li, Temp)  # N/m
-            thermal_conductivity[k] = fuel.mixture_thermal_conductivity(Y_li, Temp)
+            rho[k] = fuel.mix.rho(Y_li, Temp)  # kg/m^3
+            mu[k] = fuel.mix.mu(Y_li, Temp)  # Pa*s
+            pv[k] = fuel.mix.pvap(Y_li, Temp)  # Pa
+            surface_tension[k] = fuel.mix.sigma(Y_li, Temp)  # N/m
+            thermal_conductivity[k] = fuel.mix.k(Y_li, Temp)
 
             # Generic mixing rules for latent heat and specific heat
-            Lv[k] = fl.correlate.mixture.arithmetic(
-                X_li, fuel.latent_heat_vaporization(Temp)
-            )  # J/kg
-            Cl[k] = fl.correlate.mixture.arithmetic(X_li, fuel.Cl(Temp))  # J/kg/K
+            Lv[k] = fl.correlate.mixture.arithmetic(X_li, fuel.comps.hv(Temp))  # J/kg
+            Cl[k] = fl.correlate.mixture.arithmetic(
+                X_li, fuel.comps.cp(Temp, basis="mass")
+            )  # J/kg/K
 
         return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
 
@@ -341,13 +341,13 @@ def export_converge(
         )
 
         for k, Temp in enumerate(T_array):
-            rho[k] = fuel.density(Temp, comp_idx=comp_idx)  # kg/m^3
-            mu[k] = fuel.viscosity_dynamic(Temp, comp_idx=comp_idx)  # Pa*s
-            pv[k] = fuel.psat(Temp, comp_idx=comp_idx)  # Pa
-            surface_tension[k] = fuel.surface_tension(Temp, comp_idx=comp_idx)  # N/m
-            thermal_conductivity[k] = fuel.thermal_conductivity(Temp, comp_idx=comp_idx)
-            Lv[k] = fuel.latent_heat_vaporization(Temp, comp_idx=comp_idx)  # J/kg
-            Cl[k] = fuel.Cl(Temp, comp_idx=comp_idx)  # J/kg/K
+            rho[k] = fuel.comps.rho(Temp, comp_idx=comp_idx)  # kg/m^3
+            mu[k] = fuel.comps.mu(Temp, comp_idx=comp_idx)  # Pa*s
+            pv[k] = fuel.comps.pvap(Temp, comp_idx=comp_idx)  # Pa
+            surface_tension[k] = fuel.comps.sigma(Temp, comp_idx=comp_idx)  # N/m
+            thermal_conductivity[k] = fuel.comps.k(Temp, comp_idx=comp_idx)
+            Lv[k] = fuel.comps.hv(Temp, comp_idx=comp_idx)  # J/kg
+            Cl[k] = fuel.comps.cp(Temp, comp_idx=comp_idx, basis="mass")  # J/kg/K
 
         return mu, surface_tension, Lv, pv, rho, Cl, thermal_conductivity
 
@@ -380,15 +380,17 @@ def export_converge(
         T = Units.Quantity(np.linspace(temp_min.magnitude, temp_max.magnitude, nT), "K")
 
         # Estimate freezing point and critical temp of mixture
-        T_freeze = fl.correlate.mixture.arithmetic(fuel.Y2X(fuel.Y_0), fuel.Tm)
-        T_crit = fl.correlate.mixture.arithmetic(fuel.Y2X(fuel.Y_0), fuel.Tc)
+        T_freeze = fl.correlate.mixture.arithmetic(
+            fuel.comps.y2x(fuel.y0), fuel.comps.tm
+        )
+        T_crit = fl.correlate.mixture.arithmetic(fuel.comps.y2x(fuel.y0), fuel.comps.tc)
 
         print(f"\nEstimated mixture freezing temp: {T_freeze:.2f} K")
-        print(f"Min freezing temp min(Tm_i): {min(fuel.Tm):.2f} K")
-        print(f"Max freezing temp max(Tm_i): {max(fuel.Tm):.2f} K")
+        print(f"Min freezing temp min(Tm_i): {min(fuel.comps.tm):.2f} K")
+        print(f"Max freezing temp max(Tm_i): {max(fuel.comps.tm):.2f} K")
         print(f"Estimated mixture critical temp: {T_crit:.2f} K")
-        print(f"Min critical temp min(Tc_i): {min(fuel.Tc):.2f} K")
-        print(f"Max critical temp max(Tc_i): {max(fuel.Tc):.2f} K")
+        print(f"Min critical temp min(Tc_i): {min(fuel.comps.tc):.2f} K")
+        print(f"Max critical temp max(Tc_i): {max(fuel.comps.tc):.2f} K")
 
         # Validate and adjust temperature range
         T_min_allowed, T_max_allowed, T = validate_temperature_range(
@@ -398,8 +400,8 @@ def export_converge(
     for comp_idx, compound in enumerate(components):
         if not export_mix:
             # Get component-specific temperature limits
-            T_freeze = fuel.Tm[comp_idx]
-            T_crit = fuel.Tc[comp_idx]
+            T_freeze = fuel.comps.tm[comp_idx]
+            T_crit = fuel.comps.tc[comp_idx]
             T_min_allowed = nearest_temp(T_freeze)
 
             # Create temperature array up to critical temperature
@@ -465,11 +467,11 @@ def export_converge(
         composition_file = os.path.join(path, f"composition_{fuel.name}.csv")
         print(f"\nWriting mass fractions for {fuel.name} to {composition_file}")
         composition_data = {
-            "Index": range(len(fuel.compounds)),
-            "Component": fuel.compounds,
-            "Mass Fraction": fuel.Y_0,
-            "Mole Fraction": fuel.Y2X(fuel.Y_0),
-            converter.labels["molecular_weight"]: fuel.MW.to("kg/mol").magnitude,
+            "Index": range(len(fuel.comps.names)),
+            "Component": fuel.comps.names,
+            "Mass Fraction": fuel.y0,
+            "Mole Fraction": fuel.comps.y2x(fuel.y0),
+            converter.labels["molecular_weight"]: fuel.comps.mw.to("kg/mol").magnitude,
         }
         export_properties_to_csv(composition_file, composition_data)
 
@@ -574,7 +576,7 @@ def main():
     print(f"    Fuel data directory: {fuel_data_dir}")
 
     # Create the fuel object
-    fuel = fl.Fuel(fuel_name, fuelDataDir=fuel_data_dir)
+    fuel = fl.Fuel(fuel_name, data_dir=fuel_data_dir)
 
     # Export properties for Converge
     export_converge(

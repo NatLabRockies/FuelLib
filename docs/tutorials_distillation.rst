@@ -11,7 +11,7 @@ Simulating a D86 curve
 ----------------------
 
 :func:`~fuellib.simulate.distillation.greenfield.distill` takes a
-:class:`~fuellib.fuel.Fuel` and returns a
+:class:`~fuellib.fuel.core.Fuel` and returns a
 :class:`~fuellib.simulate.distillation.greenfield.D86Result`. Its method
 ``temperature_at`` interpolates the D86 temperature at given volume fractions
 recovered.
