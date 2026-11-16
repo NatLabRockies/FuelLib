@@ -7,6 +7,8 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-11-16
+
 ### Added
 - `fuel.components.Components`, available as `Fuel.comps`, with the per-component properties of `Fuel` as cached, snake_case attributes: `tc`, `pc`, `vc`, `tm`, `tb`, `hf_stp`, `hv_stp`, `vm_stp`, `omega`, `ysi`, `dcn`, `gf_stp`, `lj_eps_by_kb`, `lj_sigma`, `names`, `smiles`, `pelephysics_keys`, `rdkit_mols`, `num_c`, `num_h`, `mw`, `formulas`, `hc_type`, and `fam`. It also provides the temperature-dependent component methods `rho`, `nu`, `mu`, `cp`, `pvap`, `pvap_antoine_coeffs`, `vm`, `hv`, `d`, `sigma`, `k`, and `t_flash`. `Components.cp` and `Components.hv` take a `basis` of `"mass"` (default, J/kg/K and J/kg) or `"molar"` (J/mol/K and J/mol).
 - `fuel.mixture.Mixture`, available as `Fuel.mix`, with the mixture methods of `Fuel` under the same symbolic names as `Components` (no cached attributes): `rho`, `nu`, `mu`, `pvap`, `pvap_antoine_coeffs`, `sigma`, `k`, `t_freeze`, `t_flash`, `lhv`, `ysi`, `smoke_point`, `dcn`, `aromatics`, and `naphthalenes`. It also provides the composition conversions `mw` (mean molecular weight), `mass2y`, `mass2x`, `x2y`, `y2x`, and `y2v`.
