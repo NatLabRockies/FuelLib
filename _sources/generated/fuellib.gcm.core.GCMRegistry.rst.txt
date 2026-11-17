@@ -1,0 +1,31 @@
+fuellib.gcm.core.GCMRegistry
+============================
+
+.. currentmodule:: fuellib.gcm.core
+
+.. autoclass:: GCMRegistry
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GCMRegistry.methods
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~GCMRegistry.get_gcm
+      ~GCMRegistry.list_methods
+      ~GCMRegistry.register
+   
+   

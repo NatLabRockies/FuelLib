@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulating Distillation &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Exporting Properties for Pele" href="tutorials_export_pele.html" />
+    <link rel="prev" title="Adding Custom Fuels" href="tutorials_custom_fuels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fuelprops.html">Fuel Property Prediction Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-individual-compound-correlations">Equations for individual compound correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#enthalpy-of-vaporization">Enthalpy of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#specific-heat-capacity-of-the-liquid">Specific heat capacity of the liquid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#vapor-pressure">Vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#thermal-conductivity">Thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#flash-point">Flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#lower-heating-value">Lower heating value</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#equations-for-mixture-properties-from-gcm">Equations for mixture properties from GCM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-freeze-point">Mixture freeze point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-flash-point">Mixture flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-heat-of-combustion">Mixture heat of combustion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-yield-sooting-index">Mixture yield sooting index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-smoke-point">Mixture smoke point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-derived-cetane-number">Mixture derived cetane number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-aromatics-content">Mixture aromatics content</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fuelprops.html#mixture-naphthalenes-content">Mixture naphthalenes content</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-compounds-for-jet-fuels">Reference Compounds for Jet Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#reference-property-data">Reference Property Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fuelprops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="refcompounds.html">Reference Compounds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="refcompounds.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gcm.html">Group Contribution Method Abstraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#core-concepts">Core concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-gani-method">The <code class="docutils literal notranslate"><span class="pre">gani</span></code> method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gcm.html#table-of-gcm-properties">Table of GCM properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gcm.html#equations-for-gcm-properties">Equations for GCM properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-boehm-method">The <code class="docutils literal notranslate"><span class="pre">boehm</span></code> method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-nannoolal-method">The <code class="docutils literal notranslate"><span class="pre">nannoolal</span></code> method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#the-unifac-method">The <code class="docutils literal notranslate"><span class="pre">unifac</span></code> method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gcm.html#activity-coefficients">Activity coefficients</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#registering-a-new-property">Registering a new property</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#fuel-integration"><code class="docutils literal notranslate"><span class="pre">Fuel</span></code> integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#see-also">See also</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gcm.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distillation.html">Simulated Distillation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#apparatus-parameters">Apparatus parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#pure-compound-properties">Pure-compound properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#vapor-pressure">Vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#heat-capacities">Heat capacities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#cross-critical-properties">Cross critical properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#initial-state">Initial state</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#initial-charge">Initial charge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#phase-equilibrium">Phase equilibrium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#vapor-fugacity-coefficients">Vapor fugacity coefficients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#bubble-point">Bubble point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#initial-heating-rate">Initial heating rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#warm-up">Warm-up</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#distillation">Distillation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#time-step">Time step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#stage-1-distillation-flask">Stage 1: distillation flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#stage-2-mixing-stage">Stage 2: mixing stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#natural-convection-from-the-vertical-tube">Natural convection from the vertical tube</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#solution-of-stages-1-and-2">Solution of stages 1 and 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#flash">Flash</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#stage-3-air-filled-cstr">Stage 3: air-filled CSTR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="distillation.html#heating-rate-control">Heating-rate control</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#differences-from-greenfield-et-al">Differences from Greenfield et al.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distillation.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="units.html#basic-example">Basic example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#type-annotations">Type annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units.html#further-reading">Further reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorials_basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#required-input-files">Required Input Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_cli.html">Command-Line Interface (CLI) Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#unit-conversion-tools">Unit Conversion Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#fuel-management">Fuel Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#smiles-decomposition">SMILES Decomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#simulations">Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#export-for-cfd">Export for CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#developer-tools">Developer Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_custom_fuels.html">Adding Custom Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#gcxgc-composition-data">GCxGC Composition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#reference-compounds-and-group-decompositions">Reference Compounds and Group Decompositions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#using-custom-fuels">Using Custom Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#tips-and-best-practices">Tips and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Simulating Distillation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simulating-a-d86-curve">Simulating a D86 curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-variants-and-apparatus-parameters">Model variants and apparatus parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-and-comparing-curves">Plotting and comparing curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_export_pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_export_converge.html">Exporting Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#multicomponent-fuels">Multicomponent Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#fuel-blends">Fuel Blends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sourcecode.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#fuellib-file-organization">FuelLib File Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sourcecode.html#public-api">Public API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.core.html">fuellib.fuel.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.components.html">fuellib.fuel.components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.mixture.html">fuellib.fuel.mixture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.constants.html">fuellib.utils.constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.utility.html">fuellib.utils.utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.types.html">fuellib.utils.types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.core.html">fuellib.gcm.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.gani.html">fuellib.gcm.gani</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.boehm.html">fuellib.gcm.boehm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.nannoolal.html">fuellib.gcm.nannoolal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.unifac.html">fuellib.gcm.unifac</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.rdk.mol.html">fuellib.rdk.mol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.components.html">fuellib.correlate.components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.mixture.html">fuellib.correlate.mixture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.helpers.html">fuellib.correlate.helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.simulate.distillation.greenfield.html">fuellib.simulate.distillation.greenfield</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Contributing to FuelLib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#optional-conda-environment">Optional: Conda Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#developer-tasks">Developer Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#pre-commit-hooks">Pre-commit Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#optional-uv">Optional: uv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#working-with-units-pint">Working with Units (pint)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#updating-the-changelog">Updating the Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#contributing-guidelines">Contributing Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#building-and-viewing-documentation-locally">Building and Viewing Documentation Locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#releasing">Releasing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development.html#release-security-setup-repository-administrator">Release security setup (repository administrator)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorials.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Simulating Distillation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorials_distillation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="simulating-distillation">
+<h1>Simulating Distillation<a class="headerlink" href="#simulating-distillation" title="Link to this heading"></a></h1>
+<p>This tutorial shows how to simulate the ASTM D86 distillation test with the model of
+Greenfield et al.<a class="footnote-reference brackets" href="#footcite-greenfield-macroscopic-1998" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> (see <a class="reference internal" href="distillation.html"><span class="doc">Simulated Distillation</span></a>
+for the model). The complete script is
+<a class="reference external" href="https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/distillation.py">distillation.py</a>
+in the <code class="docutils literal notranslate"><span class="pre">tutorials</span></code> directory.</p>
+<section id="simulating-a-d86-curve">
+<h2>Simulating a D86 curve<a class="headerlink" href="#simulating-a-d86-curve" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="generated/fuellib.simulate.distillation.greenfield.distill.html#fuellib.simulate.distillation.greenfield.distill" title="fuellib.simulate.distillation.greenfield.distill"><code class="xref py py-func docutils literal notranslate"><span class="pre">distill()</span></code></a> takes a
+<a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel" title="fuellib.fuel.core.Fuel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fuel</span></code></a> and returns a
+<a class="reference internal" href="generated/fuellib.simulate.distillation.greenfield.D86Result.html#fuellib.simulate.distillation.greenfield.D86Result" title="fuellib.simulate.distillation.greenfield.D86Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">D86Result</span></code></a>. Its method
+<code class="docutils literal notranslate"><span class="pre">temperature_at</span></code> interpolates the D86 temperature at given volume fractions
+recovered.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fuellib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fuellib.simulate.distillation.greenfield</span><span class="w"> </span><span class="kn">import</span> <span class="n">D86Apparatus</span><span class="p">,</span> <span class="n">distill</span>
+
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">Fuel</span><span class="p">(</span><span class="s2">"posf10325"</span><span class="p">)</span>  <span class="c1"># Jet A-3</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">distill</span><span class="p">(</span><span class="n">fuel</span><span class="p">)</span>
+
+<span class="c1"># D86 temperature (C) at 10%, 50%, and 90% recovered</span>
+<span class="n">T10</span><span class="p">,</span> <span class="n">T50</span><span class="p">,</span> <span class="n">T90</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">temperature_at</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"degC"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"T10: </span><span class="si">{</span><span class="n">T10</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, T50: </span><span class="si">{</span><span class="n">T50</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">, T90: </span><span class="si">{</span><span class="n">T90</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt; T10: 164.4 °C, T50: 200.8 °C, T90: 242.1 °C
+</pre></div>
+</div>
+</section>
+<section id="model-variants-and-apparatus-parameters">
+<h2>Model variants and apparatus parameters<a class="headerlink" href="#model-variants-and-apparatus-parameters" title="Link to this heading"></a></h2>
+<p>The keyword arguments of <code class="docutils literal notranslate"><span class="pre">distill</span></code> switch off parts of the model, and
+<a class="reference internal" href="generated/fuellib.simulate.distillation.greenfield.D86Apparatus.html#fuellib.simulate.distillation.greenfield.D86Apparatus" title="fuellib.simulate.distillation.greenfield.D86Apparatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">D86Apparatus</span></code></a> changes the apparatus
+and procedure parameters (see the default values in <a class="reference internal" href="distillation.html"><span class="doc">Simulated Distillation</span></a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Variants of the model</span>
+<span class="n">partial</span> <span class="o">=</span> <span class="n">distill</span><span class="p">(</span><span class="n">fuel</span><span class="p">,</span> <span class="n">air_cstr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># no air-filled CSTR</span>
+<span class="n">ideal</span> <span class="o">=</span> <span class="n">distill</span><span class="p">(</span><span class="n">fuel</span><span class="p">,</span> <span class="n">ideal_solution</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ideal_vapor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Different apparatus parameters</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">distill</span><span class="p">(</span><span class="n">fuel</span><span class="p">,</span> <span class="n">apparatus</span><span class="o">=</span><span class="n">D86Apparatus</span><span class="p">(</span><span class="n">air_volume</span><span class="o">=</span><span class="n">fl</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="s2">"cm^3"</span><span class="p">)))</span>
+</pre></div>
+</div>
+</section>
+<section id="plotting-and-comparing-curves">
+<h2>Plotting and comparing curves<a class="headerlink" href="#plotting-and-comparing-curves" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">D86Result.plot</span></code> plots the D86 temperature against the volume percent recovered.
+Passing the returned axes to the next call overlays the curves, each in the next color
+of the <code class="docutils literal notranslate"><span class="pre">fl_blue_4</span></code> colormap (see <code class="xref py py-mod docutils literal notranslate"><span class="pre">fuellib.utils.color_maps</span></code>). The measured D86
+data of a fuel, if available, is returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">fuellib.utils.plotting.d86_data()</span></code>
+and plotted as symbols in the color of the curve.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+ <span class="n">label</span><span class="o">=</span><span class="s2">"Full model"</span><span class="p">,</span>
+ <span class="n">temperature_units</span><span class="o">=</span><span class="s2">"degC"</span><span class="p">,</span>
+ <span class="n">data</span><span class="o">=</span><span class="n">fl</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">d86_data</span><span class="p">(</span><span class="n">fuel</span><span class="p">),</span>
+ <span class="n">data_label</span><span class="o">=</span><span class="s2">"Data"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">partial</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"No CSTR"</span><span class="p">,</span> <span class="n">temperature_units</span><span class="o">=</span><span class="s2">"degC"</span><span class="p">)</span>
+<span class="n">ideal</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Ideal"</span><span class="p">,</span> <span class="n">temperature_units</span><span class="o">=</span><span class="s2">"degC"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+<span class="n">large_air_volume</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"100 cm$^3$ air"</span><span class="p">,</span> <span class="n">temperature_units</span><span class="o">=</span><span class="s2">"degC"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The simulated curves of several fuels can also be plotted together with their measured
+data using <code class="xref py py-func docutils literal notranslate"><span class="pre">fuellib.utils.plotting.plot_distillation()</span></code> or the <code class="docutils literal notranslate"><span class="pre">fl-simulate</span></code>
+command (see <a class="reference internal" href="tutorials_cli.html"><span class="doc">Command-Line Interface (CLI) Tools</span></a>).</p>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="_images/distillation_posf10325_variants.png"><img alt="_images/distillation_posf10325_variants.png" src="_images/distillation_posf10325_variants.png" style="width: 420pt;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Simulated distillation using Greenfield et al. <a class="footnote-reference brackets" href="#footcite-greenfield-macroscopic-1998" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> of conventional jet fuel POSF10325 (A-3) against data from the Air Force Research Laboratory<a class="footnote-reference brackets" href="#footcite-edwards-jet-2020" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. Note that the variant that omits the air-filled CSTR (<code class="docutils literal notranslate"><span class="pre">air_cstr=False</span></code>) does a better job of capturing the initial temperatures of the distillation curve. This is not always the case, and the full model is generally more accurate for other fuels.</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div class="docutils container" id="id4">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-greenfield-macroscopic-1998" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>Michael L. Greenfield, George A. Lavoie, Carol S. Smith, and Eric W. Curtis. Macroscopic Model of the D86 Fuel Volatility Procedure. In <em>SAE Technical Paper Series</em>, 982724. San Francisco, California, United States, October 1998. SAE International. URL: <a class="reference external" href="https://saemobilus.sae.org/papers/macroscopic-model-d86-fuel-volatility-procedure-982724">https://saemobilus.sae.org/papers/macroscopic-model-d86-fuel-volatility-procedure-982724</a> (visited on 2026-10-22), <a class="reference external" href="https://doi.org/10.4271/982724">doi:10.4271/982724</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-edwards-jet-2020" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>James T. Edwards. Jet Fuel Properties. Technical Report AFRL-RQ-WP-TR-2020-0017, Air Force Research Laboratory, Wright-Patterson Air Force Base, OH 45433, 2020. URL: <a class="reference external" href="https://apps.dtic.mil/sti/pdfs/AD1093317.pdf">https://apps.dtic.mil/sti/pdfs/AD1093317.pdf</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials_custom_fuels.html" class="btn btn-neutral float-left" title="Adding Custom Fuels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorials_export_pele.html" class="btn btn-neutral float-right" title="Exporting Properties for Pele" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+fuellib.fuel.mixture.Mixture
+============================
+
+.. currentmodule:: fuellib.fuel.mixture
+
+.. autoclass:: Mixture
+   :members:
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Mixture.aromatics
+      ~Mixture.dcn
+      ~Mixture.k
+      ~Mixture.lhv
+      ~Mixture.mu
+      ~Mixture.mw
+      ~Mixture.naphthalenes
+      ~Mixture.nu
+      ~Mixture.pvap
+      ~Mixture.pvap_antoine_coeffs
+      ~Mixture.rho
+      ~Mixture.sigma
+      ~Mixture.smoke_point
+      ~Mixture.t_flash
+      ~Mixture.t_freeze
+      ~Mixture.ysi
+   
+   

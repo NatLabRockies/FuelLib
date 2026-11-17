@@ -1,0 +1,6 @@
+fuellib.correlate.mixture.derived\_cetane\_number
+=================================================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: derived_cetane_number

@@ -1,0 +1,6 @@
+fuellib.correlate.components.specific\_heat\_capacity\_mass\_ruzicka
+====================================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: specific_heat_capacity_mass_ruzicka

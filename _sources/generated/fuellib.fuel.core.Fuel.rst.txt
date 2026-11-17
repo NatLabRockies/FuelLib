@@ -1,0 +1,111 @@
+fuellib.fuel.core.Fuel
+======================
+
+.. currentmodule:: fuellib.fuel.core
+
+.. autoclass:: Fuel
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Fuel.Cp_stp
+      ~Fuel.DCN
+      ~Fuel.Gf_stp
+      ~Fuel.Hf_stp
+      ~Fuel.Hv_stp
+      ~Fuel.Lv_stp
+      ~Fuel.MW
+      ~Fuel.Pc
+      ~Fuel.Tb
+      ~Fuel.Tc
+      ~Fuel.Tm
+      ~Fuel.Vc
+      ~Fuel.Vm_stp
+      ~Fuel.YSI
+      ~Fuel.Y_0
+      ~Fuel.compounds
+      ~Fuel.compoundsData
+      ~Fuel.epsilonByKB
+      ~Fuel.fam
+      ~Fuel.formulas
+      ~Fuel.fuelDataDir
+      ~Fuel.ganiDecomp
+      ~Fuel.gcData
+      ~Fuel.hc_type
+      ~Fuel.nC
+      ~Fuel.nH
+      ~Fuel.nannoolalDecomp
+      ~Fuel.num_compounds
+      ~Fuel.omega
+      ~Fuel.pelephysics_keys
+      ~Fuel.propData
+      ~Fuel.rdkit_mols
+      ~Fuel.refCompounds
+      ~Fuel.refGani
+      ~Fuel.refNannoolal
+      ~Fuel.refUnifac
+      ~Fuel.sigma
+      ~Fuel.smiles
+      ~Fuel.unifacDecomp
+      ~Fuel.useRefProperties
+      ~Fuel.name
+      ~Fuel.data_dir
+      ~Fuel.gc_data
+      ~Fuel.components_data
+      ~Fuel.prop_data
+      ~Fuel.metadata
+      ~Fuel.comps
+      ~Fuel.mix
+      ~Fuel.y0
+      ~Fuel.x0
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Fuel.Cl
+      ~Fuel.Cp
+      ~Fuel.X2Y
+      ~Fuel.Y2V
+      ~Fuel.Y2X
+      ~Fuel.density
+      ~Fuel.diffusion_coeff
+      ~Fuel.flash_point
+      ~Fuel.latent_heat_vaporization
+      ~Fuel.mass2X
+      ~Fuel.mass2Y
+      ~Fuel.mean_molecular_weight
+      ~Fuel.mixture_aromatics_content
+      ~Fuel.mixture_density
+      ~Fuel.mixture_derived_cetane_number
+      ~Fuel.mixture_dynamic_viscosity
+      ~Fuel.mixture_flash_point
+      ~Fuel.mixture_freeze_point
+      ~Fuel.mixture_heat_of_combustion
+      ~Fuel.mixture_kinematic_viscosity
+      ~Fuel.mixture_naphthalenes_content
+      ~Fuel.mixture_smoke_point
+      ~Fuel.mixture_surface_tension
+      ~Fuel.mixture_thermal_conductivity
+      ~Fuel.mixture_vapor_pressure
+      ~Fuel.mixture_vapor_pressure_antoine_coeffs
+      ~Fuel.mixture_yield_sooting_index
+      ~Fuel.molar_liquid_vol
+      ~Fuel.psat
+      ~Fuel.psat_antoine_coeffs
+      ~Fuel.surface_tension
+      ~Fuel.thermal_conductivity
+      ~Fuel.viscosity_dynamic
+      ~Fuel.viscosity_kinematic
+   
+   

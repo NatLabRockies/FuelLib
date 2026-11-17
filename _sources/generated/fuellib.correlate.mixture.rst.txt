@@ -1,0 +1,37 @@
+﻿fuellib.correlate.mixture
+=========================
+
+.. automodule:: fuellib.correlate.mixture
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      arithmetic
+      aromatics_content
+      arrhenius
+      density
+      derived_cetane_number
+      flash_point_alibakhshi
+      flash_point_alqaheem
+      freeze_point_boehm
+      geometric
+      heat_of_combustion
+      kendall_monroe
+      mean_molecular_weight
+      naphthalenes_content
+      smoke_point
+      surface_tension
+      thermal_conductivity_latini
+      vapor_pressure
+      vapor_pressure_antoine_coeffs
+      viscosity_dynamic_dutt
+      viscosity_dynamic_nannoolal
+      viscosity_kinematic_dutt
+      viscosity_kinematic_nannoolal
+      yield_sooting_index
+   

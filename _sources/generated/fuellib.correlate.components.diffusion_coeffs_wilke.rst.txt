@@ -1,0 +1,6 @@
+fuellib.correlate.components.diffusion\_coeffs\_wilke
+=====================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: diffusion_coeffs_wilke

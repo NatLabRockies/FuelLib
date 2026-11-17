@@ -1,0 +1,6 @@
+fuellib.correlate.mixture.kendall\_monroe
+=========================================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: kendall_monroe

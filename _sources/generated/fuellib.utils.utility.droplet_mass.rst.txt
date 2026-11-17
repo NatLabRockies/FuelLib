@@ -1,0 +1,6 @@
+fuellib.utils.utility.droplet\_mass
+===================================
+
+.. currentmodule:: fuellib.utils.utility
+
+.. autofunction:: droplet_mass

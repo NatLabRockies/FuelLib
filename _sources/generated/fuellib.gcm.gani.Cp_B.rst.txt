@@ -1,0 +1,6 @@
+fuellib.gcm.gani.Cp\_B
+======================
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autofunction:: Cp_B

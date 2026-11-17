@@ -1,0 +1,36 @@
+fuellib.simulate.distillation.greenfield.D86Result
+==================================================
+
+.. currentmodule:: fuellib.simulate.distillation.greenfield
+
+.. autoclass:: D86Result
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~D86Result.time
+      ~D86Result.volume_recovered
+      ~D86Result.T_vapor
+      ~D86Result.T_liquid
+      ~D86Result.T_condenser
+      ~D86Result.heat_input
+      ~D86Result.liquid_mole_fractions
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~D86Result.plot
+      ~D86Result.temperature_at
+   
+   

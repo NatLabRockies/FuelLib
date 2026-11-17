@@ -1,0 +1,27 @@
+fuellib.gcm.nannoolal.NannoolalDecomposer
+=========================================
+
+.. currentmodule:: fuellib.gcm.nannoolal
+
+.. autoclass:: NannoolalDecomposer
+   :members:
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~NannoolalDecomposer.context
+      ~NannoolalDecomposer.first_order_counts
+      ~NannoolalDecomposer.parse_smarts
+      ~NannoolalDecomposer.parse_smiles
+      ~NannoolalDecomposer.second_order_counts
+   
+   

@@ -1,0 +1,6 @@
+fuellib.correlate.mixture.viscosity\_kinematic\_nannoolal
+=========================================================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: viscosity_kinematic_nannoolal

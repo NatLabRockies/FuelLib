@@ -1,0 +1,34 @@
+﻿fuellib.correlate.components
+============================
+
+.. automodule:: fuellib.correlate.components
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      density
+      diffusion_coeffs_wilke
+      enthalpy_vaporization_mass
+      enthalpy_vaporization_molar
+      flash_point_alibakhshi
+      flash_point_alqaheem
+      lower_heating_value
+      molar_liquid_volume
+      specific_heat_capacity_mass
+      specific_heat_capacity_mass_ruzicka
+      specific_heat_capacity_molar
+      specific_heat_capacity_molar_ruzicka
+      surface_tension
+      thermal_conductivity_latini
+      vapor_pressure
+      vapor_pressure_antoine_coeffs
+      viscosity_dynamic_dutt
+      viscosity_dynamic_nannoolal
+      viscosity_kinematic_dutt
+      viscosity_kinematic_nannoolal
+   

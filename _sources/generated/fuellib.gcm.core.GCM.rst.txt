@@ -1,0 +1,62 @@
+fuellib.gcm.core.GCM
+====================
+
+.. currentmodule:: fuellib.gcm.core
+
+.. autoclass:: GCM
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GCM.model_computed_fields
+      ~GCM.model_config
+      ~GCM.model_extra
+      ~GCM.model_fields
+      ~GCM.model_fields_set
+      ~GCM.name
+      ~GCM.property_fns
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~GCM.construct
+      ~GCM.copy
+      ~GCM.dict
+      ~GCM.from_orm
+      ~GCM.get_property
+      ~GCM.json
+      ~GCM.list_property_fns
+      ~GCM.model_construct
+      ~GCM.model_copy
+      ~GCM.model_dump
+      ~GCM.model_dump_json
+      ~GCM.model_json_schema
+      ~GCM.model_parametrized_name
+      ~GCM.model_post_init
+      ~GCM.model_rebuild
+      ~GCM.model_validate
+      ~GCM.model_validate_json
+      ~GCM.model_validate_strings
+      ~GCM.parse_file
+      ~GCM.parse_obj
+      ~GCM.parse_raw
+      ~GCM.predict
+      ~GCM.predict_all
+      ~GCM.register_property
+      ~GCM.schema
+      ~GCM.schema_json
+      ~GCM.update_forward_refs
+      ~GCM.validate
+   
+   

@@ -1,0 +1,27 @@
+fuellib.gcm.gani.GaniDecomposer
+===============================
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autoclass:: GaniDecomposer
+   :members:
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~GaniDecomposer.context
+      ~GaniDecomposer.first_order_counts
+      ~GaniDecomposer.parse_smarts
+      ~GaniDecomposer.parse_smiles
+      ~GaniDecomposer.second_order_counts
+   
+   

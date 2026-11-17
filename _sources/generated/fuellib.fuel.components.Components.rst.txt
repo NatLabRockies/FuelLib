@@ -1,0 +1,68 @@
+fuellib.fuel.components.Components
+==================================
+
+.. currentmodule:: fuellib.fuel.components
+
+.. autoclass:: Components
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Components.dcn
+      ~Components.fam
+      ~Components.formulas
+      ~Components.gf_stp
+      ~Components.hc_type
+      ~Components.hf_stp
+      ~Components.hv_stp
+      ~Components.lj_eps_by_kb
+      ~Components.lj_sigma
+      ~Components.mw
+      ~Components.names
+      ~Components.num_c
+      ~Components.num_h
+      ~Components.omega
+      ~Components.pc
+      ~Components.pelephysics_keys
+      ~Components.rdkit_mols
+      ~Components.smiles
+      ~Components.tb
+      ~Components.tc
+      ~Components.tm
+      ~Components.vc
+      ~Components.vm_stp
+      ~Components.ysi
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Components.cp
+      ~Components.d
+      ~Components.hv
+      ~Components.k
+      ~Components.mass2x
+      ~Components.mass2y
+      ~Components.mu
+      ~Components.nu
+      ~Components.pvap
+      ~Components.pvap_antoine_coeffs
+      ~Components.rho
+      ~Components.sigma
+      ~Components.t_flash
+      ~Components.vm
+      ~Components.x2y
+      ~Components.y2v
+      ~Components.y2x
+   
+   

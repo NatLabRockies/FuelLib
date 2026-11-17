@@ -1,0 +1,6 @@
+fuellib.correlate.components.enthalpy\_vaporization\_mass
+=========================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: enthalpy_vaporization_mass

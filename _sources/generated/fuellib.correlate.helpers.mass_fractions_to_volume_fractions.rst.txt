@@ -1,0 +1,6 @@
+fuellib.correlate.helpers.mass\_fractions\_to\_volume\_fractions
+================================================================
+
+.. currentmodule:: fuellib.correlate.helpers
+
+.. autofunction:: mass_fractions_to_volume_fractions

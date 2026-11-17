@@ -1,0 +1,6 @@
+fuellib.correlate.components.specific\_heat\_capacity\_molar\_ruzicka
+=====================================================================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: specific_heat_capacity_molar_ruzicka

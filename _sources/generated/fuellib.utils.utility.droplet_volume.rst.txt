@@ -1,0 +1,6 @@
+fuellib.utils.utility.droplet\_volume
+=====================================
+
+.. currentmodule:: fuellib.utils.utility
+
+.. autofunction:: droplet_volume

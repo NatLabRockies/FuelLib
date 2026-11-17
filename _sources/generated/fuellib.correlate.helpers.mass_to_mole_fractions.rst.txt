@@ -1,0 +1,6 @@
+fuellib.correlate.helpers.mass\_to\_mole\_fractions
+===================================================
+
+.. currentmodule:: fuellib.correlate.helpers
+
+.. autofunction:: mass_to_mole_fractions

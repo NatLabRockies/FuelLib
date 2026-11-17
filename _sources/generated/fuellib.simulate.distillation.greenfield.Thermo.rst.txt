@@ -1,0 +1,34 @@
+fuellib.simulate.distillation.greenfield.Thermo
+===============================================
+
+.. currentmodule:: fuellib.simulate.distillation.greenfield
+
+.. autoclass:: Thermo
+   :members:
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Thermo.Cp_l
+      ~Thermo.Cp_v
+      ~Thermo.bubble_point
+      ~Thermo.dH_vap
+      ~Thermo.flash
+      ~Thermo.ln_K
+      ~Thermo.ln_P_sat
+      ~Thermo.ln_gamma
+      ~Thermo.ln_phi
+      ~Thermo.mixture_Cp_l
+      ~Thermo.mixture_Cp_v
+      ~Thermo.mixture_dH_vap
+   
+   

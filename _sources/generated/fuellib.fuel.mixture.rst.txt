@@ -1,0 +1,14 @@
+﻿fuellib.fuel.mixture
+====================
+
+.. automodule:: fuellib.fuel.mixture
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Mixture
+   
