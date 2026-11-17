@@ -93,14 +93,14 @@ def test_names_failing_molecule_in_multi_input_error(
     with pytest.raises(SystemExit) as error:
         decompose_smiles()
 
-    assert error.value.code == 2
+    assert error.value.code == 1
     captured = capsys.readouterr()
     assert captured.out == ""
-    assert "1-heptanol" in captured.err
-    assert "CCCCCCCO" in captured.err
-    assert "gani" in captured.err
-    assert "first-order groups matched 7 of 8 atoms" in captured.err
-    assert "Traceback" not in captured.err
+    assert captured.err.strip() == (
+        "Could not decompose '1-heptanol' with gani: "
+        "Gani decomposition failed for SMILES 'CCCCCCCO': "
+        "first-order groups matched 7 of 8 atoms."
+    )
 
 
 def test_rejects_missing_csv_smiles_with_molecule_context(
@@ -120,14 +120,13 @@ def test_rejects_missing_csv_smiles_with_molecule_context(
     with pytest.raises(SystemExit) as error:
         decompose_smiles()
 
-    assert error.value.code == 2
+    assert error.value.code == 1
     captured = capsys.readouterr()
     assert captured.out == ""
-    assert "missing compound" in captured.err
-    assert "gani" in captured.err
-    assert "SMILES must be a non-empty string" in captured.err
-    assert "got nan" not in captured.err
-    assert "Traceback" not in captured.err
+    assert captured.err.strip() == (
+        "Could not decompose 'missing compound' with gani: "
+        "SMILES must be a non-empty string."
+    )
 
 
 @pytest.mark.parametrize(

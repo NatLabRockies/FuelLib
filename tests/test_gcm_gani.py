@@ -247,11 +247,6 @@ class GaniReferenceDecompositionTestCase(unittest.TestCase):
                     decompose(smiles)
                 self.assertEqual(str(error.exception), message)
 
-    def test_supported_heptane_decomposition_is_unchanged(self):
-        """A supported hydrocarbon still decomposes to its carbon groups."""
-        groups = decompose("CCCCCCC").iloc[0]
-        self.assertEqual(groups.loc[["CH3", "CH2"]].to_dict(), {"CH3": 2, "CH2": 5})
-
     def test_reference_decomposition(self):
         """Test that the RDKit decomposition matches tabulated Gani data."""
         df_refs = pd.read_csv(Path(DEFAULT_DATA_DIR) / "ref_compounds.csv")

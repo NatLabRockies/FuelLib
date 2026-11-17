@@ -1,6 +1,7 @@
 """Command-line SMILES decomposition for FuelLib group-contribution methods."""
 
 import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -83,14 +84,20 @@ def decompose_smiles() -> None:
     decomposed = []
     for label, smiles in zip(labels, smiles_list, strict=True):
         if not isinstance(smiles, str) or not smiles.strip():
-            parser.error(
+            print(
                 f"Could not decompose {label!r} with {args.method}: "
-                "SMILES must be a non-empty string."
+                "SMILES must be a non-empty string.",
+                file=sys.stderr,
             )
+            sys.exit(1)
         try:
             decomposed.append(decompose(smiles))
         except (KeyError, ValueError) as error:
-            parser.error(f"Could not decompose {label!r} with {args.method}: {error}")
+            print(
+                f"Could not decompose {label!r} with {args.method}: {error}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
     df = pd.concat(decomposed)
     df.index = pd.Index(labels, name="Reference Compound")
 
