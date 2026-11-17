@@ -8,7 +8,7 @@ import pandas as pd
 from rdkit import Chem
 
 from ..utils import Units, types
-from .core import GCMRegistry
+from .core import Decomposer, GCMRegistry
 
 if TYPE_CHECKING:
     from ..fuel import Fuel
@@ -105,88 +105,47 @@ order2_groups = [
 ]
 
 
-def decompose(smiles: str) -> pd.DataFrame:
-    """Decompose a molecule into first and second order groups based on SMARTS patterns.
+class GaniDecomposer(Decomposer):
+    """Decomposer for first and second order Gani-Constantinou groups."""
 
-    Args:
-        smiles: The SMILES string of the molecule to decompose.
+    def second_order_counts(self, mol: Chem.Mol, smiles: str) -> dict[str, int]:
+        """Count second order groups from SMARTS patterns and non-aromatic rings.
 
-    Returns:
-        A single-row DataFrame indexed by the SMILES string, with a column for every
-        group in the GCM table containing the number of occurrences of that group.
+        Args:
+            mol: The parsed molecule.
+            smiles: The SMILES string being decomposed, used in error messages.
 
-    Raises:
-        ValueError: If the SMILES string cannot be parsed or if not all atoms are
-            matched to first order groups.
-        KeyError: If a matched group is not a column of the GCM table.
-    """
-    context = f"Gani decomposition failed for SMILES {smiles!r}"
-    mol = Chem.MolFromSmiles(smiles)
-    if not mol:
-        raise ValueError(f"{context}: RDKit could not parse the input.")
+        Returns:
+            A mapping of second order group name to its number of occurrences.
+        """
+        matched: set[int] = set()
+        counts: dict[str, int] = {}
 
-    atom_count = mol.GetNumAtoms()
-    matched = set()
-    group1_matches = dict()
+        for group, smarts in order2_groups:
+            query = self.parse_smarts(smiles, smarts)
+            for match in mol.GetSubstructMatches(query):
+                if matched.intersection(match):
+                    continue
+                matched.update(match)
+                counts[group] = counts.get(group, 0) + 1
 
-    for group, smarts in order1_groups:
-        query = Chem.MolFromSmarts(smarts)
-        if not query:
-            msg = f"{context}: invalid SMARTS pattern {smarts!r}."
-            raise ValueError(msg)
-
-        matches = mol.GetSubstructMatches(query)
-        for match in matches:
-            if any(atom_id in matched for atom_id in match):
-                continue
-
-            matched.update(match)
-            group1_matches.setdefault(group, []).append(set(match))
-
-    if len(matched) != atom_count:
-        cause = f"first-order groups matched {len(matched)} of {atom_count} atoms."
-        raise ValueError(f"{context}: {cause}")
-
-    matched = set()
-    group2_matches = dict()
-
-    for group, smarts in order2_groups:
-        query = Chem.MolFromSmarts(smarts)
-        if not query:
-            msg = f"{context}: invalid SMARTS pattern {smarts!r}."
-            raise ValueError(msg)
-
-        matches = mol.GetSubstructMatches(query)
-        for match in matches:
-            if any(atom_id in matched for atom_id in match):
-                continue
-
-            matched.update(match)
-            group2_matches.setdefault(group, []).append(set(match))
-
-    # Count each non-aromatic ring once (rings may share atoms in fused systems)
-    ring_info = mol.GetRingInfo()
-    for atom_ring, bond_ring in zip(
-        ring_info.AtomRings(), ring_info.BondRings(), strict=True
-    ):
-        if len(atom_ring) > 7 or all(
-            mol.GetBondWithIdx(b).GetIsAromatic() for b in bond_ring
+        # Count each non-aromatic ring once (rings may share atoms in fused systems)
+        ring_info = mol.GetRingInfo()
+        for atom_ring, bond_ring in zip(
+            ring_info.AtomRings(), ring_info.BondRings(), strict=True
         ):
-            continue
-        group = f"{len(atom_ring)} membered ring"
-        group2_matches.setdefault(group, []).append(set(atom_ring))
+            if len(atom_ring) > 7 or all(
+                mol.GetBondWithIdx(b).GetIsAromatic() for b in bond_ring
+            ):
+                continue
+            group = f"{len(atom_ring)} membered ring"
+            counts[group] = counts.get(group, 0) + 1
 
-    invalid = (group1_matches.keys() | group2_matches.keys()) - set(TABLE.columns)
-    if invalid:
-        msg = f"{context}: groups not found in Gani table columns: {sorted(invalid)}"
-        raise KeyError(msg)
+        return counts
 
-    df = pd.DataFrame(0, index=[smiles], columns=TABLE.columns)
-    for group_matches in (group1_matches, group2_matches):
-        for group, matches in group_matches.items():
-            df.loc[smiles, group] += len(matches)
 
-    return df
+# Decomposes a SMILES string into a single-row DataFrame of Gani group counts
+decompose = GaniDecomposer("Gani", TABLE.columns, order1_groups)
 
 
 @gani_gcm.register_property

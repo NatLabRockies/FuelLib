@@ -1,8 +1,12 @@
 """Core Group Contribution Method registry."""
 
+from collections import Counter
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 
+import pandas as pd
 from pydantic import BaseModel
+from rdkit import Chem
 
 from ..utils import types
 
@@ -10,7 +14,7 @@ if TYPE_CHECKING:
     from ..fuel import Fuel
 
 
-__all__ = ["GCMRegistry"]
+__all__ = ["Decomposer", "GCMRegistry"]
 
 
 @runtime_checkable
@@ -162,3 +166,162 @@ class GCMRegistry:
             f"{cls.list_methods()}"
         )
         raise ValueError(msg)
+
+
+class Decomposer:
+    """Decompose molecules into groups for a Group Contribution Method.
+
+    Subclasses with second order groups should override `second_order_counts`.
+    """
+
+    def __init__(
+        self,
+        method: str,
+        table_groups: pd.Index,
+        first_order_groups: Sequence[tuple[str, str]],
+    ) -> None:
+        """Initialize the decomposer with a GCM's group data.
+
+        Args:
+            method: Display name of the GCM used in error messages.
+            table_groups: Group names that are columns of the GCM parameter table.
+            first_order_groups: ``(group name, SMARTS)`` pairs ordered by priority.
+        """
+        self.method = method
+        self.table_groups = table_groups
+        self.first_order_groups = first_order_groups
+
+    def __call__(self, smiles: str) -> pd.DataFrame:
+        """Decompose a molecule into groups.
+
+        Args:
+            smiles: The SMILES string of the molecule to decompose.
+
+        Returns:
+            A single-row DataFrame indexed by the SMILES string, with a column for every
+            group in the GCM table containing the number of occurrences of that group.
+
+        Raises:
+            KeyError: If a matched group is not a column of the GCM table.
+        """
+        mol = self.parse_smiles(smiles)
+
+        counts = Counter(self.first_order_counts(mol, smiles))
+        counts.update(self.second_order_counts(mol, smiles))
+
+        invalid = set(counts) - set(self.table_groups)
+        if invalid:
+            msg = (
+                f"{self.context(smiles)}: groups not found in {self.method} table: "
+                f"{sorted(invalid)}"
+            )
+            raise KeyError(msg)
+
+        df = pd.DataFrame(0, index=[smiles], columns=self.table_groups)
+        for group, count in counts.items():
+            df.loc[smiles, group] += count
+        return df
+
+    def context(self, smiles: str) -> str:
+        """Build the shared prefix of every decomposition error message.
+
+        Args:
+            smiles: The SMILES string being decomposed.
+
+        Returns:
+            The message prefix naming the method and SMILES string.
+        """
+        return f"{self.method} decomposition failed for SMILES {smiles!r}"
+
+    def parse_smiles(self, smiles: str) -> Chem.Mol:
+        """Validate and parse a SMILES string.
+
+        Non-string values, such as the NaN pandas produces for a blank CSV cell, are
+        rejected, as are empty strings (RDKit would parse those as an empty molecule).
+
+        Args:
+            smiles: The SMILES string to parse.
+
+        Returns:
+            The parsed RDKit molecule.
+
+        Raises:
+            ValueError: If the SMILES is not a non-empty string or cannot be parsed.
+        """
+        if not isinstance(smiles, str) or not smiles.strip():
+            msg = (
+                f"{self.method} decomposition failed: "
+                "SMILES must be a non-empty string."
+            )
+            raise ValueError(msg)
+        mol = Chem.MolFromSmiles(smiles)
+        if not mol:
+            msg = f"{self.context(smiles)}: RDKit could not parse the input."
+            raise ValueError(msg)
+        return mol
+
+    def parse_smarts(self, smiles: str, smarts: str) -> Chem.Mol:
+        """Parse a SMARTS pattern used to decompose a molecule.
+
+        Args:
+            smiles: The SMILES string being decomposed, used in error messages.
+            smarts: The SMARTS pattern to parse.
+
+        Returns:
+            The RDKit query molecule.
+
+        Raises:
+            ValueError: If the SMARTS pattern is invalid.
+        """
+        query = Chem.MolFromSmarts(smarts)
+        if not query:
+            msg = f"{self.context(smiles)}: invalid SMARTS pattern {smarts!r}."
+            raise ValueError(msg)
+        return query
+
+    def first_order_counts(self, mol: Chem.Mol, smiles: str) -> dict[str, int]:
+        """Count first order groups, requiring that they cover every atom.
+
+        Args:
+            mol: The parsed molecule.
+            smiles: The SMILES string being decomposed, used in error messages.
+
+        Returns:
+            A mapping of first order group name to its number of occurrences.
+
+        Raises:
+            ValueError: If a SMARTS pattern is invalid or any atom is not matched to a
+                first order group.
+        """
+        matched: set[int] = set()
+        counts: dict[str, int] = {}
+        for group, smarts in self.first_order_groups:
+            query = self.parse_smarts(smiles, smarts)
+            for match in mol.GetSubstructMatches(query):
+                if matched.intersection(match):
+                    continue
+                matched.update(match)
+                counts[group] = counts.get(group, 0) + 1
+
+        atom_count = mol.GetNumAtoms()
+        if len(matched) != atom_count:
+            msg = (
+                f"{self.context(smiles)}: first-order groups matched "
+                f"{len(matched)} of {atom_count} atoms."
+            )
+            raise ValueError(msg)
+        return counts
+
+    def second_order_counts(self, mol: Chem.Mol, smiles: str) -> dict[str, int]:
+        """Count second order groups.
+
+        Override in GCMs that define second order groups. The default has none.
+
+        Args:
+            mol: The parsed molecule.
+            smiles: The SMILES string being decomposed, used in error messages.
+
+        Returns:
+            A mapping of second order group name to its number of occurrences.
+        """
+        return {}

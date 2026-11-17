@@ -177,14 +177,14 @@ def test_decompose(smiles: str, expected: dict[str, int]):
 @pytest.mark.parametrize("smiles", ["not-a-smiles", "C1CC"])
 def test_decompose_invalid_smiles(smiles: str):
     """Unparsable SMILES should raise a ValueError."""
-    with pytest.raises(ValueError, match="Error parsing SMILES"):
+    with pytest.raises(ValueError, match="RDKit could not parse"):
         decompose(smiles)
 
 
 @pytest.mark.parametrize("smiles", ["CCO", "CCN", "CCCl"])
 def test_decompose_unmatched_atoms(smiles: str):
     """Heteroatoms are not covered by the hydrocarbon patterns."""
-    with pytest.raises(ValueError, match="Not all atoms were matched"):
+    with pytest.raises(ValueError, match="first-order groups matched"):
         decompose(smiles)
 
 

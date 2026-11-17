@@ -83,20 +83,12 @@ def decompose_smiles() -> None:
 
     decomposed = []
     for label, smiles in zip(labels, smiles_list, strict=True):
-        if not isinstance(smiles, str) or not smiles.strip():
-            print(
-                f"Could not decompose {label!r} with {args.method}: "
-                "SMILES must be a non-empty string.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
         try:
             decomposed.append(decompose(smiles))
         except (KeyError, ValueError) as error:
-            print(
-                f"Could not decompose {label!r} with {args.method}: {error}",
-                file=sys.stderr,
-            )
+            # decompose() reports the method, SMILES, and cause; add only the label.
+            prefix = f"Error decomposing {label!r}: " if label != smiles else "Error: "
+            print(f"{prefix}{error.args[0]}", file=sys.stderr)
             sys.exit(1)
     df = pd.concat(decomposed)
     df.index = pd.Index(labels, name="Reference Compound")

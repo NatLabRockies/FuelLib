@@ -97,8 +97,32 @@ def test_names_failing_molecule_in_multi_input_error(
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err.strip() == (
-        "Could not decompose '1-heptanol' with gani: "
+        "Error decomposing '1-heptanol': "
         "Gani decomposition failed for SMILES 'CCCCCCCO': "
+        "first-order groups matched 7 of 8 atoms."
+    )
+
+
+@pytest.mark.parametrize(
+    ("method", "prefix"),
+    [("gani", "Gani"), ("nannoolal", "Nannoolal"), ("unifac", "UNIFAC")],
+)
+def test_unnamed_failure_does_not_repeat_the_smiles(
+    monkeypatch, capsys, method, prefix
+):
+    """Without --name the label equals the SMILES, so no label prefix is added."""
+    monkeypatch.setattr(
+        sys, "argv", ["fl-decomp-smiles", "-s", "CCCCCCCO", "-m", method]
+    )
+
+    with pytest.raises(SystemExit) as error:
+        decompose_smiles()
+
+    assert error.value.code == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err.strip() == (
+        f"Error: {prefix} decomposition failed for SMILES 'CCCCCCCO': "
         "first-order groups matched 7 of 8 atoms."
     )
 
@@ -124,8 +148,8 @@ def test_rejects_missing_csv_smiles_with_molecule_context(
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err.strip() == (
-        "Could not decompose 'missing compound' with gani: "
-        "SMILES must be a non-empty string."
+        "Error decomposing 'missing compound': "
+        "Gani decomposition failed: SMILES must be a non-empty string."
     )
 
 
