@@ -9,7 +9,7 @@ import pandas as pd
 from rdkit import Chem
 
 from ..utils import Units, types
-from .core import GCMRegistry
+from .core import Decomposer, GCMRegistry
 
 if TYPE_CHECKING:
     from ..fuel import Fuel
@@ -122,109 +122,71 @@ order2_groups = [
 PAIR_GROUPS = {1: "Ortho-pair(s)", 2: "Meta-pair(s)", 3: "Para-pair(s)"}
 
 
-def decompose(smiles: str) -> pd.DataFrame:
-    """Decompose a molecule into first and second order groups based on SMARTS patterns.
+class NannoolalDecomposer(Decomposer):
+    """Decomposer for first and second order Nannoolal groups."""
 
-    Args:
-        smiles: The SMILES string of the molecule to decompose.
+    def second_order_counts(self, mol: Chem.Mol, smiles: str) -> dict[str, int]:
+        """Count second order groups, hydrogen counts, rings, and aromatic pairs.
 
-    Returns:
-        A single-row DataFrame indexed by the SMILES string, with a column for every
-        group in the GCM table containing the number of occurrences of that group.
+        Args:
+            mol: The parsed molecule.
+            smiles: The SMILES string being decomposed, used in error messages.
 
-    Raises:
-        ValueError: If the SMILES string cannot be parsed or if not all atoms are
-            matched to first order groups.
-        KeyError: If a matched group is not a column of the GCM table.
-    """
-    mol = Chem.MolFromSmiles(smiles)
-    if not mol:
-        raise ValueError(f"Error parsing SMILES: {smiles}")
+        Returns:
+            A mapping of second order group name to its number of occurrences.
+        """
+        counts: dict[str, int] = {}
 
-    atom_count = mol.GetNumAtoms()
-    matched = set()
-    group1_matches = dict()
+        for group, smarts in order2_groups:
+            query = self.parse_smarts(smiles, smarts)
+            if n_matches := len(mol.GetSubstructMatches(query)):
+                counts[group] = n_matches
 
-    for _, group, smarts in sorted(order1_groups):
-        query = Chem.MolFromSmarts(smarts)
-        if not query:
-            msg = f"Error parsing SMARTS pattern: {smarts}"
-            raise ValueError(msg)
+        n_hydrogens = sum(atom.GetTotalNumHs() for atom in mol.GetAtoms())
+        if n_hydrogens == 0:
+            counts["No hydrogen"] = 1
+        elif n_hydrogens == 1:
+            counts["One hydrogen"] = 1
 
-        matches = mol.GetSubstructMatches(query)
-        for match in matches:
-            if any(atom_id in matched for atom_id in match):
-                continue
-
-            matched.update(match)
-            group1_matches.setdefault(group, []).append(set(match))
-
-    if len(matched) != atom_count:
-        msg = (
-            "Not all atoms were matched to first order groups."
-            f"Matched {len(matched)} out of {atom_count} atoms."
-        )
-        raise ValueError(msg)
-
-    group2_counts: dict[str, int] = dict()
-
-    for group, smarts in order2_groups:
-        query = Chem.MolFromSmarts(smarts)
-        if not query:
-            msg = f"Error parsing SMARTS pattern: {smarts}"
-            raise ValueError(msg)
-
-        if n_matches := len(mol.GetSubstructMatches(query)):
-            group2_counts[group] = n_matches
-
-    n_hydrogens = sum(atom.GetTotalNumHs() for atom in mol.GetAtoms())
-    if n_hydrogens == 0:
-        group2_counts["No hydrogen"] = 1
-    elif n_hydrogens == 1:
-        group2_counts["One hydrogen"] = 1
-
-    # Count each non-aromatic ring once (rings may share atoms in fused systems)
-    ring_info = mol.GetRingInfo()
-    for atom_ring, bond_ring in zip(
-        ring_info.AtomRings(), ring_info.BondRings(), strict=True
-    ):
-        if all(mol.GetBondWithIdx(b).GetIsAromatic() for b in bond_ring):
-            continue
-        if len(atom_ring) in (3, 4):
-            group2_counts["3/4 ring"] = group2_counts.get("3/4 ring", 0) + 1
-        elif len(atom_ring) == 5:
-            group2_counts["5 ring"] = group2_counts.get("5 ring", 0) + 1
-
-    # Substituent pairs on aromatic six-membered rings (substituents are attached
-    # via non-ring bonds). Counted once, and only if a single pair type exists.
-    pair_groups = set()
-    for atom_ring in ring_info.AtomRings():
-        if len(atom_ring) != 6 or not all(
-            mol.GetAtomWithIdx(i).GetIsAromatic() for i in atom_ring
+        # Count each non-aromatic ring once (rings may share atoms in fused systems)
+        ring_info = mol.GetRingInfo()
+        for atom_ring, bond_ring in zip(
+            ring_info.AtomRings(), ring_info.BondRings(), strict=True
         ):
-            continue
-        substituted = [
-            pos
-            for pos, atom_id in enumerate(atom_ring)
-            if any(not b.IsInRing() for b in mol.GetAtomWithIdx(atom_id).GetBonds())
-        ]
-        for pos_i, pos_j in combinations(substituted, 2):
-            pair_groups.add(PAIR_GROUPS[min(pos_j - pos_i, 6 - (pos_j - pos_i))])
-    if len(pair_groups) == 1:
-        group2_counts[pair_groups.pop()] = 1
+            if all(mol.GetBondWithIdx(b).GetIsAromatic() for b in bond_ring):
+                continue
+            if len(atom_ring) in (3, 4):
+                counts["3/4 ring"] = counts.get("3/4 ring", 0) + 1
+            elif len(atom_ring) == 5:
+                counts["5 ring"] = counts.get("5 ring", 0) + 1
 
-    invalid = (group1_matches.keys() | group2_counts.keys()) - set(TABLE.index)
-    if invalid:
-        msg = f"Groups not found in GCM table: {sorted(invalid)}"
-        raise KeyError(msg)
+        # Substituent pairs on aromatic six-membered rings (substituents are attached
+        # via non-ring bonds). Counted once, and only if a single pair type exists.
+        pair_groups = set()
+        for atom_ring in ring_info.AtomRings():
+            if len(atom_ring) != 6 or not all(
+                mol.GetAtomWithIdx(i).GetIsAromatic() for i in atom_ring
+            ):
+                continue
+            substituted = [
+                pos
+                for pos, atom_id in enumerate(atom_ring)
+                if any(not b.IsInRing() for b in mol.GetAtomWithIdx(atom_id).GetBonds())
+            ]
+            for pos_i, pos_j in combinations(substituted, 2):
+                pair_groups.add(PAIR_GROUPS[min(pos_j - pos_i, 6 - (pos_j - pos_i))])
+        if len(pair_groups) == 1:
+            counts[pair_groups.pop()] = 1
 
-    df = pd.DataFrame(0, index=[smiles], columns=TABLE.index)
-    for group, matches in group1_matches.items():
-        df.loc[smiles, group] += len(matches)
-    for group, count in group2_counts.items():
-        df.loc[smiles, group] += count
+        return counts
 
-    return df
+
+# Decomposes a SMILES string into a single-row DataFrame of Nannoolal group counts
+decompose = NannoolalDecomposer(
+    "Nannoolal",
+    TABLE.index,
+    [(group, smarts) for _, group, smarts in sorted(order1_groups)],
+)
 
 
 @nannoolal_gcm.register_property

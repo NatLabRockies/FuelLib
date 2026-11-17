@@ -64,6 +64,95 @@ def test_nannoolal_method(monkeypatch, capsys):
     assert lines[-1].split() == ["CCCCCC", "2", "4"]
 
 
+@pytest.mark.parametrize("source", ["arguments", "csv"])
+def test_names_failing_molecule_in_multi_input_error(
+    monkeypatch, capsys, tmp_path, source
+):
+    """A failed row identifies its name, SMILES, method, and cause without a traceback."""
+    if source == "arguments":
+        arguments = [
+            "fl-decomp-smiles",
+            "--smiles",
+            "CCCCCCC",
+            "CCCCCCCO",
+            "--name",
+            "n-heptane",
+            "1-heptanol",
+            "--method",
+            "gani",
+        ]
+    else:
+        input_path = tmp_path / "compounds.csv"
+        input_path.write_text(
+            "Reference Compound,SMILES\nn-heptane,CCCCCCC\n1-heptanol,CCCCCCCO\n"
+        )
+        arguments = ["fl-decomp-smiles", "--input", str(input_path), "--method", "gani"]
+
+    monkeypatch.setattr(sys, "argv", arguments)
+
+    with pytest.raises(SystemExit) as error:
+        decompose_smiles()
+
+    assert error.value.code == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err.strip() == (
+        "Error decomposing '1-heptanol': "
+        "Gani decomposition failed for SMILES 'CCCCCCCO': "
+        "first-order groups matched 7 of 8 atoms."
+    )
+
+
+@pytest.mark.parametrize(
+    ("method", "prefix"),
+    [("gani", "Gani"), ("nannoolal", "Nannoolal"), ("unifac", "UNIFAC")],
+)
+def test_unnamed_failure_does_not_repeat_the_smiles(
+    monkeypatch, capsys, method, prefix
+):
+    """Without --name the label equals the SMILES, so no label prefix is added."""
+    monkeypatch.setattr(
+        sys, "argv", ["fl-decomp-smiles", "-s", "CCCCCCCO", "-m", method]
+    )
+
+    with pytest.raises(SystemExit) as error:
+        decompose_smiles()
+
+    assert error.value.code == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err.strip() == (
+        f"Error: {prefix} decomposition failed for SMILES 'CCCCCCCO': "
+        "first-order groups matched 7 of 8 atoms."
+    )
+
+
+def test_rejects_missing_csv_smiles_with_molecule_context(
+    monkeypatch, capsys, tmp_path
+):
+    """A blank CSV SMILES cell reports its row name without exposing a traceback."""
+    input_path = tmp_path / "compounds.csv"
+    input_path.write_text(
+        "Reference Compound,SMILES\nn-heptane,CCCCCCC\nmissing compound,\n"
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["fl-decomp-smiles", "--input", str(input_path), "--method", "gani"],
+    )
+
+    with pytest.raises(SystemExit) as error:
+        decompose_smiles()
+
+    assert error.value.code == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err.strip() == (
+        "Error decomposing 'missing compound': "
+        "Gani decomposition failed: SMILES must be a non-empty string."
+    )
+
+
 @pytest.mark.parametrize(
     "arguments",
     [

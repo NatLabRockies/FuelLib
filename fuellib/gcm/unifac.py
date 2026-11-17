@@ -5,10 +5,9 @@ from typing import TYPE_CHECKING, Annotated
 
 import numpy as np
 import pandas as pd
-from rdkit import Chem
 
 from ..utils import Units, types
-from .core import GCMRegistry
+from .core import Decomposer, GCMRegistry
 
 if TYPE_CHECKING:
     from ..fuel import Fuel
@@ -96,60 +95,8 @@ order1_groups = [
 ]
 
 
-def decompose(smiles: str) -> pd.DataFrame:
-    """Decompose a molecule into first order groups based on SMARTS patterns.
-
-    Args:
-        smiles: The SMILES string of the molecule to decompose.
-
-    Returns:
-        A single-row DataFrame indexed by the SMILES string, with a column for every
-        group in the GCM table containing the number of occurrences of that group.
-
-    Raises:
-        ValueError: If the SMILES string cannot be parsed or if not all atoms are
-            matched to first order groups.
-        KeyError: If a matched group is not a column of the GCM table.
-    """
-    mol = Chem.MolFromSmiles(smiles)
-    if not mol:
-        raise ValueError(f"Error parsing SMILES: {smiles}")
-
-    atom_count = mol.GetNumAtoms()
-    matched = set()
-    group1_matches = dict()
-
-    for group, smarts in order1_groups:
-        query = Chem.MolFromSmarts(smarts)
-        if not query:
-            msg = f"Error parsing SMARTS pattern: {smarts}"
-            raise ValueError(msg)
-
-        matches = mol.GetSubstructMatches(query)
-        for match in matches:
-            if any(atom_id in matched for atom_id in match):
-                continue
-
-            matched.update(match)
-            group1_matches.setdefault(group, []).append(set(match))
-
-    if len(matched) != atom_count:
-        msg = (
-            "Not all atoms were matched to first order groups."
-            f"Matched {len(matched)} out of {atom_count} atoms."
-        )
-        raise ValueError(msg)
-
-    invalid = set(group1_matches.keys()) - set(TABLE.columns)
-    if invalid:
-        msg = f"Groups not found in GCM table columns: {sorted(invalid)}"
-        raise KeyError(msg)
-
-    df = pd.DataFrame(0, index=[smiles], columns=TABLE.columns)
-    for group, matches in group1_matches.items():
-        df.loc[smiles, group] += len(matches)
-
-    return df
+# Decomposes a SMILES string into a single-row DataFrame of UNIFAC group counts
+decompose = Decomposer("UNIFAC", TABLE.columns, order1_groups)
 
 
 @unifac_gcm.register_property

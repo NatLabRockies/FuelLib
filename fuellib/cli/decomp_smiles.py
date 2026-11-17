@@ -1,6 +1,7 @@
 """Command-line SMILES decomposition for FuelLib group-contribution methods."""
 
 import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -80,7 +81,16 @@ def decompose_smiles() -> None:
         labels.extend(names.fillna(input_df["SMILES"]))
         smiles_list.extend(input_df["SMILES"])
 
-    df = pd.concat([decompose(smiles) for smiles in smiles_list])
+    decomposed = []
+    for label, smiles in zip(labels, smiles_list, strict=True):
+        try:
+            decomposed.append(decompose(smiles))
+        except (KeyError, ValueError) as error:
+            # decompose() reports the method, SMILES, and cause; add only the label.
+            prefix = f"Error decomposing {label!r}: " if label != smiles else "Error: "
+            print(f"{prefix}{error.args[0]}", file=sys.stderr)
+            sys.exit(1)
+    df = pd.concat(decomposed)
     df.index = pd.Index(labels, name="Reference Compound")
 
     if args.out:
