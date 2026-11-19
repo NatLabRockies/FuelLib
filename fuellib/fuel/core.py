@@ -17,7 +17,7 @@ from ..data._reference_data import (
 )
 from ..gcm import gani_gcm
 from ..utils import Units, types
-from ..utils.constants import EpsilonByKB_gas, MW_gas, Sigma_gas, T_stp
+from ..utils.constants import LJ_EPS_BY_KB_GAS, MW_GAS, SIGMA_GAS, T_STP
 from .components import Components
 from .mixture import Mixture
 
@@ -749,9 +749,9 @@ class Fuel:
         self: Self,
         p: types.Quantity0D,
         T: types.Quantity0D,
-        sigma_gas: types.Quantity0D = Sigma_gas,
-        epsilonByKB_gas: types.Quantity0D = EpsilonByKB_gas,
-        MW_gas: types.Quantity0D = MW_gas,
+        sigma_gas: types.Quantity0D = SIGMA_GAS,
+        epsilonByKB_gas: types.Quantity0D = LJ_EPS_BY_KB_GAS,
+        MW_gas: types.Quantity0D = MW_GAS,
         correlation: Literal["Tee", "Wilke"] = "Tee",
     ) -> types.Quantity1D:
         """Deprecated. Use `comps.d` instead.
@@ -1031,7 +1031,7 @@ class Fuel:
         self: Self,
         Yi: types.Quantity1D,
         *,
-        T_ref: types.Quantity0D = T_stp,
+        T_ref: types.Quantity0D = T_STP,
     ) -> types.Quantity0D:
         """Deprecated. Use `mix.dcn` instead.
 
@@ -1039,7 +1039,7 @@ class Fuel:
             Mixture derived cetane number.
         """
         _warn_deprecated("mixture_derived_cetane_number", "mix.dcn")
-        return self.mix.dcn(Yi, T_ref=T_ref)
+        return self.mix.dcn(Yi, temp_ref=T_ref)
 
     def mixture_aromatics_content(
         self: Self,

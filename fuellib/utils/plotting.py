@@ -251,7 +251,7 @@ def plot_composition(
 
     # Plot 1: Bar chart grouped by carbon number, colored by hydrocarbon type
     spacing = [-0.2985, -0.099, 0.099, 0.2985]
-    nC_values = sorted(df["nC"].unique())
+    num_c_values = sorted(df["nC"].unique())
 
     # Get unique families that are in the filtered data
     families_in_data = [f for f in family_names if f in df["Family"].values]
@@ -261,11 +261,11 @@ def plot_composition(
         df_family = df[df["Family"] == family]
 
         # Group by carbon number and sum weights
-        family_by_nC = df_family.groupby("nC")["Weight %"].sum()
+        family_by_num_c = df_family.groupby("nC")["Weight %"].sum()
 
         ax1.bar(
-            family_by_nC.index + spacing[k],
-            family_by_nC.values,
+            family_by_num_c.index + spacing[k],
+            family_by_num_c.values,
             label=family,
             alpha=1,
             color=_FAMILY_COLORS.get(family, "#7f7f7f"),
@@ -274,11 +274,11 @@ def plot_composition(
 
     ax1.set_xlabel("Carbon Number", fontsize=16)
     ax1.set_ylabel("Weight %", fontsize=16)
-    ax1.set_xticks(nC_values)
+    ax1.set_xticks(num_c_values)
     ax1.set_xticklabels(
-        [int(n) if n == int(n) else f"{n:.1f}" for n in nC_values], fontsize=14
+        [int(n) if n == int(n) else f"{n:.1f}" for n in num_c_values], fontsize=14
     )
-    ax1.set_xlim(min(nC_values) - 0.5, max(nC_values) + 0.5)
+    ax1.set_xlim(min(num_c_values) - 0.5, max(num_c_values) + 0.5)
     ax1.tick_params(axis="y", labelsize=14)
     ax1.grid(axis="y", alpha=0.3)
 
@@ -408,7 +408,7 @@ def _predictions_and_data(
     fuel = fl.Fuel(fuel_name, data_dir=fuel_data_dir)
 
     # Try to load experimental data
-    T_data = Units.Quantity([], "celsius")
+    temp_data = Units.Quantity([], "celsius")
     prop_units = _DEFAULT_UNITS.get(prop_name, "dimensionless")
     prop_data = Units.Quantity([], prop_units)
     if fuel.prop_data is not None:
@@ -422,7 +422,7 @@ def _predictions_and_data(
             if len(data) > 0:
                 temp_units = data["Temp_Units"].iloc[0]
                 prop_units = data["Property_Units"].iloc[0]
-                T_data = Units.Quantity(data["Temp"].to_numpy(), temp_units)
+                temp_data = Units.Quantity(data["Temp"].to_numpy(), temp_units)
                 prop_data = Units.Quantity(
                     data["Property_Value"].to_numpy(), prop_units
                 )
@@ -434,22 +434,22 @@ def _predictions_and_data(
     num_prediction_points = (
         25 if prop_name == "SurfaceTension" and fuel.num_compounds > 20 else 100
     )
-    if len(T_data) > 1:
+    if len(temp_data) > 1:
         # Use the measured temperature range when it defines an interval.
-        T_pred = Units.Quantity(
+        temp_pred = Units.Quantity(
             np.linspace(
-                T_data.magnitude.min(),
-                T_data.magnitude.max(),
+                temp_data.magnitude.min(),
+                temp_data.magnitude.max(),
                 num_prediction_points,
             ),
-            T_data.units,
+            temp_data.units,
         ).to("K")
     else:
         # Use property-specific default range
         temp_range = _DEFAULT_T_RANGES.get(
             prop_name, Units.Quantity([0, 100], "celsius")
         )
-        T_pred = Units.Quantity(
+        temp_pred = Units.Quantity(
             np.linspace(
                 temp_range.magnitude[0],
                 temp_range.magnitude[1],
@@ -458,29 +458,29 @@ def _predictions_and_data(
             temp_range.units,
         ).to("K")
 
-    pred = Units.Quantity(np.zeros_like(T_pred.magnitude), prop_units)
-    Y_li = fuel.y0
+    pred = Units.Quantity(np.zeros_like(temp_pred.magnitude), prop_units)
+    yi = fuel.y0
 
-    for i, T in enumerate(T_pred):
+    for i, temp in enumerate(temp_pred):
         try:
             if prop_name == "Density":
-                pred[i] = fuel.mix.rho(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.rho(yi, temp).to(prop_units)
             elif prop_name == "VaporPressure":
-                pred[i] = fuel.mix.pvap(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.pvap(yi, temp).to(prop_units)
             elif prop_name == "Viscosity":
-                pred[i] = fuel.mix.nu(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.nu(yi, temp).to(prop_units)
             elif prop_name == "SurfaceTension":
-                pred[i] = fuel.mix.sigma(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.sigma(yi, temp).to(prop_units)
             elif prop_name == "ThermalConductivity":
-                pred[i] = fuel.mix.k(Y_li, T).to(prop_units)
+                pred[i] = fuel.mix.k(yi, temp).to(prop_units)
         except (ValueError, TypeError, RuntimeError):
             pred.magnitude[i] = np.nan
 
     plot_units = output_units if output_units is not None else prop_units
     return (
-        T_data.to("celsius").magnitude,
+        temp_data.to("celsius").magnitude,
         prop_data.to(plot_units).magnitude,
-        T_pred.to("celsius").magnitude,
+        temp_pred.to("celsius").magnitude,
         pred.to(plot_units).magnitude,
         plot_units,
     )
@@ -538,9 +538,9 @@ def plot_mixture_properties(
 
     # Create figure with subplots
     n_props = len(properties)
-    figW = 4.25 * n_props
+    fig_width = 4.25 * n_props
     fig, axes = plt.subplots(
-        1, n_props, figsize=(figW, 5.5), constrained_layout=True, squeeze=False
+        1, n_props, figsize=(fig_width, 5.5), constrained_layout=True, squeeze=False
     )
     ax = axes[0]
 
@@ -549,7 +549,7 @@ def plot_mixture_properties(
         plot_units = None
         prop_units = ""
         for fuel_idx, fuel_name in enumerate(names):
-            T_data, prop_data, T_pred, pred, prop_units = _predictions_and_data(
+            temp_data, prop_data, temp_pred, pred, prop_units = _predictions_and_data(
                 fuel_name, prop_name, fuel_data_dir, output_units=plot_units
             )
             if plot_units is None:
@@ -559,7 +559,7 @@ def plot_mixture_properties(
 
             # Plot predictions
             ax[i].plot(
-                T_pred,
+                temp_pred,
                 pred,
                 "-",
                 color=line_color,
@@ -571,7 +571,7 @@ def plot_mixture_properties(
             if len(prop_data) > 0:
                 # Label the data with the fuel name
                 ax[i].scatter(
-                    T_data,
+                    temp_data,
                     prop_data,
                     marker=marker_style,
                     label=f"Data: {legend_label}",
@@ -665,7 +665,7 @@ def plot_d86(
     if ax is None:
         _, ax = plt.subplots(figsize=_D86_FIGSIZE, constrained_layout=True)
     vol = 100.0 * result.volume_recovered.to("dimensionless").magnitude
-    T = result.T_vapor.to(temperature_units).magnitude
+    temp_vals = result.T_vapor.to(temperature_units).magnitude
     recovering = vol > 0.0
     # Data are scatter collections, so the number of lines counts the curves
     n_curves = len(ax.lines)
@@ -677,17 +677,17 @@ def plot_d86(
         data_label = f"Data: {label}"
     ax.plot(
         vol[recovering],
-        T[recovering],
+        temp_vals[recovering],
         color=color,
         linestyle=linestyle,
         linewidth=4.0,
         label=label,
     )
     if data is not None:
-        vol_data, T_data = data
+        vol_data, temp_data = data
         ax.scatter(
             100.0 * vol_data.to("dimensionless").magnitude,
-            T_data.to(temperature_units).magnitude,
+            temp_data.to(temperature_units).magnitude,
             facecolors=color,
             marker=marker,
             s=75.0,
@@ -703,18 +703,18 @@ def plot_d86(
     # Limits: full recovery range; temperatures from the standard temperature (or the
     # lowest tick below the data) up to the next major tick above the data
     ax.set_xlim(0.0, 100.0)
-    T_lo, T_hi = ax.dataLim.intervaly
-    T_min = float(_D86_T_MIN.to(temperature_units).magnitude)
-    if T_lo < T_min or not default_ymin:
-        T_min = _D86_T_STEP * np.floor(T_lo / _D86_T_STEP)
+    temp_lo, temp_hi = ax.dataLim.intervaly
+    temp_min = float(_D86_T_MIN.to(temperature_units).magnitude)
+    if temp_lo < temp_min or not default_ymin:
+        temp_min = _D86_T_STEP * np.floor(temp_lo / _D86_T_STEP)
     ax.set_ylim(
-        T_min,
-        T_min + _D86_T_STEP * (np.floor((T_hi - T_min) / _D86_T_STEP) + 1.0),
+        temp_min,
+        temp_min + _D86_T_STEP * (np.floor((temp_hi - temp_min) / _D86_T_STEP) + 1.0),
     )
 
     # Ticks
     ax.xaxis.set_major_locator(MultipleLocator(20.0))
-    ax.yaxis.set_major_locator(MultipleLocator(_D86_T_STEP, offset=T_min))
+    ax.yaxis.set_major_locator(MultipleLocator(_D86_T_STEP, offset=temp_min))
     ax.tick_params(labelsize=18)
 
     # Grid and legend below the axes, replaced when overlaying another curve
@@ -756,8 +756,8 @@ def d86_data(fuel: "fl.Fuel") -> tuple[types.Quantity1D, types.Quantity1D] | Non
     # pint does not define "percentage"
     vol_units = df["Property_Units"].iloc[0].replace("percentage", "percent")
     vol = Units.Quantity(df["Property_Value"].to_numpy(float), vol_units)
-    T = Units.Quantity(df["Temp"].to_numpy(float), df["Temp_Units"].iloc[0])
-    return vol, T
+    temp_vals = Units.Quantity(df["Temp"].to_numpy(float), df["Temp_Units"].iloc[0])
+    return vol, temp_vals
 
 
 def plot_distillation(

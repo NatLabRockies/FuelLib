@@ -56,22 +56,22 @@ def _get_decomp(fuel: "Fuel") -> types.Array2D:
 
 def _check_compatible_dims(
     xj: Annotated[types.Array1D, "GCM property vector"],
-    Aij: Annotated[types.Array2D, "Group decomposition matrix"],
+    nij: Annotated[types.Array2D, "Group decomposition matrix"],
 ) -> None:
     """Check if the shape of the GCM properties and group decomposition matrix match.
 
     Args:
         xj: The GCM property vector.
-        Aij: The group decomposition matrix.
+        nij: The group decomposition matrix.
 
     Raises:
         ValueError: If the dimensions of the GCM contribution vector and the group
             decomposition matrix are incompatible.
     """
-    if Aij.shape[1] != xj.shape[0]:
+    if nij.shape[1] != xj.shape[0]:
         msg = (
             f"Incompatible dimensions: GCM contribution vector has length {xj.shape[0]}"
-            f", but group decomposition matrix has {Aij.shape[1]} columns."
+            f", but group decomposition matrix has {nij.shape[1]} columns."
         )
         raise ValueError(msg)
 
@@ -100,7 +100,7 @@ decompose = Decomposer("UNIFAC", TABLE.columns, order1_groups)
 
 
 @unifac_gcm.register_property
-def R(fuel: "Fuel") -> types.Quantity1D:
+def r(fuel: "Fuel") -> types.Quantity1D:
     """Predict the R parameter for a fuel's components.
 
     Args:
@@ -110,14 +110,14 @@ def R(fuel: "Fuel") -> types.Quantity1D:
         The predicted R parameters (dimensionless).
     """
     nij = _get_decomp(fuel)
-    Rj = _get_row("R")
-    _check_compatible_dims(Rj, nij)
-    Ri: types.Array1D = np.matmul(nij, Rj)
-    return Units.Quantity(Ri, "")
+    r_j = _get_row("R")
+    _check_compatible_dims(r_j, nij)
+    r_i: types.Array1D = np.matmul(nij, r_j)
+    return Units.Quantity(r_i, "")
 
 
 @unifac_gcm.register_property
-def Q(fuel: "Fuel") -> types.Quantity1D:
+def q(fuel: "Fuel") -> types.Quantity1D:
     """Predict the Q parameter for a fuel's components.
 
     Args:
@@ -127,29 +127,29 @@ def Q(fuel: "Fuel") -> types.Quantity1D:
         The predicted Q parameters (dimensionless).
     """
     nij = _get_decomp(fuel)
-    Qj = _get_row("Q")
-    _check_compatible_dims(Qj, nij)
-    Qi: types.Array1D = np.matmul(nij, Qj)
-    return Units.Quantity(Qi, "")
+    q_j = _get_row("Q")
+    _check_compatible_dims(q_j, nij)
+    q_i: types.Array1D = np.matmul(nij, q_j)
+    return Units.Quantity(q_i, "")
 
 
 def _ln_group_gamma(
-    Xk: types.Array2D, Qk: types.Array1D, psi: types.Array2D
+    x_j: types.Array2D, q_j: types.Array1D, psi: types.Array2D
 ) -> types.Array2D:
-    """Residual group activity coefficients ln(Gamma_k) for each row of Xk.
+    """Residual group activity coefficients ln(Gamma_k) for each row of x_j.
 
     Args:
-        Xk: Group mole fractions, one row per mixture (shape (n, K)).
-        Qk: Group surface parameters (shape (K,)).
+        x_j: Group mole fractions, one row per mixture (shape (n, K)).
+        q_j: Group surface parameters (shape (K,)).
         psi: Group interaction matrix Psi_mn (shape (K, K)).
 
     Returns:
-        ln(Gamma_k) for each row of Xk (shape (n, K)).
+        ln(Gamma_k) for each row of x_j (shape (n, K)).
     """
-    theta = Qk * Xk
+    theta = q_j * x_j
     theta /= theta.sum(axis=1, keepdims=True)
     s = theta @ psi  # s_k = sum_m theta_m psi_mk
-    return Qk * (1.0 - np.log(s) - (theta / s) @ psi.T)
+    return q_j * (1.0 - np.log(s) - (theta / s) @ psi.T)
 
 
 def parameters(
@@ -178,57 +178,57 @@ def parameters(
 
 def ln_gamma_x(
     x: types.Array1D,
-    T: float,
+    temp: float,
     nu: types.Array2D,
-    Rk: types.Array1D,
-    Qk: types.Array1D,
+    r_j: types.Array1D,
+    q_j: types.Array1D,
     a_mn: types.Array2D,
 ) -> types.Array1D:
     """Compute UNIFAC ln(gamma_i) from mole fractions with plain NumPy arrays.
 
     Args:
         x: Liquid mole fractions of each component (shape (N,)).
-        T: Temperature in K.
+        temp: Temperature in K.
         nu: Subgroup counts per component (shape (N, K)).
-        Rk: Subgroup volume parameters (shape (K,)).
-        Qk: Subgroup surface parameters (shape (K,)).
+        r_j: Subgroup volume parameters (shape (K,)).
+        q_j: Subgroup surface parameters (shape (K,)).
         a_mn: Subgroup interaction parameters in K (shape (K, K)).
 
     Returns:
         Natural log of the activity coefficient of each component (shape (N,)).
     """
     # Combinatorial part
-    r = nu @ Rk
-    q = nu @ Qk
-    V = r / (x @ r)
-    F = q / (x @ q)
-    ln_gamma_C = 1.0 - V + np.log(V) - 5.0 * q * (1.0 - V / F + np.log(V / F))
+    r_i = nu @ r_j
+    q_i = nu @ q_j
+    v = r_i / (x @ r_i)
+    f = q_i / (x @ q_i)
+    ln_gamma_c = 1.0 - v + np.log(v) - 5.0 * q_i * (1.0 - v / f + np.log(v / f))
 
     # Residual part
-    psi = np.exp(-a_mn / T)
+    psi = np.exp(-a_mn / temp)
     nx = x @ nu
-    ln_G_mix = _ln_group_gamma((nx / nx.sum())[None, :], Qk, psi)
-    ln_G_pure = _ln_group_gamma(nu / nu.sum(axis=1, keepdims=True), Qk, psi)
-    ln_gamma_R = np.sum(nu * (ln_G_mix - ln_G_pure), axis=1)
+    ln_g_mix = _ln_group_gamma((nx / nx.sum())[None, :], q_j, psi)
+    ln_g_pure = _ln_group_gamma(nu / nu.sum(axis=1, keepdims=True), q_j, psi)
+    ln_gamma_r = np.sum(nu * (ln_g_mix - ln_g_pure), axis=1)
 
-    return ln_gamma_C + ln_gamma_R
+    return ln_gamma_c + ln_gamma_r
 
 
 def ln_gamma(
-    fuel: "Fuel", T: types.Quantity0D, Yi: types.Quantity1D | None = None
+    fuel: "Fuel", temp: types.Quantity0D, yi: types.Quantity1D | None = None
 ) -> types.Quantity1D:
     """Compute UNIFAC 2.0 activity coefficients ln(gamma_i) of a fuel's components.
 
     Args:
         fuel: The fuel object containing the decomposition matrix.
-        T: Temperature.
-        Yi: Liquid mass fractions of each component.
+        temp: Temperature.
+        yi: Liquid mass fractions of each component.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Natural log of the activity coefficient of each component (dimensionless).
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    T_K = T.to("K").magnitude
-    x = fuel.comps.y2x(Yi).to("dimensionless").magnitude
-    return Units.Quantity(ln_gamma_x(x, T_K, *parameters(fuel)), "")
+    yi = yi if yi is not None else fuel.y0
+    temp_mag = temp.to("K").magnitude
+    x = fuel.comps.y2x(yi).to("dimensionless").magnitude
+    return Units.Quantity(ln_gamma_x(x, temp_mag, *parameters(fuel)), "")

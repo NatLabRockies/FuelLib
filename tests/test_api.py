@@ -160,7 +160,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
 
                 # Antoine coefficient fits (individual compounds)
                 A, B, C, D = fuel.comps.pvap_antoine_coeffs(
-                    Tvals=Units.Quantity(np.array([300.0, 340.0]), "K"),
+                    temp_vals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="mks",
                     correlation="Lee-Kesler",
                 )
@@ -178,7 +178,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 # Antoine coefficient fits (mixture)
                 A_mix, B_mix, C_mix, D_mix = fuel.mix.pvap_antoine_coeffs(
                     Yi,
-                    Tvals=Units.Quantity(np.array([300.0, 340.0]), "K"),
+                    temp_vals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="cgs",
                     correlation="Lee-Kesler",
                 )
@@ -315,85 +315,85 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
         fuel = fl.Fuel(name="heptane")
 
         # Define some common variables for the tests.
-        Yi = fuel.y0
+        yi = fuel.y0
         mass = fl.Units.Quantity(fuel.comps.mw.magnitude * 100.0, "kg")
         temp = fl.Units.Quantity(298.15, "K")
-        temps = fl.Units.Quantity([298.15, 300.0, 310.0], "K")
+        temp_vals = fl.Units.Quantity([298.15, 300.0, 310.0], "K")
         press = fl.Units.Quantity(101325.0, "Pa")
         # List of FuelLib.fuel methods to check for API persistence.
         to_check = [
-            partial(fuel.mix.mw, Yi=Yi),
+            partial(fuel.mix.mw, yi=yi),
             partial(fuel.comps.mass2x, mass=mass),
             partial(fuel.comps.mass2y, mass=mass),
-            partial(fuel.comps.rho, T=temp, comp_idx=0),
-            partial(fuel.comps.nu, T=temp, comp_idx=0),
-            partial(fuel.comps.mu, T=temp, comp_idx=0),
-            partial(fuel.comps.cp, T=temp, comp_idx=0, basis="mass"),
-            partial(fuel.comps.cp, T=temp, comp_idx=0, basis="molar"),
+            partial(fuel.comps.rho, temp=temp, comp_idx=0),
+            partial(fuel.comps.nu, temp=temp, comp_idx=0),
+            partial(fuel.comps.mu, temp=temp, comp_idx=0),
+            partial(fuel.comps.cp, temp=temp, comp_idx=0, basis="mass"),
+            partial(fuel.comps.cp, temp=temp, comp_idx=0, basis="molar"),
             partial(
                 fuel.comps.pvap,
-                T=temp,
+                temp=temp,
                 comp_idx=0,
                 correlation="Lee-Kesler",
             ),
             partial(
                 fuel.comps.pvap_antoine_coeffs,
-                Tvals=temps,
+                temp_vals=temp_vals,
                 units="mks",
                 correlation="Lee-Kesler",
             ),
-            partial(fuel.comps.vm, T=temp, comp_idx=0),
-            partial(fuel.comps.hv, T=temp, comp_idx=0, basis="mass"),
-            partial(fuel.comps.hv, T=temp, comp_idx=0, basis="molar"),
+            partial(fuel.comps.vm, temp=temp, comp_idx=0),
+            partial(fuel.comps.hv, temp=temp, comp_idx=0, basis="mass"),
+            partial(fuel.comps.hv, temp=temp, comp_idx=0, basis="molar"),
             partial(
                 fuel.comps.d,
                 p=press,
-                T=temp,
+                temp=temp,
                 correlation="Tee",
             ),
             partial(
                 fuel.comps.sigma,
-                T=temp,
+                temp=temp,
                 comp_idx=0,
                 correlation="Brock-Bird",
             ),
-            partial(fuel.comps.k, T=temp, comp_idx=0),
-            partial(fuel.mix.rho, Yi=Yi, T=temp),
+            partial(fuel.comps.k, temp=temp, comp_idx=0),
+            partial(fuel.mix.rho, yi=yi, temp=temp),
             partial(
                 fuel.mix.nu,
-                Yi=Yi,
-                T=temp,
+                yi=yi,
+                temp=temp,
                 mixing_rule="Kendall-Monroe",
             ),
             partial(
                 fuel.mix.mu,
-                Yi=Yi,
-                T=temp,
+                yi=yi,
+                temp=temp,
                 mixing_rule="Kendall-Monroe",
             ),
             partial(
                 fuel.mix.pvap,
-                Yi=Yi,
-                T=temp,
+                yi=yi,
+                temp=temp,
                 correlation="Lee-Kesler",
             ),
             partial(
                 fuel.mix.pvap_antoine_coeffs,
-                Yi=Yi,
-                Tvals=temps,
+                yi=yi,
+                temp_vals=temp_vals,
                 units="cgs",
                 correlation="Lee-Kesler",
             ),
             partial(
                 fuel.mix.sigma,
-                Yi=Yi,
-                T=temp,
+                yi=yi,
+                temp=temp,
                 correlation="Brock-Bird",
             ),
             partial(
                 fuel.mix.k,
-                Yi=Yi,
-                T=temp,
+                yi=yi,
+                temp=temp,
             ),
         ]
 

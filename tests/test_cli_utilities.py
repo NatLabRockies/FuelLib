@@ -14,10 +14,10 @@ class TestUtilityFunctions(unittest.TestCase):
         # Test with a known value
         # epsilon = 1000 J/mol
         # epsilon_molecule = 1000 / 6.02214076e23 J
-        # T* = epsilon_molecule / k_B = (1000 / 6.02214076e23) / 1.380649e-23 K
+        # T* = epsilon_molecule / K_B = (1000 / 6.02214076e23) / 1.380649e-23 K
         result = fl.utility.epsilon_to_characteristic_temperature(1000.0)
         expected = fl.Units.Quantity(1000.0, "J/mol") / (
-            fl.constants.N_A * fl.constants.k_B
+            fl.constants.N_A * fl.constants.K_B
         )
         self.assertAlmostEqual(result.magnitude, expected.magnitude, places=10)
 
@@ -30,7 +30,7 @@ class TestUtilityFunctions(unittest.TestCase):
         """Test epsilon conversion with negative input."""
         result = fl.utility.epsilon_to_characteristic_temperature(-1000.0)
         expected = fl.Units.Quantity(-1000.0, "J/mol") / (
-            fl.constants.N_A * fl.constants.k_B
+            fl.constants.N_A * fl.constants.K_B
         )
         self.assertAlmostEqual(result.magnitude, expected.magnitude, places=10)
 

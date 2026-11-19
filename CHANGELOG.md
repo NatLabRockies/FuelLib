@@ -7,6 +7,18 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Breaking:** the per-component functions in `gcm.gani` are renamed to snake_case: `Tc` -> `tc`, `Pc` -> `pc`, `Vc` -> `vc`, `Tb` -> `tb`, `Tm` -> `tm`, `Hf` -> `hf`, `Gf` -> `gf`, `Hv_stp` -> `hv_stp`, `Vm_stp` -> `vm_stp`, `Cp_stp` -> `cp_stp`, `Cp_B` -> `cp_b`, `Cp_C` -> `cp_c`, `rd_A` -> `rd_a`, `rd_B` -> `rd_b`, and `rd_D` -> `rd_d`. `gcm.boehm.dS_fus` is renamed to `ds_fus`, `gcm.nannoolal.dBv` and `gcm.nannoolal.Tv` are renamed to `dbv` and `tv`, and `gcm.unifac.R` and `gcm.unifac.Q` are renamed to `r` and `q`. The group decomposition matrix argument of the GCM helpers is renamed from `Aij` to `nij`. Lookups through `predict()` are case-insensitive, so `gani_gcm.predict("Tc", fuel)` is unchanged.
+- **Breaking:** the arguments of the `correlate.components`, `correlate.mixture`, and `correlate.helpers` functions are renamed to snake_case: `T` -> `temp`, `Yi` -> `yi`, `Xi` -> `xi`, `X` -> `x`, `T_ref` -> `temp_ref`, `Tvals` -> `temp_vals`, `epsilonByKB_gas` -> `lj_eps_by_kb_gas`, and `MW_gas` -> `mw_gas`.
+- **Breaking:** the constants in `utils.constants` are renamed to UPPER_SNAKE: `k_B` -> `K_B`, `T_stp` -> `T_STP`, `Sigma_gas` -> `SIGMA_GAS`, `EpsilonByKB_gas` -> `LJ_EPS_BY_KB_GAS`, and `MW_gas` -> `MW_GAS`.
+- **Breaking:** the `epsilonByKB_gas` and `MW_gas` arguments of `Fuel.comps.d` are renamed to `lj_eps_by_kb_gas` and `mw_gas`.
+- **Breaking:** the arguments of the `Fuel.comps` and `Fuel.mix` methods are renamed to snake_case: `T` -> `temp`, `Yi` -> `yi`, `Xi` -> `xi`, `T_vals` -> `temp_vals`, and `T_ref` -> `temp_ref` (e.g. `fuel.mix.rho(yi=..., temp=...)`). Positional calls are unchanged. The deprecated `Fuel` methods keep their original argument names.
+- **Breaking:** in `utils.utility`, the arguments of `mixing_rule` (`X` -> `x`, `var_n` -> `var_i`), `droplet_mass` (`Yi` -> `yi`, `T` -> `temp`), and `epsilon_to_characteristic_temperature` (`epsilon_j_per_mol` -> `epsilon`) are renamed.
+- **Breaking:** the component property argument `var_n` of `correlate.mixture.arithmetic`, `geometric`, `arrhenius`, and `kendall_monroe` is renamed to `var_i`, and the subgroup arguments `r_k` and `q_k` of `gcm.unifac.ln_gamma_x` are renamed to `r_j` and `q_j`.
+- **Breaking:** the arguments of `exporters.converge.UnitConverter.create_data_dict` are renamed to snake_case (`temp_vals`, `tc`, `mu`, `surface_tension`, `hv`, `pv`, `rho`, `cp`, `thermal_conductivity`). The exported file contents are unchanged.
+- `cli.convert.eps2K_main` is renamed to `eps2k_main`. The `fl-eps2K` command is unchanged.
+- Internal variable names use a consistent snake_case vocabulary (see the Code Style and Naming section of the development guide). Units are no longer part of variable names.
+
 ## [3.2.0] - 2026-11-16
 
 ### Added

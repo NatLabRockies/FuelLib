@@ -16,23 +16,23 @@ from fuellib.fuel import Fuel
 from fuellib.gcm import GCMRegistry, gani_gcm
 from fuellib.gcm.gani import decompose
 from fuellib.gcm.gani import (
-    Cp_B,
-    Cp_C,
-    Cp_stp,
-    Gf,
-    Hf,
-    Hv_stp,
-    Pc,
-    Tb,
-    Tc,
-    Tm,
-    Vc,
-    Vm_stp,
     alibakhshi_phi,
+    cp_b,
+    cp_c,
+    cp_stp,
+    gf,
+    hf,
+    hv_stp,
     omega,
-    rd_A,
-    rd_B,
-    rd_D,
+    pc,
+    rd_a,
+    rd_b,
+    rd_d,
+    tb,
+    tc,
+    tm,
+    vc,
+    vm_stp,
 )
 from fuellib.utils import Units
 from fuellib import DEFAULT_DATA_DIR
@@ -124,68 +124,68 @@ class GaniPropertyTestCase(unittest.TestCase):
         self.assertTrue(np.all(np.isfinite(arr)))
 
     def test_tc(self):
-        """Tc should return finite critical temperatures in K."""
-        self._assert_valid_quantity(Tc(self.fuel), "K")
+        """tc should return finite critical temperatures in K."""
+        self._assert_valid_quantity(tc(self.fuel), "K")
 
     def test_pc(self):
-        """Pc should return finite critical pressures in bar."""
-        self._assert_valid_quantity(Pc(self.fuel), "bar")
+        """pc should return finite critical pressures in bar."""
+        self._assert_valid_quantity(pc(self.fuel), "bar")
 
     def test_vc(self):
-        """Vc should return finite critical volumes in m^3/kmol."""
-        self._assert_valid_quantity(Vc(self.fuel), "m^3/kmol")
+        """vc should return finite critical volumes in m^3/kmol."""
+        self._assert_valid_quantity(vc(self.fuel), "m^3/kmol")
 
     def test_tb(self):
-        """Tb should return finite normal boiling temperatures in K."""
-        self._assert_valid_quantity(Tb(self.fuel), "K")
+        """tb should return finite normal boiling temperatures in K."""
+        self._assert_valid_quantity(tb(self.fuel), "K")
 
     def test_tm(self):
-        """Tm should return finite melting temperatures in K."""
-        self._assert_valid_quantity(Tm(self.fuel), "K")
+        """tm should return finite melting temperatures in K."""
+        self._assert_valid_quantity(tm(self.fuel), "K")
 
     def test_hf(self):
-        """Hf should return finite enthalpies of formation in kJ/mol."""
-        self._assert_valid_quantity(Hf(self.fuel), "kJ/mol")
+        """hf should return finite enthalpies of formation in kJ/mol."""
+        self._assert_valid_quantity(hf(self.fuel), "kJ/mol")
 
     def test_gf(self):
-        """Gf should return finite Gibbs free energies of formation in kJ/mol."""
-        self._assert_valid_quantity(Gf(self.fuel), "kJ/mol")
+        """gf should return finite Gibbs free energies of formation in kJ/mol."""
+        self._assert_valid_quantity(gf(self.fuel), "kJ/mol")
 
     def test_hv_stp(self):
-        """Hv_stp should return finite enthalpies of vaporization in kJ/mol."""
-        self._assert_valid_quantity(Hv_stp(self.fuel), "kJ/mol")
+        """hv_stp should return finite enthalpies of vaporization in kJ/mol."""
+        self._assert_valid_quantity(hv_stp(self.fuel), "kJ/mol")
 
     def test_omega(self):
         """omega should return finite dimensionless acentric factors."""
         self._assert_valid_quantity(omega(self.fuel), "")
 
     def test_vm_stp(self):
-        """Vm_stp should return finite standard molar volumes in m^3/kmol."""
-        self._assert_valid_quantity(Vm_stp(self.fuel), "m^3/kmol")
+        """vm_stp should return finite standard molar volumes in m^3/kmol."""
+        self._assert_valid_quantity(vm_stp(self.fuel), "m^3/kmol")
 
     def test_cp_stp(self):
-        """Cp_stp should return finite standard molar heat capacities."""
-        self._assert_valid_quantity(Cp_stp(self.fuel), "J/(mol*K)")
+        """cp_stp should return finite standard molar heat capacities."""
+        self._assert_valid_quantity(cp_stp(self.fuel), "J/(mol*K)")
 
     def test_cp_b(self):
-        """Cp_B should return finite heat capacity B correction terms."""
-        self._assert_valid_quantity(Cp_B(self.fuel), "J/(mol*K)")
+        """cp_b should return finite heat capacity B correction terms."""
+        self._assert_valid_quantity(cp_b(self.fuel), "J/(mol*K)")
 
     def test_cp_c(self):
-        """Cp_C should return finite heat capacity C correction terms."""
-        self._assert_valid_quantity(Cp_C(self.fuel), "J/(mol*K)")
+        """cp_c should return finite heat capacity C correction terms."""
+        self._assert_valid_quantity(cp_c(self.fuel), "J/(mol*K)")
 
     def test_rd_a(self):
-        """rd_A should return finite dimensionless Ruzicka-Domalski A coefficients."""
-        self._assert_valid_quantity(rd_A(self.fuel), "")
+        """rd_a should return finite dimensionless Ruzicka-Domalski A coefficients."""
+        self._assert_valid_quantity(rd_a(self.fuel), "")
 
     def test_rd_b(self):
-        """rd_B should return finite Ruzicka-Domalski B coefficients in K^-1."""
-        self._assert_valid_quantity(rd_B(self.fuel), "K^-1")
+        """rd_b should return finite Ruzicka-Domalski B coefficients in K^-1."""
+        self._assert_valid_quantity(rd_b(self.fuel), "K^-1")
 
     def test_rd_d(self):
-        """rd_D should return finite Ruzicka-Domalski D coefficients in K^-2."""
-        self._assert_valid_quantity(rd_D(self.fuel), "K^-2")
+        """rd_d should return finite Ruzicka-Domalski D coefficients in K^-2."""
+        self._assert_valid_quantity(rd_d(self.fuel), "K^-2")
 
     def test_alibakhshi_phi(self):
         """alibakhshi_phi should return finite phi parameters in K."""

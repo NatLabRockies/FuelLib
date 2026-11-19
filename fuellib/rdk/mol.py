@@ -103,11 +103,11 @@ def hill_formula(mol: Mol) -> str:
             f"{atom}{count}" if count > 1 else atom
             for atom, count in sorted(atom_counts_dict.items())
         )
-    nC = atom_counts_dict.pop("C")
-    formula_parts = [f"C{nC}" if nC > 1 else "C"]
-    nH = atom_counts_dict.pop("H", 0)
-    if nH > 0:
-        formula_parts.append(f"H{nH}" if nH > 1 else "H")
+    num_c = atom_counts_dict.pop("C")
+    formula_parts = [f"C{num_c}" if num_c > 1 else "C"]
+    num_h = atom_counts_dict.pop("H", 0)
+    if num_h > 0:
+        formula_parts.append(f"H{num_h}" if num_h > 1 else "H")
     for atom, count in sorted(atom_counts_dict.items()):
         formula_parts.append(f"{atom}{count}" if count > 1 else atom)
     return "".join(formula_parts)

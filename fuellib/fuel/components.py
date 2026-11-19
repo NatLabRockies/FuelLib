@@ -13,7 +13,7 @@ from .. import correlate
 from ..gcm import gani_gcm
 from ..rdk import mol
 from ..utils import Units, types
-from ..utils.constants import EpsilonByKB_gas, MW_gas, Sigma_gas
+from ..utils.constants import LJ_EPS_BY_KB_GAS, MW_GAS, SIGMA_GAS
 
 if TYPE_CHECKING:
     from .core import Fuel
@@ -297,30 +297,32 @@ class Components:
     # -------------------------------------------------------------------------
     # Temperature-dependent properties
     # -------------------------------------------------------------------------
-    def rho(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
-        """Calculate the density of each component at temperature T.
+    def rho(
+        self, temp: types.Quantity0D, comp_idx: int | None = None
+    ) -> types.Quantity1D:
+        """Calculate the density of each component at a given temperature.
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
 
         Returns:
             Density of each compound in kg/m^3.
         """
-        rho_i = correlate.components.density(self._fuel, T)
+        rho_i = correlate.components.density(self._fuel, temp)
         return rho_i[comp_idx] if comp_idx is not None else rho_i
 
     def nu(
         self,
-        T: types.Quantity0D,
+        temp: types.Quantity0D,
         comp_idx: int | None = None,
         correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
     ) -> types.Quantity1D:
         """Calculate component kinematic viscosity.
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Dutt" or "Nannoolal").
@@ -333,23 +335,23 @@ class Components:
             ValueError: If `correlation` is not Dutt or Nannoolal.
         """
         if correlation.casefold() == "dutt":
-            nu_i = correlate.components.viscosity_kinematic_dutt(self._fuel, T)
+            nu_i = correlate.components.viscosity_kinematic_dutt(self._fuel, temp)
         elif correlation.casefold() == "nannoolal":
-            nu_i = correlate.components.viscosity_kinematic_nannoolal(self._fuel, T)
+            nu_i = correlate.components.viscosity_kinematic_nannoolal(self._fuel, temp)
         else:
             raise ValueError(f"Unknown viscosity correlation: {correlation!r}")
         return nu_i[comp_idx] if comp_idx is not None else nu_i
 
     def mu(
         self,
-        T: types.Quantity0D,
+        temp: types.Quantity0D,
         comp_idx: int | None = None,
         correlation: Literal["Dutt", "Nannoolal"] = "Nannoolal",
     ) -> types.Quantity1D:
         """Calculate component dynamic viscosity.
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Dutt" or "Nannoolal").
@@ -362,23 +364,23 @@ class Components:
             ValueError: If `correlation` is not Dutt or Nannoolal.
         """
         if correlation.casefold() == "dutt":
-            mu_i = correlate.components.viscosity_dynamic_dutt(self._fuel, T)
+            mu_i = correlate.components.viscosity_dynamic_dutt(self._fuel, temp)
         elif correlation.casefold() == "nannoolal":
-            mu_i = correlate.components.viscosity_dynamic_nannoolal(self._fuel, T)
+            mu_i = correlate.components.viscosity_dynamic_nannoolal(self._fuel, temp)
         else:
             raise ValueError(f"Unknown viscosity correlation: {correlation!r}")
         return mu_i[comp_idx] if comp_idx is not None else mu_i
 
     def cp(
         self,
-        T: types.Quantity0D,
+        temp: types.Quantity0D,
         comp_idx: int | None = None,
         basis: Literal["mass", "molar"] = "mass",
     ) -> types.Quantity1D:
         """Compute specific heat capacity at a given temperature.
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             basis: Basis of the heat capacity ("mass" or "molar").
@@ -391,16 +393,16 @@ class Components:
             ValueError: If `basis` is not "mass" or "molar".
         """
         if basis.casefold() == "mass":
-            cp = correlate.components.specific_heat_capacity_mass(self._fuel, T)
+            cp = correlate.components.specific_heat_capacity_mass(self._fuel, temp)
         elif basis.casefold() == "molar":
-            cp = correlate.components.specific_heat_capacity_molar(self._fuel, T)
+            cp = correlate.components.specific_heat_capacity_molar(self._fuel, temp)
         else:
             raise ValueError(f"Unknown heat capacity basis: {basis!r}")
         return cp[comp_idx] if comp_idx is not None else cp
 
     def pvap(
         self,
-        T: types.Quantity0D,
+        temp: types.Quantity0D,
         comp_idx: int | None = None,
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> types.Quantity1D:
@@ -409,7 +411,7 @@ class Components:
         Can use Ambrose-Walton or Lee-Kesler correlations (default Lee-Kesler).
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
@@ -419,20 +421,20 @@ class Components:
             Vapor pressure in Pa.
         """
         pvap = correlate.components.vapor_pressure(
-            self._fuel, T, correlation=correlation
+            self._fuel, temp, correlation=correlation
         )
         return pvap[comp_idx] if comp_idx is not None else pvap
 
     def pvap_antoine_coeffs(
         self,
-        Tvals: types.Quantity1D | None = None,
+        temp_vals: types.Quantity1D | None = None,
         units: Literal["mks", "cgs", "dyne/cm^2", "Pa"] = "mks",
         correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
     ) -> tuple[types.Array1D, types.Array1D, types.Array1D, types.Array1D]:
         """Estimate Antoine coefficients for vapor pressure of each compound.
 
         Args:
-            Tvals: Temperature range or nodes for Antoine fit in Kelvin.
+            temp_vals: Temperature range or nodes for Antoine fit in Kelvin.
                 Defaults to [273.15, Tb_i].
             units: Units for pressure in fit ("mks", "cgs", "dyne/cm^2", "Pa").
                 Defaults to "mks".
@@ -443,33 +445,35 @@ class Components:
             Coefficients A, B, C, D for each compound.
         """
         return correlate.components.vapor_pressure_antoine_coeffs(
-            self._fuel, Tvals=Tvals, units=units, correlation=correlation
+            self._fuel, temp_vals=temp_vals, units=units, correlation=correlation
         )
 
-    def vm(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
+    def vm(
+        self, temp: types.Quantity0D, comp_idx: int | None = None
+    ) -> types.Quantity1D:
         """Compute molar liquid volume with temperature correction.
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
 
         Returns:
             Molar liquid volume in m^3/mol.
         """
-        vm_i = correlate.components.molar_liquid_volume(self._fuel, T)
+        vm_i = correlate.components.molar_liquid_volume(self._fuel, temp)
         return vm_i[comp_idx] if comp_idx is not None else vm_i
 
     def hv(
         self,
-        T: types.Quantity0D,
+        temp: types.Quantity0D,
         comp_idx: int | None = None,
         basis: Literal["mass", "molar"] = "mass",
     ) -> types.Quantity1D:
         """Calculate enthalpy of vaporization adjusted for temperature.
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             basis: Basis of the enthalpy of vaporization ("mass" or "molar").
@@ -482,9 +486,9 @@ class Components:
             ValueError: If `basis` is not "mass" or "molar".
         """
         if basis.casefold() == "mass":
-            hv_i = correlate.components.enthalpy_vaporization_mass(self._fuel, T)
+            hv_i = correlate.components.enthalpy_vaporization_mass(self._fuel, temp)
         elif basis.casefold() == "molar":
-            hv_i = correlate.components.enthalpy_vaporization_molar(self._fuel, T)
+            hv_i = correlate.components.enthalpy_vaporization_molar(self._fuel, temp)
         else:
             raise ValueError(f"Unknown enthalpy of vaporization basis: {basis!r}")
         return hv_i[comp_idx] if comp_idx is not None else hv_i
@@ -492,10 +496,10 @@ class Components:
     def d(
         self,
         p: types.Quantity0D,
-        T: types.Quantity0D,
-        sigma_gas: types.Quantity0D = Sigma_gas,
-        epsilonByKB_gas: types.Quantity0D = EpsilonByKB_gas,
-        MW_gas: types.Quantity0D = MW_gas,
+        temp: types.Quantity0D,
+        sigma_gas: types.Quantity0D = SIGMA_GAS,
+        lj_eps_by_kb_gas: types.Quantity0D = LJ_EPS_BY_KB_GAS,
+        mw_gas: types.Quantity0D = MW_GAS,
         correlation: Literal["Tee", "Wilke"] = "Tee",
     ) -> types.Quantity1D:
         """Compute diffusion coefficients using Lennard-Jones parameters.
@@ -505,12 +509,12 @@ class Components:
 
         Args:
             p: Pressure to compute property.
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             sigma_gas: Collision diameter.
                 Default is 3.62 Angstroms.
-            epsilonByKB_gas: Well depth over Boltzmann constant.
+            lj_eps_by_kb_gas: Well depth over Boltzmann constant.
                 Default is 97.0 K.
-            MW_gas: Mean molecular weight of ambient gas.
+            mw_gas: Mean molecular weight of ambient gas.
                 Default is 28.97 g/mol.
             correlation: Method to calculate sigma and epsilon ("Tee" or "Wilke").
                 Default is "Tee".
@@ -521,16 +525,16 @@ class Components:
         return correlate.components.diffusion_coeffs_wilke(
             self._fuel,
             p,
-            T,
+            temp,
             sigma_gas=sigma_gas,
-            epsilonByKB_gas=epsilonByKB_gas,
-            MW_gas=MW_gas,
+            lj_eps_by_kb_gas=lj_eps_by_kb_gas,
+            mw_gas=mw_gas,
             correlation=correlation,
         )
 
     def sigma(
         self,
-        T: types.Quantity0D,
+        temp: types.Quantity0D,
         comp_idx: int | None = None,
         correlation: Literal["Brock-Bird", "Pitzer"] = "Brock-Bird",
     ) -> types.Quantity1D:
@@ -539,7 +543,7 @@ class Components:
         Uses Brock-Bird (default) or Pitzer correlations (Poling 12-3.5, 12-3.7).
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
             correlation: Correlation method ("Brock-Bird" or "Pitzer").
@@ -549,24 +553,26 @@ class Components:
             Surface tension in N/m.
         """
         st = correlate.components.surface_tension(
-            self._fuel, T, correlation=correlation
+            self._fuel, temp, correlation=correlation
         )
         return st[comp_idx] if comp_idx is not None else st
 
-    def k(self, T: types.Quantity0D, comp_idx: int | None = None) -> types.Quantity1D:
+    def k(
+        self, temp: types.Quantity0D, comp_idx: int | None = None
+    ) -> types.Quantity1D:
         """Calculate thermal conductivity at a given temperature.
 
         Uses Latini et al. method (Poling equation 10-9.1).
 
         Args:
-            T: Temperature to compute property.
+            temp: Temperature to compute property.
             comp_idx: Index of compound to calculate property for.
                 Defaults to None (all compounds).
 
         Returns:
             Thermal conductivity in W/m/K.
         """
-        k_i = correlate.components.thermal_conductivity_latini(self._fuel, T)
+        k_i = correlate.components.thermal_conductivity_latini(self._fuel, temp)
         return k_i[comp_idx] if comp_idx is not None else k_i
 
     def t_flash(
@@ -595,7 +601,7 @@ class Components:
     # Composition conversions
     # -------------------------------------------------------------------------
     def mass2y(self, mass: types.Quantity1D) -> types.Quantity1D:
-        """Convert mass of each component to mass fractions (Yi).
+        """Convert mass of each component to mass fractions (yi).
 
         Args:
             mass: Mass of each compound.
@@ -606,7 +612,7 @@ class Components:
         return correlate.helpers.mass_to_mass_fractions(self._fuel, mass)
 
     def mass2x(self, mass: types.Quantity1D) -> types.Quantity1D:
-        """Convert mass of each component to mole fractions (Xi).
+        """Convert mass of each component to mole fractions (xi).
 
         Args:
             mass: Mass of each compound.
@@ -616,36 +622,38 @@ class Components:
         """
         return correlate.helpers.mass_to_mole_fractions(self._fuel, mass)
 
-    def x2y(self, Xi: types.Quantity1D) -> types.Quantity1D:
-        """Convert mole fractions (Xi) to mass fractions (Yi).
+    def x2y(self, xi: types.Quantity1D) -> types.Quantity1D:
+        """Convert mole fractions (xi) to mass fractions (yi).
 
         Args:
-            Xi: Mole fractions of each compound.
+            xi: Mole fractions of each compound.
 
         Returns:
             Mass fractions of the compounds (shape: num_compounds,).
         """
-        return correlate.helpers.mole_fractions_to_mass_fractions(self._fuel, Xi)
+        return correlate.helpers.mole_fractions_to_mass_fractions(self._fuel, xi)
 
-    def y2x(self, Yi: types.Quantity1D) -> types.Quantity1D:
-        """Convert mass fractions (Yi) to mole fractions (Xi).
+    def y2x(self, yi: types.Quantity1D) -> types.Quantity1D:
+        """Convert mass fractions (yi) to mole fractions (xi).
 
         Args:
-            Yi: Mass fractions of each compound.
+            yi: Mass fractions of each compound.
 
         Returns:
             Mole fractions of the compounds (shape: num_compounds,).
         """
-        return correlate.helpers.mass_fractions_to_mole_fractions(self._fuel, Yi)
+        return correlate.helpers.mass_fractions_to_mole_fractions(self._fuel, yi)
 
-    def y2v(self, Yi: types.Quantity1D, T: types.Quantity0D) -> types.Quantity1D:
-        """Convert mass fractions (Yi) to volume fractions (Vi).
+    def y2v(self, yi: types.Quantity1D, temp: types.Quantity0D) -> types.Quantity1D:
+        """Convert mass fractions (yi) to volume fractions (vi).
 
         Args:
-            Yi: Mass fractions of each compound.
-            T: Temperature at which to evaluate the mixture density.
+            yi: Mass fractions of each compound.
+            temp: Temperature at which to evaluate the mixture density.
 
         Returns:
             Volume fractions of the compounds (shape: num_compounds,).
         """
-        return correlate.helpers.mass_fractions_to_volume_fractions(self._fuel, Yi, T)
+        return correlate.helpers.mass_fractions_to_volume_fractions(
+            self._fuel, yi, temp
+        )

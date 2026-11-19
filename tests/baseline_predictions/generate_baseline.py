@@ -151,7 +151,7 @@ def update_baseline(
                 # (pandas parses "NaN" as float nan), so do not pass T to the method.
                 kwargs = {}
                 if not pd.isna(row.Temp):
-                    kwargs["T"] = Units.Quantity(row.Temp, row.Temp_Units)
+                    kwargs["temp"] = Units.Quantity(row.Temp, row.Temp_Units)
                 prop_val = Units.Quantity(row.Property_Value, row.Property_Units)
                 pred_val = method(fuel=fuel, **kwargs).to(row.Property_Units)
 

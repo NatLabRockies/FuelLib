@@ -15,20 +15,20 @@ if TYPE_CHECKING:
 
 
 def arithmetic(
-    X: types.Quantity1D,
-    var_n: types.Quantity1D,
+    x: types.Quantity1D,
+    var_i: types.Quantity1D,
 ) -> types.Quantity0D:
     """Arithmetic mixing rule for computing mixture properties.
 
     Args:
-        X: Mole fractions of the compounds.
-        var_n: Individual compound properties.
+        x: Mole fractions of the compounds.
+        var_i: Individual compound properties.
 
     Returns:
         Mixture property value.
     """
-    values = var_n.magnitude
-    mag_X = X.to("dimensionless").magnitude
+    values = var_i.magnitude
+    mag_x = x.to("dimensionless").magnitude
 
     num_comps = len(values)
     var_mix = 0.0
@@ -36,26 +36,26 @@ def arithmetic(
         for j in range(num_comps):
             # Use arithmetic definition for the pseudo property
             var_ij = (values[i] + values[j]) / 2
-            var_mix += mag_X[i] * mag_X[j] * var_ij
+            var_mix += mag_x[i] * mag_x[j] * var_ij
 
-    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+    return Units.Quantity(var_mix, var_i.units)  # Attach original units from var_i
 
 
 def geometric(
-    X: types.Quantity1D,
-    var_n: types.Quantity1D,
+    x: types.Quantity1D,
+    var_i: types.Quantity1D,
 ) -> types.Quantity0D:
     """Geometric mixing rule for computing mixture properties.
 
     Args:
-        X: Mole fractions of the compounds.
-        var_n: Individual compound properties.
+        x: Mole fractions of the compounds.
+        var_i: Individual compound properties.
 
     Returns:
         Mixture property value.
     """
-    values = var_n.magnitude
-    mag_X = X.to("dimensionless").magnitude
+    values = var_i.magnitude
+    mag_x = x.to("dimensionless").magnitude
 
     num_comps = len(values)
     var_mix = 0.0
@@ -63,85 +63,85 @@ def geometric(
         for j in range(num_comps):
             # Use geometric definition for the pseudo property
             var_ij = (values[i] * values[j]) ** 0.5
-            var_mix += mag_X[i] * mag_X[j] * var_ij
+            var_mix += mag_x[i] * mag_x[j] * var_ij
 
-    return Units.Quantity(var_mix, var_n.units)  # Attach original units from var_n
+    return Units.Quantity(var_mix, var_i.units)  # Attach original units from var_i
 
 
-def arrhenius(X: types.Quantity1D, var_n: types.Quantity1D) -> types.Quantity0D:
+def arrhenius(x: types.Quantity1D, var_i: types.Quantity1D) -> types.Quantity0D:
     """Apply the Arrhenius mixing rule to a positive component property.
 
     Args:
-        X: Mole fractions of the compounds.
-        var_n: Positive component properties, typically kinematic viscosities.
+        x: Mole fractions of the compounds.
+        var_i: Positive component properties, typically kinematic viscosities.
 
     Returns:
-        The mixture property in the units of `var_n`.
+        The mixture property in the units of `var_i`.
     """
-    values = var_n.magnitude
-    mole_fractions = X.to("dimensionless").magnitude
-    return Units.Quantity(np.exp(np.sum(mole_fractions * np.log(values))), var_n.units)
+    values = var_i.magnitude
+    mole_fractions = x.to("dimensionless").magnitude
+    return Units.Quantity(np.exp(np.sum(mole_fractions * np.log(values))), var_i.units)
 
 
-def kendall_monroe(X: types.Quantity1D, var_n: types.Quantity1D) -> types.Quantity0D:
+def kendall_monroe(x: types.Quantity1D, var_i: types.Quantity1D) -> types.Quantity0D:
     """Apply the Kendall-Monroe mixing rule to a positive component property.
 
     Args:
-        X: Mole fractions of the compounds.
-        var_n: Positive component properties, typically kinematic viscosities.
+        x: Mole fractions of the compounds.
+        var_i: Positive component properties, typically kinematic viscosities.
 
     Returns:
-        The mixture property in the units of `var_n`.
+        The mixture property in the units of `var_i`.
     """
-    values = var_n.magnitude
-    mole_fractions = X.to("dimensionless").magnitude
+    values = var_i.magnitude
+    mole_fractions = x.to("dimensionless").magnitude
     value = np.sum(mole_fractions * values ** (1.0 / 3.0)) ** 3.0
-    return Units.Quantity(value, var_n.units)
+    return Units.Quantity(value, var_i.units)
 
 
 def mean_molecular_weight(
-    fuel: "Fuel", Yi: types.Quantity1D | None = None
+    fuel: "Fuel", yi: types.Quantity1D | None = None
 ) -> types.Quantity0D:
     """Calculate the mean molecular weight of the mixture.
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound.
+        yi: Mass fractions of each compound.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Mean molecular weight of the mixture in kg/mol.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    MW = fuel.comps.mw.to("kg/mol")  # Can't be None after `rdkit` implementation
-    return 1 / np.sum(Yi / MW)
+    yi = yi if yi is not None else fuel.y0
+    mw = fuel.comps.mw.to("kg/mol")  # Can't be None after `rdkit` implementation
+    return 1 / np.sum(yi / mw)
 
 
 def density(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
 ) -> types.Quantity0D:
     """Calculate mixture density.
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Mixture density in kg/m^3.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    rho_i = components.density(fuel, T).to("kg/m^3")
-    return Yi @ rho_i
+    yi = yi if yi is not None else fuel.y0
+    rho_i = components.density(fuel, temp).to("kg/m^3")
+    return yi @ rho_i
 
 
 def viscosity_kinematic_dutt(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
     *,
     mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
 ) -> types.Quantity0D:
@@ -151,8 +151,8 @@ def viscosity_kinematic_dutt(
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound.
             Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
@@ -160,22 +160,22 @@ def viscosity_kinematic_dutt(
     Returns:
         Mixture kinematic viscosity in m^2/s.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    nu_i = components.viscosity_kinematic_dutt(fuel, T).to("m^2/s")
+    yi = yi if yi is not None else fuel.y0
+    nu_i = components.viscosity_kinematic_dutt(fuel, temp).to("m^2/s")
     # Calculate mole fractions for each species
-    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
+    xi = helpers.mass_fractions_to_mole_fractions(fuel, yi)
     if mixing_rule.casefold() == "Arrhenius".casefold():
         # Arrhenius mixing correlation
-        return arrhenius(Xi, nu_i)
+        return arrhenius(xi, nu_i)
     else:
         # Default: Kendall-Monroe mixing correlation
-        return kendall_monroe(Xi, nu_i)
+        return kendall_monroe(xi, nu_i)
 
 
 def viscosity_dynamic_dutt(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
     *,
     mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
 ) -> types.Quantity0D:
@@ -183,8 +183,8 @@ def viscosity_dynamic_dutt(
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound.
             Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
@@ -192,16 +192,16 @@ def viscosity_dynamic_dutt(
     Returns:
         Mixture dynamic viscosity in Pa*s.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    nu = viscosity_kinematic_dutt(fuel, T, Yi, mixing_rule=mixing_rule)
-    rho = density(fuel, T, Yi)
+    yi = yi if yi is not None else fuel.y0
+    nu = viscosity_kinematic_dutt(fuel, temp, yi, mixing_rule=mixing_rule)
+    rho = density(fuel, temp, yi)
     return (rho * nu).to("Pa*s")
 
 
 def viscosity_kinematic_nannoolal(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
     *,
     mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
 ) -> types.Quantity0D:
@@ -211,8 +211,8 @@ def viscosity_kinematic_nannoolal(
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound.
             Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
@@ -220,22 +220,22 @@ def viscosity_kinematic_nannoolal(
     Returns:
         Mixture kinematic viscosity in m^2/s.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    nu_i = components.viscosity_kinematic_nannoolal(fuel, T).to("m^2/s")
+    yi = yi if yi is not None else fuel.y0
+    nu_i = components.viscosity_kinematic_nannoolal(fuel, temp).to("m^2/s")
     # Calculate mole fractions for each species
-    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
+    xi = helpers.mass_fractions_to_mole_fractions(fuel, yi)
     if mixing_rule.casefold() == "Arrhenius".casefold():
         # Arrhenius mixing correlation
-        return arrhenius(Xi, nu_i)
+        return arrhenius(xi, nu_i)
     else:
         # Default: Kendall-Monroe mixing correlation
-        return kendall_monroe(Xi, nu_i)
+        return kendall_monroe(xi, nu_i)
 
 
 def viscosity_dynamic_nannoolal(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
     *,
     mixing_rule: Literal["Kendall-Monroe", "Arrhenius"] = "Kendall-Monroe",
 ) -> types.Quantity0D:
@@ -243,8 +243,8 @@ def viscosity_dynamic_nannoolal(
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound.
             Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixture rule ("Kendall-Monroe" or "Arrhenius").
             Defaults to "Kendall-Monroe".
@@ -252,16 +252,16 @@ def viscosity_dynamic_nannoolal(
     Returns:
         Mixture dynamic viscosity in Pa*s.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    nu = viscosity_kinematic_nannoolal(fuel, T, Yi, mixing_rule=mixing_rule)
-    rho = density(fuel, T, Yi)
+    yi = yi if yi is not None else fuel.y0
+    nu = viscosity_kinematic_nannoolal(fuel, temp, yi, mixing_rule=mixing_rule)
+    rho = density(fuel, temp, yi)
     return (rho * nu).to("Pa*s")
 
 
 def vapor_pressure(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
     *,
     correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
 ) -> types.Quantity0D:
@@ -269,8 +269,8 @@ def vapor_pressure(
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound in the mixture.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
         correlation: Correlation method ("Ambrose-Walton" or "Lee-Kesler").
             Defaults to "Lee-Kesler".
@@ -278,19 +278,19 @@ def vapor_pressure(
     Returns:
         Mixture vapor pressure in Pa.
     """
-    Yi = Yi if Yi is not None else fuel.y0
+    yi = yi if yi is not None else fuel.y0
     # Mole fraction for each compound
-    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
+    xi = helpers.mass_fractions_to_mole_fractions(fuel, yi)
     # Vapor pressure for each compound (Pa)
-    pvap_i = components.vapor_pressure(fuel, T, correlation=correlation).to("Pa")
+    pvap_i = components.vapor_pressure(fuel, temp, correlation=correlation).to("Pa")
     # Mixture vapor pressure via Raoult's law
-    return pvap_i @ Xi
+    return pvap_i @ xi
 
 
 def vapor_pressure_antoine_coeffs(
     fuel: "Fuel",
-    Tvals: types.Quantity1D | None = None,
-    Yi: types.Quantity1D | None = None,
+    temp_vals: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
     *,
     units: Literal["mks", "cgs", "dyne/cm^2", "Pa"] = "mks",
     correlation: Literal["Ambrose-Walton", "Lee-Kesler"] = "Lee-Kesler",
@@ -299,9 +299,9 @@ def vapor_pressure_antoine_coeffs(
 
     Args:
         fuel: Fuel object.
-        Tvals: Temperature range or nodes for Antoine fit in Kelvin.
+        temp_vals: Temperature range or nodes for Antoine fit in Kelvin.
             Defaults to [273.15, min(Tb_mix)].
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
         units: Units for pressure in fit.
             Defaults to "mks" (Pa).
@@ -312,9 +312,9 @@ def vapor_pressure_antoine_coeffs(
         Coefficients A, B, C, D.
 
     Raises:
-        ValueError: If units or Tvals are invalid.
+        ValueError: If units or temp_vals are invalid.
     """
-    Yi = Yi if Yi is not None else fuel.y0
+    yi = yi if yi is not None else fuel.y0
     if units == "cgs":
         units = "dyne/cm^2"
     elif units == "mks":
@@ -322,63 +322,67 @@ def vapor_pressure_antoine_coeffs(
     elif units not in ["dyne/cm^2", "Pa"]:
         raise ValueError("units must be either 'mks', 'cgs', 'dyne/cm^2', or 'Pa'.")
 
-    if Tvals is not None:
-        Tvals = Tvals.to("K")
+    if temp_vals is not None:
+        temp_vals = temp_vals.to("K")
 
     # Define or get temperature nodes for fit
-    if Tvals is None:
-        print("Tvals not specified, using [273.15, min(Tb_mix)] for mixture.")
-        Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
-        Tb = arithmetic(Xi, fuel.comps.tb)
-        T = Units.Quantity(np.linspace(273.15, np.min(Tb.to("K").magnitude), 20), "K")
-    elif len(Tvals) == 2:
-        T = Units.Quantity(np.linspace(Tvals[0].magnitude, Tvals[1].magnitude, 20), "K")
-    elif len(Tvals) > 2:
-        T = Tvals
-    else:
-        raise ValueError("Tvals must be None, length 2, or length > 2.")
+    if temp_vals is None:
+        print("temp_vals not specified, using [273.15, min(Tb_mix)] for mixture.")
+        xi = helpers.mass_fractions_to_mole_fractions(fuel, yi)
+        tb = arithmetic(xi, fuel.comps.tb)
+        temp_vals = Units.Quantity(
+            np.linspace(273.15, np.min(tb.to("K").magnitude), 20), "K"
+        )
+    elif len(temp_vals) == 2:
+        temp_vals = Units.Quantity(
+            np.linspace(temp_vals[0].magnitude, temp_vals[1].magnitude, 20), "K"
+        )
+    elif len(temp_vals) < 2:
+        raise ValueError("temp_vals must be None, length 2, or length > 2.")
 
     # Antoine equation log10(p) = A - B/(C + T)
     def antoine_eq(
-        T: float | types.Array1D, A: float, B: float, C: float
+        temp: float | types.Array1D, a: float, b: float, c: float
     ) -> float | types.Array1D:
         """Antoine equation for vapor pressure.
 
         Args:
-            T: Temperature.
-            A: Antoine coefficient A.
-            B: Antoine coefficient B.
-            C: Antoine coefficient C.
+            temp: Temperature.
+            a: Antoine coefficient A.
+            b: Antoine coefficient B.
+            c: Antoine coefficient C.
 
         Returns:
             log10(pressure).
         """
-        return A - B / (T + C)
+        return a - b / (temp + c)
 
     # Fit A, B, C against pressure in Pa (mks base) so the coefficients are
     # unit independent. "mks" (meter-kilogram-second) and "cgs"
     # D is the Pa-to-target-unit conversion factor, applied only when evaluating
     # pvap(T) = D * 10**(A - B/(T + C)) in Pele.
-    D = Units.Quantity(1, "Pa").to(units)
+    d = Units.Quantity(1, "Pa").to(units)
 
-    T_magnitude = T.to("K").magnitude
-    Pvals = np.zeros_like(T_magnitude)
-    for k in range(len(T)):
-        Pvals[k] = (
-            vapor_pressure(fuel, T[k], Yi, correlation=correlation).to(units).magnitude
+    temp_vals_mag = temp_vals.to("K").magnitude
+    pvals = np.zeros_like(temp_vals_mag)
+    for k in range(len(temp_vals)):
+        pvals[k] = (
+            vapor_pressure(fuel, temp_vals[k], yi, correlation=correlation)
+            .to(units)
+            .magnitude
         )
 
-    logP = np.log10(Pvals)
-    popt, _ = curve_fit(antoine_eq, T_magnitude, logP, p0=[1, 1e3, -1])
-    A, B, C = popt
+    log_p = np.log10(pvals)
+    popt, _ = curve_fit(antoine_eq, temp_vals_mag, log_p, p0=[1, 1e3, -1])
+    a, b, c = popt
 
-    return A, B, C, D.magnitude
+    return a, b, c, d.magnitude
 
 
 def surface_tension(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
     *,
     correlation: Literal["Pitzer", "Brock-Bird"] = "Brock-Bird",
 ) -> types.Quantity0D:
@@ -389,8 +393,8 @@ def surface_tension(
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound in the mixture.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
         correlation: Correlation method ("Pitzer" or "Brock-Bird").
             Defaults to "Brock-Bird".
@@ -398,40 +402,40 @@ def surface_tension(
     Returns:
         Mixture surface tension in N/m.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
+    yi = yi if yi is not None else fuel.y0
+    xi = helpers.mass_fractions_to_mole_fractions(fuel, yi)
     # Surface tension for each compound (N/m)
-    sti = components.surface_tension(fuel, T, correlation=correlation)
+    sti = components.surface_tension(fuel, temp, correlation=correlation)
     # Mixture surface tension via arithmetic mean, Poling (12-5.2)
-    st = arithmetic(Xi, sti)
+    st = arithmetic(xi, sti)
     return st.to("N/m")
 
 
 def thermal_conductivity_latini(
     fuel: "Fuel",
-    T: types.Quantity0D,
-    Yi: types.Quantity1D | None = None,
+    temp: types.Quantity0D,
+    yi: types.Quantity1D | None = None,
 ) -> types.Quantity0D:
     """Calculate thermal conductivity of the mixture.
 
     Args:
         fuel: Fuel object.
-        T: Temperature to compute property.
-        Yi: Mass fractions of each compound in the mixture.
+        temp: Temperature to compute property.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Thermal conductivity in W/m/K.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    tci = components.thermal_conductivity_latini(fuel, T).to("W/(m*K)").magnitude
-    tc = np.sum(Yi.magnitude * tci ** (-2)) ** (-0.5)
-    return Units.Quantity(tc, "W/(m*K)")
+    yi = yi if yi is not None else fuel.y0
+    k_i = components.thermal_conductivity_latini(fuel, temp).to("W/(m*K)").magnitude
+    k_mix = np.sum(yi.magnitude * k_i ** (-2)) ** (-0.5)
+    return Units.Quantity(k_mix, "W/(m*K)")
 
 
 def freeze_point_boehm(
     fuel: "Fuel",
-    Yi: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
     *,
     alpha: float = 1.0,
 ) -> types.Quantity0D:
@@ -439,7 +443,7 @@ def freeze_point_boehm(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
         alpha: Scaling applied to the ideal mixing-entropy term.
             Defaults to 1.0 (classical ideal-solution entropy term).
@@ -450,16 +454,16 @@ def freeze_point_boehm(
     Raises:
         RuntimeError: If the root finder fails to converge.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    Xi = (
-        helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
+    yi = yi if yi is not None else fuel.y0
+    xi = (
+        helpers.mass_fractions_to_mole_fractions(fuel, yi).to("dimensionless").magnitude
     )
 
-    R = constants.R.to("J/(mol*K)")
-    Tm = fuel.comps.tm.to("K")
-    dS_fus = boehm_gcm.predict("dS_fus", fuel).to("J/(mol*K)")
-    dH_fus = Tm * dS_fus
-    dCp = (
+    r = constants.R.to("J/(mol*K)")
+    tm = fuel.comps.tm.to("K")
+    ds_fus = boehm_gcm.predict("ds_fus", fuel).to("J/(mol*K)")
+    dh_fus = tm * ds_fus
+    dcp = (
         -0.35
         * components.specific_heat_capacity_mass_ruzicka(
             fuel, Units.Quantity(298.15, "K")
@@ -469,72 +473,72 @@ def freeze_point_boehm(
 
     # Ideal mixing entropy for each compound at its mole fraction in the
     # mixture. This is the only composition-dependent term in the model.
-    Xi_safe = np.clip(Xi, 1e-6, 1.0 - 1e-6)
-    dS_mix = (
-        -R
-        / Xi_safe
-        * ((1.0 - Xi_safe) * np.log(1.0 - Xi_safe) + Xi_safe * np.log(Xi_safe))
+    xi_safe = np.clip(xi, 1e-6, 1.0 - 1e-6)
+    ds_mix = (
+        -r
+        / xi_safe
+        * ((1.0 - xi_safe) * np.log(1.0 - xi_safe) + xi_safe * np.log(xi_safe))
     )
 
-    Tm_mag = Tm.magnitude
-    dH_fus_mag = dH_fus.magnitude
-    dS_fus_mag = dS_fus.magnitude
-    dCp_mag = dCp.magnitude
-    dS_mix_mag = dS_mix.magnitude
+    tm_mag = tm.magnitude
+    dh_fus_mag = dh_fus.magnitude
+    ds_fus_mag = ds_fus.magnitude
+    dcp_mag = dcp.magnitude
+    ds_mix_mag = ds_mix.magnitude
 
-    def residual(T: types.Array1D) -> types.Array1D:
+    def residual(temp: types.Array1D) -> types.Array1D:
         """Residual of Boehm et al. (2022), equation 21, for each compound.
 
         Args:
-            T: Candidate freeze temperature of each compound in K.
+            temp: Candidate freeze temperature of each compound in K.
 
         Returns:
             Residual of equation 21 for each compound.
         """
-        T_safe = np.maximum(T, 1.0)
-        lhs = T_safe * (
-            dS_fus_mag
-            + Xi_safe * dCp_mag * np.log(T_safe / Tm_mag)
-            + alpha * dS_mix_mag
+        temp_safe = np.maximum(temp, 1.0)
+        lhs = temp_safe * (
+            ds_fus_mag
+            + xi_safe * dcp_mag * np.log(temp_safe / tm_mag)
+            + alpha * ds_mix_mag
         )
-        rhs = dH_fus_mag + Xi_safe * dCp_mag * (T_safe - Tm_mag)
+        rhs = dh_fus_mag + xi_safe * dcp_mag * (temp_safe - tm_mag)
         return lhs - rhs
 
-    sol = root(residual, Tm_mag)
+    sol = root(residual, tm_mag)
     if not sol.success:
         raise RuntimeError(
             f"Freeze point root-finding failed to converge: {sol.message}"
         )
 
     # Mark non-physical (non-positive or non-finite) solutions as -inf, and
-    # only let compounds actually present in the mixture (Xi > 1e-6) set the
+    # only let compounds actually present in the mixture (xi > 1e-6) set the
     # freeze point, matching the reference implementation's convention.
-    T_candidates = np.where(np.isfinite(sol.x) & (sol.x > 0), sol.x, -np.inf)
-    T_freeze = np.max(np.where(Xi > 1e-6, T_candidates, -np.inf))
+    t_freeze_i = np.where(np.isfinite(sol.x) & (sol.x > 0), sol.x, -np.inf)
+    t_freeze = np.max(np.where(xi > 1e-6, t_freeze_i, -np.inf))
 
-    return Units.Quantity(T_freeze, "K")
+    return Units.Quantity(t_freeze, "K")
 
 
 def _liaw_chiu_flash_point(
-    Xi: types.Array1D,
-    Tf_i: types.Array1D,
-    Tc: types.Array1D,
-    Pc: types.Array1D,
+    xi: types.Array1D,
+    t_flash_i: types.Array1D,
+    tc: types.Array1D,
+    pc: types.Array1D,
     omega: types.Array1D,
 ) -> float:
     """Solve the ideal Liaw-Chiu mixture flash-point criterion.
 
     Solves for the mixture flash point T such that
-    sum(Xi * pvap(T) / pvap(Tf_i)) = 1, where pvap is evaluated with the
+    sum(xi * pvap(T) / pvap(t_flash_i)) = 1, where pvap is evaluated with the
     Lee-Kesler correlation for each compound at its own critical properties.
     A scipy root finder is used in place of the fixed-point iteration used
     in the original reference implementation.
 
     Args:
-        Xi: Mole fractions of each compound in the mixture.
-        Tf_i: Flash point of each compound in K.
-        Tc: Critical temperature of each compound in K.
-        Pc: Critical pressure of each compound.
+        xi: Mole fractions of each compound in the mixture.
+        t_flash_i: Flash point of each compound in K.
+        tc: Critical temperature of each compound in K.
+        pc: Critical pressure of each compound.
         omega: Acentric factor of each compound.
 
     Returns:
@@ -545,9 +549,9 @@ def _liaw_chiu_flash_point(
     """
 
     def _pvap_lee_kesler(
-        T: types.Array1D | float,
-        Tc: types.Array1D,
-        Pc: types.Array1D,
+        temp: types.Array1D | float,
+        tc: types.Array1D,
+        pc: types.Array1D,
         omega: types.Array1D,
     ) -> types.Array1D:
         """Lee-Kesler vapor pressure for each compound.
@@ -556,35 +560,35 @@ def _liaw_chiu_flash_point(
         in a scipy-based root-finding context.
 
         Args:
-            T: Temperature in K.
-            Tc: Critical temperature of each compound in K.
-            Pc: Critical pressure of each compound.
+            temp: Temperature in K.
+            tc: Critical temperature of each compound in K.
+            pc: Critical pressure of each compound.
             omega: Acentric factor of each compound.
 
         Returns:
-            Vapor pressure (units follow whatever `Pc` is given in).
+            Vapor pressure (units follow whatever `pc` is given in).
         """
-        Tr = T / Tc
-        f0 = 5.92714 - (6.09648 / Tr) - 1.28862 * np.log(Tr) + 0.169347 * (Tr**6)
-        f1 = 15.2518 - (15.6875 / Tr) - 13.4721 * np.log(Tr) + 0.43577 * (Tr**6)
-        return Pc * np.exp(f0 + omega * f1)
+        tr = temp / tc
+        f0 = 5.92714 - (6.09648 / tr) - 1.28862 * np.log(tr) + 0.169347 * (tr**6)
+        f1 = 15.2518 - (15.6875 / tr) - 13.4721 * np.log(tr) + 0.43577 * (tr**6)
+        return pc * np.exp(f0 + omega * f1)
 
-    pvap_ref = _pvap_lee_kesler(Tf_i, Tc, Pc, omega)
+    pvap_ref = _pvap_lee_kesler(t_flash_i, tc, pc, omega)
 
-    def residual(T: types.Array1D) -> types.Array1D:
+    def residual(temp: types.Array1D) -> types.Array1D:
         """Residual of the ideal Liaw-Chiu mixture flash-point criterion.
 
         Args:
-            T: Candidate mixture flash point in K.
+            temp: Candidate mixture flash point in K.
 
         Returns:
             Residual of the flash-point criterion.
         """
-        pvap_T = _pvap_lee_kesler(T[0], Tc, Pc, omega)
-        return np.array([np.sum(Xi * pvap_T / pvap_ref) - 1.0])
+        pvap_temp = _pvap_lee_kesler(temp[0], tc, pc, omega)
+        return np.array([np.sum(xi * pvap_temp / pvap_ref) - 1.0])
 
-    T0 = np.sum(Xi * Tf_i)
-    sol = root(residual, [T0])
+    t_flash_0 = np.sum(xi * t_flash_i)
+    sol = root(residual, [t_flash_0])
     if not sol.success:
         raise RuntimeError(
             f"Flash point root-finding failed to converge: {sol.message}"
@@ -595,7 +599,7 @@ def _liaw_chiu_flash_point(
 
 def flash_point_alqaheem(
     fuel: "Fuel",
-    Yi: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
     *,
     mixing_rule: Literal["linear", "Liaw"] = "Liaw",
 ) -> types.Quantity0D:
@@ -603,7 +607,7 @@ def flash_point_alqaheem(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixing rule to use.
             Defaults to "Liaw".
@@ -611,29 +615,29 @@ def flash_point_alqaheem(
     Returns:
         Mixture flash point in K.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    T_fpi = components.flash_point_alqaheem(fuel)
+    yi = yi if yi is not None else fuel.y0
+    t_flash_i = components.flash_point_alqaheem(fuel)
     if mixing_rule.casefold() == "linear".casefold():
-        return np.sum(Yi * T_fpi)
+        return np.sum(yi * t_flash_i)
 
     # Liaw-Chiu mixing rule: solve for the mixture flash point T such that
-    # sum(Xi * pvap(T) / pvap(Tf_i)) = 1, where pvap is evaluated with the
+    # sum(xi * pvap(T) / pvap(t_flash_i)) = 1, where pvap is evaluated with the
     # Lee-Kesler correlation for each compound at its own critical properties.
-    Xi = (
-        helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
+    xi = (
+        helpers.mass_fractions_to_mole_fractions(fuel, yi).to("dimensionless").magnitude
     )
-    Tc = fuel.comps.tc.to("K").magnitude
-    Pc = fuel.comps.pc.magnitude
+    tc = fuel.comps.tc.to("K").magnitude
+    pc = fuel.comps.pc.magnitude
     omega = fuel.comps.omega.magnitude
-    Tf_i = T_fpi.to("K").magnitude
+    t_flash_i_mag = t_flash_i.to("K").magnitude
 
-    T_flash = _liaw_chiu_flash_point(Xi, Tf_i, Tc, Pc, omega)
-    return Units.Quantity(T_flash, "K")
+    t_flash = _liaw_chiu_flash_point(xi, t_flash_i_mag, tc, pc, omega)
+    return Units.Quantity(t_flash, "K")
 
 
 def flash_point_alibakhshi(
     fuel: "Fuel",
-    Yi: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
     *,
     mixing_rule: Literal["linear", "Liaw"] = "Liaw",
 ) -> types.Quantity0D:
@@ -641,7 +645,7 @@ def flash_point_alibakhshi(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
         mixing_rule: Mixing rule to use.
             Defaults to "Liaw".
@@ -649,28 +653,28 @@ def flash_point_alibakhshi(
     Returns:
         Mixture flash point in K.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    T_fpi = components.flash_point_alibakhshi(fuel)
+    yi = yi if yi is not None else fuel.y0
+    t_flash_i = components.flash_point_alibakhshi(fuel)
     if mixing_rule.casefold() == "linear".casefold():
-        return np.sum(Yi * T_fpi)
+        return np.sum(yi * t_flash_i)
 
     # Liaw-Chiu mixing rule: solve for the mixture flash point T such that
-    # sum(Xi * pvap(T) / pvap(Tf_i)) = 1, where pvap is evaluated with the
+    # sum(xi * pvap(T) / pvap(t_flash_i)) = 1, where pvap is evaluated with the
     # Lee-Kesler correlation for each compound at its own critical properties.
-    Xi = (
-        helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless").magnitude
+    xi = (
+        helpers.mass_fractions_to_mole_fractions(fuel, yi).to("dimensionless").magnitude
     )
-    Tc = fuel.comps.tc.to("K").magnitude
-    Pc = fuel.comps.pc.magnitude
+    tc = fuel.comps.tc.to("K").magnitude
+    pc = fuel.comps.pc.magnitude
     omega = fuel.comps.omega.magnitude
-    Tf_i = T_fpi.to("K").magnitude
+    t_flash_i_mag = t_flash_i.to("K").magnitude
 
-    T_flash = _liaw_chiu_flash_point(Xi, Tf_i, Tc, Pc, omega)
-    return Units.Quantity(T_flash, "K")
+    t_flash = _liaw_chiu_flash_point(xi, t_flash_i_mag, tc, pc, omega)
+    return Units.Quantity(t_flash, "K")
 
 
 def heat_of_combustion(
-    fuel: "Fuel", Yi: types.Quantity1D | None = None
+    fuel: "Fuel", yi: types.Quantity1D | None = None
 ) -> types.Quantity0D:
     """Calculate the heat of combustion of the fuel using a Hess cycle.
 
@@ -679,19 +683,19 @@ def heat_of_combustion(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Heat of combustion of the mixture in J/kg.
     """
-    Yi = Yi if Yi is not None else fuel.y0
+    yi = yi if yi is not None else fuel.y0
     lhv_i = components.lower_heating_value(fuel).to("J/kg")
-    return np.sum(Yi * lhv_i)
+    return np.sum(yi * lhv_i)
 
 
 def yield_sooting_index(
-    fuel: "Fuel", Yi: types.Quantity1D | None = None
+    fuel: "Fuel", yi: types.Quantity1D | None = None
 ) -> types.Quantity0D:
     """Calculate the yield sooting index of the fuel mixture.
 
@@ -700,7 +704,7 @@ def yield_sooting_index(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
@@ -709,8 +713,8 @@ def yield_sooting_index(
     Raises:
         ValueError: If yield sooting index is unavailable for any component.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi).to("dimensionless")
+    yi = yi if yi is not None else fuel.y0
+    xi = helpers.mass_fractions_to_mole_fractions(fuel, yi).to("dimensionless")
     ysi_i = fuel.comps.ysi
     valid = ~np.isnan(ysi_i.magnitude)
     if not np.all(valid):
@@ -722,14 +726,14 @@ def yield_sooting_index(
         raise ValueError(msg)
     if not np.any(valid):
         return Units.Quantity(np.nan, "")
-    Xi_valid = Xi.magnitude[valid]
+    xi_valid = xi.magnitude[valid]
     ysi_valid = ysi_i.magnitude[valid]
-    return Units.Quantity(np.sum(Xi_valid * ysi_valid) / np.sum(Xi_valid), "")
+    return Units.Quantity(np.sum(xi_valid * ysi_valid) / np.sum(xi_valid), "")
 
 
 def smoke_point(
     fuel: "Fuel",
-    Yi: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
     correlation: Literal["NJFCP", "McEnally"] = "NJFCP",
 ) -> types.Quantity0D:
     """Calculate the smoke point of the fuel mixture.
@@ -739,7 +743,7 @@ def smoke_point(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
         correlation: Fit coefficients to use: "McEnally" or "NJFCP".
             Defaults to "NJFCP".
@@ -767,19 +771,19 @@ def smoke_point(
         )
         raise ValueError(msg)
     a, b = coefficients[correlation.casefold()]
-    Yi = Yi if Yi is not None else fuel.y0
-    Xi = helpers.mass_fractions_to_mole_fractions(fuel, Yi)
-    ysi = yield_sooting_index(fuel, Yi).magnitude
+    yi = yi if yi is not None else fuel.y0
+    xi = helpers.mass_fractions_to_mole_fractions(fuel, yi)
+    ysi = yield_sooting_index(fuel, yi).magnitude
     if not ysi > 0:
         msg = f"Mixture yield sooting index must be positive to compute SP, got {ysi}."
         raise ValueError(msg)
-    X_O2_air = 0.209  # Mole fraction of O2 in air
-    S_i = (fuel.comps.num_c + fuel.comps.num_h / 4.0) / X_O2_air
-    S = np.sum(Xi.magnitude * S_i) / np.sum(Xi.magnitude)
-    denom = ysi / S - a
+    x_o2_air = 0.209  # Mole fraction of O2 in air
+    s_i = (fuel.comps.num_c + fuel.comps.num_h / 4.0) / x_o2_air
+    s = np.sum(xi.magnitude * s_i) / np.sum(xi.magnitude)
+    denom = ysi / s - a
     if denom <= 0:
         msg = (
-            f"YSI / S = {ysi / S:.3f} must exceed {a} to compute SP; "
+            f"YSI / S = {ysi / s:.3f} must exceed {a} to compute SP; "
             "the mixture is outside the range of the correlation."
         )
         raise ValueError(msg)
@@ -788,21 +792,21 @@ def smoke_point(
 
 def derived_cetane_number(
     fuel: "Fuel",
-    Yi: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
     *,
-    T_ref: types.Quantity0D = constants.T_stp,
+    temp_ref: types.Quantity0D = constants.T_STP,
 ) -> types.Quantity0D:
     """Calculate the derived cetane number (DCN) of the fuel mixture.
 
     Combines each component's derived cetane number with a linear, liquid volume
     fraction mixing rule. Volume fractions are derived from mass fractions using
-    component liquid densities at T_ref.
+    component liquid densities at temp_ref.
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
-        T_ref: Reference temperature for liquid densities.
+        temp_ref: Reference temperature for liquid densities.
             Required for converting mass fractions to volume fractions.
 
     Returns:
@@ -811,9 +815,9 @@ def derived_cetane_number(
     Raises:
         ValueError: If derived cetane number is unavailable for any component.
     """
-    Yi = Yi if Yi is not None else fuel.y0
+    yi = yi if yi is not None else fuel.y0
     dcn_i = fuel.comps.dcn
-    rho_i = components.density(fuel, T_ref).magnitude
+    rho_i = components.density(fuel, temp_ref).magnitude
     valid = ~np.isnan(dcn_i.magnitude)
     if not np.all(valid):
         msg = (
@@ -823,14 +827,14 @@ def derived_cetane_number(
         raise ValueError(msg)
     if not np.any(valid):
         return Units.Quantity(np.nan, "")
-    tot_vol = np.sum(Yi / rho_i)
-    vol_frac = (Yi / rho_i) / tot_vol
+    tot_vol = np.sum(yi / rho_i)
+    vol_frac = (yi / rho_i) / tot_vol
     return Units.Quantity(np.sum(vol_frac * dcn_i.magnitude), "")
 
 
 def aromatics_content(
     fuel: "Fuel",
-    Yi: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
 ) -> types.Quantity0D:
     """Calculate the aromatics content of the fuel mixture.
 
@@ -839,21 +843,21 @@ def aromatics_content(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Aromatics content of the mixture in volume percent.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
+    yi = yi if yi is not None else fuel.y0
+    vi = helpers.mass_fractions_to_volume_fractions(fuel, yi, constants.T_STP)
     is_aromatic = np.array(fuel.comps.hc_type) == "aromatic"
-    return Units.Quantity(np.sum(Vi.magnitude[is_aromatic]), "").to("percent")
+    return Units.Quantity(np.sum(vi.magnitude[is_aromatic]), "").to("percent")
 
 
 def naphthalenes_content(
     fuel: "Fuel",
-    Yi: types.Quantity1D | None = None,
+    yi: types.Quantity1D | None = None,
 ) -> types.Quantity0D:
     """Calculate the naphthalenes content of the fuel mixture.
 
@@ -863,13 +867,13 @@ def naphthalenes_content(
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
             Defaults to `fuel.y0` (initial mass fractions).
 
     Returns:
         Naphthalenes content of the mixture in volume percent.
     """
-    Yi = Yi if Yi is not None else fuel.y0
-    Vi = helpers.mass_fractions_to_volume_fractions(fuel, Yi, constants.T_stp)
+    yi = yi if yi is not None else fuel.y0
+    vi = helpers.mass_fractions_to_volume_fractions(fuel, yi, constants.T_STP)
     is_naphthalene = np.array([mol.has_naphthalene(m) for m in fuel.comps.rdkit_mols])
-    return Units.Quantity(np.sum(Vi.magnitude[is_naphthalene]), "").to("percent")
+    return Units.Quantity(np.sum(vi.magnitude[is_naphthalene]), "").to("percent")

@@ -19,7 +19,7 @@ WALDEN_RULE_DS_FUS = 56.5
 
 
 @boehm_gcm.register_property
-def dS_fus(fuel: "Fuel") -> types.Quantity1D:
+def ds_fus(fuel: "Fuel") -> types.Quantity1D:
     """Return the fusion entropy (ΔS_fus) for each component in the fuel.
 
     Compounds whose family is not present in the family correlation table
@@ -35,13 +35,13 @@ def dS_fus(fuel: "Fuel") -> types.Quantity1D:
     result = []
     for i in range(fuel.num_compounds):
         family = families[i]
-        nC = fuel.comps.num_c[i]
+        num_c = fuel.comps.num_c[i]
         if family in TABLE.index:
             row = TABLE.loc[family]
-            dsFus_i = float(row["dSfus_A"]) + float(row["dSfus_B"]) * (
-                nC - int(row["C_ref"])
+            ds_fus_i = float(row["dSfus_A"]) + float(row["dSfus_B"]) * (
+                num_c - int(row["C_ref"])
             )
-            result.append(max(dsFus_i, 20.0))
+            result.append(max(ds_fus_i, 20.0))
         else:
             result.append(WALDEN_RULE_DS_FUS)
     return Units.Quantity(result, "J/(mol*K)")

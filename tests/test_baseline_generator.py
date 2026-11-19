@@ -30,7 +30,7 @@ def test_generated_values_round_trip_without_losing_float_precision(
         correlate.mixture
         .density(
             fuel=fuel,
-            T=Units.Quantity(source_row.Temp, source_row.Temp_Units),
+            temp=Units.Quantity(source_row.Temp, source_row.Temp_Units),
         )
         .to(source_row.Property_Units)
         .magnitude
