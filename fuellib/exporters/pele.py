@@ -336,7 +336,7 @@ def export_pele(
         path = os.getcwd()
 
     # Input validation
-    if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
+    if not hasattr(fuel, "comps") or not hasattr(fuel, "y0"):
         raise TypeError("fuel parameter must be a valid FuelLib fuel object")
 
     if liq_prop_model.lower() not in ["gcm", "mp"]:

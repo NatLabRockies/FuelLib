@@ -32,8 +32,8 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
             print(f"\n{fuel_name.upper()}:")
 
             with self.subTest(fuel=fuel_name):
-                Yi = fuel.y0.copy()
-                self.assertAlmostEqual(np.sum(Yi), 1.0)
+                yi = fuel.y0.copy()
+                self.assertAlmostEqual(np.sum(yi), 1.0)
 
                 # Utility functions (run per fuel for consistent CI grouping)
                 print("  Utility Functions:")
@@ -44,30 +44,30 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 )
                 print("    ✓ utility.droplet_volume")
 
-                Xi = fuel.comps.y2x(Yi)
+                xi = fuel.comps.y2x(yi)
                 self._assert_finite_and_positive(
-                    fl.utility.mixing_rule(fuel.comps.tc, Xi, pseudo_prop="arithmetic")
+                    fl.utility.mixing_rule(fuel.comps.tc, xi, pseudo_prop="arithmetic")
                 )
                 print("    ✓ utility.mixing_rule (arithmetic)")
                 self._assert_finite_and_positive(
-                    fl.utility.mixing_rule(fuel.comps.tc, Xi, pseudo_prop="geometric")
+                    fl.utility.mixing_rule(fuel.comps.tc, xi, pseudo_prop="geometric")
                 )
                 print("    ✓ utility.mixing_rule (geometric)")
                 self._assert_finite_and_positive(
-                    fl.correlate.mixture.arithmetic(Xi, fuel.comps.tc)
+                    fl.correlate.mixture.arithmetic(xi, fuel.comps.tc)
                 )
                 print("    ✓ correlate.mixture.arithmetic")
                 self._assert_finite_and_positive(
-                    fl.correlate.mixture.geometric(Xi, fuel.comps.tc)
+                    fl.correlate.mixture.geometric(xi, fuel.comps.tc)
                 )
                 print("    ✓ correlate.mixture.geometric")
                 component_nu = fuel.comps.nu(self.T)
                 self._assert_finite_and_positive(
-                    fl.correlate.mixture.arrhenius(Xi, component_nu)
+                    fl.correlate.mixture.arrhenius(xi, component_nu)
                 )
                 print("    ✓ correlate.mixture.arrhenius")
                 self._assert_finite_and_positive(
-                    fl.correlate.mixture.kendall_monroe(Xi, component_nu)
+                    fl.correlate.mixture.kendall_monroe(xi, component_nu)
                 )
                 print("    ✓ correlate.mixture.kendall_monroe")
 
@@ -76,7 +76,7 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 methods_to_test = [
                     (
                         "mix.mw",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.mw(Yi),
+                        lambda fuel=fuel, yi=yi: fuel.mix.mw(yi),
                     ),
                 ]
                 for method_name, method_call in methods_to_test:
@@ -88,18 +88,18 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                         print(f"    ✗ {method_name}: {e}")
                         raise
 
-                Yi_back = fuel.comps.x2y(Xi)
-                self.assertTrue(np.allclose(Yi, Yi_back, rtol=1e-10, atol=1e-12))
+                yi_back = fuel.comps.x2y(xi)
+                self.assertTrue(np.allclose(yi, yi_back, rtol=1e-10, atol=1e-12))
                 print("    ✓ y2x/x2y roundtrip")
 
-                mass = Units.Quantity(Yi.magnitude * 1.0e-6, "kg")
+                mass = Units.Quantity(yi.magnitude * 1.0e-6, "kg")
                 self.assertTrue(
-                    np.allclose(fuel.comps.mass2y(mass), Yi, rtol=1e-10, atol=1e-12)
+                    np.allclose(fuel.comps.mass2y(mass), yi, rtol=1e-10, atol=1e-12)
                 )
                 print("    ✓ mass2y")
 
-                Xi_from_mass = fuel.comps.mass2x(mass)
-                self.assertTrue(np.allclose(np.sum(Xi_from_mass), 1.0))
+                xi_from_mass = fuel.comps.mass2x(mass)
+                self.assertTrue(np.allclose(np.sum(xi_from_mass), 1.0))
                 print("    ✓ mass2x")
 
                 # Component properties (all components and explicit component index)
@@ -159,32 +159,32 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                     print(f"    ✓ {method_name}")
 
                 # Antoine coefficient fits (individual compounds)
-                A, B, C, D = fuel.comps.pvap_antoine_coeffs(
+                a, b, c, d = fuel.comps.pvap_antoine_coeffs(
                     temp_vals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="mks",
                     correlation="Lee-Kesler",
                 )
-                self.assertEqual(len(A), fuel.num_compounds)
-                self.assertEqual(len(B), fuel.num_compounds)
-                self.assertEqual(len(C), fuel.num_compounds)
-                self.assertEqual(len(D), fuel.num_compounds)
+                self.assertEqual(len(a), fuel.num_compounds)
+                self.assertEqual(len(b), fuel.num_compounds)
+                self.assertEqual(len(c), fuel.num_compounds)
+                self.assertEqual(len(d), fuel.num_compounds)
                 # A, B, D must be positive; C can be negative (it's a temperature offset)
-                self._assert_finite_and_positive(A)
-                self._assert_finite_and_positive(B)
-                self._assert_finite_and_positive(D)
-                self.assertTrue(np.all(np.isfinite(C)))
+                self._assert_finite_and_positive(a)
+                self._assert_finite_and_positive(b)
+                self._assert_finite_and_positive(d)
+                self.assertTrue(np.all(np.isfinite(c)))
                 print("    ✓ pvap_antoine_coeffs (individual)")
 
                 # Antoine coefficient fits (mixture)
-                A_mix, B_mix, C_mix, D_mix = fuel.mix.pvap_antoine_coeffs(
-                    Yi,
+                a_mix, b_mix, c_mix, d_mix = fuel.mix.pvap_antoine_coeffs(
+                    yi,
                     temp_vals=Units.Quantity(np.array([300.0, 340.0]), "K"),
                     units="cgs",
                     correlation="Lee-Kesler",
                 )
                 # A, B, D must be positive; C can be negative (it's a temperature offset)
-                self._assert_finite_and_positive([A_mix, B_mix, D_mix])
-                self.assertTrue(np.isfinite(C_mix))
+                self._assert_finite_and_positive([a_mix, b_mix, d_mix])
+                self.assertTrue(np.isfinite(c_mix))
                 print("    ✓ mix.pvap_antoine_coeffs")
 
                 # Mixture properties
@@ -192,51 +192,51 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 mixture_methods = [
                     (
                         "mix.rho",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.rho(Yi, self.T),
+                        lambda fuel=fuel, yi=yi: fuel.mix.rho(yi, self.T),
                     ),
                     (
                         "mix.nu (Kendall-Monroe)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.nu(
-                            Yi, self.T, mixing_rule="Kendall-Monroe"
+                        lambda fuel=fuel, yi=yi: fuel.mix.nu(
+                            yi, self.T, mixing_rule="Kendall-Monroe"
                         ),
                     ),
                     (
                         "mix.nu (Arrhenius)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.nu(
-                            Yi, self.T, mixing_rule="Arrhenius"
+                        lambda fuel=fuel, yi=yi: fuel.mix.nu(
+                            yi, self.T, mixing_rule="Arrhenius"
                         ),
                     ),
                     (
                         "mix.mu",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.mu(Yi, self.T),
+                        lambda fuel=fuel, yi=yi: fuel.mix.mu(yi, self.T),
                     ),
                     (
                         "mix.pvap (Lee-Kesler)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.pvap(
-                            Yi, self.T, correlation="Lee-Kesler"
+                        lambda fuel=fuel, yi=yi: fuel.mix.pvap(
+                            yi, self.T, correlation="Lee-Kesler"
                         ),
                     ),
                     (
                         "mix.pvap (Ambrose-Walton)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.pvap(
-                            Yi, self.T, correlation="Ambrose-Walton"
+                        lambda fuel=fuel, yi=yi: fuel.mix.pvap(
+                            yi, self.T, correlation="Ambrose-Walton"
                         ),
                     ),
                     (
                         "mix.sigma (Brock-Bird)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.sigma(
-                            Yi, self.T, correlation="Brock-Bird"
+                        lambda fuel=fuel, yi=yi: fuel.mix.sigma(
+                            yi, self.T, correlation="Brock-Bird"
                         ),
                     ),
                     (
                         "mix.sigma (Pitzer)",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.sigma(
-                            Yi, self.T, correlation="Pitzer"
+                        lambda fuel=fuel, yi=yi: fuel.mix.sigma(
+                            yi, self.T, correlation="Pitzer"
                         ),
                     ),
                     (
                         "mix.k",
-                        lambda fuel=fuel, Yi=Yi: fuel.mix.k(Yi, self.T),
+                        lambda fuel=fuel, yi=yi: fuel.mix.k(yi, self.T),
                     ),
                 ]
                 for method_name, method_call in mixture_methods:
@@ -246,13 +246,13 @@ class FuelLibFunctionEvalTestCase(unittest.TestCase):
                 # Droplet helpers
                 print("  Droplet Properties:")
                 r = Units.Quantity(2.0e-5, "m")
-                m = fl.utility.droplet_mass(fuel, r, Yi, self.T)
+                m = fl.utility.droplet_mass(fuel, r, yi, self.T)
                 self.assertEqual(m.shape, fuel.comps.mw.shape)
                 self.assertTrue(np.all(m >= 0.0))
                 self.assertTrue(
                     np.allclose(
                         fl.utility.droplet_mass(
-                            fuel, Units.Quantity(0.0, "m"), Yi, self.T
+                            fuel, Units.Quantity(0.0, "m"), yi, self.T
                         ),
                         0.0,
                     )
@@ -274,42 +274,55 @@ class FuelLibAPIContractTestCase(unittest.TestCase):
         """Test that the Fuel class attributes persist across versions."""
         fuel = fl.Fuel("heptane")
         attributes = [
-            "fuelDataDir",
-            "propData",
             "name",
-            "compounds",
-            "Y_0",
+            "data_dir",
+            "gc_data",
+            "components_data",
+            "prop_data",
+            "y0",
+            "x0",
             "num_compounds",
-            "MW",
-            "Tc",
-            "Pc",
-            "Vc",
-            "Tb",
-            "Tm",
-            "Hf_stp",
-            "Gf_stp",
-            "Hv_stp",
-            "Lv_stp",
-            "Cp_stp",
-            "Vm_stp",
-            "omega",
-            "sigma",
-            "epsilonByKB",
-            "hc_type",
-            "fam",
-            "nC",
-            "nH",
-            "pelephysics_keys",
+            "comps",
+            "mix",
+            "metadata",
         ]
         for attr in attributes:
             self.assertTrue(
                 hasattr(fuel, attr), f"Fuel class is missing attribute '{attr}'"
             )
 
+        comps_attributes = [
+            "names",
+            "smiles",
+            "pelephysics_keys",
+            "mw",
+            "tc",
+            "pc",
+            "vc",
+            "tb",
+            "tm",
+            "hf_stp",
+            "gf_stp",
+            "hv_stp",
+            "vm_stp",
+            "omega",
+            "lj_sigma",
+            "lj_eps_by_kb",
+            "hc_type",
+            "fam",
+            "num_c",
+            "num_h",
+        ]
+        for attr in comps_attributes:
+            self.assertTrue(
+                hasattr(fuel.comps, attr),
+                f"Fuel.comps is missing attribute '{attr}'",
+            )
+
     def test__fuel_module_api_call_persistence(self):
         """Test that the FuelLib.fuel module API persists across versions."""
-        fuelDataDir = Path(__file__).parent.parent / "fuellib/data"
-        fuel_init = partial(fl.Fuel, name="heptane", fuelDataDir=str(fuelDataDir))
+        fuel_data_dir = Path(__file__).parent.parent / "fuellib/data"
+        fuel_init = partial(fl.Fuel, name="heptane", data_dir=str(fuel_data_dir))
         fuel_init()  # Check that the Fuel object can be instantiated.
 
         fuel = fl.Fuel(name="heptane")

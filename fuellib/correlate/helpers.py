@@ -93,9 +93,9 @@ def mass_fractions_to_mole_fractions(
     Returns:
         Mole fractions of the compounds (shape: num_compounds,).
     """
-    mw_bar = fuel.mix.mw(yi)
+    mw_mix = fuel.mix.mw(yi)
     if np.sum(yi) != 0:
-        xi = (mw_bar * yi / fuel.comps.mw).magnitude
+        xi = (mw_mix * yi / fuel.comps.mw).magnitude
     else:
         xi = np.zeros_like(fuel.comps.mw.magnitude)
 

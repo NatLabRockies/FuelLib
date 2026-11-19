@@ -166,7 +166,11 @@ Use the same name for the same quantity throughout the code base:
 model equations, because it is dominated by math.
 
 Code style is otherwise enforced by Ruff (``task format`` and ``task lint``) with a
-line length of 88 characters and Google-style docstrings.
+line length of 88 characters and Google-style docstrings. The PEP 8 naming rules
+(Ruff's ``N`` rules) are checked for every Python file, including ``tests/``,
+``tutorials/``, ``docs/``, ``fuellib/cli``, and ``fuellib/exporters``; the only file
+excluded from them is ``greenfield.py`` (see ``ruff.toml``). ``tests/test_style.py``
+runs Ruff as part of the test suite to confirm this.
 
 Updating the Changelog
 -----------------------

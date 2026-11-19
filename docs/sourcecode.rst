@@ -12,7 +12,7 @@ FuelLib File Organization
 - **fuellib:** main package directory containing:
 
     - **fuel**: subpackage containing the :class:`~fuellib.fuel.core.Fuel` class (re-exported as ``fuellib.Fuel``)
-        - ``core.py``: core :class:`~fuellib.fuel.core.Fuel` class for Group Contribution Method calculations, including loading of GCxGC data and matching of compounds to the reference data tables, plus deprecated aliases of the pre-``comps``/``mix`` API
+        - ``core.py``: core :class:`~fuellib.fuel.core.Fuel` class for Group Contribution Method calculations, including loading of GCxGC data and matching of compounds to the reference data tables
         - ``components.py``: :class:`~fuellib.fuel.components.Components` class (``Fuel.comps``) with the per-component properties (critical properties, reference-only and structural properties) and temperature-dependent methods
         - ``mixture.py``: :class:`~fuellib.fuel.mixture.Mixture` class (``Fuel.mix``) with the composition conversions and mixture-property methods
 
