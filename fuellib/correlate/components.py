@@ -348,22 +348,24 @@ def vapor_pressure_antoine_coeffs(
     b = np.zeros(fuel.num_compounds)
     c = np.zeros(fuel.num_compounds)
     for i in range(fuel.num_compounds):
-        # Update temp_vals if not specified
-        if use_tb_range:
-            temp_vals = Units.Quantity(
+        # Use the compound-specific range if temp_vals is not specified
+        if temp_vals is None:
+            nodes = Units.Quantity(
                 np.linspace(273.15, fuel.comps.tb[i].magnitude, 20), "K"
             )
-        temp_vals_mag = temp_vals.to("K").magnitude
-        pvals = np.zeros_like(temp_vals_mag)
-        for k in range(len(temp_vals)):
+        else:
+            nodes = temp_vals
+        nodes_mag = nodes.to("K").magnitude
+        pvals = np.zeros_like(nodes_mag)
+        for k in range(len(nodes)):
             pvals[k] = (
-                vapor_pressure(fuel, temp_vals[k], correlation=correlation)[i]
+                vapor_pressure(fuel, nodes[k], correlation=correlation)[i]
                 .to("Pa")
                 .magnitude
             )
 
         log_p = np.log10(pvals)
-        popt, _ = curve_fit(antoine_eq, temp_vals_mag, log_p, p0=[1, 1e3, -1])
+        popt, _ = curve_fit(antoine_eq, nodes_mag, log_p, p0=[1, 1e3, -1])
         a[i], b[i], c[i] = popt
     d = d.magnitude + np.zeros(fuel.num_compounds)  # make d an array
     return a, b, c, d

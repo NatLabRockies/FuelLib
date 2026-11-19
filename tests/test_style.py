@@ -30,6 +30,7 @@ class StyleTestCase(unittest.TestCase):
             raise unittest.SkipTest("ruff is not installed")
 
     def _run_ruff(self, *args):
+        assert self.ruff is not None
         result = subprocess.run(
             [*self.ruff, "check", "--no-cache", "--output-format", "concise", *args],
             capture_output=True,
