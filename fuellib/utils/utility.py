@@ -8,7 +8,7 @@ import numpy as np
 
 from .. import correlate
 from . import types
-from .constants import N_A, k_B
+from .constants import K_B, N_A
 from .types import Units
 
 if TYPE_CHECKING:
@@ -16,23 +16,23 @@ if TYPE_CHECKING:
 
 
 def mixing_rule(
-    var_n: types.Quantity1D,
-    X: types.Quantity1D,
+    var_i: types.Quantity1D,
+    x: types.Quantity1D,
     pseudo_prop: Literal["arithmetic", "geometric"] = "arithmetic",
 ) -> types.Quantity0D:
     """Mixing rules for computing mixture properties.
 
     Args:
-        var_n: Individual compound properties.
-        X: Mole fractions of the compounds.
+        var_i: Individual compound properties.
+        x: Mole fractions of the compounds.
         pseudo_prop: Type of mean ("arithmetic" or "geometric").
 
     Returns:
         Mixture property value.
     """
     if pseudo_prop.casefold() == "geometric":
-        return correlate.mixture.geometric(X, var_n)
-    return correlate.mixture.arithmetic(X, var_n)
+        return correlate.mixture.geometric(x, var_i)
+    return correlate.mixture.arithmetic(x, var_i)
 
 
 def droplet_volume(r: types.Quantity0D) -> types.Quantity0D:
@@ -49,45 +49,45 @@ def droplet_volume(r: types.Quantity0D) -> types.Quantity0D:
 
 
 def droplet_mass(
-    fuel: Fuel, r: types.Quantity0D, Yi: types.Quantity1D, T: types.Quantity0D
+    fuel: Fuel, r: types.Quantity0D, yi: types.Quantity1D, temp: types.Quantity0D
 ) -> types.Quantity1D:
     """Calculate the mass of each compound in the fuel provided droplet radius.
 
     Args:
         fuel: An instance of the fuel class.
         r: Radius of the droplet.
-        Yi: Mass fractions of each compound.
-        T: Droplet temperature in Kelvin.
+        yi: Mass fractions of each compound.
+        temp: Droplet temperature.
 
     Returns:
         Mass of each compound in the droplet in kg.
     """
-    Yi_magnitude = Yi.to("dimensionless").magnitude
+    yi_mag = yi.to("dimensionless").magnitude
     volume = droplet_volume(r)
     if volume > 0:
-        return (
-            volume / (fuel.comps.vm(T) @ Yi_magnitude) * Yi_magnitude * fuel.comps.mw
-        ).to("kg")
+        return (volume / (fuel.comps.vm(temp) @ yi_mag) * yi_mag * fuel.comps.mw).to(
+            "kg"
+        )
     else:
         return Units.Quantity(np.zeros_like(fuel.comps.mw.magnitude), "kg")
 
 
-def epsilon_to_characteristic_temperature(epsilon_j_per_mol: float) -> types.Quantity0D:
+def epsilon_to_characteristic_temperature(epsilon: float) -> types.Quantity0D:
     """Convert Lennard-Jones epsilon from J/mol to characteristic temperature in Kelvin.
 
-    The characteristic temperature (epsilon/k_B) is used in transport property
+    The characteristic temperature (epsilon/K_B) is used in transport property
     correlations and is required by combustion codes like CHEMKIN.
 
-    Uses the relation: T* = (epsilon_J/mol) / (N_A * k_B)
+    Uses the relation: T* = epsilon / (N_A * K_B)
 
     Args:
-        epsilon_j_per_mol: Lennard-Jones well depth epsilon in J/mol.
+        epsilon: Lennard-Jones well depth epsilon in J/mol.
 
     Returns:
-        Characteristic temperature (epsilon/k_B) in Kelvin.
+        Characteristic temperature (epsilon/K_B) in Kelvin.
     """
-    eps = Units.Quantity(epsilon_j_per_mol, "J/mol")
-    return (eps / (N_A * k_B)).to("K")
+    eps = Units.Quantity(epsilon, "J/mol")
+    return (eps / (N_A * K_B)).to("K")
 
 
 __all__ = [

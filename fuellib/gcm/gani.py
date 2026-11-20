@@ -51,22 +51,22 @@ def _get_decomp(fuel: "Fuel") -> types.Array2D:
 
 def _check_compatible_dims(
     xj: Annotated[types.Array1D, "GCM property vector"],
-    Aij: Annotated[types.Array2D, "Group decomposition matrix"],
+    nij: Annotated[types.Array2D, "Group decomposition matrix"],
 ) -> None:
     """Check if the shape of the GCM properties and group decomposition matrix match.
 
     Args:
         xj: The GCM property vector.
-        Aij: The group decomposition matrix.
+        nij: The group decomposition matrix.
 
     Raises:
         ValueError: If the dimensions of the GCM contribution vector and the group
             decomposition matrix are incompatible.
     """
-    if Aij.shape[1] != xj.shape[0]:
+    if nij.shape[1] != xj.shape[0]:
         msg = (
             f"Incompatible dimensions: GCM contribution vector has length {xj.shape[0]}"
-            f", but group decomposition matrix has {Aij.shape[1]} columns."
+            f", but group decomposition matrix has {nij.shape[1]} columns."
         )
         raise ValueError(msg)
 
@@ -149,7 +149,7 @@ decompose = GaniDecomposer("Gani", TABLE.columns, order1_groups)
 
 
 @gani_gcm.register_property
-def Tc(fuel: "Fuel") -> types.Quantity1D:
+def tc(fuel: "Fuel") -> types.Quantity1D:
     """Predict the critical temperature (Tc) for a fuel's components.
 
     Args:
@@ -166,7 +166,7 @@ def Tc(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Pc(fuel: "Fuel") -> types.Quantity1D:
+def pc(fuel: "Fuel") -> types.Quantity1D:
     """Predict the critical pressure (Pc) for a fuel's components.
 
     Args:
@@ -183,7 +183,7 @@ def Pc(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Vc(fuel: "Fuel") -> types.Quantity1D:
+def vc(fuel: "Fuel") -> types.Quantity1D:
     """Predict the critical volume (Vc) for a fuel's components.
 
     Args:
@@ -200,7 +200,7 @@ def Vc(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Tb(fuel: "Fuel") -> types.Quantity1D:
+def tb(fuel: "Fuel") -> types.Quantity1D:
     """Predict the normal boiling temperature (Tb) for a fuel's components.
 
     Args:
@@ -217,7 +217,7 @@ def Tb(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Tm(fuel: "Fuel") -> types.Quantity1D:
+def tm(fuel: "Fuel") -> types.Quantity1D:
     """Predict the melting temperature (Tm) for a fuel's components.
 
     Args:
@@ -234,7 +234,7 @@ def Tm(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Hf(fuel: "Fuel") -> types.Quantity1D:
+def hf(fuel: "Fuel") -> types.Quantity1D:
     """Predict the standard enthalpy of formation (Hf) for a fuel's components.
 
     Args:
@@ -251,7 +251,7 @@ def Hf(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Gf(fuel: "Fuel") -> types.Quantity1D:
+def gf(fuel: "Fuel") -> types.Quantity1D:
     """Predict the Gibbs free energy of formation (Gf) for a fuel's components.
 
     Args:
@@ -268,7 +268,7 @@ def Gf(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Hv_stp(fuel: "Fuel") -> types.Quantity1D:
+def hv_stp(fuel: "Fuel") -> types.Quantity1D:
     """Predict the enthalpy of vaporization at STP (Hv_stp) for a fuel's components.
 
     Args:
@@ -305,7 +305,7 @@ def omega(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Vm_stp(fuel: "Fuel") -> types.Quantity1D:
+def vm_stp(fuel: "Fuel") -> types.Quantity1D:
     """Predict the standard molar volume at STP (Vm_stp) for a fuel's components.
 
     Args:
@@ -322,7 +322,7 @@ def Vm_stp(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Cp_stp(fuel: "Fuel") -> types.Quantity1D:
+def cp_stp(fuel: "Fuel") -> types.Quantity1D:
     """Predict the standard molar heat capacity at STP (Cp_stp) for a fuel's components.
 
     Args:
@@ -339,7 +339,7 @@ def Cp_stp(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Cp_B(fuel: "Fuel") -> types.Quantity1D:
+def cp_b(fuel: "Fuel") -> types.Quantity1D:
     """Predict the molar heat capacity B correction (Cp_B) for a fuel's components.
 
     Args:
@@ -356,7 +356,7 @@ def Cp_B(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def Cp_C(fuel: "Fuel") -> types.Quantity1D:
+def cp_c(fuel: "Fuel") -> types.Quantity1D:
     """Predict the molar heat capacity C correction (Cp_C) for a fuel's components.
 
     Args:
@@ -373,7 +373,7 @@ def Cp_C(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def rd_A(fuel: "Fuel") -> types.Quantity1D:
+def rd_a(fuel: "Fuel") -> types.Quantity1D:
     """Predict the RD liquid heat-capacity coefficient A (rd_A) for a fuel's components.
 
     Args:
@@ -390,7 +390,7 @@ def rd_A(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def rd_B(fuel: "Fuel") -> types.Quantity1D:
+def rd_b(fuel: "Fuel") -> types.Quantity1D:
     """Predict the RD liquid heat-capacity coefficient B (rd_B) for a fuel's components.
 
     Args:
@@ -407,7 +407,7 @@ def rd_B(fuel: "Fuel") -> types.Quantity1D:
 
 
 @gani_gcm.register_property
-def rd_D(fuel: "Fuel") -> types.Quantity1D:
+def rd_d(fuel: "Fuel") -> types.Quantity1D:
     """Predict the RD liquid heat-capacity coefficient D (rd_D) for a fuel's components.
 
     Args:

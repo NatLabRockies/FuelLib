@@ -66,18 +66,21 @@ select = [
     "F403", # wildcard import
     "F405", # names relying on wildcard imports
     "F841", # unused variable
+    "N", # PEP 8 naming conventions
 ]
 
 [lint.pydocstyle]
 convention = "google"
 
 [lint.per-file-ignores]
-"docs/**.py" = ["ALL"]
-"tests/**.py" = ["ALL"]
-"fuellib/cli/**.py" = ["ALL"]
-"fuellib/exporters/**.py" = ["ALL"]
-"fuellib/_data_locator.py" = ["ALL"]
-"tutorials/**.py" = ["ALL"]
+# Everything except the naming rules ("N") is ignored in these paths.
+"docs/**.py" = ["D", "DOC", "ANN", "E501", "INP001", "I001", "RUF022", "F401", "F403", "F405", "F841"]
+"tests/**.py" = ["D", "DOC", "ANN", "E501", "INP001", "I001", "RUF022", "F401", "F403", "F405", "F841"]
+"fuellib/cli/**.py" = ["D", "DOC", "ANN", "E501", "INP001", "I001", "RUF022", "F401", "F403", "F405", "F841"]
+"fuellib/exporters/**.py" = ["D", "DOC", "ANN", "E501", "INP001", "I001", "RUF022", "F401", "F403", "F405", "F841"]
+"tutorials/**.py" = ["D", "DOC", "ANN", "E501", "INP001", "I001", "RUF022", "F401", "F403", "F405", "F841"]
+# The Greenfield model keeps the symbols of the published equations.
+"fuellib/simulate/distillation/greenfield.py" = ["N"]
 
 [format]
 # Like Black, use double quotes for strings.

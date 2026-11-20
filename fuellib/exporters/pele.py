@@ -192,10 +192,10 @@ def create_individual_compounds_dataframe(fuel, compound_names, converter):
     # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
     # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
-    Cp_A = gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
-    Cp_B = gani_gcm.predict("Cp_B", fuel).to("J/(mol*K)") / fuel.comps.mw
-    Cp_C = gani_gcm.predict("Cp_C", fuel).to("J/(mol*K)") / fuel.comps.mw
-    Lv_stp = (gani_gcm.predict("Hv_stp", fuel).to("J/mol") / fuel.comps.mw).to("J/kg")
+    cp_a = gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
+    cp_b = gani_gcm.predict("Cp_B", fuel).to("J/(mol*K)") / fuel.comps.mw
+    cp_c = gani_gcm.predict("Cp_C", fuel).to("J/(mol*K)") / fuel.comps.mw
+    hv_stp = (gani_gcm.predict("Hv_stp", fuel).to("J/mol") / fuel.comps.mw).to("J/kg")
 
     return pd.DataFrame({
         "Compound": compound_names,
@@ -208,11 +208,11 @@ def create_individual_compounds_dataframe(fuel, compound_names, converter):
         "Tb": list(fuel.comps.tb),
         "omega": list(fuel.comps.omega),
         "Vm_stp": list(fuel.comps.vm_stp),
-        "Cp_A": list(Cp_A),
-        "Cp_B": list(Cp_B),
-        "Cp_C": list(Cp_C),
-        "Cp_stp": list(Cp_A),  # For PeleMP model
-        "Lv_stp": list(Lv_stp),
+        "Cp_A": list(cp_a),
+        "Cp_B": list(cp_b),
+        "Cp_C": list(cp_c),
+        "Cp_stp": list(cp_a),  # For PeleMP model
+        "Lv_stp": list(hv_stp),
     })
 
 
@@ -236,15 +236,15 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
     # Terms for liquid specific heat capacity in (J/kg/K) or (erg/g/K)
     # Cp(T) = Cp_A + Cp_B * theta + Cp_C * theta^2
     # where theta = (T - 298.15) / 700
-    X = fuel.comps.y2x(fuel.y0)
-    Cp_A = fl.correlate.mixture.arithmetic(
-        X, gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
+    xi = fuel.comps.y2x(fuel.y0)
+    cp_a = fl.correlate.mixture.arithmetic(
+        xi, gani_gcm.predict("Cp_stp", fuel).to("J/(mol*K)") / fuel.comps.mw
     )
-    Cp_B = fl.correlate.mixture.arithmetic(
-        X, gani_gcm.predict("Cp_B", fuel).to("J/(mol*K)") / fuel.comps.mw
+    cp_b = fl.correlate.mixture.arithmetic(
+        xi, gani_gcm.predict("Cp_B", fuel).to("J/(mol*K)") / fuel.comps.mw
     )
-    Cp_C = fl.correlate.mixture.arithmetic(
-        X, gani_gcm.predict("Cp_C", fuel).to("J/(mol*K)") / fuel.comps.mw
+    cp_c = fl.correlate.mixture.arithmetic(
+        xi, gani_gcm.predict("Cp_C", fuel).to("J/(mol*K)") / fuel.comps.mw
     )
 
     return pd.DataFrame({
@@ -252,19 +252,19 @@ def create_mixture_dataframe(fuel, export_mix_name, converter):
         "Family": [st.mode(fuel.comps.fam).mode],
         "Y_0": [1.0],
         "MW": [fuel.mix.mw(fuel.y0)],
-        "Tc": [fl.correlate.mixture.arithmetic(X, fuel.comps.tc)],
-        "Pc": [fl.correlate.mixture.arithmetic(X, fuel.comps.pc)],
-        "Vc": [fl.correlate.mixture.arithmetic(X, fuel.comps.vc)],
-        "Tb": [fl.correlate.mixture.arithmetic(X, fuel.comps.tb)],
-        "omega": [fl.correlate.mixture.arithmetic(X, fuel.comps.omega)],
-        "Vm_stp": [fl.correlate.mixture.arithmetic(X, fuel.comps.vm_stp)],
-        "Cp_A": [Cp_A],
-        "Cp_B": [Cp_B],
-        "Cp_C": [Cp_C],
-        "Cp_stp": [Cp_A],  # For MP model: Cp_stp = Cp_A
+        "Tc": [fl.correlate.mixture.arithmetic(xi, fuel.comps.tc)],
+        "Pc": [fl.correlate.mixture.arithmetic(xi, fuel.comps.pc)],
+        "Vc": [fl.correlate.mixture.arithmetic(xi, fuel.comps.vc)],
+        "Tb": [fl.correlate.mixture.arithmetic(xi, fuel.comps.tb)],
+        "omega": [fl.correlate.mixture.arithmetic(xi, fuel.comps.omega)],
+        "Vm_stp": [fl.correlate.mixture.arithmetic(xi, fuel.comps.vm_stp)],
+        "Cp_A": [cp_a],
+        "Cp_B": [cp_b],
+        "Cp_C": [cp_c],
+        "Cp_stp": [cp_a],  # For MP model: Cp_stp = Cp_A
         "Lv_stp": [
             fl.correlate.mixture.arithmetic(
-                X, (fuel.comps.hv_stp / fuel.comps.mw).to("J/kg")
+                xi, (fuel.comps.hv_stp / fuel.comps.mw).to("J/kg")
             )
         ],
     })
@@ -336,7 +336,7 @@ def export_pele(
         path = os.getcwd()
 
     # Input validation
-    if not hasattr(fuel, "compounds") or not hasattr(fuel, "Y_0"):
+    if not hasattr(fuel, "comps") or not hasattr(fuel, "y0"):
         raise TypeError("fuel parameter must be a valid FuelLib fuel object")
 
     if liq_prop_model.lower() not in ["gcm", "mp"]:
@@ -445,33 +445,33 @@ def export_pele(
             prop_names.append("psat")
 
         # Calculate density at 298.15 K
-        ref_T = Units.Quantity(298.15, "K")
+        temp_ref = Units.Quantity(298.15, "K")
         if export_mix:
-            rho = fuel.mix.rho(fuel.y0, ref_T)
+            rho = fuel.mix.rho(fuel.y0, temp_ref)
         else:
-            rho = fuel.comps.rho(ref_T)
+            rho = fuel.comps.rho(temp_ref)
         df["rho"] = [rho] if export_mix else list(rho)
 
         # Get Antoine coefficients
         if psat_antoine:
             if export_mix:
                 (
-                    psat_A,
-                    psat_B,
-                    psat_C,
-                    psat_D,
+                    psat_a,
+                    psat_b,
+                    psat_c,
+                    psat_d,
                 ) = fuel.mix.pvap_antoine_coeffs(fuel.y0, units=units)
-                rho = fuel.mix.rho(fuel.y0, ref_T)
+                rho = fuel.mix.rho(fuel.y0, temp_ref)
             else:
-                psat_A, psat_B, psat_C, psat_D = fuel.comps.pvap_antoine_coeffs(
+                psat_a, psat_b, psat_c, psat_d = fuel.comps.pvap_antoine_coeffs(
                     units=units
                 )
-                rho = fuel.comps.rho(ref_T)
+                rho = fuel.comps.rho(temp_ref)
 
-            df["psat_A"] = psat_A
-            df["psat_B"] = psat_B
-            df["psat_C"] = psat_C
-            df["psat_D"] = psat_D
+            df["psat_A"] = psat_a
+            df["psat_B"] = psat_b
+            df["psat_C"] = psat_c
+            df["psat_D"] = psat_d
 
     # Dictionary of formatted names
     formatted_names = {
@@ -519,7 +519,7 @@ def export_pele(
         f.write(f"particles.Y_0 = {vec_to_str(df['Y_0'].tolist())}\n")
         f.write(f"particles.dep_fuel_species = {vec_to_str(dep_fuel_names)}\n")
         if liq_prop_model.lower() == "mp":
-            f.write(f"particles.fuel_ref_temp = {ref_T.magnitude} # K\n")
+            f.write(f"particles.fuel_ref_temp = {temp_ref.magnitude} # K\n")
 
         for comp_name in compound_names:
             f.write(f"\n# Properties for {comp_name} in {units.upper()}\n")
@@ -553,11 +553,10 @@ def export_pele(
                             f"particles.{comp_name}_{prop_name} = {value} # {unit_txt}\n"
                         )
                     elif prop == "psat":
-                        A = df.loc[df["Compound"] == comp_name, "psat_A"].values[0]
-                        B = df.loc[df["Compound"] == comp_name, "psat_B"].values[0]
-                        C = df.loc[df["Compound"] == comp_name, "psat_C"].values[0]
-                        D = df.loc[df["Compound"] == comp_name, "psat_D"].values[0]
-                        psat_coeffs = [A, B, C, D]
+                        psat_coeffs = [
+                            df.loc[df["Compound"] == comp_name, key].values[0]
+                            for key in ("psat_A", "psat_B", "psat_C", "psat_D")
+                        ]
                         f.write(
                             f"particles.{comp_name}_{prop_name} = {vec_to_str(psat_coeffs)} # {unit_txt}\n"
                         )

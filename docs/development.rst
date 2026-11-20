@@ -126,6 +126,52 @@ contributing new code that creates or consumes physical quantities:
   ``Fuel``/``utility`` APIs; this would reverse an intentional breaking
   change (see ``CHANGELOG.md``).
 
+Code Style and Naming
+---------------------
+
+FuelLib follows `PEP 8 <https://peps.python.org/pep-0008/>`_ naming conventions
+everywhere, with one deliberate exception (``greenfield.py``, below):
+
+- Functions, methods, arguments, and variables use ``lower_snake_case``, including
+  names for physical symbols (e.g. ``temp``, ``yi``, ``temp_vals``, ``num_c``,
+  ``ds_fus``, ``tc``, ``rd_a``) and arrays of group contributions (e.g. ``xj``,
+  ``nij``).
+- Classes use ``CapWords`` and module-level constants use ``UPPER_SNAKE_CASE``
+  (e.g. ``K_B``, ``T_STP``, ``MW_GAS``).
+- Do not rename string keys that refer to data files (e.g. CSV column or row labels
+  such as ``"Tv"``, ``"dBv"``, ``"CpAk"``, or ``"rd_A"``); these match the
+  published parameter tables.
+- GCM property functions are registered by their lowercased function name, so
+  ``predict("Tc", fuel)`` and ``predict("tc", fuel)`` are equivalent.
+
+Use the same name for the same quantity throughout the code base:
+
+- Temperature: ``temp`` for a generic temperature, ``temp_vals`` for an array of
+  temperatures, and ``temp_ref`` for a reference temperature.
+- Named temperatures and critical properties: ``tb`` (boiling), ``tc``
+  (critical), ``tm`` (melting), ``tr`` (reduced), ``tbr`` (reduced boiling),
+  ``t_freeze``, ``t_flash``, ``pc``, ``vc``, and ``omega`` (acentric factor).
+- Composition: ``x`` or ``xi`` (mole fractions), ``yi`` (mass fractions), ``vi``
+  (volume fractions), and ``mw`` (molecular weight).
+- Suffixes: ``_i`` for per-component values, ``_j`` for per-group values,
+  ``_ij`` for component-group or component-component values, ``_mix`` for
+  mixture values, and ``_mag`` for the magnitude of a Pint quantity (e.g.
+  ``temp_mag = temp.to("K").magnitude``).
+- Do not put units in names (e.g. ``temp_c`` or ``pc_bar``). Convert the quantity
+  in place and note the unit in a comment, e.g.
+  ``pc = fuel.comps.pc.to("bar").magnitude  # bar``.
+
+**Exception: the Greenfield distillation model.**
+``fuellib/simulate/distillation/greenfield.py`` keeps the symbols of the published
+model equations, because it is dominated by math.
+
+Code style is otherwise enforced by Ruff (``task format`` and ``task lint``) with a
+line length of 88 characters and Google-style docstrings. The PEP 8 naming rules
+(Ruff's ``N`` rules) are checked for every Python file, including ``tests/``,
+``tutorials/``, ``docs/``, ``fuellib/cli``, and ``fuellib/exporters``; the only file
+excluded from them is ``greenfield.py`` (see ``ruff.toml``). ``tests/test_style.py``
+runs Ruff as part of the test suite to confirm this.
+
 Updating the Changelog
 -----------------------
 

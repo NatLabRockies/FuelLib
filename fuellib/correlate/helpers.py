@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 def mass_to_mass_fractions(fuel: "Fuel", mass: types.Quantity1D) -> types.Quantity1D:
-    """Convert mass of each component to mass fractions (Yi).
+    """Convert mass of each component to mass fractions (yi).
 
     Args:
         fuel: Fuel object.
@@ -24,15 +24,15 @@ def mass_to_mass_fractions(fuel: "Fuel", mass: types.Quantity1D) -> types.Quanti
     mass = mass.to("kg")
     total_mass = mass.magnitude.sum()
     if total_mass != 0:
-        Yi = (mass / total_mass).magnitude
+        yi = (mass / total_mass).magnitude
     else:
-        Yi = np.zeros_like(fuel.comps.mw.magnitude)
+        yi = np.zeros_like(fuel.comps.mw.magnitude)
 
-    return Units.Quantity(Yi, "dimensionless")
+    return Units.Quantity(yi, "dimensionless")
 
 
 def mass_to_mole_fractions(fuel: "Fuel", mass: types.Quantity1D) -> types.Quantity1D:
-    """Convert mass of each component to mole fractions (Xi).
+    """Convert mass of each component to mole fractions (xi).
 
     Args:
         fuel: Fuel object.
@@ -49,80 +49,80 @@ def mass_to_mole_fractions(fuel: "Fuel", mass: types.Quantity1D) -> types.Quanti
     # Normalize to get group mole fractions
     total_moles = np.sum(num_mole)
     if total_moles != 0:
-        Xi = (num_mole / total_moles).magnitude
+        xi = (num_mole / total_moles).magnitude
     else:
-        Xi = np.zeros_like(fuel.comps.mw.magnitude)
+        xi = np.zeros_like(fuel.comps.mw.magnitude)
 
-    return Units.Quantity(Xi, "dimensionless")
+    return Units.Quantity(xi, "dimensionless")
 
 
 def mole_fractions_to_mass_fractions(
-    fuel: "Fuel", Xi: types.Quantity1D
+    fuel: "Fuel", xi: types.Quantity1D
 ) -> types.Quantity1D:
-    """Convert mole fractions (Xi) to mass fractions (Yi).
+    """Convert mole fractions (xi) to mass fractions (yi).
 
     Args:
         fuel: Fuel object.
-        Xi: Mole fractions of each compound in the mixture.
+        xi: Mole fractions of each compound in the mixture.
 
     Returns:
         Mass fractions of the compounds (shape: num_compounds,).
     """
     # Calculate the mass for each compound
-    mass = fuel.comps.mw * Xi
+    mass = fuel.comps.mw * xi
     # Normalize to get group mass fractions
     total_mass = np.sum(mass)
-    Yi: types.Array1D = (
+    yi: types.Array1D = (
         (mass / total_mass).magnitude
         if total_mass != 0
         else np.zeros_like(fuel.comps.mw.magnitude)
     )
 
-    return Units.Quantity(Yi, "dimensionless")
+    return Units.Quantity(yi, "dimensionless")
 
 
 def mass_fractions_to_mole_fractions(
-    fuel: "Fuel", Yi: types.Quantity1D
+    fuel: "Fuel", yi: types.Quantity1D
 ) -> types.Quantity1D:
-    """Convert mass fractions (Yi) to mole fractions (Xi).
+    """Convert mass fractions (yi) to mole fractions (xi).
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
+        yi: Mass fractions of each compound in the mixture.
 
     Returns:
         Mole fractions of the compounds (shape: num_compounds,).
     """
-    Mbar = fuel.mix.mw(Yi)
-    if np.sum(Yi) != 0:
-        Xi = (Mbar * Yi / fuel.comps.mw).magnitude
+    mw_mix = fuel.mix.mw(yi)
+    if np.sum(yi) != 0:
+        xi = (mw_mix * yi / fuel.comps.mw).magnitude
     else:
-        Xi = np.zeros_like(fuel.comps.mw.magnitude)
+        xi = np.zeros_like(fuel.comps.mw.magnitude)
 
-    return Units.Quantity(Xi, "dimensionless")
+    return Units.Quantity(xi, "dimensionless")
 
 
 def mass_fractions_to_volume_fractions(
-    fuel: "Fuel", Yi: types.Quantity1D, T: types.Quantity0D
+    fuel: "Fuel", yi: types.Quantity1D, temp: types.Quantity0D
 ) -> types.Quantity1D:
-    """Convert mass fractions (Yi) to volume fractions (Vi).
+    """Convert mass fractions (yi) to volume fractions (vi).
 
     Args:
         fuel: Fuel object.
-        Yi: Mass fractions of each compound in the mixture.
-        T: Temperature at which to evaluate the mixture density.
+        yi: Mass fractions of each compound in the mixture.
+        temp: Temperature at which to evaluate the mixture density.
 
     Returns:
         Volume fractions of the compounds (shape: num_compounds,).
     """
-    density = fuel.comps.rho(T)
-    if np.sum(Yi) != 0:
-        V = Yi / density
-        Vi = (V / np.sum(V)).magnitude
+    density = fuel.comps.rho(temp)
+    if np.sum(yi) != 0:
+        v = yi / density
+        vi = (v / np.sum(v)).magnitude
     else:
-        Vi = np.zeros_like(fuel.comps.mw.magnitude)
+        vi = np.zeros_like(fuel.comps.mw.magnitude)
 
-    return Units.Quantity(Vi, "dimensionless")
+    return Units.Quantity(vi, "dimensionless")
 
 
 __all__ = [
