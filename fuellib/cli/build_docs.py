@@ -4,15 +4,19 @@ This script builds the HTML documentation using Sphinx, handling the proper
 setup of paths and environment variables needed for autodoc to work correctly.
 """
 
+import argparse
 import os
 import subprocess
 import sys
 
 
-def main():
+def run(args: argparse.Namespace | None = None) -> None:
     """Build the FuelLib documentation.
 
     Changes to the docs directory and runs sphinx-build to generate HTML documentation.
+
+    Args:
+        args: Parsed command-line arguments (unused).
     """
     # Get the directory of this script (fuellib/cli)
     cli_dir = os.path.dirname(os.path.abspath(__file__))
@@ -58,7 +62,3 @@ def main():
         print()
         print("Documentation build failed. Please check the errors above.")
         sys.exit(result.returncode)
-
-
-if __name__ == "__main__":
-    main()

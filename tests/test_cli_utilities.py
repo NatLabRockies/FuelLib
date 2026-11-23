@@ -53,59 +53,71 @@ class TestUtilityCLI(unittest.TestCase):
             self.skipTest(f"Command '{command}' not found in PATH")
 
     def test_fl_eps2k_basic(self):
-        """Test fl-eps2K CLI command."""
-        returncode, stdout, stderr = self._run_cli_command("fl-eps2K", "1000.0")
+        """Test fl convert eps2k CLI command."""
+        returncode, stdout, stderr = self._run_cli_command(
+            "fl", "convert", "eps2k", "1000.0"
+        )
         self.assertEqual(returncode, 0, f"stderr: {stderr}")
         self.assertIn("Characteristic temperature", stdout)
         self.assertIn("K", stdout)
 
     def test_fl_eps2k_invalid_input(self):
-        """Test fl-eps2K CLI with invalid input."""
-        returncode, _stdout, stderr = self._run_cli_command("fl-eps2K", "not_a_number")
+        """Test fl convert eps2k CLI with invalid input."""
+        returncode, _stdout, stderr = self._run_cli_command(
+            "fl", "convert", "eps2k", "not_a_number"
+        )
         self.assertNotEqual(returncode, 0)
         self.assertIn("error", stderr)
 
     def test_fl_eps2k_no_args(self):
-        """Test fl-eps2K CLI with no arguments."""
-        returncode, _stdout, stderr = self._run_cli_command("fl-eps2K")
+        """Test fl convert eps2k CLI with no arguments."""
+        returncode, _stdout, stderr = self._run_cli_command("fl", "convert", "eps2k")
         self.assertNotEqual(returncode, 0)
         self.assertIn("usage", stderr)
 
     def test_fl_c2k_basic(self):
-        """Test fl-C2K CLI command."""
-        returncode, stdout, stderr = self._run_cli_command("fl-C2K", "25.0")
+        """Test fl convert c2k CLI command."""
+        returncode, stdout, stderr = self._run_cli_command(
+            "fl", "convert", "c2k", "25.0"
+        )
         self.assertEqual(returncode, 0, f"stderr: {stderr}")
         self.assertIn("298.15", stdout)
         self.assertIn("K", stdout)
 
     def test_fl_c2k_invalid_input(self):
-        """Test fl-C2K CLI with invalid input."""
-        returncode, _stdout, stderr = self._run_cli_command("fl-C2K", "not_a_number")
+        """Test fl convert c2k CLI with invalid input."""
+        returncode, _stdout, stderr = self._run_cli_command(
+            "fl", "convert", "c2k", "not_a_number"
+        )
         self.assertNotEqual(returncode, 0)
         self.assertIn("error", stderr)
 
     def test_fl_c2k_no_args(self):
-        """Test fl-C2K CLI with no arguments."""
-        returncode, _stdout, stderr = self._run_cli_command("fl-C2K")
+        """Test fl convert c2k CLI with no arguments."""
+        returncode, _stdout, stderr = self._run_cli_command("fl", "convert", "c2k")
         self.assertNotEqual(returncode, 0)
         self.assertIn("usage", stderr)
 
     def test_fl_k2c_basic(self):
-        """Test fl-K2C CLI command."""
-        returncode, stdout, stderr = self._run_cli_command("fl-K2C", "298.15")
+        """Test fl convert k2c CLI command."""
+        returncode, stdout, stderr = self._run_cli_command(
+            "fl", "convert", "k2c", "298.15"
+        )
         self.assertEqual(returncode, 0, f"stderr: {stderr}")
         self.assertIn("25.00", stdout)
         self.assertIn("C", stdout)
 
     def test_fl_k2c_invalid_input(self):
-        """Test fl-K2C CLI with invalid input."""
-        returncode, _stdout, stderr = self._run_cli_command("fl-K2C", "not_a_number")
+        """Test fl convert k2c CLI with invalid input."""
+        returncode, _stdout, stderr = self._run_cli_command(
+            "fl", "convert", "k2c", "not_a_number"
+        )
         self.assertNotEqual(returncode, 0)
         self.assertIn("error", stderr)
 
     def test_fl_k2c_no_args(self):
-        """Test fl-K2C CLI with no arguments."""
-        returncode, _stdout, stderr = self._run_cli_command("fl-K2C")
+        """Test fl convert k2c CLI with no arguments."""
+        returncode, _stdout, stderr = self._run_cli_command("fl", "convert", "k2c")
         self.assertNotEqual(returncode, 0)
         self.assertIn("usage", stderr)
 

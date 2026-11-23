@@ -201,15 +201,15 @@ To build the documentation after installing with ``pip install -e '.[dev]'``:
 
 .. code-block:: bash
 
-   fl-build-docs
+   fl dev build-docs
 
-The built documentation will be in ``docs/_build/html/``. Open ``index.html`` in your browser to view it.
+The built documentation will be in ``docs/_build/html/``. Open ``index.html`` in your browser to view it, or run ``fl dev view-docs``.
 
 To clean the build artifacts:
 
 .. code-block:: bash
 
-   fl-clean-docs
+   fl dev clean-docs
 
 
 Releasing

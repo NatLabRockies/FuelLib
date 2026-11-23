@@ -1,15 +1,19 @@
 """Remove Sphinx documentation build artifacts."""
 
+import argparse
 import os
 import shutil
 import sys
 
 
-def main():
+def run(args: argparse.Namespace | None = None) -> None:
     """Remove the documentation build directory and generated files.
 
     Cleans up the Sphinx build output in docs/_build/ and
     generated documentation in docs/generated/
+
+    Args:
+        args: Parsed command-line arguments (unused).
     """
     # Get the directory of this script (fuellib/cli)
     cli_dir = os.path.dirname(os.path.abspath(__file__))
@@ -46,7 +50,3 @@ def main():
             sys.exit(1)
     else:
         print(f"Generated directory does not exist: {generated_dir}")
-
-
-if __name__ == "__main__":
-    main()

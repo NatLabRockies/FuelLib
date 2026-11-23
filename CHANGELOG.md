@@ -7,6 +7,22 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Breaking:** the separate `fl-*` commands are replaced by a single `fl` command with subcommands (`fl <group> <command>`), implemented with `argparse` subparsers in `fuellib.cli` (`fuellib.cli.main`):
+  - `fl-decomp-smiles` -> `fl decomp`
+  - `fl-export-pele`, `fl-export-converge` -> `fl export pele`, `fl export converge`
+  - `fl-fuels` -> `fl list fuels`
+  - `fl-plt-comp`, `fl-plt-props` -> `fl plot comp`, `fl plot props`
+  - `fl-simulate d86_greenfield` -> `fl simulate distillation` (`--model greenfield` is the default)
+  - `fl-C2K`, `fl-K2C`, `fl-C2F`, `fl-F2C`, `fl-F2K`, `fl-K2F`, `fl-eps2K` -> `fl convert c2k`, `k2c`, `c2f`, `f2c`, `f2k`, `k2f`, `eps2k`
+  - `fl-format`, `fl-build-docs`, `fl-clean-docs` -> `fl dev format`, `fl dev build-docs`, `fl dev clean-docs`
+- **Breaking:** the `main` functions of `fuellib.exporters.converge` and `fuellib.exporters.pele` are removed; their command-line arguments are now defined in `fuellib.cli.export`. `fuellib.cli` sits above `fuellib.exporters` in the import-linter layers.
+- Errors raised by the subcommands (`OSError`, `ValueError`, `RuntimeError`) are reported as `fl <command>: error: <message>` with exit code 2.
+
+### Added
+- `fl dev test` (runs `pytest`, passing extra arguments through) and `fl dev view-docs` (opens the built documentation).
+- `fl decomp --from {smiles,inchi}` to decompose InChI strings (and `InChI` CSV columns); `--structures` is the new name of `--smiles`, which still works.
+
 ## [4.0.0] - 2026-11-23
 
 ### Changed

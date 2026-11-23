@@ -16,7 +16,7 @@ def _d86_greenfield(fuels: list[Fuel], air_cstr: bool) -> Figure:
 
     Args:
         fuels: Fuel objects, overlaid on the same axes with the colors, symbols
-            and legend labels of ``fl-plt-props``, with their measured D86 curves
+            and legend labels of ``fl plot props``, with their measured D86 curves
             if available.
         air_cstr: Whether to include the air-filled CSTR in the simulation.
 
@@ -26,22 +26,32 @@ def _d86_greenfield(fuels: list[Fuel], air_cstr: bool) -> Figure:
     return plotting.plot_distillation(fuels, air_cstr=air_cstr)
 
 
-SIMULATIONS: dict[str, Callable[[list[Fuel], bool], Figure]] = {
-    "d86_greenfield": _d86_greenfield,
+DISTILLATION_MODELS: dict[str, Callable[[list[Fuel], bool], Figure]] = {
+    "greenfield": _d86_greenfield,
 }
-"""Simulations available from the command line, by name."""
+"""Distillation curve models available from the command line, by name."""
 
 
-def main() -> None:
-    """Run a simulation for fuels and export or show the plot of the results."""
-    parser = argparse.ArgumentParser(
-        description="Simulate a fuel test and plot the results."
+def add_parser(commands: "argparse._SubParsersAction") -> None:
+    """Add the ``simulate`` command and its subcommands.
+
+    Args:
+        commands: Subparsers action of the ``fl`` command.
+    """
+    description = "Simulate a fuel test and plot the results."
+    simulate = commands.add_parser(
+        "simulate", help=description, description=description
     )
+    tests = simulate.add_subparsers(dest="test", metavar="TEST", required=True)
+
+    description = "Simulate the ASTM D86 distillation curve of fuels."
+    parser = tests.add_parser("distillation", help=description, description=description)
     parser.add_argument(
-        "simulation",
+        "--model",
+        default="greenfield",
         type=str.casefold,
-        choices=SIMULATIONS,
-        help="Simulation to perform.",
+        choices=DISTILLATION_MODELS,
+        help="Distillation curve model (default: greenfield).",
     )
     parser.add_argument(
         "-f",
@@ -82,8 +92,11 @@ def main() -> None:
         metavar="FILE",
         help="File to export the plot to (default: show the plot).",
     )
-    args = parser.parse_args()
+    parser.set_defaults(func=_distillation)
 
+
+def _distillation(args: argparse.Namespace) -> None:
+    """Simulate the distillation curves of fuels and export or show the plot."""
     fuels = [
         Fuel(
             name,
@@ -92,7 +105,7 @@ def main() -> None:
         )
         for name in args.fuel_names
     ]
-    fig = SIMULATIONS[args.simulation](fuels, args.air_cstr)
+    fig = DISTILLATION_MODELS[args.model](fuels, args.air_cstr)
 
     if args.output is None:
         plt.show()
@@ -101,7 +114,3 @@ def main() -> None:
         fig.savefig(args.output, dpi=300, bbox_inches="tight")
         print(f"Plot saved to {args.output}")
     plt.close(fig)
-
-
-if __name__ == "__main__":
-    main()

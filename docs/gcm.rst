@@ -75,7 +75,7 @@ group in the table:
 
 A :class:`ValueError` is raised if the SMILES cannot be parsed or an atom is not
 matched to a first-order group. The same functionality is available from the
-command line as ``fl-decomp-smiles`` (see :doc:`tutorials_cli`).
+command line as ``fl decomp`` (see :doc:`tutorials_cli`).
 
 .. warning::
    Automated decompositions must be verified. A known shortcoming is indene,
@@ -248,7 +248,7 @@ structural checks: the number of hydrogens (``No hydrogen``,
 benzene rings (counted only when a single pair type is present). A
 :class:`ValueError` is raised if the SMILES cannot be parsed or an atom is not
 matched to a first-order group. The same functionality is available as
-``fl-decomp-smiles --method nannoolal`` (see :doc:`tutorials_cli`).
+``fl decomp --method nannoolal`` (see :doc:`tutorials_cli`).
 
 .. code-block:: python
 
@@ -355,7 +355,7 @@ Only the hydrocarbon subgroups are matched, in order of priority: ``ACCH3``,
 ``CH=C``, ``C=C``, ``CH3``, ``CH2``, ``CH``, and ``C``. A :class:`ValueError` is
 raised if the SMILES cannot be parsed or an atom is not matched to a subgroup,
 for example a heteroatom. The same functionality is available as
-``fl-decomp-smiles --method unifac`` (see :doc:`tutorials_cli`).
+``fl decomp --method unifac`` (see :doc:`tutorials_cli`).
 
 Registering a new property
 ---------------------------
