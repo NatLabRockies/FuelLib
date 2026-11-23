@@ -318,7 +318,7 @@ main group (for example ``CH3`` and ``CH2``) therefore do not contribute to the
 residual part.
 
 :func:`fuellib.gcm.unifac.ln_gamma` evaluates :math:`\ln \gamma_i` for a fuel at
-temperature ``T``. The composition is given as liquid mass fractions ``Yi``
+temperature ``temp``. The composition is given as liquid mass fractions ``yi``
 (default: :attr:`~fuellib.fuel.core.Fuel.y0`) and converted to mole fractions.
 For repeated evaluations, such as in a solver loop,
 :func:`~fuellib.gcm.unifac.parameters` collects the arrays

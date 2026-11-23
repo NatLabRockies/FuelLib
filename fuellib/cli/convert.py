@@ -19,9 +19,9 @@ def c2k_main():
     )
 
     args = parser.parse_args()
-    T = Units.Quantity(args.temperature, "celsius")
-    result = T.to("kelvin")
-    print(f"{T:.2f~P} = {result:.2f~P}")
+    temp = Units.Quantity(args.temperature, "celsius")
+    result = temp.to("kelvin")
+    print(f"{temp:.2f~P} = {result:.2f~P}")
 
 
 def k2c_main():
@@ -37,9 +37,9 @@ def k2c_main():
     )
 
     args = parser.parse_args()
-    T = Units.Quantity(args.temperature, "kelvin")
-    result = T.to("celsius")
-    print(f"{T:.2f~P} = {result:.2f~P}")
+    temp = Units.Quantity(args.temperature, "kelvin")
+    result = temp.to("celsius")
+    print(f"{temp:.2f~P} = {result:.2f~P}")
 
 
 def c2f_main():
@@ -55,9 +55,9 @@ def c2f_main():
     )
 
     args = parser.parse_args()
-    T = Units.Quantity(args.temperature, "celsius")
-    result = T.to("fahrenheit")
-    print(f"{T:.2f~P} = {result:.2f~P}")
+    temp = Units.Quantity(args.temperature, "celsius")
+    result = temp.to("fahrenheit")
+    print(f"{temp:.2f~P} = {result:.2f~P}")
 
 
 def f2c_main():
@@ -73,9 +73,9 @@ def f2c_main():
     )
 
     args = parser.parse_args()
-    T = Units.Quantity(args.temperature, "fahrenheit")
-    result = T.to("celsius")
-    print(f"{T:.2f~P} = {result:.2f~P}")
+    temp = Units.Quantity(args.temperature, "fahrenheit")
+    result = temp.to("celsius")
+    print(f"{temp:.2f~P} = {result:.2f~P}")
 
 
 def f2k_main():
@@ -91,9 +91,9 @@ def f2k_main():
     )
 
     args = parser.parse_args()
-    T = Units.Quantity(args.temperature, "fahrenheit")
-    result = T.to("kelvin")
-    print(f"{T:.2f~P} = {result:.2f~P}")
+    temp = Units.Quantity(args.temperature, "fahrenheit")
+    result = temp.to("kelvin")
+    print(f"{temp:.2f~P} = {result:.2f~P}")
 
 
 def k2f_main():
@@ -109,12 +109,12 @@ def k2f_main():
     )
 
     args = parser.parse_args()
-    T = Units.Quantity(args.temperature, "kelvin")
-    result = T.to("fahrenheit")
-    print(f"{T:.2f~P} = {result:.2f~P}")
+    temp = Units.Quantity(args.temperature, "kelvin")
+    result = temp.to("fahrenheit")
+    print(f"{temp:.2f~P} = {result:.2f~P}")
 
 
-def eps2K_main():
+def eps2k_main():
     """Convert Lennard-Jones epsilon from J/mol to K via command line."""
     parser = argparse.ArgumentParser(
         description="Convert Lennard-Jones well depth epsilon from J/mol to Kelvin"

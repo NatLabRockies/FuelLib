@@ -53,12 +53,12 @@ def ylab(prop_name, temp, prop_units):
     return rf"{prop_name} at {temp_c:g} °C [$\mathrm{{{prop_units}}}$]"
 
 
-def getPredAndData(fuel_name, prop_name, blend):
+def get_pred_and_data(fuel_name, prop_name, blend):
     blend = blend.to_base_units()  # Convert percent to mass fraction
 
     # Get the fuel properties based on the GCM
     fuel = fl.Fuel(fuel_name)
-    jetA = fl.Fuel(conv_fuel_name)
+    jet_a = fl.Fuel(conv_fuel_name)
 
     data_file = "hefa_jet_a_blends.csv"
     data_path = os.path.join(fl.get_fueldata_props_dir(), data_file)
@@ -71,34 +71,36 @@ def getPredAndData(fuel_name, prop_name, blend):
 
     # Separate properties and associated temperatures from data
     if prop_name == "Density":
-        T = fl.Units.Quantity(15, "celsius").to("K")
+        temp = fl.Units.Quantity(15, "celsius").to("K")
         prop_pred = fl.Units.Quantity(np.zeros_like(blend.magnitude), prop_units)
     elif prop_name == "Viscosity":
-        T = fl.Units.Quantity(-20, "celsius").to("K")
+        temp = fl.Units.Quantity(-20, "celsius").to("K")
         prop_pred = fl.Units.Quantity(np.zeros_like(blend), prop_units)
 
     for i in range(len(prop_pred)):
         # Initial liquid mass fractions
-        Y_li = blend[i] * fuel.y0 + (1 - blend[i]) * jetA.y0
+        yi = blend[i] * fuel.y0 + (1 - blend[i]) * jet_a.y0
 
         if prop_name == "Density":
-            prop_pred[i] = fuel.mix.rho(Y_li, T).to(prop_units)
+            prop_pred[i] = fuel.mix.rho(yi, temp).to(prop_units)
 
         if prop_name == "Viscosity":
             # initial liquid mass fractions
-            Y_li = blend[i] * fuel.y0 + (1 - blend[i]) * jetA.y0
+            yi = blend[i] * fuel.y0 + (1 - blend[i]) * jet_a.y0
 
-            prop_pred[i] = fuel.mix.nu(Y_li, T).to(prop_units)
+            prop_pred[i] = fuel.mix.nu(yi, temp).to(prop_units)
 
-    return T, prop_units, prop_data.magnitude, blend_data, prop_pred.magnitude
+    return temp, prop_units, prop_data.magnitude, blend_data, prop_pred.magnitude
 
 
-figW = 5.25 * len(prop_names)
-fig, ax = plt.subplots(1, len(prop_names), figsize=(figW, 5.5), constrained_layout=True)
+fig_width = 5.25 * len(prop_names)
+fig, ax = plt.subplots(
+    1, len(prop_names), figsize=(fig_width, 5.5), constrained_layout=True
+)
 
 for i in range(len(prop_names)):
     for fuel_name in fuel_names:
-        T, prop_units, prop_data, blend_data, pred = getPredAndData(
+        temp, prop_units, prop_data, blend_data, pred = get_pred_and_data(
             fuel_name, prop_names[i], blends
         )
         line_color, marker_style = linespecs(fuel_name)
@@ -135,7 +137,7 @@ for i in range(len(prop_names)):
     # Add labels and adjust ticks
     ax[i].set_xlabel("HEFA Concentration [wt %]", fontsize=fsize)
     ax[i].set_xticks([0, 20, 40, 60, 80, 100])
-    ax[i].set_ylabel(ylab(prop_names[i], T, prop_units), fontsize=fsize)
+    ax[i].set_ylabel(ylab(prop_names[i], temp, prop_units), fontsize=fsize)
     ax[i].tick_params(labelsize=ticksize)
 
 handles, labels = ax[0].get_legend_handles_labels()

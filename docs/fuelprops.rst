@@ -759,8 +759,8 @@ mixing rule,
    \phi_i = \frac{Y_i / \rho_i}{\sum_{k=1}^{N_c} Y_k / \rho_k},
 
 where :math:`\phi_i` is the liquid volume fraction of compound *i* and :math:`\rho_i` is the
-component liquid density evaluated at a reference temperature ``T_ref`` (default: standard
-temperature, ``constants.T_stp``). A ``ValueError`` listing the compounds is
+component liquid density evaluated at a reference temperature ``temp_ref`` (default: standard
+temperature, ``constants.T_STP``). A ``ValueError`` listing the compounds is
 raised if the reference data are missing for any component.
 
 Linear volume-fraction blending is a first-order approximation. Cetane number can
@@ -784,7 +784,7 @@ The aromatics content is the total liquid volume percent of aromatic compounds i
 where :math:`\mathcal{A}` is the set of compounds whose
 :attr:`~fuellib.fuel.components.Components.hc_type` is ``"aromatic"`` (any compound containing an aromatic
 ring, including cycloaromatics and diaromatics), and :math:`\rho_i` is the component liquid
-density evaluated at standard temperature (``constants.T_stp``). The result is in vol%,
+density evaluated at standard temperature (``constants.T_STP``). The result is in vol%,
 directly comparable with aromatics specifications (e.g., ASTM D1319).
 
 Mixture naphthalenes content
@@ -802,7 +802,7 @@ naphthalenes in the mixture,
 
 where :math:`\mathcal{N}` is the set of compounds flagged by
 :func:`~fuellib.rdk.mol.has_naphthalene`, and :math:`\rho_i` is the component liquid
-density evaluated at standard temperature (``constants.T_stp``). A compound is flagged
+density evaluated at standard temperature (``constants.T_STP``). A compound is flagged
 when its RDKit molecule contains the
 naphthalene core (two fused aromatic six-membered rings) and its fused ring system
 contains exactly two rings. Larger fused systems (e.g., anthracene) and partially

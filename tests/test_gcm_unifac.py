@@ -30,39 +30,41 @@ def _params(*smiles: str):
     return unifac.parameters(cast(Fuel, SimpleNamespace(_unifac_decomp=decomp)))
 
 
-def _ln_gamma_combinatorial_reference(x, nu, Rk, Qk):
+def _ln_gamma_combinatorial_reference(x, nu, r_j, q_j):
     """Textbook Staverman-Guggenheim combinatorial term (z = 10)."""
-    r, q = nu @ Rk, nu @ Qk
+    r, q = nu @ r_j, nu @ q_j
     phi = r * x / (r @ x)
     theta = q * x / (q @ x)
     ell = 5.0 * (r - q) - (r - 1.0)
     return np.log(phi / x) + 5.0 * q * np.log(theta / phi) + ell - phi / x * (x @ ell)
 
 
-def _ln_gamma_residual_reference(x, T, nu, Qk, a_mn):
+def _ln_gamma_residual_reference(x, temp, nu, q_j, a_mn):
     """Textbook UNIFAC residual term, written with explicit loops."""
-    psi = np.exp(-a_mn / T)
-    K = len(Qk)
+    psi = np.exp(-a_mn / temp)
+    num_groups = len(q_j)
 
-    def ln_Gamma(X):
-        theta = Qk * X / np.sum(Qk * X)
-        out = np.empty(K)
-        for k in range(K):
-            s_k = sum(theta[m] * psi[m, k] for m in range(K))
+    def ln_gamma_group(x_j):
+        theta = q_j * x_j / np.sum(q_j * x_j)
+        out = np.empty(num_groups)
+        for k in range(num_groups):
+            s_k = sum(theta[m] * psi[m, k] for m in range(num_groups))
             t = sum(
-                theta[m] * psi[k, m] / sum(theta[n] * psi[n, m] for n in range(K))
-                for m in range(K)
+                theta[m]
+                * psi[k, m]
+                / sum(theta[n] * psi[n, m] for n in range(num_groups))
+                for m in range(num_groups)
             )
-            out[k] = Qk[k] * (1.0 - np.log(s_k) - t)
+            out[k] = q_j[k] * (1.0 - np.log(s_k) - t)
         return out
 
-    ln_G_mix = ln_Gamma(x @ nu / np.sum(x @ nu))
+    ln_gamma_mix = ln_gamma_group(x @ nu / np.sum(x @ nu))
     result = np.zeros(len(x))
     for i in range(len(x)):
         mask = nu[i] > 0
-        ln_G_pure = np.zeros(K)
-        ln_G_pure[mask] = ln_Gamma(nu[i] / nu[i].sum())[mask]
-        result[i] = np.sum(nu[i] * (ln_G_mix - ln_G_pure))
+        ln_gamma_pure = np.zeros(num_groups)
+        ln_gamma_pure[mask] = ln_gamma_group(nu[i] / nu[i].sum())[mask]
+        result[i] = np.sum(nu[i] * (ln_gamma_mix - ln_gamma_pure))
     return result
 
 
@@ -81,7 +83,7 @@ def test_table_parameters():
 
 
 @pytest.mark.parametrize(
-    "group, R, Q",
+    "group, r, q",
     [
         ("CH3", 0.9011, 0.848),
         ("CH2", 0.6744, 0.540),
@@ -93,10 +95,10 @@ def test_table_parameters():
         ("ACCH2", 1.0396, 0.660),
     ],
 )
-def test_hydrocarbon_subgroup_parameters(group: str, R: float, Q: float):
+def test_hydrocarbon_subgroup_parameters(group: str, r: float, q: float):
     """Hydrocarbon subgroup R/Q should match the published UNIFAC values."""
-    assert TABLE.loc["R", group] == pytest.approx(R)
-    assert TABLE.loc["Q", group] == pytest.approx(Q)
+    assert TABLE.loc["R", group] == pytest.approx(r)
+    assert TABLE.loc["Q", group] == pytest.approx(q)
 
 
 def test_interaction_matrix():
@@ -203,18 +205,18 @@ def posf10325() -> Fuel:
     return Fuel("posf10325")
 
 
-def test_R_Q_heptane(heptane: Fuel):
+def test_r_q_heptane(heptane: Fuel):
     """R and Q for n-heptane: 2 CH3 + 5 CH2."""
-    R = unifac.unifac_gcm.predict("R", heptane)
-    Q = unifac.unifac_gcm.predict("Q", heptane)
-    for prop in (R, Q):
+    r = unifac.unifac_gcm.predict("R", heptane)
+    q = unifac.unifac_gcm.predict("Q", heptane)
+    for prop in (r, q):
         assert prop.check("")
         assert prop.magnitude.shape == (1,)
-    assert R.magnitude[0] == pytest.approx(2 * 0.9011 + 5 * 0.6744)
-    assert Q.magnitude[0] == pytest.approx(2 * 0.848 + 5 * 0.540)
+    assert r.magnitude[0] == pytest.approx(2 * 0.9011 + 5 * 0.6744)
+    assert q.magnitude[0] == pytest.approx(2 * 0.848 + 5 * 0.540)
 
 
-def test_R_Q_multicomponent(posf10325: Fuel):
+def test_r_q_multicomponent(posf10325: Fuel):
     """R and Q should be positive for every component of a real fuel."""
     for name in ("R", "Q"):
         prop = unifac.unifac_gcm.predict(name, posf10325).magnitude
@@ -231,15 +233,15 @@ def test_check_compatible_dims():
 
 def test_parameters_only_used_groups(posf10325: Fuel):
     """parameters() should drop unused subgroups and keep consistent shapes."""
-    nu, Rk, Qk, a_mn = unifac.parameters(posf10325)
-    N, K = nu.shape
-    assert N == posf10325.num_compounds
-    assert Rk.shape == Qk.shape == (K,)
-    assert a_mn.shape == (K, K)
+    nu, r_j, q_j, a_mn = unifac.parameters(posf10325)
+    num_compounds, num_groups = nu.shape
+    assert num_compounds == posf10325.num_compounds
+    assert r_j.shape == q_j.shape == (num_groups,)
+    assert a_mn.shape == (num_groups, num_groups)
     assert np.all(nu.any(axis=0))
     assert np.all(nu.sum(axis=1) > 0)
     full = unifac.unifac_gcm.predict("R", posf10325).magnitude
-    np.testing.assert_allclose(nu @ Rk, full)
+    np.testing.assert_allclose(nu @ r_j, full)
 
 
 # ---------------------------------------------------------------------------
@@ -254,31 +256,31 @@ BINARIES = [
 
 
 @pytest.mark.parametrize("pair", BINARIES)
-@pytest.mark.parametrize("T", [250.0, 300.0, 450.0])
-def test_ln_gamma_matches_reference(pair, T):
+@pytest.mark.parametrize("temp", [250.0, 300.0, 450.0])
+def test_ln_gamma_matches_reference(pair, temp):
     """Vectorized kernel should match an independent textbook implementation."""
-    nu, Rk, Qk, a_mn = _params(*pair)
+    nu, r_j, q_j, a_mn = _params(*pair)
     for x1 in (0.05, 0.3, 0.5, 0.9):
         x = np.array([x1, 1.0 - x1])
         expected = _ln_gamma_combinatorial_reference(
-            x, nu, Rk, Qk
-        ) + _ln_gamma_residual_reference(x, T, nu, Qk, a_mn)
+            x, nu, r_j, q_j
+        ) + _ln_gamma_residual_reference(x, temp, nu, q_j, a_mn)
         np.testing.assert_allclose(
-            unifac.ln_gamma_x(x, T, nu, Rk, Qk, a_mn), expected, atol=1e-12
+            unifac.ln_gamma_x(x, temp, nu, r_j, q_j, a_mn), expected, atol=1e-12
         )
 
 
 def test_ln_gamma_matches_reference_multicomponent(posf10325: Fuel):
     """Kernel should match the textbook implementation for a real fuel."""
-    nu, Rk, Qk, a_mn = unifac.parameters(posf10325)
+    nu, r_j, q_j, a_mn = unifac.parameters(posf10325)
     rng = np.random.default_rng(0)
     x = rng.dirichlet(np.ones(nu.shape[0]))
-    T = 350.0
+    temp = 350.0
     expected = _ln_gamma_combinatorial_reference(
-        x, nu, Rk, Qk
-    ) + _ln_gamma_residual_reference(x, T, nu, Qk, a_mn)
+        x, nu, r_j, q_j
+    ) + _ln_gamma_residual_reference(x, temp, nu, q_j, a_mn)
     np.testing.assert_allclose(
-        unifac.ln_gamma_x(x, T, nu, Rk, Qk, a_mn), expected, atol=1e-10
+        unifac.ln_gamma_x(x, temp, nu, r_j, q_j, a_mn), expected, atol=1e-10
     )
 
 
@@ -295,23 +297,23 @@ def test_pure_component_limit(pair):
 
 def test_same_main_group_is_athermal():
     """Alkane mixtures have only combinatorial nonideality (a_mn = 0)."""
-    nu, Rk, Qk, a_mn = _params("CCCCC", "CCCCCCCCCCCCCCCC")
+    nu, r_j, q_j, a_mn = _params("CCCCC", "CCCCCCCCCCCCCCCC")
     assert np.all(a_mn == 0)
     x = np.array([0.4, 0.6])
-    expected = _ln_gamma_combinatorial_reference(x, nu, Rk, Qk)
-    for T in (250.0, 500.0):
+    expected = _ln_gamma_combinatorial_reference(x, nu, r_j, q_j)
+    for temp in (250.0, 500.0):
         np.testing.assert_allclose(
-            unifac.ln_gamma_x(x, T, nu, Rk, Qk, a_mn), expected, atol=1e-12
+            unifac.ln_gamma_x(x, temp, nu, r_j, q_j, a_mn), expected, atol=1e-12
         )
 
 
 def test_high_temperature_limit():
     """As T -> infinity, Psi -> 1 and the residual part vanishes."""
-    nu, Rk, Qk, a_mn = _params("CCCCCCC", "Cc1ccccc1")
+    nu, r_j, q_j, a_mn = _params("CCCCCCC", "Cc1ccccc1")
     x = np.array([0.3, 0.7])
     np.testing.assert_allclose(
-        unifac.ln_gamma_x(x, 1e15, nu, Rk, Qk, a_mn),
-        _ln_gamma_combinatorial_reference(x, nu, Rk, Qk),
+        unifac.ln_gamma_x(x, 1e15, nu, r_j, q_j, a_mn),
+        _ln_gamma_combinatorial_reference(x, nu, r_j, q_j),
         atol=1e-10,
     )
 
@@ -334,10 +336,10 @@ def test_gibbs_duhem(pair):
 def test_gibbs_duhem_multicomponent(posf10325: Fuel):
     """Gibbs-Duhem should hold along an arbitrary direction for a real fuel."""
     params = unifac.parameters(posf10325)
-    N = params[0].shape[0]
+    num_compounds = params[0].shape[0]
     rng = np.random.default_rng(1)
-    x = rng.dirichlet(np.full(N, 10.0))
-    v = rng.standard_normal(N)
+    x = rng.dirichlet(np.full(num_compounds, 10.0))
+    v = rng.standard_normal(num_compounds)
     v -= v.mean()
     v *= 0.5 * x.min() / np.abs(v).max()
     eps = 1e-5
@@ -373,15 +375,15 @@ def test_ln_gamma_single_component(heptane: Fuel):
 
 def test_ln_gamma_fuel(posf10325: Fuel):
     """ln(gamma) for a real fuel should be finite, dimensionless and consistent."""
-    T = Units.Quantity(300.0, "K")
-    ln_g = unifac.ln_gamma(posf10325, T)
+    temp = Units.Quantity(300.0, "K")
+    ln_g = unifac.ln_gamma(posf10325, temp)
     assert ln_g.check("")
     assert ln_g.magnitude.shape == (posf10325.num_compounds,)
     assert np.all(np.isfinite(ln_g.magnitude))
 
-    # Default Yi is the initial composition
+    # Default yi is the initial composition
     np.testing.assert_allclose(
-        unifac.ln_gamma(posf10325, T, posf10325.y0).magnitude, ln_g.magnitude
+        unifac.ln_gamma(posf10325, temp, posf10325.y0).magnitude, ln_g.magnitude
     )
 
     # Temperature units are converted
@@ -401,10 +403,10 @@ def test_ln_gamma_fuel(posf10325: Fuel):
 
 def test_ln_gamma_fuel_custom_composition(posf10325: Fuel):
     """Changing composition should change ln(gamma)."""
-    T = Units.Quantity(300.0, "K")
-    N = posf10325.num_compounds
-    Y = Units.Quantity(np.full(N, 1.0 / N), "")
+    temp = Units.Quantity(300.0, "K")
+    num_compounds = posf10325.num_compounds
+    yi = Units.Quantity(np.full(num_compounds, 1.0 / num_compounds), "")
     assert not np.allclose(
-        unifac.ln_gamma(posf10325, T, Y).magnitude,
-        unifac.ln_gamma(posf10325, T).magnitude,
+        unifac.ln_gamma(posf10325, temp, yi).magnitude,
+        unifac.ln_gamma(posf10325, temp).magnitude,
     )

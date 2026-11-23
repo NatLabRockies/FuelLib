@@ -51,22 +51,22 @@ def _get_decomp(fuel: "Fuel") -> types.Array2D:
 
 def _check_compatible_dims(
     xj: Annotated[types.Array1D, "GCM property vector"],
-    Aij: Annotated[types.Array2D, "Group decomposition matrix"],
+    nij: Annotated[types.Array2D, "Group decomposition matrix"],
 ) -> None:
     """Check if the shape of the GCM properties and group decomposition matrix match.
 
     Args:
         xj: The GCM property vector.
-        Aij: The group decomposition matrix.
+        nij: The group decomposition matrix.
 
     Raises:
         ValueError: If the dimensions of the GCM contribution vector and the group
             decomposition matrix are incompatible.
     """
-    if Aij.shape[1] != xj.shape[0]:
+    if nij.shape[1] != xj.shape[0]:
         msg = (
             f"Incompatible dimensions: GCM contribution vector has length {xj.shape[0]}"
-            f", but group decomposition matrix has {Aij.shape[1]} columns."
+            f", but group decomposition matrix has {nij.shape[1]} columns."
         )
         raise ValueError(msg)
 
@@ -190,7 +190,7 @@ decompose = NannoolalDecomposer(
 
 
 @nannoolal_gcm.register_property
-def dBv(fuel: "Fuel") -> types.Quantity1D:
+def dbv(fuel: "Fuel") -> types.Quantity1D:
     """Get the saturated liquid viscosity curve slope for a fuel's components.
 
     Args:
@@ -202,15 +202,15 @@ def dBv(fuel: "Fuel") -> types.Quantity1D:
         Converting these sums into dBv requires Nannoolal Eq. (7).
     """
     nij = _get_decomp(fuel)
-    dBvj = _get_row("dBv")
-    _check_compatible_dims(dBvj, nij)
+    dbvj = _get_row("dBv")
+    _check_compatible_dims(dbvj, nij)
     # Only absent groups are zeroed; NaN propagates for used, unsupported groups
-    dBvi = np.where(nij != 0, nij * dBvj, 0.0).sum(axis=1)
-    return Units.Quantity(dBvi, "")
+    dbvi = np.where(nij != 0, nij * dbvj, 0.0).sum(axis=1)
+    return Units.Quantity(dbvi, "")
 
 
 @nannoolal_gcm.register_property
-def Tv(fuel: "Fuel") -> types.Quantity1D:
+def tv(fuel: "Fuel") -> types.Quantity1D:
     """Get the saturated liquid viscosity reference temperature for a fuel's components.
 
     Args:
@@ -222,7 +222,7 @@ def Tv(fuel: "Fuel") -> types.Quantity1D:
         Converting these sums into Tv in K requires Nannoolal Eq. (8).
     """
     nij = _get_decomp(fuel)
-    Tvj = _get_row("Tv")
-    _check_compatible_dims(Tvj, nij)
-    Tvi = np.where(nij != 0, nij * Tvj, 0.0).sum(axis=1)
-    return Units.Quantity(Tvi, "")
+    tvj = _get_row("Tv")
+    _check_compatible_dims(tvj, nij)
+    tvi = np.where(nij != 0, nij * tvj, 0.0).sum(axis=1)
+    return Units.Quantity(tvi, "")

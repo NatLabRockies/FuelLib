@@ -64,7 +64,7 @@ class MixtureTestCase(unittest.TestCase):
                         # no Temp (parsed as NaN), so do not pass T to the method.
                         kwargs = {}
                         if not pd.isna(row.Temp):
-                            kwargs["T"] = Units.Quantity(row.Temp, row.Temp_Units)
+                            kwargs["temp"] = Units.Quantity(row.Temp, row.Temp_Units)
                         pred = method(fuel=fuel, **kwargs).to(row.Property_Units)
                         pred_val = pred.magnitude
                         if isinstance(pred_val, np.ndarray):

@@ -78,7 +78,7 @@ def _format_baseline_float(value: float) -> str:
 def update_baseline(
     fuels: Iterable[str] | None = None,
     properties: Iterable[str] | None = None,
-    useRefProperties: bool = False,
+    use_ref_props: bool = False,
 ) -> None:
     """Update the baseline predictions in the mixture data.
 
@@ -86,7 +86,7 @@ def update_baseline(
         fuels: Fuels to regenerate. If None, all fuels in ``fuel_names`` are used.
         properties: Properties to regenerate. If None, all properties in ``method_map``
             are used.
-        useRefProperties: Whether to use reference properties when generating the
+        use_ref_props: Whether to use reference properties when generating the
             baseline. Defaults to False.
     """
     selected_fuels = sorted(set(fuels)) if fuels else sorted(fuel_names)
@@ -128,7 +128,7 @@ def update_baseline(
 
     new_rows = []
     for fuel_name in selected_fuels:
-        fuel = Fuel(fuel_name, use_ref_props=useRefProperties)
+        fuel = Fuel(fuel_name, use_ref_props=use_ref_props)
         if fuel.prop_data is None:
             msg = f"No property data found for fuel '{fuel_name}'."
             raise ValueError(msg)
@@ -151,7 +151,7 @@ def update_baseline(
                 # (pandas parses "NaN" as float nan), so do not pass T to the method.
                 kwargs = {}
                 if not pd.isna(row.Temp):
-                    kwargs["T"] = Units.Quantity(row.Temp, row.Temp_Units)
+                    kwargs["temp"] = Units.Quantity(row.Temp, row.Temp_Units)
                 prop_val = Units.Quantity(row.Property_Value, row.Property_Units)
                 pred_val = method(fuel=fuel, **kwargs).to(row.Property_Units)
 
@@ -222,5 +222,5 @@ if __name__ == "__main__":
     update_baseline(
         fuels=args.fuel,
         properties=args.property,
-        useRefProperties=args.refProps,
+        use_ref_props=args.refProps,
     )
