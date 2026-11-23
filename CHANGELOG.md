@@ -7,6 +7,8 @@ release workflow to parse release entries in this file.
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-11-23
+
 ### Changed
 - **Breaking:** the per-component functions in `gcm.gani` are renamed to snake_case: `Tc` -> `tc`, `Pc` -> `pc`, `Vc` -> `vc`, `Tb` -> `tb`, `Tm` -> `tm`, `Hf` -> `hf`, `Gf` -> `gf`, `Hv_stp` -> `hv_stp`, `Vm_stp` -> `vm_stp`, `Cp_stp` -> `cp_stp`, `Cp_B` -> `cp_b`, `Cp_C` -> `cp_c`, `rd_A` -> `rd_a`, `rd_B` -> `rd_b`, and `rd_D` -> `rd_d`. `gcm.boehm.dS_fus` is renamed to `ds_fus`, `gcm.nannoolal.dBv` and `gcm.nannoolal.Tv` are renamed to `dbv` and `tv`, and `gcm.unifac.R` and `gcm.unifac.Q` are renamed to `r` and `q`. The group decomposition matrix argument of the GCM helpers is renamed from `Aij` to `nij`. Lookups through `predict()` are case-insensitive, so `gani_gcm.predict("Tc", fuel)` is unchanged.
 - **Breaking:** the arguments of the `correlate.components`, `correlate.mixture`, and `correlate.helpers` functions are renamed to snake_case: `T` -> `temp`, `Yi` -> `yi`, `Xi` -> `xi`, `X` -> `x`, `T_ref` -> `temp_ref`, `Tvals` -> `temp_vals`, `epsilonByKB_gas` -> `lj_eps_by_kb_gas`, and `MW_gas` -> `mw_gas`.
