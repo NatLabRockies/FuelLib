@@ -3,6 +3,7 @@
 import argparse
 import sys
 from pathlib import Path
+from typing import cast
 
 import pandas as pd
 from rdkit import Chem
@@ -27,18 +28,16 @@ def _to_smiles(structure: object, source_format: str) -> str:
         source_format: Format of ``structure``, ``"smiles"`` or ``"inchi"``.
 
     Returns:
-        The SMILES string; ``structure`` unchanged if it is already SMILES.
+        The SMILES string. SMILES input is returned unchanged (even if it is a
+        missing CSV value) so the decomposer reports the error with its context.
 
     Raises:
-        ValueError: If the structure is not a non-empty string or an InChI
-            cannot be parsed.
+        ValueError: If an InChI is empty or cannot be parsed.
     """
-    if not isinstance(structure, str) or not structure.strip():
-        raise ValueError(
-            f"{_COLUMNS[source_format]} must be a non-empty string, got {structure!r}."
-        )
     if source_format == "smiles":
-        return structure
+        return cast(str, structure)
+    if not isinstance(structure, str) or not structure.strip():
+        raise ValueError("InChI must be a non-empty string.")
     mol = Chem.MolFromInchi(structure)
     if mol is None:
         raise ValueError(f"Could not parse InChI {structure!r}.")
