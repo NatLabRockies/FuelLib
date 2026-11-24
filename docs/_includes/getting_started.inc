@@ -57,5 +57,5 @@ installing from source; see :doc:`contributing`.
 Basic usage
 -----------
 
-See the :doc:`Basic Usage tutorial <tutorials_basic>` for an introduction to 
+See the :ref:`Basic Usage tutorial <sec-basic-usage>` for an introduction to 
 creating a ``Fuel`` object and predicting fuel properties.
