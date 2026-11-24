@@ -1,0 +1,10 @@
+/* The RTD theme prevents table cells from wrapping, which makes tables with long
+   text very wide. Allow wrapping so tables fit the page. */
+.wy-table-responsive table td,
+.wy-table-responsive table th {
+    white-space: normal;
+}
+
+.wy-table-responsive {
+    overflow: visible;
+}

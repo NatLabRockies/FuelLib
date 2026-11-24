@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fuellib"
 version = "4.0.0"
-description = "FuelLib: A Python library for Group Contribution Method (GCM) calculations of fuel properties"
+description = "FuelLib: A fuel property prediction package based on group contribution methods and measurement data"
 readme = "README.md"
 license = {text = "BSD-3-Clause"}
 authors = [

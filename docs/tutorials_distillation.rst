@@ -2,7 +2,7 @@ Simulating Distillation
 =======================
 
 This tutorial shows how to simulate the ASTM D86 distillation test with the model of
-Greenfield et al.\ :footcite:p:`greenfield_macroscopic_1998` (see :doc:`distillation`
+Greenfield et al.\ :footcite:p:`greenfield_macroscopic_1998` (see :doc:`simulation_distillation`
 for the model). The complete script is
 `distillation.py <https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/distillation.py>`_
 in the ``tutorials`` directory.
@@ -39,7 +39,7 @@ Model variants and apparatus parameters
 
 The keyword arguments of ``distill`` switch off parts of the model, and
 :class:`~fuellib.simulate.distillation.greenfield.D86Apparatus` changes the apparatus
-and procedure parameters (see the default values in :doc:`distillation`).
+and procedure parameters (see the default values in :doc:`simulation_distillation`).
 
 .. code-block:: python
 

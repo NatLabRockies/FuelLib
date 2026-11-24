@@ -33,7 +33,7 @@ This example walks through the process and the available options for exporting G
 Default Options
 ^^^^^^^^^^^^^^^
     
-After installing FuelLib with ``pip install fuellib``, run the following command in the terminal, noting that ``--fuel-name`` is the only required input: ::
+After installing FuelLib with ``pip install fuellib`` (see `pypi.org/project/fuellib <https://pypi.org/project/fuellib>`_), run the following command in the terminal, noting that ``--fuel-name`` is the only required input: ::
     
     fl export converge --fuel-name posf10325
 

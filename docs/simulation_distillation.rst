@@ -1,5 +1,5 @@
-Simulated Distillation 
-======================
+Distillation
+============
 
 The module :mod:`fuellib.simulate.distillation.greenfield` simulates the ASTM D86
 distillation test with the macroscopic model of
@@ -235,7 +235,7 @@ The flask liquid is at its bubble point,
 
    \phi_i^{(1)} y_i P = \gamma_i^{(1)} x_i P_i^{sat}. \tag{10}
 
-The activity coefficients :math:`\gamma_i` come from UNIFAC 2.0 (see :doc:`gcm`).
+The activity coefficients :math:`\gamma_i` come from UNIFAC 2.0 (see :ref:`sec-gcm-unifac`).
 The equilibrium in stage 2 (equation 11) has the same form.
 
 Vapor fugacity coefficients
@@ -549,7 +549,7 @@ Differences from Greenfield et al.
      - Eq. 19 solved for :math:`C^0_{p,v}` (eq. 18 only for air)
    * - Activity coefficients
      - UNIFAC
-     - UNIFAC 2.0 (see :doc:`gcm`)
+     - UNIFAC 2.0 (see :ref:`sec-gcm-unifac`)
    * - Dissolved air
      - Eq. 37-40
      - Not included; air only in the CSTR
