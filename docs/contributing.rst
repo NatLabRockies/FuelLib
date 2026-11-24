@@ -104,13 +104,16 @@ in the ``[tool.taskipy.tasks]`` table of ``pyproject.toml``, and can be run with
 Working with Units (pint)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-FuelLib's public API is unit-aware: physical quantities (e.g. ``Fuel.comps.mw``,
-``Fuel.comps.tc``, ``Fuel.comps.pc``) are `pint <https://pint.readthedocs.io>`_
+FuelLib's public API is unit-aware: physical quantities (e.g.
+:attr:`Fuel.comps.mw <fuellib.fuel.components.Components.mw>`,
+:attr:`Fuel.comps.tc <fuellib.fuel.components.Components.tc>`,
+:attr:`Fuel.comps.pc <fuellib.fuel.components.Components.pc>`) are `pint <https://pint.readthedocs.io>`_
 ``Quantity`` objects rather than bare ``float``/``np.ndarray`` values. When
 contributing new code that creates or consumes physical quantities:
 
-- Always build quantities using the shared ``fuellib.Units`` registry (also
-   available as ``fuellib.utils.Units``), for example
+- Always build quantities using the shared
+   :data:`fuellib.Units <fuellib.utils.types.Units>` registry (also
+   available as :data:`fuellib.utils.Units <fuellib.utils.types.Units>`), for example
    ``Units.Quantity(value, "K")``. Do not instantiate a new
    ``pint.UnitRegistry()``: quantities from different registries are not
    compatible with one another.
@@ -118,12 +121,14 @@ contributing new code that creates or consumes physical quantities:
   value with ``.magnitude`` only at boundaries (e.g. plotting, exporting,
   passing to non-pint-aware libraries).
 - For annotations, import ``types`` from ``fuellib.utils`` and use its
-   aliases: ``Array1D`` and ``Array2D`` for one- and two-dimensional
-   ``float64`` NumPy arrays, and ``Quantity0D``, ``Quantity1D``, and
-   ``Quantity2D`` for Pint quantities with scalar, one-dimensional, and
+   aliases: :data:`~fuellib.utils.types.Array1D` and
+   :data:`~fuellib.utils.types.Array2D` for one- and two-dimensional
+   ``float64`` NumPy arrays, and :data:`~fuellib.utils.types.Quantity0D`,
+   :data:`~fuellib.utils.types.Quantity1D`, and
+   :data:`~fuellib.utils.types.Quantity2D` for Pint quantities with scalar, one-dimensional, and
    two-dimensional magnitudes, respectively.
 - Do not reintroduce bare-float return types for existing public
-  ``Fuel``/``utility`` APIs; this would reverse an intentional breaking
+  :class:`~fuellib.fuel.core.Fuel`/``utility`` APIs; this would reverse an intentional breaking
   change (see ``CHANGELOG.md``).
 
 Code Style and Naming
@@ -142,7 +147,8 @@ everywhere, with one deliberate exception (``greenfield.py``, below):
   such as ``"Tv"``, ``"dBv"``, ``"CpAk"``, or ``"rd_A"``); these match the
   published parameter tables.
 - GCM property functions are registered by their lowercased function name, so
-  ``predict("Tc", fuel)`` and ``predict("tc", fuel)`` are equivalent.
+  :meth:`predict("Tc", fuel) <fuellib.gcm.core.GCM.predict>` and
+  :meth:`predict("tc", fuel) <fuellib.gcm.core.GCM.predict>` are equivalent.
 
 Use the same name for the same quantity throughout the code base:
 

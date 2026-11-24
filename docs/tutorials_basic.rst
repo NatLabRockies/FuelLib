@@ -36,7 +36,7 @@ Each row of the GCxGC file is matched to a compound in the reference data tables
 
 Rows are matched by ``Reference Compound`` name first (case-insensitive) and then by the InChI derived from ``SMILES``. A ``ValueError`` listing the unmatched rows is raised if any GCxGC compound is missing from the reference tables, so new compounds must first be added to the reference tables (see the :doc:`Adding Custom Fuels <tutorials_custom_fuels>` tutorial). Many examples can be found in the `fuellib/data <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data>`_ directory in the repository.
 
-Optionally, measured property data can be provided in ``properties_data/<fuel_name>.csv``. It is loaded into ``Fuel.prop_data`` and used for validation and plotting.
+Optionally, measured property data can be provided in ``properties_data/<fuel_name>.csv``. It is loaded into :attr:`Fuel.prop_data <fuellib.fuel.core.Fuel.prop_data>` and used for validation and plotting.
 
 Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
