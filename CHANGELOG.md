@@ -10,7 +10,11 @@ release workflow to parse release entries in this file.
 ### Changed
 - FuelLib is now described as a fuel property prediction package based on group contribution methods and, when available, measurement data (README, documentation, package description, and `fuellib` module docstring).
 - The documentation is reorganized into Getting Started, Fuel Property Prediction Framework, Group Contribution Methods, Reference Compounds, Correlations and Mixture Rules, Simulation, Tutorials, Validation, Source Code, and Contributing. Several pages are renamed, so their old URLs no longer work: `fuelprops.html` -> `correlations.html`, `gcm.html` -> `group_contribution_methods.html`, `refcompounds.html` -> `reference_compounds.html`, `distillation.html` -> `simulation_distillation.html`, `sourcecode.html` and `units.html` -> `source_code.html`, and `development.html` -> `contributing.html`.
-- The Public API section of `source_code.html` is organized by package -> module -> class, function, or constant, covering `fuellib.correlate`, `exporters`, `fuel`, `gcm`, `rdk`, `simulate`, and `utils`. The constants in `fuellib.utils.constants` are each documented.
+- The Public API section of `source_code.html` is organized by package -> module -> class, function, or constant, covering `fuellib.correlate`, `exporters`, `fuel`, `gcm`, `rdk`, `simulate`, and `utils`. The constants in `fuellib.utils.constants` are each documented. The sidebar stops at the module level.
+- Pint quantities in the documentation, tutorials, and `fl convert` output are formatted consistently with `~P.#f` (e.g. `{T:~P.0f}`); the output of `fl convert` is unchanged.
+
+### Added
+- The API documentation links each documented class, function, method, constant, and type alias to its source code on GitHub (`sphinx.ext.linkcode`).
 
 ## [4.0.0] - 2026-11-24
 
