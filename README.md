@@ -88,7 +88,7 @@ Quick start:
 2. Create a `newFeature` branch that contains your changes
 3. Update the sphinx documentation in `newFeature`
 4. Install development dependencies: `uv venv && uv pip install -e '.[dev]'` (or `pip install -e '.[dev]'`)
-5. Format the source code files using the provided CLI command: `fl-format`
+5. Format the source code files using the provided CLI command: `fl dev format`
 6. Run tests and build documentation locally to verify your changes
 7. Open a Pull Request (PR) from `newFeature` on your fork to branch `main` FuelLib repository.
 
@@ -102,7 +102,7 @@ pip install -e ".[dev]"
 
 Then use the provided CLI command:
 ~~~
-fl-build-docs
+fl dev build-docs
 ~~~
 
 The HTML documentation will be generated in `docs/_build/html/`. Open `docs/_build/html/index.html` in your web browser to view it. 

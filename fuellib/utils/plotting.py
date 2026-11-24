@@ -1,9 +1,9 @@
 """Plotting utilities for FuelLib.
 
 Functions to plot the composition, mixture properties and simulated D86 distillation
-curves of fuels. The ``fl-plt-comp``, ``fl-plt-props`` and ``fl-simulate`` commands
-are thin wrappers around these functions. The colormaps and fuel colors are in
-:mod:`fuellib.utils.color_maps`.
+curves of fuels. The ``fl plot comp``, ``fl plot props`` and
+``fl simulate distillation`` commands are thin wrappers around these functions.
+The colormaps and fuel colors are in :mod:`fuellib.utils.color_maps`.
 """
 
 import os

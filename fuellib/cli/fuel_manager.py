@@ -57,29 +57,12 @@ def load_fuel_metadata(fuel_data_dir=None):
     return {}
 
 
-def list_fuels_main():
-    """Entry point for fl-fuels command - List all available fuels in the library."""
-    parser = argparse.ArgumentParser(
-        description="List all available fuels in the FuelLib library."
-    )
+def run(args: argparse.Namespace) -> None:
+    """List all available fuels in the library.
 
-    parser.add_argument(
-        "-dir",
-        "--fuel-data-dir",
-        default=None,
-        metavar="PATH",
-        help="Directory containing fuel data (with gc_data/ and, optionally, fuel_metadata.yaml). "
-        "If not specified, uses embedded FuelLib data.",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Show detailed information including source and category for each fuel.",
-    )
-
-    args = parser.parse_args()
-
+    Args:
+        args: Parsed command-line arguments (``fuel_data_dir`` and ``verbose``).
+    """
     if args.fuel_data_dir is None:
         fuel_data_dir = fl.get_fueldata_gc_dir()
         metadata_dir = None  # Use embedded metadata
@@ -149,3 +132,34 @@ def list_fuels_main():
     except Exception as e:  # noqa: BLE001
         print(f"Error listing fuels: {e}")
         sys.exit(1)
+
+
+def add_parser(commands: "argparse._SubParsersAction") -> None:
+    """Add the ``list`` command and its subcommands.
+
+    Args:
+        commands: Subparsers action of the ``fl`` command.
+    """
+    description = "List the fuels or other resources available in FuelLib."
+    list_parser = commands.add_parser("list", help=description, description=description)
+    resources = list_parser.add_subparsers(
+        dest="resource", metavar="RESOURCE", required=True
+    )
+
+    description = "List all available fuels in the FuelLib library."
+    parser = resources.add_parser("fuels", help=description, description=description)
+    parser.add_argument(
+        "-dir",
+        "--fuel-data-dir",
+        default=None,
+        metavar="PATH",
+        help="Directory containing fuel data (with gc_data/ and, optionally, fuel_metadata.yaml). "
+        "If not specified, uses embedded FuelLib data.",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Show detailed information including source and category for each fuel.",
+    )
+    parser.set_defaults(func=run)

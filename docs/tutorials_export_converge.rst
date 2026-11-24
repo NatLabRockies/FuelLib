@@ -1,7 +1,7 @@
 Exporting Properties for Converge
 ----------------------------------
 
-The export script, ``fl-export-converge``, generates property data files for use in Converge CFD simulations. 
+The export script, ``fl export converge``, generates property data files for use in Converge CFD simulations. 
 There are two options for exporting data:
 
 1. **Mixture Properties**: This option generates a csv file named ``mixturePropsGCM_<fuel_name>.csv`` containing 
@@ -28,18 +28,18 @@ The properties include:
     terminal output and should be considered when using the mixture properties in a simulation.
 
 This example walks through the process and the available options for exporting GCM-based properties for 
-"posf10325", which is conventional Jet-A, using the ``fl-export-converge`` command.
+"posf10325", which is conventional Jet-A, using the ``fl export converge`` command.
 
 Default Options
 ^^^^^^^^^^^^^^^
     
 After installing FuelLib with ``pip install fuellib``, run the following command in the terminal, noting that ``--fuel-name`` is the only required input: ::
     
-    fl-export-converge --fuel-name posf10325
+    fl export converge --fuel-name posf10325
 
 Or using the short option ``-f``: ::
 
-    fl-export-converge -f posf10325
+    fl export converge -f posf10325
 
 
 This generates the files for each compound and a composition description in ``FuelLib/exportData/posf10325`` with  
@@ -48,7 +48,7 @@ property predictions from 0 K to 1000 K for use in a Converge simulation.
 Additional Options
 ^^^^^^^^^^^^^^^^^^
 
-There are several additional options that can be specified when running the ``fl-export-converge`` command:
+There are several additional options that can be specified when running the ``fl export converge`` command:
 
 - ``-dir, --fuel-data-dir PATH``: Directory containing the fuel data files. Default: ``fuellib/data``.
 - ``-t, --temp-min K``: Minimum temperature for property calculations. Default: ``0``.
@@ -59,11 +59,11 @@ There are several additional options that can be specified when running the ``fl
 
 For example, run the following command to export mixture properties from 273 K to 550 K with 5 K steps: ::
     
-    fl-export-converge -f posf10325 -m -t 273 -T 550 -s 5
+    fl export converge -f posf10325 -m -t 273 -T 550 -s 5
 
 Or with long options: ::
     
-    fl-export-converge --fuel-name posf10325 --export-mix --temp-min 273 --temp-max 550 --temp-step 5
+    fl export converge --fuel-name posf10325 --export-mix --temp-min 273 --temp-max 550 --temp-step 5
 
 
 This generates the file ``FuelLib/exportData/mixturePropsGCM_posf10325.csv`` with mixture 

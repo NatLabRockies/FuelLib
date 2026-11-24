@@ -1,5 +1,4 @@
 from pathlib import Path
-import argparse
 import json
 import os
 import subprocess
@@ -30,16 +29,17 @@ def _magnitude(value, unit=None):
 Script that exports critical properties and initial mass fraction data
 for use in Pele simulations.
 
-This script is designed to be run from the command line and will create
+This script is designed to be run from the command line (``fl export pele``)
+and will create
 a file named "sprayPropsGCM_<fuel_name>.inp" or "sprayPropsMP_<fuel_name>.inp"
 in the specified directory. The file contains properties for each compound in 
 the fuel, formatted for Pele.
 
 Usage:
-    fl-export-pele -f <fuel_name>
+    fl export pele -f <fuel_name>
 
 For detailed options, run:
-    fl-export-pele -h
+    fl export pele -h
 """
 
 
@@ -568,163 +568,3 @@ def export_pele(
                         f.write(
                             f"particles.{comp_name}_{prop_name} = {value:.6f} # {unit_txt}\n"
                         )
-
-
-def main():
-    """Parse CLI arguments and export fuel properties for Pele simulations.
-
-    Raises:
-        FileNotFoundError: If required files for the specified fuel are not found.
-    """
-    # Set up argument parser
-    parser = argparse.ArgumentParser(
-        description="Export fuel properties for Pele simulations."
-    )
-
-    # Mandatory argument for fuel name
-    parser.add_argument(
-        "-f",
-        "--fuel-name",
-        required=True,
-        metavar="NAME",
-        help="Name of the fuel (mandatory).",
-    )
-
-    # Optional argument for fuel data directory
-    parser.add_argument(
-        "-dir",
-        "--fuel-data-dir",
-        default=FUELDATA_DIR,
-        metavar="PATH",
-        help="Directory where fuel data files are located (optional, default: fuellib/data).",
-    )
-
-    # Optional argument for units
-    # Default is 'mks', but can be set to 'cgs'
-    parser.add_argument(
-        "-u",
-        "--units",
-        default="mks",
-        metavar="{mks,cgs}",
-        help="Units for critical properties (optional, default: mks).",
-    )
-
-    # Optional argument for deposition fuel names
-    parser.add_argument(
-        "-dep",
-        "--dep-fuel-names",
-        nargs="+",  # Accepts one or more values
-        default=None,
-        metavar="NAME",
-        help="Space-separated list or single fuel that each compound deposits to (optional, default: fuel.comps.names).",
-    )
-
-    # Optional argument for using PelePhysics key
-    parser.add_argument(
-        "-pp",
-        "--use-pp-keys",
-        dest="use_pp_keys",
-        action="store_true",
-        help="Use PelePhysics keys for each compound.",
-    )
-
-    # Optional argument for export directory
-    parser.add_argument(
-        "-o",
-        "--export-dir",
-        default=os.getcwd(),
-        metavar="PATH",
-        help="Directory to export the properties (optional, default: current working directory).",
-    )
-
-    # Optional argument for exporting mixture properties
-    parser.add_argument(
-        "-m",
-        "--export-mix",
-        dest="export_mix",
-        action="store_true",
-        help="Export mixture properties of the fuel.",
-    )
-
-    # Optional argument for mixture name if different than fuel_name
-    parser.add_argument(
-        "-mn",
-        "--export-mix-name",
-        default=None,
-        metavar="NAME",
-        help="Name the mixture if different than fuel_name (optional, default: fuel_name).",
-    )
-
-    # Optional argument for liquid property model
-    parser.add_argument(
-        "-l",
-        "--liq-prop-model",
-        default="gcm",
-        metavar="{gcm,mp}",
-        help="Model for liquid properties (optional, default: gcm).",
-    )
-
-    # Optional argument for printing Antoine coefficients in MP model
-    parser.add_argument(
-        "-psat",
-        "--psat-antoine",
-        dest="psat_antoine",
-        action="store_true",
-        help="Use Antoine coefficients for vapor pressure in the MP model.",
-    )
-
-    # Parse arguments
-    args = parser.parse_args()
-    fuel_name = args.fuel_name
-    fuel_data_dir = args.fuel_data_dir
-
-    units = args.units.lower()
-    dep_fuel_names = args.dep_fuel_names
-    use_pp_keys = args.use_pp_keys
-    export_dir = args.export_dir
-    export_mix = args.export_mix
-    export_mix_name = args.export_mix_name
-    liq_prop_model = args.liq_prop_model.lower()
-    psat_antoine = args.psat_antoine
-
-    # Print the parsed arguments
-    print("Preparing to export properties:")
-    print(f"    Fuel name: {fuel_name}")
-    print(f"    Units: {units}")
-    print(f"    Liquid property model: {liq_prop_model}")
-    if liq_prop_model.lower() == "mp":
-        print(f"    Antoine coefficients: {psat_antoine}")
-    print(f"    Export mixture properties: {export_mix}")
-    print(f"    Export directory: {export_dir}")
-    print(f"    Fuel data directory: {fuel_data_dir}")
-
-    # Create the groupContribution object for the specified fuel
-    fuel = fl.Fuel(fuel_name, data_dir=fuel_data_dir)
-    if dep_fuel_names is None and not export_mix:
-        if use_pp_keys and fuel.comps.pelephysics_keys is not None:
-            dep_fuel_names = list(fuel.comps.pelephysics_keys)
-        else:
-            dep_fuel_names = (
-                fuel.gc_data["GC-Bin"].tolist()
-                if "GC-Bin" in fuel.gc_data.columns
-                else list(fuel.comps.names)
-            )
-
-    # Export properties for Pele
-    export_pele(
-        fuel,
-        path=export_dir,
-        units=units,
-        dep_fuel_names=dep_fuel_names,
-        use_pp_keys=use_pp_keys,
-        export_mix=export_mix,
-        export_mix_name=export_mix_name,
-        liq_prop_model=liq_prop_model,
-        psat_antoine=psat_antoine,
-    )
-
-    print("\nExport completed successfully!")
-
-
-if __name__ == "__main__":
-    main()

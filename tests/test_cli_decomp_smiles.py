@@ -1,11 +1,16 @@
-"""Tests for the fl-decomp-smiles command-line tool."""
+"""Tests for the fl decompose command-line tool."""
 
 import csv
 import sys
 
 import pytest
 
-from fuellib.cli.decomp_smiles import decompose_smiles
+from fuellib.cli import main
+
+
+def decompose_smiles() -> None:
+    """Run the CLI with the patched ``sys.argv``."""
+    main()
 
 
 def test_writes_named_decompositions(monkeypatch, capsys, tmp_path):
@@ -15,7 +20,8 @@ def test_writes_named_decompositions(monkeypatch, capsys, tmp_path):
         sys,
         "argv",
         [
-            "fl-decomp-smiles",
+            "fl",
+            "decompose",
             "--smiles",
             "CCc1ccccc1",
             "CC(C)CCCCC",
@@ -44,7 +50,7 @@ def test_reads_input_file(monkeypatch, capsys, tmp_path):
     """The CLI should process all compounds in an input CSV."""
     input_path = tmp_path / "compounds.csv"
     input_path.write_text("Reference Compound,SMILES\nn-heptane,CCCCCCC\n")
-    monkeypatch.setattr(sys, "argv", ["fl-decomp-smiles", "-i", str(input_path)])
+    monkeypatch.setattr(sys, "argv", ["fl", "decompose", "-i", str(input_path)])
 
     decompose_smiles()
     lines = capsys.readouterr().out.splitlines()
@@ -55,7 +61,7 @@ def test_reads_input_file(monkeypatch, capsys, tmp_path):
 def test_nannoolal_method(monkeypatch, capsys):
     """The CLI should decompose with the Nannoolal method when requested."""
     monkeypatch.setattr(
-        sys, "argv", ["fl-decomp-smiles", "-s", "CCCCCC", "-m", "nannoolal"]
+        sys, "argv", ["fl", "decompose", "-s", "CCCCCC", "-m", "nannoolal"]
     )
 
     decompose_smiles()
@@ -71,7 +77,8 @@ def test_names_failing_molecule_in_multi_input_error(
     """A failed row identifies its name, SMILES, method, and cause without a traceback."""
     if source == "arguments":
         arguments = [
-            "fl-decomp-smiles",
+            "fl",
+            "decompose",
             "--smiles",
             "CCCCCCC",
             "CCCCCCCO",
@@ -86,7 +93,14 @@ def test_names_failing_molecule_in_multi_input_error(
         input_path.write_text(
             "Reference Compound,SMILES\nn-heptane,CCCCCCC\n1-heptanol,CCCCCCCO\n"
         )
-        arguments = ["fl-decomp-smiles", "--input", str(input_path), "--method", "gani"]
+        arguments = [
+            "fl",
+            "decompose",
+            "--input",
+            str(input_path),
+            "--method",
+            "gani",
+        ]
 
     monkeypatch.setattr(sys, "argv", arguments)
 
@@ -112,7 +126,7 @@ def test_unnamed_failure_does_not_repeat_the_smiles(
 ):
     """Without --name the label equals the SMILES, so no label prefix is added."""
     monkeypatch.setattr(
-        sys, "argv", ["fl-decomp-smiles", "-s", "CCCCCCCO", "-m", method]
+        sys, "argv", ["fl", "decompose", "-s", "CCCCCCCO", "-m", method]
     )
 
     with pytest.raises(SystemExit) as error:
@@ -138,7 +152,7 @@ def test_rejects_missing_csv_smiles_with_molecule_context(
     monkeypatch.setattr(
         sys,
         "argv",
-        ["fl-decomp-smiles", "--input", str(input_path), "--method", "gani"],
+        ["fl", "decompose", "--input", str(input_path), "--method", "gani"],
     )
 
     with pytest.raises(SystemExit) as error:
@@ -163,7 +177,7 @@ def test_rejects_missing_csv_smiles_with_molecule_context(
 )
 def test_rejects_invalid_arguments(monkeypatch, arguments):
     """The CLI should report invalid sources, names, and methods as usage errors."""
-    monkeypatch.setattr(sys, "argv", ["fl-decomp-smiles", *arguments])
+    monkeypatch.setattr(sys, "argv", ["fl", "decompose", *arguments])
 
     with pytest.raises(SystemExit) as error:
         decompose_smiles()

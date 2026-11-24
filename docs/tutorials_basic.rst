@@ -42,8 +42,8 @@ Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The decomposition process requires knowledge of the chemical structure of each component in the fuel. 
-A starting decomposition can be generated automatically from SMILES strings with :func:`fuellib.gcm.gani.decompose` or the ``fl-decomp-smiles`` command (see :doc:`tutorials_cli`), but the results should be checked against the `Gani table`_.
-Nannoolal decompositions for ``ref_nannoolal.csv`` can be generated in the same way with :func:`fuellib.gcm.nannoolal.decompose` or ``fl-decomp-smiles --method nannoolal``, and UNIFAC decompositions for ``ref_unifac.csv`` with :func:`fuellib.gcm.unifac.decompose` or ``fl-decomp-smiles --method unifac``.
+A starting decomposition can be generated automatically from SMILES strings with :func:`fuellib.gcm.gani.decompose` or the ``fl decompose`` command (see :doc:`tutorials_cli`), but the results should be checked against the `Gani table`_.
+Nannoolal decompositions for ``ref_nannoolal.csv`` can be generated in the same way with :func:`fuellib.gcm.nannoolal.decompose` or ``fl decompose --method nannoolal``, and UNIFAC decompositions for ``ref_unifac.csv`` with :func:`fuellib.gcm.unifac.decompose` or ``fl decompose --method unifac``.
 
 .. warning::
     Automated decompositions must be verified. A known shortcoming is indene, where the non-aromatic C=C bond is categorized as a ``CH`` group.

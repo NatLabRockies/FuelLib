@@ -68,7 +68,7 @@ Every compound in a fuel must appear in all of the effective reference tables. T
 - ``ref_nannoolal.csv``: the Nannoolal group decomposition of the compound, in the same format as ``ref_gani.csv`` but with the groups defined in `nannoolal.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/nannoolal.csv>`_.
 - ``ref_unifac.csv``: the UNIFAC subgroup decomposition of the compound, in the same format as ``ref_gani.csv`` but with the subgroups defined in `unifac.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/unifac.csv>`_.
 
-Decompositions can be generated from SMILES with ``fl-decomp-smiles`` (``--method gani``, ``--method nannoolal``, or ``--method unifac``; see :doc:`tutorials_cli`), but should be verified before use.
+Decompositions can be generated from SMILES with ``fl decompose`` (``--method gani``, ``--method nannoolal``, or ``--method unifac``; see :doc:`tutorials_cli`), but should be verified before use.
 
 See the `Basic Usage tutorial <tutorials_basic.html#decomposing-fuel-components-into-fundamental-groups>`_ for detailed information on group decompositions.
 

@@ -1,12 +1,17 @@
 """Format, lint, and type-check all Python source code, mirroring CI's Formatting job."""
 
+import argparse
 import os
 import subprocess
 import sys
 
 
-def main():
-    """Run ruff format, ruff check --fix, and ty check on the repository."""
+def run(args: argparse.Namespace | None = None) -> None:
+    """Run ruff format, ruff check --fix, and ty check on the repository.
+
+    Args:
+        args: Parsed command-line arguments (unused).
+    """
     # Get the directory of this script (fuellib/cli)
     cli_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -36,7 +41,3 @@ def main():
             exit_code = result.returncode
 
     sys.exit(exit_code)
-
-
-if __name__ == "__main__":
-    main()

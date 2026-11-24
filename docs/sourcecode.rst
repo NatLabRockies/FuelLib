@@ -58,18 +58,20 @@ FuelLib File Organization
         - **properties_data:** directory containing measurement or predicted data used for validation
         - ``fuel_metadata.yaml``: YAML file with source information and other optional metadata for each fuel (loaded into ``Fuel.metadata``)
     
-    - **exporters:** subpackage with CLI exporters for generating fuel properties
+    - **exporters:** subpackage with the CFD property exporters
     
-        - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl-export-converge``)
-        - ``pele.py``: exporter for PelePhysics simulations (CLI: ``fl-export-pele``)
+        - ``converge.py``: exporter for Converge CFD simulations (CLI: ``fl export converge``)
+        - ``pele.py``: exporter for PelePhysics simulations (CLI: ``fl export pele``)
 
-    - **cli:** subpackage with command-line interface tools for data conversion and analysis
+    - **cli:** subpackage with the ``fl`` command-line interface (``__init__.py`` builds the parser and dispatches the subcommands)
     
-        - ``convert.py``: temperature and Lennard-Jones conversion utilities (CLI: ``fl-C2K``, ``fl-K2C``, ``fl-C2F``, ``fl-F2C``, ``fl-F2K``, ``fl-K2F``, ``fl-eps2K``)
-        - ``plotting.py``: command-line wrappers around the functions in ``utils/plotting.py`` (CLI: ``fl-plt-comp``, ``fl-plt-props``)
-        - ``fuel_manager.py``: fuel manager utility
-        - ``decomp_smiles.py``: SMILES group-decomposition utility (CLI: ``fl-decomp-smiles``)
-        - ``simulate.py``: fuel test simulations with plots of the results (CLI: ``fl-simulate``)
+        - ``convert.py``: temperature and Lennard-Jones conversion utilities (CLI: ``fl convert c2k``, ``k2c``, ``c2f``, ``f2c``, ``f2k``, ``k2f``, ``eps2k``)
+        - ``export.py``: CFD property exporters (CLI: ``fl export converge``, ``fl export pele``)
+        - ``plotting.py``: command-line wrappers around the functions in ``utils/plotting.py`` (CLI: ``fl plot comp``, ``fl plot props``)
+        - ``fuel_manager.py``: fuel manager utility (CLI: ``fl list fuels``)
+        - ``decomp_smiles.py``: SMILES group-decomposition utility (CLI: ``fl decompose``)
+        - ``simulate.py``: fuel test simulations with plots of the results (CLI: ``fl simulate distillation``)
+        - ``dev.py``: developer commands (CLI: ``fl dev format``, ``test``, ``build-docs``, ``clean-docs``, ``view-docs``)
         - ``build_docs.py``: documentation builder utility
         - ``clean_docs.py``: documentation cleaner utility
         - ``format_code.py``: code formatter utility
@@ -85,7 +87,7 @@ FuelLib File Organization
     - ``test_gcm_gani.py``: unit tests for the ``gani`` GCM, including comparison of RDKit SMILES decompositions with ``ref_gani.csv``.
     - ``test_gcm_nannoolal.py``: unit tests for the ``nannoolal`` GCM, including comparison of RDKit SMILES decompositions with ``ref_nannoolal.csv`` and the Nannoolal viscosity correlations.
     - ``test_gcm_unifac.py``: unit tests for the ``unifac`` GCM, including comparison of RDKit SMILES decompositions with ``ref_unifac.csv`` and checks of the UNIFAC 2.0 activity coefficients.
-    - ``test_cli_decomp_smiles.py``: unit tests for the ``fl-decomp-smiles`` command.
+    - ``test_cli_decomp_smiles.py``: unit tests for the ``fl decompose`` command.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 

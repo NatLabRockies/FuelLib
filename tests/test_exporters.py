@@ -47,10 +47,10 @@ def run_export_command(cmd, output_dir=None, timeout=180):
 
 
 def test_pele_individual_component():
-    """Test fl-export-pele individual component export."""
+    """Test fl export pele individual component export."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264"], output_dir=tmpdir, timeout=180
+            ["fl", "export", "pele", "-f", "posf10264"], output_dir=tmpdir, timeout=180
         )
 
 
@@ -62,7 +62,7 @@ def test_pele_default_deposition_species():
     ]:
         with tempfile.TemporaryDirectory() as tmpdir:
             run_export_command(
-                ["fl-export-pele", "-f", "heptane_decane", *options],
+                ["fl", "export", "pele", "-f", "heptane_decane", *options],
                 output_dir=tmpdir,
             )
             output_file = os.path.join(tmpdir, "sprayPropsGCM_heptane_decane.inp")
@@ -82,54 +82,58 @@ def test_pele_default_deposition_species():
 
 
 def test_pele_mixture_gcm():
-    """Test fl-export-pele mixture export with GCM model."""
+    """Test fl export pele mixture export with GCM model."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-m"], output_dir=tmpdir
+            ["fl", "export", "pele", "-f", "posf10264", "-m"], output_dir=tmpdir
         )
 
 
 def test_pele_mixture_mp():
-    """Test fl-export-pele mixture export with MP model."""
+    """Test fl export pele mixture export with MP model."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-m", "-l", "mp", "-psat"],
+            ["fl", "export", "pele", "-f", "posf10264", "-m", "-l", "mp", "-psat"],
             output_dir=tmpdir,
         )
 
 
 def test_pele_mixture_cgs():
-    """Test fl-export-pele mixture export with CGS units."""
+    """Test fl export pele mixture export with CGS units."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-m", "-u", "cgs"],
+            ["fl", "export", "pele", "-f", "posf10264", "-m", "-u", "cgs"],
             output_dir=tmpdir,
         )
 
 
 def test_pele_deposit_species():
-    """Test fl-export-pele single deposit species."""
+    """Test fl export pele single deposit species."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-dep", "POSF10264"],
+            ["fl", "export", "pele", "-f", "posf10264", "-dep", "POSF10264"],
             output_dir=tmpdir,
         )
 
 
 def test_converge_individual_component():
-    """Test fl-export-converge individual component export."""
+    """Test fl export converge individual component export."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
-            ["fl-export-converge", "-f", "posf10264"], output_dir=tmpdir, timeout=180
+            ["fl", "export", "converge", "-f", "posf10264"],
+            output_dir=tmpdir,
+            timeout=180,
         )
 
 
 def test_converge_mixture():
-    """Test fl-export-converge mixture export."""
+    """Test fl export converge mixture export."""
     with tempfile.TemporaryDirectory() as tmpdir:
         run_export_command(
             [
-                "fl-export-converge",
+                "fl",
+                "export",
+                "converge",
                 "-f",
                 "posf10264",
                 "-m",
@@ -145,7 +149,7 @@ def test_converge_mixture():
 
 
 def test_pele_custom_fuel_data_dir():
-    """Test fl-export-pele with custom fuel data directory (not embedded data)."""
+    """Test fl export pele with custom fuel data directory (not embedded data)."""
     # Create temporary directories for fuel data and output
     with tempfile.TemporaryDirectory() as tmpdir:
         # Copy the embedded fuelData to a temp location
@@ -157,14 +161,14 @@ def test_pele_custom_fuel_data_dir():
         output_dir = os.path.join(tmpdir, "output")
         os.makedirs(output_dir)
         run_export_command(
-            ["fl-export-pele", "-f", "posf10264", "-dir", custom_fueldata],
+            ["fl", "export", "pele", "-f", "posf10264", "-dir", custom_fueldata],
             output_dir=output_dir,
             timeout=180,
         )
 
 
 def test_converge_custom_fuel_data_dir():
-    """Test fl-export-converge with custom fuel data directory (not embedded data)."""
+    """Test fl export converge with custom fuel data directory (not embedded data)."""
     # Create temporary directories for fuel data and output
     with tempfile.TemporaryDirectory() as tmpdir:
         # Copy the embedded fuelData to a temp location
@@ -177,7 +181,9 @@ def test_converge_custom_fuel_data_dir():
         os.makedirs(output_dir)
         run_export_command(
             [
-                "fl-export-converge",
+                "fl",
+                "export",
+                "converge",
                 "-f",
                 "posf10264",
                 "-dir",
@@ -199,24 +205,24 @@ if __name__ == "__main__":
 
     tests = [
         (
-            "fl-export-pele - individual component export",
+            "fl export pele - individual component export",
             test_pele_individual_component,
         ),
-        ("fl-export-pele - mixture export with GCM model", test_pele_mixture_gcm),
-        ("fl-export-pele - mixture export with MP model", test_pele_mixture_mp),
-        ("fl-export-pele - mixture export with CGS units", test_pele_mixture_cgs),
-        ("fl-export-pele - single deposit species", test_pele_deposit_species),
+        ("fl export pele - mixture export with GCM model", test_pele_mixture_gcm),
+        ("fl export pele - mixture export with MP model", test_pele_mixture_mp),
+        ("fl export pele - mixture export with CGS units", test_pele_mixture_cgs),
+        ("fl export pele - single deposit species", test_pele_deposit_species),
         (
-            "fl-export-pele - custom fuel data directory",
+            "fl export pele - custom fuel data directory",
             test_pele_custom_fuel_data_dir,
         ),
         (
-            "fl-export-converge - individual component export",
+            "fl export converge - individual component export",
             test_converge_individual_component,
         ),
-        ("fl-export-converge - mixture export", test_converge_mixture),
+        ("fl export converge - mixture export", test_converge_mixture),
         (
-            "fl-export-converge - custom fuel data directory",
+            "fl export converge - custom fuel data directory",
             test_converge_custom_fuel_data_dir,
         ),
     ]

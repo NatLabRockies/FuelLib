@@ -1,4 +1,3 @@
-import argparse
 import os
 from pathlib import Path
 
@@ -16,15 +15,16 @@ FUELDATA_DIR = Path(__file__).parent.parent / "data"
 Script that exports mixture properties over large temperature range for use in
 Converge simulations.
 
-This script is designed to be run from the command line and will create
+This script is designed to be run from the command line (``fl export converge``)
+and will create
 a file named "mixturePropsGCM_<fuel_name>.csv" in the specified directory.
 The file contains mixture properties for the fuel, formatted for Converge.
 
 Usage:
-    fl-export-converge -f <fuel_name>
+    fl export converge -f <fuel_name>
 
 For detailed options, run:
-    fl-export-converge -h
+    fl export converge -h
 """
 
 
@@ -486,122 +486,3 @@ def export_converge(
             converter.labels["molecular_weight"]: fuel.comps.mw.to("kg/mol").magnitude,
         }
         export_properties_to_csv(composition_file, composition_data)
-
-
-def main():
-    """Parse CLI arguments and export fuel properties for Converge simulations.
-
-    Raises:
-        FileNotFoundError: If required files for the specified fuel are not found.
-    """
-    # Set up argument parser
-    parser = argparse.ArgumentParser(
-        description="Export mixture fuel properties for Converge simulations."
-    )
-
-    # Mandatory argument for fuel name
-    parser.add_argument(
-        "-f",
-        "--fuel-name",
-        required=True,
-        metavar="NAME",
-        help="Name of the fuel (mandatory).",
-    )
-
-    # Optional argument for fuel data directory
-    parser.add_argument(
-        "-dir",
-        "--fuel-data-dir",
-        default=FUELDATA_DIR,
-        metavar="PATH",
-        help="Directory where fuel data files are located (optional, default: fuellib/data).",
-    )
-
-    # Optional argument for minimum temperature
-    parser.add_argument(
-        "-t",
-        "--temp-min",
-        type=float,
-        default=0,
-        metavar="K",
-        help="Minimum temperature for property calculations (optional, default: 0).",
-    )
-
-    # Optional argument for maximum temperature
-    parser.add_argument(
-        "-T",
-        "--temp-max",
-        type=float,
-        default=1000,
-        metavar="K",
-        help="Maximum temperature for property calculations (optional, default: 1000).",
-    )
-
-    # Optional argument for temperature step size
-    parser.add_argument(
-        "-s",
-        "--temp-step",
-        type=int,
-        default=10,
-        metavar="K",
-        help="Step size for temperature (optional, default: 10).",
-    )
-
-    # Optional argument for export directory
-    parser.add_argument(
-        "-o",
-        "--export-dir",
-        default=os.getcwd(),
-        metavar="PATH",
-        help="Directory to export the properties (optional, default: current working directory).",
-    )
-
-    # Optional argument for exporting mixture properties
-    parser.add_argument(
-        "-m",
-        "--export-mix",
-        dest="export_mix",
-        action="store_true",
-        help="Export mixture properties instead of component properties.",
-    )
-
-    # Parse arguments
-    args = parser.parse_args()
-    fuel_name = args.fuel_name
-    fuel_data_dir = args.fuel_data_dir
-    temp_min = args.temp_min
-    temp_max = args.temp_max
-    temp_step = args.temp_step
-    export_dir = args.export_dir
-    export_mix = args.export_mix
-
-    # Print the parsed arguments
-    print("Preparing to export mixture properties:")
-    print(f"    Fuel name: {fuel_name}")
-    if export_mix:
-        print("    Exporting mixture properties: True")
-    print("    Units: mks")
-    print(f"    Minimum temperature: {temp_min} K")
-    print(f"    Maximum temperature: {temp_max} K")
-    print(f"    Temperature step size: {temp_step} K")
-    print(f"    Export directory: {export_dir}")
-    print(f"    Fuel data directory: {fuel_data_dir}")
-
-    # Create the fuel object
-    fuel = fl.Fuel(fuel_name, data_dir=fuel_data_dir)
-
-    # Export properties for Converge
-    export_converge(
-        fuel,
-        path=export_dir,
-        temp_min=temp_min,
-        temp_max=temp_max,
-        temp_step=temp_step,
-        export_mix=export_mix,
-    )
-
-    print("\nExport completed successfully!")
-
-
-if __name__ == "__main__":
-    main()

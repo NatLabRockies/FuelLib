@@ -5,127 +5,66 @@ import argparse
 from ..utils import utility
 from ..utils.types import Units
 
+_TEMPERATURE_UNITS = {
+    "C": ("celsius", "Celsius"),
+    "K": ("kelvin", "Kelvin"),
+    "F": ("fahrenheit", "Fahrenheit"),
+}
+"""Pint units and display names of the temperature scales, by abbreviation."""
 
-def c2k_main():
-    """Convert temperature from Celsius to Kelvin via command line."""
-    parser = argparse.ArgumentParser(
-        description="Convert temperature from Celsius to Kelvin"
-    )
-    parser.add_argument(
-        "temperature",
-        type=float,
-        metavar="TEMP",
-        help="Temperature in Celsius",
-    )
+_TEMPERATURE_CONVERSIONS = ["c2k", "k2c", "c2f", "f2c", "f2k", "k2f"]
+"""Temperature conversions available from the command line, as ``<from>2<to>``."""
 
-    args = parser.parse_args()
-    temp = Units.Quantity(args.temperature, "celsius")
-    result = temp.to("kelvin")
+
+def _convert_temperature(args: argparse.Namespace) -> None:
+    """Convert a temperature between scales and print the result."""
+    temp = Units.Quantity(args.temperature, args.source_units)
+    result = temp.to(args.target_units)
     print(f"{temp:.2f~P} = {result:.2f~P}")
 
 
-def k2c_main():
-    """Convert temperature from Kelvin to Celsius via command line."""
-    parser = argparse.ArgumentParser(
-        description="Convert temperature from Kelvin to Celsius"
-    )
-    parser.add_argument(
-        "temperature",
-        type=float,
-        metavar="TEMP",
-        help="Temperature in Kelvin",
-    )
-
-    args = parser.parse_args()
-    temp = Units.Quantity(args.temperature, "kelvin")
-    result = temp.to("celsius")
-    print(f"{temp:.2f~P} = {result:.2f~P}")
+def _convert_epsilon(args: argparse.Namespace) -> None:
+    """Convert Lennard-Jones epsilon from J/mol to K and print the result."""
+    result = utility.epsilon_to_characteristic_temperature(args.epsilon)
+    print(f"Characteristic temperature: {result:.3f~P}")
 
 
-def c2f_main():
-    """Convert temperature from Celsius to Fahrenheit via command line."""
-    parser = argparse.ArgumentParser(
-        description="Convert temperature from Celsius to Fahrenheit"
-    )
-    parser.add_argument(
-        "temperature",
-        type=float,
-        metavar="TEMP",
-        help="Temperature in Celsius",
+def add_parser(commands: "argparse._SubParsersAction") -> None:
+    """Add the ``convert`` command and its subcommands.
+
+    Args:
+        commands: Subparsers action of the ``fl`` command.
+    """
+    description = "Convert temperatures and Lennard-Jones parameters."
+    convert = commands.add_parser("convert", help=description, description=description)
+    conversions = convert.add_subparsers(
+        dest="conversion", metavar="CONVERSION", required=True
     )
 
-    args = parser.parse_args()
-    temp = Units.Quantity(args.temperature, "celsius")
-    result = temp.to("fahrenheit")
-    print(f"{temp:.2f~P} = {result:.2f~P}")
+    for name in _TEMPERATURE_CONVERSIONS:
+        source, target = name.upper().split("2")
+        source_units, source_name = _TEMPERATURE_UNITS[source]
+        target_units, target_name = _TEMPERATURE_UNITS[target]
+        description = f"Convert temperature from {source_name} to {target_name}"
+        parser = conversions.add_parser(name, help=description, description=description)
+        parser.add_argument(
+            "temperature",
+            type=float,
+            metavar="TEMP",
+            help=f"Temperature in {source_name}",
+        )
+        parser.set_defaults(
+            func=_convert_temperature,
+            source_units=source_units,
+            target_units=target_units,
+        )
 
-
-def f2c_main():
-    """Convert temperature from Fahrenheit to Celsius via command line."""
-    parser = argparse.ArgumentParser(
-        description="Convert temperature from Fahrenheit to Celsius"
-    )
-    parser.add_argument(
-        "temperature",
-        type=float,
-        metavar="TEMP",
-        help="Temperature in Fahrenheit",
-    )
-
-    args = parser.parse_args()
-    temp = Units.Quantity(args.temperature, "fahrenheit")
-    result = temp.to("celsius")
-    print(f"{temp:.2f~P} = {result:.2f~P}")
-
-
-def f2k_main():
-    """Convert temperature from Fahrenheit to Kelvin via command line."""
-    parser = argparse.ArgumentParser(
-        description="Convert temperature from Fahrenheit to Kelvin"
-    )
-    parser.add_argument(
-        "temperature",
-        type=float,
-        metavar="TEMP",
-        help="Temperature in Fahrenheit",
-    )
-
-    args = parser.parse_args()
-    temp = Units.Quantity(args.temperature, "fahrenheit")
-    result = temp.to("kelvin")
-    print(f"{temp:.2f~P} = {result:.2f~P}")
-
-
-def k2f_main():
-    """Convert temperature from Kelvin to Fahrenheit via command line."""
-    parser = argparse.ArgumentParser(
-        description="Convert temperature from Kelvin to Fahrenheit"
-    )
-    parser.add_argument(
-        "temperature",
-        type=float,
-        metavar="TEMP",
-        help="Temperature in Kelvin",
-    )
-
-    args = parser.parse_args()
-    temp = Units.Quantity(args.temperature, "kelvin")
-    result = temp.to("fahrenheit")
-    print(f"{temp:.2f~P} = {result:.2f~P}")
-
-
-def eps2k_main():
-    """Convert Lennard-Jones epsilon from J/mol to K via command line."""
-    parser = argparse.ArgumentParser(
-        description="Convert Lennard-Jones well depth epsilon from J/mol to Kelvin"
-    )
+    description = "Convert Lennard-Jones well depth epsilon from J/mol to Kelvin"
+    parser = conversions.add_parser("eps2k", help=description, description=description)
     parser.add_argument(
         "epsilon",
         type=float,
         metavar="EPSILON",
         help="Lennard-Jones well depth in J/mol",
     )
-
-    args = parser.parse_args()
-    result = utility.epsilon_to_characteristic_temperature(args.epsilon)
-    print(f"Characteristic temperature: {result:.3f~P}")
+    parser.set_defaults(func=_convert_epsilon)
