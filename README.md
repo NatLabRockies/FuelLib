@@ -1,4 +1,6 @@
-<img src="https://raw.githubusercontent.com/NatLabRockies/FuelLib/main/docs/comms/FuelLibLogo_LightTransparent.png" alt="FuelLib Logo" width="300">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/NatLabRockies/FuelLib/main/docs/comms/FuelLibLogo_LightTransparent.png" alt="FuelLib Logo" width="500">
+</p>
 
 [![GitHub Release](https://img.shields.io/github/v/release/NatLabRockies/FuelLib?logo=github)](https://github.com/NatLabRockies/FuelLib/releases)
 [![PyPI - Version](https://img.shields.io/pypi/v/fuellib?logo=pypi)](https://pypi.org/project/fuellib/)
