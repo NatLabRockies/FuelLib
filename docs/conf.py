@@ -2,7 +2,10 @@
 
 # -- Path setup --------------------------------------------------------------
 
+import ast
 import csv
+import importlib
+import inspect
 import os
 import sys
 
@@ -38,6 +41,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.linkcode",
     "sphinx.ext.napoleon",
     "sphinxcontrib.bibtex",
 ]
@@ -75,6 +79,64 @@ typehints_defaults = "braces"  # "param (type, (default: value)) -- description"
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False  # Turn off NumPy if you only use Google
 napoleon_include_init_with_doc = True
+
+
+# -- Links to the source code on GitHub --------------------------------------
+
+GITHUB_SOURCE_URL = "https://github.com/NatLabRockies/FuelLib/blob/main"
+PACKAGE_DIR = os.path.join(PROJECT_ROOT, "fuellib")
+
+
+def _find_assignment_lines(source_file, name):
+    """Return the (first, last) line of the top-level assignment of ``name``."""
+    with open(source_file, encoding="utf-8") as f:
+        tree = ast.parse(f.read())
+    for node in tree.body:
+        if isinstance(node, ast.Assign):
+            targets = node.targets
+        elif isinstance(node, ast.AnnAssign):
+            targets = [node.target]
+        else:
+            continue
+        if any(isinstance(t, ast.Name) and t.id == name for t in targets):
+            return node.lineno, node.end_lineno
+    return None
+
+
+def linkcode_resolve(domain, info):
+    """Return the GitHub URL of the source of a documented Python object."""
+    if domain != "py" or not info["module"]:
+        return None
+    try:
+        module = importlib.import_module(info["module"])
+        obj = module
+        for part in info["fullname"].split("."):
+            obj = getattr(obj, part)
+    except Exception:
+        return None
+
+    source_file = lines = None
+    try:
+        obj = inspect.unwrap(obj)
+        source_file = inspect.getsourcefile(obj)
+        source_lines, first = inspect.getsourcelines(obj)
+        lines = (first, first + len(source_lines) - 1)
+    except (TypeError, OSError):
+        source_file = None
+
+    # Constants and type aliases have no source of their own: link to the
+    # assignment in the module that defines them.
+    if source_file is None or not os.path.abspath(source_file).startswith(PACKAGE_DIR):
+        source_file = getattr(module, "__file__", None)
+        if source_file is None or "." in info["fullname"]:
+            return None
+        lines = _find_assignment_lines(source_file, info["fullname"])
+
+    relative = os.path.relpath(os.path.abspath(source_file), PROJECT_ROOT)
+    url = f"{GITHUB_SOURCE_URL}/{relative.replace(os.sep, '/')}"
+    if lines:
+        url += f"#L{lines[0]}-L{lines[1]}"
+    return url
 
 
 # -- Generated tables --------------------------------------------------------
