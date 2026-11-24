@@ -118,4 +118,8 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
-html_theme_options = {"collapse_navigation": False, "navigation_depth": 3}
+html_theme_options = {"collapse_navigation": False, "navigation_depth": 4}
+
+# Do not list documented objects (classes, functions, ...) as entries in the
+# sidebar tree below their own page.
+toc_object_entries = False

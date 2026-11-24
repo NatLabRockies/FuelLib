@@ -255,25 +255,18 @@ The project aims to keep the public API stable across releases. Any intentional
 breaking API change should be explicitly documented in release notes and
 accompanied by updates to tests and user-facing documentation.
 
-Click on the links below for the full auto-documentation of the API, or browse
-the :ref:`genindex` and the :ref:`modindex`.
+The API is organized as it is in the source code, by package and module, down
+to the individual classes, functions, and constants. Browse the packages below
+or use the sidebar, the :ref:`genindex`, and the :ref:`modindex`.
 
 .. autosummary::
-    :toctree: generated
+   :toctree: generated
+   :recursive:
 
-    fuellib.fuel.core
-    fuellib.fuel.components
-    fuellib.fuel.mixture
-    fuellib.utils.constants
-    fuellib.utils.utility
-    fuellib.utils.types
-    fuellib.gcm.core
-    fuellib.gcm.gani
-    fuellib.gcm.boehm
-    fuellib.gcm.nannoolal
-    fuellib.gcm.unifac
-    fuellib.rdk.mol
-    fuellib.correlate.components
-    fuellib.correlate.mixture
-    fuellib.correlate.helpers
-    fuellib.simulate.distillation.greenfield
+   fuellib.correlate
+   fuellib.exporters
+   fuellib.fuel
+   fuellib.gcm
+   fuellib.rdk
+   fuellib.simulate
+   fuellib.utils
