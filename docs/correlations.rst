@@ -1,5 +1,5 @@
-Equations for Correlations and Mixture Rules
-============================================
+Correlations and Mixture Rules
+==============================
 
 Group contribution methods and reference data give the properties of each
 compound at standard conditions (see :doc:`prediction_framework`). This page

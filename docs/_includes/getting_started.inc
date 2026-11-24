@@ -53,3 +53,9 @@ installed automatically by ``pip``:
 
 Development tools (Sphinx, Ruff, ty, pytest) are available for developers
 installing from source; see :doc:`contributing`.
+
+Basic usage
+-----------
+
+See the :doc:`Basic Usage tutorial <tutorials_basic>` for an introduction to 
+creating a ``Fuel`` object and predicting fuel properties.
