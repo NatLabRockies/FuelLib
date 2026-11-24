@@ -79,6 +79,9 @@ The :ref:`tab-reduced-temps` are used throughout this section for each compound
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.comps.nu <fuellib.fuel.components.Components.nu>`, where the
+``correlation`` argument selects ``"Nannoolal"`` (default) or ``"Dutt"``.
+
 .. autofunction:: fuellib.correlate.components.viscosity_kinematic_nannoolal
    :noindex:
 
@@ -112,6 +115,9 @@ contributions (see :ref:`eq-nannoolal-properties`).
 Enthalpy of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.comps.hv <fuellib.fuel.components.Components.hv>`, where the
+``basis`` argument selects the molar (``"molar"``) or mass (``"mass"``, default) function.
+
 .. autofunction:: fuellib.correlate.components.enthalpy_vaporization_molar
    :noindex:
 
@@ -134,6 +140,8 @@ molecular weight:
 
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.comps.vm <fuellib.fuel.components.Components.vm>`.
 
 .. autofunction:: fuellib.correlate.components.molar_liquid_volume
    :noindex:
@@ -160,6 +168,8 @@ where
 Density
 ^^^^^^^
 
+Wrapped by :meth:`fuel.comps.rho <fuellib.fuel.components.Components.rho>`.
+
 .. autofunction:: fuellib.correlate.components.density
    :noindex:
 
@@ -171,6 +181,11 @@ The density of the *i-th* compound is given by
 
 Specific heat capacity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.comps.cp <fuellib.fuel.components.Components.cp>`, where the
+``basis`` argument selects the molar or mass (default) function. The Ruzicka-Domalski
+functions are not wrapped by the Fuel class and can only be called directly from
+:mod:`fuellib.correlate.components`.
 
 .. autofunction:: fuellib.correlate.components.specific_heat_capacity_molar
    :noindex:
@@ -202,6 +217,9 @@ properties included in the ``gani`` GCM (see :ref:`sec-gcm-gani`):
 
 Vapor pressure
 ^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.comps.pvap <fuellib.fuel.components.Components.pvap>`, where the
+``correlation`` argument selects ``"Lee-Kesler"`` (default) or ``"Ambrose-Walton"``.
 
 .. autofunction:: fuellib.correlate.components.vapor_pressure
    :noindex:
@@ -235,6 +253,11 @@ The Ambrose-Walton\ :footcite:p:`ambrose_vapour_1989` correlation sets:
 
 with :math:`\tau_i = 1 - T_{r,i}`.
 
+Vapor pressure (Antoine coefficients)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.comps.pvap_antoine_coeffs <fuellib.fuel.components.Components.pvap_antoine_coeffs>`.
+
 .. autofunction:: fuellib.correlate.components.vapor_pressure_antoine_coeffs
    :noindex:
 
@@ -253,6 +276,9 @@ for additional information.
 
 Surface tension
 ^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.comps.sigma <fuellib.fuel.components.Components.sigma>`, where the
+``correlation`` argument selects ``"Brock-Bird"`` (default) or ``"Pitzer"``.
 
 .. autofunction:: fuellib.correlate.components.surface_tension
    :noindex:
@@ -275,6 +301,8 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
 
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.comps.k <fuellib.fuel.components.Components.k>`.
 
 .. autofunction:: fuellib.correlate.components.thermal_conductivity_latini
    :noindex:
@@ -323,6 +351,9 @@ and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
 
 Flash point
 ^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.comps.t_flash <fuellib.fuel.components.Components.t_flash>`, where the
+``correlation`` argument selects ``"Alibakhshi"`` (default) or ``"Alqaheem"``.
 
 .. autofunction:: fuellib.correlate.components.flash_point_alqaheem
    :noindex:
@@ -460,7 +491,9 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 
 Mixture density
 ^^^^^^^^^^^^^^^
-   
+
+Wrapped by :meth:`fuel.mix.rho <fuellib.fuel.mixture.Mixture.rho>`.
+
 .. autofunction:: fuellib.correlate.mixture.density
    :noindex:
 
@@ -473,6 +506,10 @@ The mixture's density is calculated as:
 
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.mix.nu <fuellib.fuel.mixture.Mixture.nu>`, where the ``correlation``
+argument selects ``"Nannoolal"`` (default) or ``"Dutt"`` for the compound viscosities and the
+``mixing_rule`` argument selects ``"Kendall-Monroe"`` (default) or ``"Arrhenius"``.
 
 .. autofunction:: fuellib.correlate.mixture.viscosity_kinematic_nannoolal
    :noindex:
@@ -501,6 +538,10 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.mix.pvap <fuellib.fuel.mixture.Mixture.pvap>`, where the
+``correlation`` argument selects ``"Lee-Kesler"`` (default) or ``"Ambrose-Walton"``
+for the compound vapor pressures.
+
 .. autofunction:: fuellib.correlate.mixture.vapor_pressure
    :noindex:
 
@@ -509,6 +550,11 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 .. math::
 
    p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{v,i}.
+
+Mixture vapor pressure (Antoine coefficients)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.mix.pvap_antoine_coeffs <fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs>`.
 
 .. autofunction:: fuellib.correlate.mixture.vapor_pressure_antoine_coeffs
    :noindex:
@@ -529,6 +575,10 @@ for additional information.
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.mix.sigma <fuellib.fuel.mixture.Mixture.sigma>`, where the
+``correlation`` argument selects ``"Brock-Bird"`` (default) or ``"Pitzer"`` for the
+compound surface tensions.
+
 .. autofunction:: fuellib.correlate.mixture.surface_tension
    :noindex:
 
@@ -541,6 +591,8 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.mix.k <fuellib.fuel.mixture.Mixture.k>`.
 
 .. autofunction:: fuellib.correlate.mixture.thermal_conductivity_latini
    :noindex:
@@ -555,6 +607,8 @@ Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 
 Mixture freeze point
 ^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.mix.t_freeze <fuellib.fuel.mixture.Mixture.t_freeze>`.
 
 .. autofunction:: fuellib.correlate.mixture.freeze_point_boehm
    :noindex:
@@ -587,6 +641,11 @@ does not capture cooling rate, supercooling, or solid-phase nonideality.
 Mixture flash point
 ^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.mix.t_flash <fuellib.fuel.mixture.Mixture.t_flash>`, where the
+``correlation`` argument selects ``"Alibakhshi"`` (default) or ``"Alqaheem"`` for the
+compound flash points and the ``mixing_rule`` argument selects ``"Liaw"`` (default) or
+``"linear"``.
+
 .. autofunction:: fuellib.correlate.mixture.flash_point_alqaheem
    :noindex:
 
@@ -610,6 +669,8 @@ mixing rule does not model nonideal liquid activity coefficients.
 Mixture heat of combustion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.mix.lhv <fuellib.fuel.mixture.Mixture.lhv>`.
+
 .. autofunction:: fuellib.correlate.mixture.heat_of_combustion
    :noindex:
 
@@ -628,6 +689,8 @@ estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter te
 Mixture yield sooting index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.mix.ysi <fuellib.fuel.mixture.Mixture.ysi>`.
+
 .. autofunction:: fuellib.correlate.mixture.yield_sooting_index
    :noindex:
 
@@ -645,6 +708,8 @@ component. Mass fractions are converted to mole fractions using the component mo
 
 Mixture smoke point
 ^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.mix.smoke_point <fuellib.fuel.mixture.Mixture.smoke_point>`.
 
 .. autofunction:: fuellib.correlate.mixture.smoke_point
    :noindex:
@@ -684,6 +749,8 @@ is raised if :math:`YSI` is unavailable for any component, is not positive, or i
 Mixture derived cetane number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.mix.dcn <fuellib.fuel.mixture.Mixture.dcn>`.
+
 .. autofunction:: fuellib.correlate.mixture.derived_cetane_number
    :noindex:
 
@@ -711,6 +778,8 @@ The graph neural network models of Kim et al. for predicting cetane numbers are 
 Mixture aromatics content
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Wrapped by :meth:`fuel.mix.aromatics <fuellib.fuel.mixture.Mixture.aromatics>`.
+
 .. autofunction:: fuellib.correlate.mixture.aromatics_content
    :noindex:
 
@@ -728,6 +797,8 @@ directly comparable with aromatics specifications (e.g., ASTM D1319).
 
 Mixture naphthalenes content
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Wrapped by :meth:`fuel.mix.naphthalenes <fuellib.fuel.mixture.Mixture.naphthalenes>`.
 
 .. autofunction:: fuellib.correlate.mixture.naphthalenes_content
    :noindex:
