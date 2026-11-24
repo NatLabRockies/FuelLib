@@ -10,6 +10,17 @@ uses GCMs for the compound properties that are not available as
 :ref:`reference data <sec-reference-properties>` (see
 :ref:`sec-prediction-methodology`).
 
+.. _sec-gcm-notation:
+
+Notation
+--------
+
+A tilde denotes a molar property (e.g., :math:`\tilde{C}_{p,i}` in J/mol/K and
+:math:`\Delta\tilde{H}_{v,i}` in J/mol), while the same symbol without a tilde
+denotes the corresponding mass-based property (e.g., :math:`C_{p,i}` in J/kg/K
+and :math:`\Delta H_{v,i}` in J/kg). The subscript *i* denotes the *i-th*
+compound in a mixture.
+
 .. _sec-gcm-core-concepts:
 
 Core concepts

@@ -7,8 +7,18 @@ presents the correlations that evaluate the properties of each compound at
 other temperatures and pressures, and the mixture rules that combine the
 compound properties into the properties of the fuel. Unless noted otherwise in
 the individual correlation, all units are assumed to be SI: length (m), mass
-(kg), time (s), temperature (K), mole (mol). See :ref:`sec-notation` for the
-notation.
+(kg), time (s), temperature (K), mole (mol).
+
+.. _sec-correlations-notation:
+
+Notation
+--------
+
+A tilde denotes a molar property (e.g., :math:`\tilde{C}_{p,i}` in J/mol/K and
+:math:`\Delta\tilde{H}_{v,i}` in J/mol), while the same symbol without a tilde
+denotes the corresponding mass-based property (e.g., :math:`C_{p,i}` in J/kg/K
+and :math:`\Delta H_{v,i}` in J/kg). The subscript *i* denotes the *i-th*
+compound in a mixture.
 
 .. _eq-GCM-correlations:
 

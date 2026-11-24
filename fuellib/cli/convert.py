@@ -20,13 +20,13 @@ def _convert_temperature(args: argparse.Namespace) -> None:
     """Convert a temperature between scales and print the result."""
     temp = Units.Quantity(args.temperature, args.source_units)
     result = temp.to(args.target_units)
-    print(f"{temp:.2f~P} = {result:.2f~P}")
+    print(f"{temp:~P.2f} = {result:~P.2f}")
 
 
 def _convert_epsilon(args: argparse.Namespace) -> None:
     """Convert Lennard-Jones epsilon from J/mol to K and print the result."""
     result = utility.epsilon_to_characteristic_temperature(args.epsilon)
-    print(f"Characteristic temperature: {result:.3f~P}")
+    print(f"Characteristic temperature: {result:~P.3f}")
 
 
 def add_parser(commands: "argparse._SubParsersAction") -> None:

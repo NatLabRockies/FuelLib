@@ -33,10 +33,10 @@ Basic example
    fuel = fl.Fuel("heptane_decane")
 
    # Properties on the Fuel object are pint.Quantity values and print with units
-   print(f"Critical temperature: {fuel.comps.tc:.2f}")
+   print(f"Critical temperature: {fuel.comps.tc:~P.2f}")
 
    # Convert to another unit with `.to(...)`
-   print(f"Critical temperature (°C): {fuel.comps.tc.to('celsius'):.2f}")
+   print(f"Critical temperature: {fuel.comps.tc.to('celsius'):~P.2f}")
 
    # Get the raw numeric value with `.magnitude`
    print(f"Critical temperature, magnitude only: {fuel.comps.tc.magnitude}")
@@ -45,7 +45,7 @@ Basic example
    # temperature-dependent correlation
    T = fl.Units.Quantity(320.0, "K")
    pvap_i = fuel.comps.pvap(T)
-   print(f"Component vapor pressure at {T}: {pvap_i:.2f}")
+   print(f"Component vapor pressure at {T:~P.0f}: {pvap_i:~P.2f}")
 
 Arithmetic between quantities automatically combines/cancels units, and pint
 raises an error if you try to combine incompatible units (e.g. adding a

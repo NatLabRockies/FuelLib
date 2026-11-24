@@ -60,19 +60,19 @@ conditions.
    * - Property
      - Source
    * - Critical properties, boiling and melting points, enthalpies of formation and vaporization, liquid molar volume, and acentric factor
-     - Reference data when available, otherwise the Constantinou-Gani GCM.
+     - Reference data when available, otherwise the Constantinou-Gani GCM\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995`.
    * - Gibbs free energy of formation and specific heat capacity
-     - Constantinou-Gani GCM.
+     - Constantinou-Gani GCM\ :footcite:p:`constantinou_new_1994,nielsen_molecular_1998,poling_properties_2001`.
    * - Viscosity parameters
-     - Nannoolal GCM.
+     - Nannoolal GCM\ :footcite:p:`nannoolal_estimation_2009`.
    * - Volume and surface parameters, activity coefficients
-     - UNIFAC 2.0.
+     - UNIFAC 2.0\ :footcite:p:`hayer_advancing_2025`.
    * - Entropy of fusion
-     - Boehm GCM.
+     - Boehm GCM\ :footcite:p:`boehm_blend_2022`.
    * - Yield sooting index and derived cetane number
-     - Reference data only.
+     - Reference data only. Yield sooting indices are primarily from the Yield Sooting Index Database\ :footcite:p:`mcenally_yield_2017`.
    * - Molecular weight, atom counts, and hydrocarbon type
-     - RDKit, from the SMILES string.
+     - `RDKit <https://www.rdkit.org>`_, from the SMILES string.
 
 .. _sec-notation:
 
