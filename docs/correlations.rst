@@ -1,5 +1,5 @@
-Correlations and Mixture Rules
-==============================
+Equations for Correlations and Mixture Rules
+============================================
 
 Group contribution methods and reference data give the properties of each
 compound at standard conditions (see :doc:`prediction_framework`). This page
@@ -79,7 +79,10 @@ The :ref:`tab-reduced-temps` are used throughout this section for each compound
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.nu
+.. autofunction:: fuellib.correlate.components.viscosity_kinematic_nannoolal
+   :noindex:
+
+.. autofunction:: fuellib.correlate.components.viscosity_kinematic_dutt
    :noindex:
 
 The kinematic viscosity of the *i-th* compound of the fuel,
@@ -109,7 +112,10 @@ contributions (see :ref:`eq-nannoolal-properties`).
 Enthalpy of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.hv
+.. autofunction:: fuellib.correlate.components.enthalpy_vaporization_molar
+   :noindex:
+
+.. autofunction:: fuellib.correlate.components.enthalpy_vaporization_mass
    :noindex:
 
 The molar enthalpy of vaporization for each compound at standard pressure and
@@ -129,7 +135,7 @@ molecular weight:
 Liquid molar volume
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.vm
+.. autofunction:: fuellib.correlate.components.molar_liquid_volume
    :noindex:
 
 The liquid molar volume is calculated at a specific temperature :math:`T` using
@@ -154,7 +160,7 @@ where
 Density
 ^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.rho
+.. autofunction:: fuellib.correlate.components.density
    :noindex:
 
 The density of the *i-th* compound is given by
@@ -163,10 +169,19 @@ The density of the *i-th* compound is given by
    \rho_i = \frac{M_{w,i}}{V_{m,i}}.
 
 
-Specific heat capacity of the liquid
+Specific heat capacity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.cp
+.. autofunction:: fuellib.correlate.components.specific_heat_capacity_molar
+   :noindex:
+
+.. autofunction:: fuellib.correlate.components.specific_heat_capacity_mass
+   :noindex:
+
+.. autofunction:: fuellib.correlate.components.specific_heat_capacity_molar_ruzicka
+   :noindex:
+
+.. autofunction:: fuellib.correlate.components.specific_heat_capacity_mass_ruzicka
    :noindex:
 
 The molar specific heat capacity, :math:`\tilde{C}_{p,i}` (``basis="molar"``), is evaluated from the
@@ -188,7 +203,7 @@ properties included in the ``gani`` GCM (see :ref:`sec-gcm-gani`):
 Vapor pressure
 ^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.pvap
+.. autofunction:: fuellib.correlate.components.vapor_pressure
    :noindex:
 
 The vapor pressure for each compound is calculated as a function of
@@ -220,7 +235,7 @@ The Ambrose-Walton\ :footcite:p:`ambrose_vapour_1989` correlation sets:
 
 with :math:`\tau_i = 1 - T_{r,i}`.
 
-.. automethod:: fuellib.fuel.components.Components.pvap_antoine_coeffs
+.. autofunction:: fuellib.correlate.components.vapor_pressure_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on
@@ -239,7 +254,7 @@ for additional information.
 Surface tension
 ^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.sigma
+.. autofunction:: fuellib.correlate.components.surface_tension
    :noindex:
 
 Surface tension for each compound is approximated using the relation:
@@ -261,7 +276,7 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.k
+.. autofunction:: fuellib.correlate.components.thermal_conductivity_latini
    :noindex:
 
 Thermal conductivity for each compound is computed according to the method of
@@ -309,7 +324,10 @@ and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
 Flash point
 ^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.components.Components.t_flash
+.. autofunction:: fuellib.correlate.components.flash_point_alqaheem
+   :noindex:
+
+.. autofunction:: fuellib.correlate.components.flash_point_alibakhshi
    :noindex:
 
 Two correlations are available for the flash point :math:`T_{\textit{flash},i}` of each compound,
@@ -413,7 +431,6 @@ are used throughout this section.
 
 Conventional mixing rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. autofunction:: fuellib.correlate.mixture.arithmetic
    :noindex:
 
@@ -443,8 +460,8 @@ where :math:`Q_i` is the property of the *i-th* compound of the multicomponent m
 
 Mixture density
 ^^^^^^^^^^^^^^^
-
-.. automethod:: fuellib.fuel.mixture.Mixture.rho
+   
+.. autofunction:: fuellib.correlate.mixture.density
    :noindex:
 
 The mixture's density is calculated as:
@@ -457,7 +474,10 @@ The mixture's density is calculated as:
 Mixture kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.nu
+.. autofunction:: fuellib.correlate.mixture.viscosity_kinematic_nannoolal
+   :noindex:
+
+.. autofunction:: fuellib.correlate.mixture.viscosity_kinematic_dutt
    :noindex:
 
 The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
@@ -481,7 +501,7 @@ The Arrhenius rule is:
 Mixture vapor pressure
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.pvap
+.. autofunction:: fuellib.correlate.mixture.vapor_pressure
    :noindex:
 
 The vapor pressure of the mixture is calculated according to Raoult's law:
@@ -490,7 +510,7 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 
    p_{v} = \sum_{i = 1}^{N_c} X_i \, p_{v,i}.
 
-.. automethod:: fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs
+.. autofunction:: fuellib.correlate.mixture.vapor_pressure_antoine_coeffs
    :noindex:
 
 Users also have the option to return the coefficients from an Antoine fit based on
@@ -509,7 +529,7 @@ for additional information.
 Mixture surface tension
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.sigma
+.. autofunction:: fuellib.correlate.mixture.surface_tension
    :noindex:
 
 The surface tension of the mixture is calculated using the :ref:`conventional-mixing-rules`
@@ -522,7 +542,7 @@ Hugill and van Welsenes\ :footcite:p:`hugill_surface_1986`:
 Mixture thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.k
+.. autofunction:: fuellib.correlate.mixture.thermal_conductivity_latini
    :noindex:
 
 The thermal conductivity of the mixture is calculated using the power law method of
@@ -536,7 +556,7 @@ Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 Mixture freeze point
 ^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.t_freeze
+.. autofunction:: fuellib.correlate.mixture.freeze_point_boehm
    :noindex:
 
 The freeze point of the mixture is estimated with the solid-liquid equilibrium model
@@ -567,7 +587,10 @@ does not capture cooling rate, supercooling, or solid-phase nonideality.
 Mixture flash point
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.t_flash
+.. autofunction:: fuellib.correlate.mixture.flash_point_alqaheem
+   :noindex:
+
+.. autofunction:: fuellib.correlate.mixture.flash_point_alibakhshi
    :noindex:
 
 The mixture flash point is computed from the component flash points :math:`T_{\textit{flash},i}`
@@ -587,7 +610,7 @@ mixing rule does not model nonideal liquid activity coefficients.
 Mixture heat of combustion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.lhv
+.. autofunction:: fuellib.correlate.mixture.heat_of_combustion
    :noindex:
 
 The mixture heat of combustion :math:`\Delta H^\circ_c` is reported per unit mass as the
@@ -605,7 +628,7 @@ estimate related to ASTM D4809/D3338 rather than a simulated bomb-calorimeter te
 Mixture yield sooting index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.ysi
+.. autofunction:: fuellib.correlate.mixture.yield_sooting_index
    :noindex:
 
 The yield sooting index :math:`YSI` is a dimensionless measure of a fuel's tendency to soot.
@@ -623,7 +646,7 @@ component. Mass fractions are converted to mole fractions using the component mo
 Mixture smoke point
 ^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.smoke_point
+.. autofunction:: fuellib.correlate.mixture.smoke_point
    :noindex:
 
 The mixture smoke point :math:`SP` is estimated from the mixture
@@ -661,7 +684,7 @@ is raised if :math:`YSI` is unavailable for any component, is not positive, or i
 Mixture derived cetane number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.dcn
+.. autofunction:: fuellib.correlate.mixture.derived_cetane_number
    :noindex:
 
 The derived cetane number :math:`DCN` is a dimensionless measure of ignition quality.
@@ -688,7 +711,7 @@ The graph neural network models of Kim et al. for predicting cetane numbers are 
 Mixture aromatics content
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.aromatics
+.. autofunction:: fuellib.correlate.mixture.aromatics_content
    :noindex:
 
 The aromatics content is the total liquid volume percent of aromatic compounds in the mixture,
@@ -706,7 +729,7 @@ directly comparable with aromatics specifications (e.g., ASTM D1319).
 Mixture naphthalenes content
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automethod:: fuellib.fuel.mixture.Mixture.naphthalenes
+.. autofunction:: fuellib.correlate.mixture.naphthalenes_content
    :noindex:
 
 The naphthalenes content is the total liquid volume percent of naphthalene and alkylated
