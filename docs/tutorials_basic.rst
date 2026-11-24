@@ -1,14 +1,14 @@
 Introduction and Basic Usage
 ----------------------------
 
-FuelLib is a Python library that uses group contribution methods to estimate the 
-thermophysical properties of multicomponent liquid fuels and their mixtures. This tutorial 
+FuelLib is a fuel property prediction package based on group contribution methods and,
+when available, measurement data. This tutorial 
 provides a basic introduction to using FuelLib, including installation, required input files, and example usage.
 
 Download and Setup
 ^^^^^^^^^^^^^^^^^^
 
-Install FuelLib using pip:
+Install FuelLib using pip from `pypi.org/project/fuellib <https://pypi.org/project/fuellib>`_:
 
 .. code-block:: bash
 
@@ -16,7 +16,7 @@ Install FuelLib using pip:
 
 The required dependencies will be installed automatically.
 
-For information about contributing or installation for development, see the `Contributing <development.html>`_ page.
+For information about contributing or installation for development, see the :doc:`contributing` page.
 
 If you want to run the example scripts, you can either clone the repository or download individual tutorial files from the `tutorials <https://github.com/NatLabRockies/FuelLib/tree/main/tutorials>`_ directory on GitHub.
 
@@ -34,7 +34,7 @@ Each row of the GCxGC file is matched to a compound in the reference data tables
 - ``fuellib/data/ref_nannoolal.csv``: the Nannoolal group decomposition of each reference compound, used for the Nannoolal viscosity correlations (columns must be groups defined in `nannoolal.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/nannoolal.csv>`_).
 - ``fuellib/data/ref_unifac.csv``: the UNIFAC subgroup decomposition of each reference compound, used for the UNIFAC 2.0 activity coefficients (columns must be subgroups defined in `unifac.csv <https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/unifac.csv>`_).
 
-Rows are matched by ``Reference Compound`` name first (case-insensitive) and then by the InChI derived from ``SMILES``. A ``ValueError`` listing the unmatched rows is raised if any GCxGC compound is missing from the reference tables, so new compounds must first be added to the reference tables (see the `Adding Custom Fuels <tutorials_custom_fuels.html>`_ tutorial). Many examples can be found in the `fuellib/data <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data>`_ directory in the repository.
+Rows are matched by ``Reference Compound`` name first (case-insensitive) and then by the InChI derived from ``SMILES``. A ``ValueError`` listing the unmatched rows is raised if any GCxGC compound is missing from the reference tables, so new compounds must first be added to the reference tables (see the :doc:`Adding Custom Fuels <tutorials_custom_fuels>` tutorial). Many examples can be found in the `fuellib/data <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data>`_ directory in the repository.
 
 Optionally, measured property data can be provided in ``properties_data/<fuel_name>.csv``. It is loaded into ``Fuel.prop_data`` and used for validation and plotting.
 
@@ -145,4 +145,4 @@ for each component and the mixture at a given temperature:
     >> Mixture vapor pressure at 320 K: 11117.77 Pa
 
 The following links provide more information on the :ref:`eq-GCM-correlations` and
-the :ref:`eq-mixture-properties` that can be calculated using the ``groupContribution`` object.
+the :ref:`eq-mixture-properties` that can be calculated using the :class:`~fuellib.fuel.core.Fuel` object.

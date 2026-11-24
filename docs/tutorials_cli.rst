@@ -140,7 +140,7 @@ measured data for the simulated test (``Distillation`` rows for
 Options:
 
 - ``--model``: distillation curve model. ``greenfield`` (default) is the
-  ASTM D86 distillation curve model of Greenfield et al. (see :doc:`distillation`).
+  ASTM D86 distillation curve model of Greenfield et al. (see :doc:`simulation_distillation`).
 - ``-f``/``--fuel_names``: name(s) of the fuel(s), space-separated (required).
 - ``-dir``/``--fuel_data_dir``: directory where fuel data files are located
   (default: ``fuellib/data``). Applies to all fuels.

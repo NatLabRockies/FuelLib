@@ -12,7 +12,7 @@
 
 
 # Overview
-FuelLib (SWR-25-26) utilizes the tables and functions of the Group Contribution Method (GCM) as proposed by [Constantinou and Gani (1994)](https://doi.org/10.1002/aic.690401011) and [Constantinou, Gani and O'Connel (1995)](https://doi.org/10.1016/0378-3812(94)02593-P), with additional physical properties discussed in [Govindaraju & Ihme (2016)](https://doi.org/10.1016/j.ijheatmasstransfer.2016.06.079).  The code is based on Pavan B. Govindaraju's [Matlab implementation](https://github.com/gpavanb-old/GroupContribution) of the GCM, and has been expanded to include additional thermodynamic properties and mixture properties.  The fuel library contains gas chromatography (GC x GC) data for a variety of fuels ranging from simple single component fuels to complex jet fuels.  The GC x GC data for POSF jet fuels comes from [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).  
+FuelLib (SWR-25-26) is a fuel property prediction package based on group contribution methods (GCMs) and, when available, measurement data. A fuel is represented as a mixture of individual compounds from its GCxGC composition. The properties of each compound are taken from measured reference data or predicted with GCMs such as those of [Constantinou and Gani (1994)](https://doi.org/10.1002/aic.690401011) and [Constantinou, Gani and O'Connel (1995)](https://doi.org/10.1016/0378-3812(94)02593-P), [Nannoolal et al. (2009)](https://doi.org/10.1016/j.fluid.2009.02.016), and [UNIFAC 2.0 (Hayer et al., 2025)](https://doi.org/10.1016/j.cej.2024.158667). Correlations and mixture rules, including those discussed in [Govindaraju & Ihme (2016)](https://doi.org/10.1016/j.ijheatmasstransfer.2016.06.079), then give the properties of the compounds and the fuel at other conditions. FuelLib originated from Pavan B. Govindaraju's [Matlab implementation](https://github.com/gpavanb-old/GroupContribution) of the Constantinou and Gani method.  The fuel library contains gas chromatography (GC x GC) data for a variety of fuels ranging from simple single component fuels to complex jet fuels.  The GC x GC data for POSF jet fuels comes from [Edwards (2020)](https://apps.dtic.mil/sti/pdfs/AD1093317.pdf).  
 
 ## Citing this Work
 If you use FuelLib in your research, please cite the following software record:
@@ -72,7 +72,7 @@ pip install -e '.[dev]'  # Install with development tools (docs, testing, format
 ~~~
 > **Note:** Building `grimp` (a dependency of `import-linter`) requires a Rust toolchain. On macOS you may need to run `brew install rust`.
 
-See the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page for more detailed setup instructions and contribution guidelines.
+See the [Contributing](https://NatLabRockies.github.io/FuelLib/contributing.html) page for more detailed setup instructions and contribution guidelines.
 
 ## Library Usage
 This repository includes tutorials of ways to use FuelLib.  We recommend starting with the basic tutorial, [`tutorials/basic.py`](https://github.com/NatLabRockies/FuelLib/blob/main/tutorials/basic.py), which is documented at [natlabrockies.github.io/FuelLib/tutorials_basic.html](https://natlabrockies.github.io/FuelLib/tutorials_basic.html).
@@ -81,7 +81,7 @@ This repository includes tutorials of ways to use FuelLib.  We recommend startin
 After installing FuelLib using one of the methods above, you have access to several command-line tools for plotting, unit conversion, and exporting fuel data. A comprehensive list is provided in the documentation at [https://natlabrockies.github.io/FuelLib/tutorials_cli.html](https://natlabrockies.github.io/FuelLib/tutorials_cli.html).
 
 # Contributing
-New contributions are always welcome! For detailed contribution guidelines, installation instructions, and development setup, see the [Contributing](https://NatLabRockies.github.io/FuelLib/development.html) page in the documentation.
+New contributions are always welcome! For detailed contribution guidelines, installation instructions, and development setup, see the [Contributing](https://NatLabRockies.github.io/FuelLib/contributing.html) page in the documentation.
 
 Quick start:
 1. Fork the main repository

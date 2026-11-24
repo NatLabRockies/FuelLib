@@ -1,8 +1,8 @@
 Validation
-----------
+==========
 
 Single Component Fuels
-^^^^^^^^^^^^^^^^^^^^^^
+----------------------
 
 .. figure:: /figures/props_heptane_decane_dodecane.png
    :width: 700pt
@@ -11,7 +11,7 @@ Single Component Fuels
    Properties of heptane, decane, and dodecane against predictive data from NIST Chemistry WebBook.
 
 Multicomponent Fuels
-^^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 .. figure:: /figures/props_posf10264_posf10325_posf10289.png
    :width: 700pt
@@ -31,10 +31,8 @@ Multicomponent Fuels
 
    Predictions of smoke point using the McEnally et al.\ :footcite:p:`mcenally_soot_2020` correlation and coefficients, as well as coefficients from fitting against measured smoke points from the NJFCP database.
 
-
-
-Fuel Blends
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Fuel blends
+^^^^^^^^^^^
 
 .. figure:: /figures/hefa_blends.png
    :width: 400pt

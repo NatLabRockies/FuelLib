@@ -1,5 +1,5 @@
-Contributing to FuelLib
-=======================
+Contributing
+============
 
 We welcome contributions! This page covers how to set up your development environment, make changes, and submit pull requests.
 
@@ -33,8 +33,41 @@ To use a specific conda environment:
    conda install -c conda-forge rust
    pip install -e '.[dev]'
 
+Pre-commit Hooks
+^^^^^^^^^^^^^^^^
+
+This repository uses `lefthook <https://lefthook.dev>`_ to run the formatting, linting,
+type-checking, and test tasks automatically before each commit. After installing the
+``dev`` dependencies, enable the hooks with:
+
+.. code-block:: bash
+
+   lefthook install
+
+You can also run the full pre-commit suite manually with ``lefthook run pre-commit --all-files``.
+Note that the ``import-linter`` module-layering check (``lint-imports``) is not yet part of
+the pre-commit suite, since the codebase doesn't fully match the target module layering yet.
+
+Test coverage is currently enforced at a low threshold (``fail_under = 20`` in
+``pyproject.toml``) while the codebase is migrated; this will be raised over time.
+
+Optional: uv
+^^^^^^^^^^^^
+
+`uv <https://docs.astral.sh/uv/>`_ is included as a dev dependency and offers a much
+faster alternative to ``pip`` for installing dependencies and managing a virtual
+environment:
+
+.. code-block:: bash
+
+   uv venv
+   uv pip install -e '.[dev]'
+
+Run ``uv lock`` to regenerate ``uv.lock`` after changing dependencies in
+``pyproject.toml``, keeping installs reproducible across machines.
+
 Developer Tasks
-----------------
+---------------
 
 Common developer tasks are defined with `taskipy <https://github.com/taskipy/taskipy>`_
 in the ``[tool.taskipy.tasks]`` table of ``pyproject.toml``, and can be run with
@@ -68,41 +101,8 @@ in the ``[tool.taskipy.tasks]`` table of ``pyproject.toml``, and can be run with
      - ``bash fuellib/cli/view-docs.sh``
      - Open the built documentation in a browser
 
-Pre-commit Hooks
------------------
-
-This repository uses `lefthook <https://lefthook.dev>`_ to run the formatting, linting,
-type-checking, and test tasks automatically before each commit. After installing the
-``dev`` dependencies, enable the hooks with:
-
-.. code-block:: bash
-
-   lefthook install
-
-You can also run the full pre-commit suite manually with ``lefthook run pre-commit --all-files``.
-Note that the ``import-linter`` module-layering check (``lint-imports``) is not yet part of
-the pre-commit suite, since the codebase doesn't fully match the target module layering yet.
-
-Test coverage is currently enforced at a low threshold (``fail_under = 20`` in
-``pyproject.toml``) while the codebase is migrated; this will be raised over time.
-
-Optional: uv
-------------
-
-`uv <https://docs.astral.sh/uv/>`_ is included as a dev dependency and offers a much
-faster alternative to ``pip`` for installing dependencies and managing a virtual
-environment:
-
-.. code-block:: bash
-
-   uv venv
-   uv pip install -e '.[dev]'
-
-Run ``uv lock`` to regenerate ``uv.lock`` after changing dependencies in
-``pyproject.toml``, keeping installs reproducible across machines.
-
 Working with Units (pint)
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 FuelLib's public API is unit-aware: physical quantities (e.g. ``Fuel.comps.mw``,
 ``Fuel.comps.tc``, ``Fuel.comps.pc``) are `pint <https://pint.readthedocs.io>`_
@@ -127,7 +127,7 @@ contributing new code that creates or consumes physical quantities:
   change (see ``CHANGELOG.md``).
 
 Code Style and Naming
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 FuelLib follows `PEP 8 <https://peps.python.org/pep-0008/>`_ naming conventions
 everywhere, with one deliberate exception (``greenfield.py``, below):
@@ -173,7 +173,7 @@ excluded from them is ``greenfield.py`` (see ``ruff.toml``). ``tests/test_style.
 runs Ruff as part of the test suite to confirm this.
 
 Updating the Changelog
------------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 This project keeps ``CHANGELOG.md`` in the `Keep a Changelog <https://keepachangelog.com/en/1.1.0/>`_
 format. The `keepachangelog <https://pypi.org/project/keepachangelog/>`_ package is a
@@ -182,7 +182,7 @@ add a bullet under the ``## [Unreleased]`` section using the appropriate categor
 (``Added``, ``Changed``, ``Deprecated``, ``Removed``, ``Fixed``, or ``Security``).
 
 Contributing Guidelines
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 New contributions are always welcome! To contribute:
 
@@ -195,7 +195,7 @@ New contributions are always welcome! To contribute:
 7. Open a Pull Request (PR) from your fork to the main FuelLib repository
 
 Building and Viewing Documentation Locally
--------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To build the documentation after installing with ``pip install -e '.[dev]'``:
 
@@ -213,7 +213,7 @@ To clean the build artifacts:
 
 
 Releasing
----------
+^^^^^^^^^
 
 Releases are maintainer-gated. A maintainer first opens a release
 pull request that manually sets a new PEP 440 version in ``[project].version``
@@ -230,7 +230,7 @@ publishes the tested artifacts. After a successful PyPI upload it creates the
 ``v<version>`` tag and GitHub release.
 
 Release security setup (repository administrator)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Configure PyPI `trusted publishing <https://docs.pypi.org/trusted-publishers/>`_
 for the ``fuellib`` project with this repository, the ``release.yml`` workflow, and

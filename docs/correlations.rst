@@ -1,109 +1,29 @@
-Fuel Property Prediction Model
+Correlations and Mixture Rules
 ==============================
 
-**FuelLib** utilizes the group contribution method (GCM), as developed by Constantinou and 
-Gani\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimation_1995` in the mid-1990s, 
-to provide a systematic approach for estimating the thermodynamic properties of
-pure organic compounds. The GCM decomposes molecules into structural groups, 
-each contributing to a target property based on predefined group values. 
-By summing these contributions, the GCM accurately predicts essential properties, 
-including the acentric factor, normal boiling point, liquid molar volume at standard conditions 
-(298 K) and more. This predictive capability is particularly useful for complex 
-mixtures such as synthetic aviation turbine fuels (SATFs), where experimental thermodynamic data 
-is limited. `FuelLib` provides SATF developers with a means to estimate 
-these critical properties without extensive physical testing, thereby aiding in 
-the identification of promising fuel compositions before committing to large-scale production.
-
-`FuelLib` builds on 
-`Pavan B. Govindaraju's Matlab implementation <https://github.com/gpavanb-old/GroupContribution>`_, 
-and includes gas chromatography data (GC x GC) for various jet fuels from the National Jet Fuel Combustion Program\ :footcite:p:`colket_overview_2017` (NJFCP) 
-Air Force Research Laboratory\ :footcite:p:`edwards_reference_2017` \ :footcite:p:`edwards_jet_2020` (AFRL) and Vozka et al.\ :footcite:p:`vozka_impact_2018`.
-Additionally, `FuelLib` includes correlations for the thermodynamic properties of 
-mixture such as density, viscosity, vapor pressure, surface tension, and thermal conductivity. :ref:`tab-GCM-properties` 
-outlines the properties for the *i-th* compound in a mixture, which depends on 
-the *k-th* first-order and *j-th* second-order group contributions.
-
-A tilde denotes a molar property (e.g., :math:`\tilde{C}_{p,i}` in J/mol/K and
-:math:`\Delta\tilde{H}_{v,i}` in J/mol), while the same symbol without a tilde denotes the
-corresponding mass-based property (e.g., :math:`C_{p,i}` in J/kg/K and
-:math:`\Delta H_{v,i}` in J/kg). The group-contribution parameters (e.g., :math:`h_{v1k}`)
-follow the notation of the original publications.
-
-.. _tab-GCM-properties:
-
-Table of GCM properties
------------------------
-
-.. table:: GCM properties of the *i-th* component in a mixture. The subscript *stp* denotes a standard pressure assumption.
-   :widths: auto
-   :align: center
-
-   ============================================  =====================  ===========================================  ====================  ===========================================================
-   Property                                      Units                  Group Contributions                          Units                 Description
-   ============================================  =====================  ===========================================  ====================  ===========================================================
-   :math:`M_{w,i}`                               kg/mol                 :math:`m_{w1k}`                              g/mol                 Molecular weight.
-   :math:`T_{c,i}`                               K                      :math:`t_{c1k}`, :math:`t_{c2j}`             1                     Critical temperature\ :footcite:p:`constantinou_new_1994`.
-   :math:`p_{c,i}`                               Pa                     :math:`p_{c1k}`, :math:`p_{c2j}`             bar\ :sup:`-0.5`      Critical pressure\ :footcite:p:`constantinou_new_1994`.
-   :math:`V_{c,i}`                               m\ :sup:`3`\ /mol      :math:`v_{c1k}`, :math:`v_{c2j}`             m\ :sup:`3`\ /kmol    Critical volume\ :footcite:p:`constantinou_new_1994`.
-   :math:`T_{b,i}`                               K                      :math:`t_{b1k}`, :math:`t_{b2j}`             1                     Normal boiling point\ :footcite:p:`constantinou_new_1994`.
-   :math:`T_{m,i}`                               K                      :math:`t_{m1k}`, :math:`t_{m2j}`             1                     Normal melting point\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta\tilde{H}_{f,i}`                 J/mol                  :math:`h_{f1k}`, :math:`h_{f2j}`             kJ/mol                Enthalpy of formation at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta\tilde{G}_{f,i}`                 J/mol                  :math:`g_{f1k}`, :math:`g_{f2j}`             kJ/mol                Standard Gibbs free energy at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\Delta\tilde{H}_{v,\textit{stp},i}`    J/mol                  :math:`h_{v1k}`, :math:`h_{v2j}`             kJ/mol                Enthalpy of vaporization at 298 K\ :footcite:p:`constantinou_new_1994`.
-   :math:`\omega_i`                              1                      :math:`\omega_{1k}`, :math:`\omega_{2j}`     1                     Acentric factor\ :footcite:p:`constantinou_estimation_1995`.
-   :math:`V_{m,\textit{stp},i}`                  m\ :sup:`3`\ /mol      :math:`v_{m1k}`, :math:`v_{m2j}`             m\ :sup:`3`\ /kmol    Liquid molar volume at 298 K\ :footcite:p:`constantinou_estimation_1995`. 
-   :math:`\tilde{C}_{p,i}`                       J/mol/K                :math:`C_{pA1_k}`, :math:`C_{pA2_k}`,...     J/mol/K               Molar specific heat capacity\ :footcite:p:`nielsen_molecular_1998` \ :footcite:p:`poling_properties_2001`.
-   ============================================  =====================  ===========================================  ====================  ===========================================================
-
-.. _eq-GCM-properties:
-
-Equations for GCM properties
-----------------------------
-
-The properties of each compound in a mixture can be calculated as the sum of contributions 
-from the first- and second-order groups that make up the compound. For a given mixture, 
-let :math:`\mathbf{N}` be an :math:`N_c \times N_{g_1}` matrix that represents the 
-number of first-order groups in each compound, where :math:`N_c` is the number of compounds 
-in the mixture and :math:`N_{g_1}` is the total number of first-order groups as defined 
-by Constantinou and Gani\ :footcite:p:`constantinou_new_1994,constantinou_estimation_1995`.  
-Similarly, let :math:`\mathbf{M}` be an :math:`N_c \times N_{g_2}` matrix that specifies 
-the number of second-order groups in each compound, where :math:`N_{g_2}` is the total 
-number of second-order groups. The total number of groups :math:`N_g = N_{g_1} + N_{g_2} = 121`. 
-The GCM properties for the *i-th* compound in the mixture are calculated as 
-follows\ :footcite:p:`constantinou_new_1994` \ :footcite:p:`constantinou_estimation_1995` \ :footcite:p:`poling_properties_2001`:
-
-.. math::
-
-   M_{w,i} &= \bigg[\sum_{k = 1}^{N_{g_1}}\mathbf{N}_{ik}m_{w1k} \bigg] \times 10^{-3}, \\
-   T_{c,i} &= 181.28 \ln  \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} t_{c1k} + \sum_{j=1}^{N_{g_2}}         \mathbf{M}_{ij} t_{c2j} \bigg],\\
-   p_{c,i} &= \Bigg( \bigg[  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} p_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}     p_{c2j} + 0.10022\bigg]^{-2}  + 1.3705\Bigg)\times 10^{5}, \\
-   V_{c,i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{c1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij}      v_{c2j} \bigg] -0.00435 \Bigg)\times 10^{-3}, \\
-   T_{b,i} &= 204.359 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{b1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{b2j}\bigg],\\
-   T_{m,i} &= 102.425 \ln  \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} t_{m1k} + \sum_{j=1}^{N_{g_2}}  \mathbf{M}_{ij} t_{m2j}\bigg],\\
-   \Delta\tilde{H}_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{f2j} \bigg] + 10.835\Bigg) \times 10^3,\\
-   \Delta\tilde{G}_{f,i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} g_{f1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} g_{f2j} \bigg] -14.828 \Bigg) \times 10^3,\\
-   \Delta\tilde{H}_{v,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k = 1}^{N_{g_1}} \mathbf{N}_{ik} h_{v1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} h_{v2j} \bigg] + 6.829\Bigg) \times 10^3, \\
-   \omega_i &= 0.4085 \bigg[ \ln \Big(  \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \omega_{1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} \omega_{2j} + 1.1507\Big) \bigg]^{1/0.5050}, \\
-   V_{m,\textit{stp},i} &= \Bigg( \bigg[ \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} v_{m1k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} v_{m2j} \bigg] + 0.01211 \Bigg)\times 10^{-3}, \\
-   \tilde{C}_{p,i} & =\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pA1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pA2_j} -19.7779\bigg]  \\
-       & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pB1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pB2_j} + 22.5981\bigg] \theta \\
-       & +\bigg[\sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} C_{pC1_k} + \sum_{j=1}^{N_{g_2}} \mathbf{M}_{ij} C_{pC2_j} - 10.7983\bigg] \theta^2 \\
-   \theta &= \frac{T - 298.15}{700}
-
+Group contribution methods and reference data give the properties of each
+compound at standard conditions (see :doc:`prediction_framework`). This page
+presents the correlations that evaluate the properties of each compound at
+other temperatures and pressures, and the mixture rules that combine the
+compound properties into the properties of the fuel. Unless noted otherwise in
+the individual correlation, all units are assumed to be SI: length (m), mass
+(kg), time (s), temperature (K), mole (mol). See :ref:`sec-notation` for the
+notation.
 
 .. _eq-GCM-correlations:
 
-Equations for individual compound correlations
-----------------------------------------------
+Individual component properties (``fuellib.correlate.components``)
+------------------------------------------------------------------
 
-This section presents correlations for physical properties that leverage the individual 
-compound properties defined in :ref:`eq-GCM-properties`.  These correlations make 
-it possible to evaluate physical properties at non-standard temperatures and pressures, 
-given that group contribution properties are only defined at standard conditions.
-Unless noted otherwise in the individual correlation, all units are assumed to be SI: 
-length (m), mass (kg), time (s), temperature (K), mole (mol).
-The :ref:`tab-reduced-temps` are used throughout this section for each compound *i*, 
-provided :math:`T` in K unless noted otherwise.
+This section presents correlations for physical properties that leverage the
+individual compound properties from the :doc:`group_contribution_methods` and
+the :ref:`reference data <sec-reference-properties>`. These correlations make
+it possible to evaluate physical properties at non-standard temperatures and
+pressures, given that group contribution properties are only defined at
+standard conditions. The functions are in :mod:`fuellib.correlate.components`
+and are available as methods of :attr:`Fuel.comps <fuellib.fuel.core.Fuel.comps>`.
+The :ref:`tab-reduced-temps` are used throughout this section for each compound
+*i*, provided :math:`T` in K unless noted otherwise.
 
 .. _tab-correlation-qtys:
 
@@ -144,6 +64,7 @@ provided :math:`T` in K unless noted otherwise.
    :math:`T_{r,\textit{stp},i}`   :math:`\frac{298 \text{ (K)}}{T_{c,i}}`    Reduced standard temperature.
    =============================  =========================================  ======================================================
 
+.. _sec-kinematic-viscosity:
 
 Kinematic viscosity
 ^^^^^^^^^^^^^^^^^^^
@@ -151,14 +72,14 @@ Kinematic viscosity
 .. automethod:: fuellib.fuel.components.Components.nu
    :noindex:
 
-The kinematic viscosity of the *i-th* compound of the fuel, 
+The kinematic viscosity of the *i-th* compound of the fuel,
 
 .. math::
-   
-   \nu_i = \frac{\mu_i}{\rho_i}, 
+
+   \nu_i = \frac{\mu_i}{\rho_i},
 
 is calculated with the GCM of Nannoolal et al.\ :footcite:p:`nannoolal_estimation_2009`
-(default) or from Dutt's equation (Eq. 4.23 in Viscosity of 
+(default) or from Dutt's equation (Eq. 4.23 in Viscosity of
 Liquids\ :footcite:p:`viswanath_viscosity_2007`). Dutt's equation calculates the
 kinematic viscosity directly provided :math:`T` in :math:`^{\circ}` C:
 
@@ -171,22 +92,9 @@ For supported hydrocarbons, the Nannoolal GCM calculates the dynamic viscosity o
 .. math::
    \mu_i = 1.3\times10^{-3}\exp\left[-dBv_i\frac{T-T_{v,i}}{T-(T_{v,i}/16)}\right],
 
-then obtains :math:`\nu_i = \mu_i / \rho_i`. The tabulated group contributions are 
-:math:`\widetilde{dBv}_k` and :math:`\widetilde{T}_{v,k}`, whereas
-:math:`dBv_i` and :math:`T_{v,i}` are component parameters calculated from the
-group sums and normal boiling temperature:
-
-.. math::
-   dBv_i &= \frac{\sum_k N_{ik} \widetilde{dBv}_k}
-      {n_i^{-2.5635} + 0.0685} + 3.7777, \\
-   T_{v,i} &= 21.8444\sqrt{T_{b,i}}
-      + \frac{\left(\sum_k N_{ik} \widetilde{T}_{v,k}\right)^{0.9315}}
-      {n_i^{0.6577} + 4.9259} - 231.1361,
-
-Here, :math:`n_i` is the component's non-hydrogen atom count. 
-Groups without a published contribution are discussed in :doc:`gcm`.
-
-
+then obtains :math:`\nu_i = \mu_i / \rho_i`. The compound parameters
+:math:`dBv_i` and :math:`T_{v,i}` are calculated from the Nannoolal group
+contributions (see :ref:`eq-nannoolal-properties`).
 
 Enthalpy of vaporization
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -194,14 +102,14 @@ Enthalpy of vaporization
 .. automethod:: fuellib.fuel.components.Components.hv
    :noindex:
 
-The molar enthalpy of vaporization for each compound at standard pressure and 
-temperature, :math:`\Delta\tilde{H}_{v,\textit{stp},i}`, is adjusted for variations in 
+The molar enthalpy of vaporization for each compound at standard pressure and
+temperature, :math:`\Delta\tilde{H}_{v,\textit{stp},i}`, is adjusted for variations in
 temperature\ :footcite:p:`govindaraju_group_2016`:
 
 .. math::
    \Delta\tilde{H}_{v,i} = \Delta\tilde{H}_{v,\textit{stp},i} \bigg(\frac{1 - T_{r,i}}{1-T_{r,b,i}} \bigg)^{0.38}.
 
-The mass-based enthalpy of vaporization (``basis="mass"``, default) is obtained by dividing by the 
+The mass-based enthalpy of vaporization (``basis="mass"``, default) is obtained by dividing by the
 molecular weight:
 
 .. math::
@@ -214,20 +122,20 @@ Liquid molar volume
 .. automethod:: fuellib.fuel.components.Components.vm
    :noindex:
 
-The liquid molar volume is calculated at a specific temperature :math:`T` using 
-the generalized Rackett equation\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973` 
+The liquid molar volume is calculated at a specific temperature :math:`T` using
+the generalized Rackett equation\ :footcite:p:`rackett_equation_1970` \ :footcite:p:`yamada_saturated_1973`
 with an updated :math:`\phi_i` parameter\ :footcite:p:`govindaraju_group_2016`:
 
 .. math::
 
-   V_{m,i} = V_{m,\textit{stp},i} Z^{\phi_i}_{c,i}, 
+   V_{m,i} = V_{m,\textit{stp},i} Z^{\phi_i}_{c,i},
 
 where
 
 .. math::
 
    Z_{c,i} &= 0.29056 - 0.08775 \omega_i,  \\
-   \phi_i &= 
+   \phi_i &=
    \begin{cases}
        (1 - T_{r,i})^{2/7} - (1 - T_{r,\textit{stp},i})^{2/7}, & \text{ if } T \leq T_{c,i} \\
        - (1 - T_{r,\textit{stp},i})^{2/7}, & \text{ if } T > T_{c,i}
@@ -251,21 +159,20 @@ Specific heat capacity of the liquid
 .. automethod:: fuellib.fuel.components.Components.cp
    :noindex:
 
-The molar specific heat capacity, :math:`\tilde{C}_{p,i}` (``basis="molar"``), is evaluated from the 
-group contribution expansion in :math:`\theta = (T - 298)/700` (:doc:`gcm`). 
-The mass specific heat capacity (``basis="mass"``, default) is obtained by dividing by the 
+The molar specific heat capacity, :math:`\tilde{C}_{p,i}` (``basis="molar"``), is evaluated from the
+group contribution expansion in :math:`\theta = (T - 298)/700` (see :ref:`eq-GCM-properties`).
+The mass specific heat capacity (``basis="mass"``, default) is obtained by dividing by the
 molecular weight:
 
 .. math::
-   C_{p,i} = \dfrac{\tilde{C}_{p,i}}{M_{w,i}} 
+   C_{p,i} = \dfrac{\tilde{C}_{p,i}}{M_{w,i}}
 
 Alternatively, the Ruzicka-Domalski\ :footcite:p:`ruzicka_estimation_1993` group additivity correlation
 is available, with :math:`\theta = T / 100` (K) and the ``rd_A``, ``rd_B``, and ``rd_D``
-properties included in the ``gani`` GCM (:doc:`gcm`):
+properties included in the ``gani`` GCM (see :ref:`sec-gcm-gani`):
 
 .. math::
    \tilde{C}_{p,i} = R \big(A_i + B_i \theta + D_i \theta^2\big).
-
 
 
 Vapor pressure
@@ -274,17 +181,17 @@ Vapor pressure
 .. automethod:: fuellib.fuel.components.Components.pvap
    :noindex:
 
-The vapor pressure for each compound is calculated as a function of 
-temperature using either the Lee–Kesler method\ :footcite:p:`lee_generalized_1975` 
+The vapor pressure for each compound is calculated as a function of
+temperature using either the Lee–Kesler method\ :footcite:p:`lee_generalized_1975`
 or the Ambrose-Walton method\ :footcite:p:`ambrose_vapour_1989`.  Both methods solve
 
 .. math::
    \ln p_{r,v,i} = f_i^{(0)} + \omega_i f_i^{(1)} + \omega_i^2 f_i^{(2)}
 
-for the reduced vapor pressure for each compound, 
-:math:`p_{r,v,i} = p_{v,i}/p_{c,i}`.  
-The default method in `FuelLib` is the Lee-Kesler method, as it is 
-more stable at higher temperatures. 
+for the reduced vapor pressure for each compound,
+:math:`p_{r,v,i} = p_{v,i}/p_{c,i}`.
+The default method in `FuelLib` is the Lee-Kesler method, as it is
+more stable at higher temperatures.
 The Lee-Kesler\ :footcite:p:`lee_generalized_1975` method defines
 
 .. math::
@@ -306,17 +213,17 @@ with :math:`\tau_i = 1 - T_{r,i}`.
 .. automethod:: fuellib.fuel.components.Components.pvap_antoine_coeffs
    :noindex:
 
-Users also have the option to return the coefficients from an Antoine fit based on 
+Users also have the option to return the coefficients from an Antoine fit based on
 the mixture vapor pressure calculated from Raoult's law above.  Antoine's equation is:
 
-.. math:: 
+.. math::
 
    \log_{10}\Big(\frac{p_{v,i}}{D_i}\Big) = A_i - \frac{B_i}{C_i + T},
 
 where :math:`D_i` is a conversion factor for converting :math:`p_{v,i}` from Pa to cgs-based units dyne/cm :sup:`2` (:math:`D_i = 10`).
 This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option to estimate Antoine coefficients for use in CFD
 simulations with spray. See the `PelePhysics documentation <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
-for additional information. 
+for additional information.
 
 
 Surface tension
@@ -332,7 +239,7 @@ Surface tension for each compound is approximated using the relation:
 
 provided :math:`p_{c,i}` in bar.  The :math:`Q_i` term is defined by Brock and Bird\ :footcite:p:`brock_surface_1955` (default in FuelLib) as
 
-.. math:: 
+.. math::
    Q_i = 0.1196 \bigg[1 + \frac{T_{r,b,i} \log(p_{c,i}/1.01325)}{1 - T_{r,b,i}}\bigg] - 0.279,
 
 or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_volumetric_1958` \ :footcite:p:`pitzer_thermodynamics_1995` as
@@ -341,32 +248,31 @@ or by Curl and Pitzer\ :footcite:p:`poling_properties_2001` \ :footcite:p:`curl_
    Q_i = \frac{1.86 + 1.18 \omega_i}{19.05} \bigg[ \frac{3.75 + 0.91 \omega_i}{0.291 - 0.08\omega_i} \bigg]^{2/3}.
 
 
-
 Thermal conductivity
 ^^^^^^^^^^^^^^^^^^^^
 
 .. automethod:: fuellib.fuel.components.Components.k
    :noindex:
 
-Thermal conductivity for each compound is computed according to the method of 
+Thermal conductivity for each compound is computed according to the method of
 Latini et al. as summarized in Poling's\ :footcite:p:`poling_properties_2001` book:
 
-.. math:: 
+.. math::
    k_i = \frac{A_i(1 - T_{r,i})^{0.38}}{T_{r,i}^{1/6}}.
 
 The constant :math:`A_i` is defined by:
 
-.. math:: 
-   A_i = \frac{A^\ast T_{b,i}^\alpha}{M_{w,i}^\beta T_{c,i}^{\gamma}}, 
+.. math::
+   A_i = \frac{A^\ast T_{b,i}^\alpha}{M_{w,i}^\beta T_{c,i}^{\gamma}},
 
-provided :math:`M_{w,i}` in g/mol. The exponents vary depending on the family of 
+provided :math:`M_{w,i}` in g/mol. The exponents vary depending on the family of
 the compound as defined in :ref:`tab-thermal-conductivity-parameters`.  It is assumed
 that:
 
 * aromatics have contain aromatic group contributions (e.g. ACCH)
-* cycloparaffins contain a ring (e.g. 5-membered ring) and do not contain aromatic groups  
+* cycloparaffins contain a ring (e.g. 5-membered ring) and do not contain aromatic groups
 * olefins contain one or more pairs of carbon atoms linked by a double bond and do not contain aromatic groups or rings
-* all other compounds are assumed to be saturated hydrocarbons. 
+* all other compounds are assumed to be saturated hydrocarbons.
 
 These structural checks are performed on each compound's `RDKit <https://www.rdkit.org/docs/>`_
 ``Mol`` object (built from its SMILES string via
@@ -381,14 +287,14 @@ and :func:`~fuellib.rdk.mol.has_double_bond` from :mod:`fuellib.rdk.mol`.
    :widths: auto
    :align: center
 
-   ===========  ==========================  ===============  ===============  ===============  ===============  
-   Identifier   Family                      :math:`A^\ast`   :math:`\alpha`   :math:`\beta`    :math:`\gamma`   
-   ===========  ==========================  ===============  ===============  ===============  =============== 
+   ===========  ==========================  ===============  ===============  ===============  ===============
+   Identifier   Family                      :math:`A^\ast`   :math:`\alpha`   :math:`\beta`    :math:`\gamma`
+   ===========  ==========================  ===============  ===============  ===============  ===============
    0            Saturated hydrocarbons      0.00350          1.2              0.5              0.167
-   1            Aromatics                   0.0346           1.2              1.0              0.167            
-   2            Cycloparaffins              0.0310           1.2              1.0              0.167            
-   3            Olefins                     0.0361           1.2              1.0              0.167         
-   ===========  ==========================  ===============  ===============  ===============  =============== 
+   1            Aromatics                   0.0346           1.2              1.0              0.167
+   2            Cycloparaffins              0.0310           1.2              1.0              0.167
+   3            Olefins                     0.0361           1.2              1.0              0.167
+   ===========  ==========================  ===============  ===============  ===============  ===============
 
 Flash point
 ^^^^^^^^^^^
@@ -397,7 +303,7 @@ Flash point
    :noindex:
 
 Two correlations are available for the flash point :math:`T_{\textit{flash},i}` of each compound,
-both based on the Constantinou-Gani normal boiling point :math:`T_{b,i}`.
+both based on the normal boiling point :math:`T_{b,i}`.
 The Alqaheem and Riazi\ :footcite:p:`alqaheem_flash_2017` correlation takes the flash point as a fixed fraction
 of the boiling point:
 
@@ -411,7 +317,7 @@ group-contribution term:
    T_{\textit{flash},i} = 12.14 + 0.73 \, T_{b,i} + \sum_{k=1}^{N_{g_1}} \mathbf{N}_{ik} \phi_k,
 
 where :math:`\phi_k` are the group contributions registered as the ``alibakhshi_phi``
-property of the ``gani`` GCM (:doc:`gcm`).
+property of the ``gani`` GCM (see :ref:`sec-gcm-gani`).
 
 .. _sec-lower-heating-value:
 
@@ -421,7 +327,7 @@ Lower heating value
 .. autofunction:: fuellib.correlate.components.lower_heating_value
    :noindex:
 
-The lower (net) heating value :math:`LHV_i` is computed from a Hess cycle using the Constantinou-Gani
+The lower (net) heating value :math:`LHV_i` is computed from a Hess cycle using the
 enthalpy of formation :math:`\Delta\tilde{H}_{f,i}` and enthalpy of vaporization
 :math:`\Delta\tilde{H}_{v,\textit{stp},i}`. The liquid-phase enthalpy of formation is
 
@@ -447,16 +353,15 @@ heteroatom-containing groups.
 
 .. _eq-mixture-properties:
 
-Equations for mixture properties from GCM
------------------------------------------
+Mixture properties (``fuellib.correlate.mixture``)
+--------------------------------------------------
 
-This section contains correlations for estimating physical properties of the 
-mixture from the individual compound and physical properties defined in 
-:ref:`eq-GCM-properties` and :ref:`eq-GCM-correlations`.  These correlations make 
-it possible to evaluate physical properties at non-standard temperatures and 
-pressures, as the group contribution properties are only defined at standard 
-conditions. The :ref:`tab-mixture-properties` available in `FuelLib` are listed in 
-table below.  Mass and mole fractions defined in Table :ref:`tab-mass-mole-fracs`
+This section contains mixture rules for estimating physical properties of the
+mixture from the individual compound properties defined in
+:ref:`eq-GCM-correlations`. The functions are in :mod:`fuellib.correlate.mixture`
+and are available as methods of :attr:`Fuel.mix <fuellib.fuel.core.Fuel.mix>`.
+The :ref:`tab-mixture-properties` available in `FuelLib` are listed in
+the table below.  Mass and mole fractions defined in Table :ref:`tab-mass-mole-fracs`
 are used throughout this section.
 
 .. _tab-mixture-properties:
@@ -464,7 +369,7 @@ are used throughout this section.
 .. table:: Mixture properties
    :widths: auto
    :align: center
-   
+
    ============================  ===============  =====================
    Symbol                        Units            Description
    ============================  ===============  =====================
@@ -535,7 +440,7 @@ Mixture density
 The mixture's density is calculated as:
 
 .. math::
-   
+
    \rho = \sum_{i=1}^{N_c}Y_i\frac{M_{w,i}}{V_{m,i}}.
 
 
@@ -545,23 +450,22 @@ Mixture kinematic viscosity
 .. automethod:: fuellib.fuel.mixture.Mixture.nu
    :noindex:
 
-The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917` 
-mixing rule, with an option to use the Arrhenius\ :footcite:p:`arrhenius_uber_1887` 
-mixing rule. The viscosity of each component. After evaluating thirty mixing rules,  Hernandez et al.\ :footcite:p:`hernandez_evaluation_2021` 
-found that both Kendall-Monroe and Arrhenius 
-were among the most effective without relying on additional data or parameter fitting. 
-The Kendall-Monroe rule is: 
+The kinematic viscosity of the mixture is computed using the Kendall-Monroe\ :footcite:p:`kendall_viscosity_1917`
+mixing rule, with an option to use the Arrhenius\ :footcite:p:`arrhenius_uber_1887`
+mixing rule. The viscosity of each component. After evaluating thirty mixing rules,  Hernandez et al.\ :footcite:p:`hernandez_evaluation_2021`
+found that both Kendall-Monroe and Arrhenius
+were among the most effective without relying on additional data or parameter fitting.
+The Kendall-Monroe rule is:
 
 .. math::
 
-   \nu_{KM}^{1/3} = \sum_{i=1}^{N_c} X_i \, \nu_i^{1/3}. 
+   \nu_{KM}^{1/3} = \sum_{i=1}^{N_c} X_i \, \nu_i^{1/3}.
 
 The Arrhenius rule is:
 
 .. math::
 
    \ln \nu_{Arr} = \sum_{i=1}^{N_c} X_i\ln\nu_i .
-
 
 
 Mixture vapor pressure
@@ -579,17 +483,17 @@ The vapor pressure of the mixture is calculated according to Raoult's law:
 .. automethod:: fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs
    :noindex:
 
-Users also have the option to return the coefficients from an Antoine fit based on 
+Users also have the option to return the coefficients from an Antoine fit based on
 the mixture vapor pressure calculated from Raoult's law above.  Antoine's equation is:
 
-.. math:: 
+.. math::
 
    \log_{10}\Big(\frac{p_{v}}{D}\Big) = A - \frac{B}{C + T},
 
 where :math:`D` is a conversion factor for converting :math:`p_v` from Pa to cgs-based units dyne/cm :sup:`2` (:math:`D_i = 10`)..
 This feature was added to provide `Pele <https://amrex-combustion.github.io>`_ users an option for estimating these coefficients for use in CFD
 simulations with spray. See the `PelePhysics documentation <https://amrex-combustion.github.io/PelePhysics/Spray.html>`_
-for additional information. 
+for additional information.
 
 
 Mixture surface tension
@@ -611,11 +515,13 @@ Mixture thermal conductivity
 .. automethod:: fuellib.fuel.mixture.Mixture.k
    :noindex:
 
-The thermal conductivity of the mixture is calculated using the power law method of 
+The thermal conductivity of the mixture is calculated using the power law method of
 Vredeveld as described in Poling\ :footcite:p:`poling_properties_2001`:
 
 .. math::
    k = \bigg(\sum_{i=1}^{N_c} Y_i k_i^{-2} \bigg)^{-1/2}.
+
+.. _sec-mixture-freeze-point:
 
 Mixture freeze point
 ^^^^^^^^^^^^^^^^^^^^
@@ -642,7 +548,7 @@ where
 :math:`T_{m,j}` is the melting point from :attr:`~fuellib.fuel.components.Components.tm` (a reference value
 when available, otherwise the Constantinou-Gani prediction; see :ref:`sec-reference-properties`),
 :math:`\Delta S_{\textit{fus},j}`
-is provided by the ``boehm`` GCM (see :doc:`gcm`), and :math:`\alpha` is an optional
+is provided by the ``boehm`` GCM (see :ref:`sec-gcm-boehm`), and :math:`\alpha` is an optional
 scaling of the ideal mixing-entropy term (default 1). The mixture freeze point is the
 highest :math:`T_j` among compounds with :math:`X_j > 10^{-6}`, i.e. the temperature at
 which the first crystal forms on cooling. This is an equilibrium screening model that
@@ -808,59 +714,6 @@ naphthalene core (two fused aromatic six-membered rings) and its fused ring syst
 contains exactly two rings. Larger fused systems (e.g., anthracene) and partially
 saturated systems (e.g., tetralin) are not counted. Naphthalenes are a subset of the
 aromatics, so :math:`\phi_{\textit{naph}} \le \phi_{\textit{aro}}`. The result is in vol%.
-
-Reference Compounds for Jet Fuels
----------------------------------
-
-FuelLib uses a set of reference compounds to represent the hydrocarbon families and carbon numbers 
-reported by GCxGC analysis of jet fuels. See :doc:`refcompounds` for the full list of reference compounds.
-
-.. _sec-reference-properties:
-
-Reference Property Data
------------------------
-
-Measured properties of pure compounds can replace group-contribution predictions.
-These data are stored directly in ``fuellib/data/ref_compounds.csv``. Each compound has the columns
-``Family``, ``Carbon Number``, ``Reference Compound``, and ``SMILES``, followed by a block of five columns
-for each property: ``{Property}_Value``, ``{Property}_Error``, ``{Property}_Units``, ``{Property}_Source``,
-and ``{Property}_Notes``. Blank values indicate that no reference data are available for that compound.
-
-``Family`` is one of ``n-alkane``, ``isoalkane``, ``alkene``, ``monocycloalkane``, ``dicycloalkane``,
-``tricycloalkane``, ``alkylbenzene``, ``cycloaromatic``, or ``diaromatic``. The following properties are
-supported:
-
-=============  ====================================================  =====================================================
-Property       Attribute                                             Behavior
-=============  ====================================================  =====================================================
-``Tc``         :attr:`~fuellib.fuel.components.Components.tc`        Reference value, else group-contribution prediction
-``Pc``         :attr:`~fuellib.fuel.components.Components.pc`        Reference value, else group-contribution prediction
-``Vc``         :attr:`~fuellib.fuel.components.Components.vc`        Reference value, else group-contribution prediction
-``Tm``         :attr:`~fuellib.fuel.components.Components.tm`        Reference value, else group-contribution prediction
-``Tb``         :attr:`~fuellib.fuel.components.Components.tb`        Reference value, else group-contribution prediction
-``Hf_STP``     :attr:`~fuellib.fuel.components.Components.hf_stp`    Reference value, else group-contribution prediction
-``Hv_STP``     :attr:`~fuellib.fuel.components.Components.hv_stp`    Reference value, else group-contribution prediction
-``Vm_STP``     :attr:`~fuellib.fuel.components.Components.vm_stp`    Reference value, else group-contribution prediction
-``Omega``      :attr:`~fuellib.fuel.components.Components.omega`     Reference value, else group-contribution prediction
-``YSI``        :attr:`~fuellib.fuel.components.Components.ysi`       Reference only; raises ``ValueError`` if missing
-``DCN``        :attr:`~fuellib.fuel.components.Components.dcn`       Reference only; raises ``ValueError`` if missing
-=============  ====================================================  =====================================================
-
-Reference values are converted from the stated ``{Property}_Units`` to the attribute's units. Measured
-values are used for properties in the first group on a compound-by-compound basis, so a single fuel can mix
-reference values and predictions. Pass ``use_ref_props=False`` to :class:`~fuellib.fuel.core.Fuel` to use
-only the group-contribution predictions. ``YSI`` (Yield Sooting Index) and ``DCN`` (derived cetane number)
-are not predicted by FuelLib, so they are always taken from the reference data.
-
-Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
-from its ``SMILES``; the matched rows are available as ``Fuel.components_data``, and the
-group decompositions from ``ref_gani.csv``, ``ref_nannoolal.csv``, and ``ref_unifac.csv`` as
-``Fuel._gani_decomp``, ``Fuel._nannoolal_decomp``, and
-``Fuel._unifac_decomp``. Custom tables are read from ``ref_compounds.csv``, ``ref_gani.csv``,
-``ref_nannoolal.csv``, and ``ref_unifac.csv`` in the ``data_dir`` passed to :class:`~fuellib.fuel.core.Fuel` (see :doc:`tutorials_custom_fuels`). Each custom table is merged
-with, rather than replacing, the bundled table: unique custom rows are added, while duplicates take precedence over
-the bundled rows. A reference-compound duplicate is identified when its SMILES resolves to the same InChI as a
-bundled compound; a Gani, Nannoolal, or UNIFAC decomposition duplicate is identified by its ``Reference Compound``.
 
 References
 ----------
