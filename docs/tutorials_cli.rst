@@ -93,28 +93,25 @@ Quick listing of available fuels:
 SMILES Decomposition
 ~~~~~~~~~~~~~~~~~~~~
 
-Decompose SMILES or InChI strings into the Constantinou-Gani groups used in
+Decompose SMILES strings into the Constantinou-Gani groups used in
 ``ref_gani.csv`` (default), the Nannoolal groups used in
 ``ref_nannoolal.csv``, or the UNIFAC subgroups used in ``ref_unifac.csv``:
 
 .. code-block:: bash
 
     # Note that SMILES strings with branching or complex structures must be quoted to avoid interpretation issues.
-    fl decomp -s CCc1ccccc1 "CC(C)CCCCC" -n ethylbenzene 2-methylheptane
-    fl decomp -i compounds.csv -o decomposition.csv
-    fl decomp -s CCc1ccccc1 -n ethylbenzene -m nannoolal
-    fl decomp -s CCc1ccccc1 -n ethylbenzene -m unifac
-    fl decomp --from inchi -s "InChI=1S/C7H16/c1-3-5-7-6-4-2/h3-7H2,1-2H3" -n n-heptane
+    fl decompose -s CCc1ccccc1 "CC(C)CCCCC" -n ethylbenzene 2-methylheptane
+    fl decompose -i compounds.csv -o decomposition.csv
+    fl decompose -s CCc1ccccc1 -n ethylbenzene -m nannoolal
+    fl decompose -s CCc1ccccc1 -n ethylbenzene -m unifac
 
 Options:
 
-- ``-s``/``--structures`` (or ``--smiles``): one or more structures to decompose.
+- ``-s``/``--smiles``: one or more SMILES strings to decompose.
 - ``-n``/``--name``: optional ``Reference Compound`` names, exactly one for each
-  structure given with ``--structures``.
-- ``-i``/``--input``: CSV file with a ``SMILES`` (or ``InChI``) column and an
-  optional ``Reference Compound`` column.
-- ``--from``: format of the input structures, ``smiles`` (default) or ``inchi``.
-  InChI strings are converted to SMILES with RDKit before decomposition.
+  SMILES string given with ``--smiles``.
+- ``-i``/``--input``: CSV file with a ``SMILES`` column and an optional
+  ``Reference Compound`` column.
 - ``-m``/``--method``: group-contribution method, ``gani`` (default),
   ``nannoolal``, or ``unifac`` (case-insensitive).
 - ``-o``/``--out``: CSV file for the counts. Without it, the nonzero group

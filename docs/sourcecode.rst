@@ -69,7 +69,7 @@ FuelLib File Organization
         - ``export.py``: CFD property exporters (CLI: ``fl export converge``, ``fl export pele``)
         - ``plotting.py``: command-line wrappers around the functions in ``utils/plotting.py`` (CLI: ``fl plot comp``, ``fl plot props``)
         - ``fuel_manager.py``: fuel manager utility (CLI: ``fl list fuels``)
-        - ``decomp_smiles.py``: SMILES and InChI group-decomposition utility (CLI: ``fl decomp``)
+        - ``decomp_smiles.py``: SMILES group-decomposition utility (CLI: ``fl decompose``)
         - ``simulate.py``: fuel test simulations with plots of the results (CLI: ``fl simulate distillation``)
         - ``dev.py``: developer commands (CLI: ``fl dev format``, ``test``, ``build-docs``, ``clean-docs``, ``view-docs``)
         - ``build_docs.py``: documentation builder utility
@@ -87,7 +87,7 @@ FuelLib File Organization
     - ``test_gcm_gani.py``: unit tests for the ``gani`` GCM, including comparison of RDKit SMILES decompositions with ``ref_gani.csv``.
     - ``test_gcm_nannoolal.py``: unit tests for the ``nannoolal`` GCM, including comparison of RDKit SMILES decompositions with ``ref_nannoolal.csv`` and the Nannoolal viscosity correlations.
     - ``test_gcm_unifac.py``: unit tests for the ``unifac`` GCM, including comparison of RDKit SMILES decompositions with ``ref_unifac.csv`` and checks of the UNIFAC 2.0 activity coefficients.
-    - ``test_cli_decomp_smiles.py``: unit tests for the ``fl decomp`` command.
+    - ``test_cli_decomp_smiles.py``: unit tests for the ``fl decompose`` command.
 
 - **tutorials:** directory containing example scripts that demonstrate how to use FuelLib
 

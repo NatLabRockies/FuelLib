@@ -11,7 +11,7 @@ release workflow to parse release entries in this file.
 
 ### Changed
 - **Breaking:** the separate `fl-*` commands are replaced by a single `fl` command with subcommands (`fl <group> <command>`), implemented with `argparse` subparsers in `fuellib.cli` (`fuellib.cli.main`):
-  - `fl-decomp-smiles` -> `fl decomp`
+  - `fl-decomp-smiles` -> `fl decompose`
   - `fl-export-pele`, `fl-export-converge` -> `fl export pele`, `fl export converge`
   - `fl-fuels` -> `fl list fuels`
   - `fl-plt-comp`, `fl-plt-props` -> `fl plot comp`, `fl plot props`
@@ -33,7 +33,6 @@ release workflow to parse release entries in this file.
 
 ### Added
 - `fl dev test` (runs `pytest`, passing extra arguments through) and `fl dev view-docs` (opens the built documentation).
-- `fl decomp --from {smiles,inchi}` to decompose InChI strings (and `InChI` CSV columns); `--structures` is the new name of `--smiles`, which still works.
 - `tests/test_style.py` runs `ruff check` (including the PEP 8 naming rules) over the whole repository, and the `N` rules are enabled in `ruff.toml` for all Python files except `fuellib/simulate/distillation/greenfield.py`.
 
 ### Removed
