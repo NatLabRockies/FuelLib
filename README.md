@@ -1,4 +1,6 @@
 # FuelLib
+![FuelLib Logo](docs/comms/FuelLibLogo.png)
+
 [![GitHub Release](https://img.shields.io/github/v/release/NatLabRockies/FuelLib?logo=github)](https://github.com/NatLabRockies/FuelLib/releases)
 [![PyPI - Version](https://img.shields.io/pypi/v/fuellib?logo=pypi)](https://pypi.org/project/fuellib/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fuellib?logo=pypi)
