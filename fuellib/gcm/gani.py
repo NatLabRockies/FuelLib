@@ -14,6 +14,8 @@ if TYPE_CHECKING:
     from ..fuel import Fuel
 
 TABLE = pd.read_csv(Path(__file__).with_suffix(".csv"), header=0, index_col=0)
+#: Gani-Constantinou group contribution method.
+#: An instance of :class:`~fuellib.gcm.core.GCM`.
 gani_gcm = GCMRegistry.register("gani", property_fns=[])
 
 
@@ -144,7 +146,9 @@ class GaniDecomposer(Decomposer):
         return counts
 
 
-# Decomposes a SMILES string into a single-row DataFrame of Gani group counts
+#: Decomposes a SMILES string into a single-row DataFrame of Gani group counts.
+#: An instance of :class:`GaniDecomposer`.
+#: :meta hide-value:
 decompose = GaniDecomposer("Gani", TABLE.columns, order1_groups)
 
 

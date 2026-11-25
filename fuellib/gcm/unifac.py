@@ -19,6 +19,8 @@ MAIN_GROUP = _RAW.loc["Main Group No."].astype(int)
 # Interaction parameters a_mn [K] indexed by main group numbers (row m, column n)
 AMN = pd.read_csv(Path(__file__).with_name("unifac_amn.csv"), index_col=0)
 AMN.columns = AMN.columns.astype(int)
+#: UNIFAC 2.0 group contribution method.
+#: An instance of :class:`~fuellib.gcm.core.GCM`.
 unifac_gcm = GCMRegistry.register("UNIFAC", property_fns=[])
 
 
@@ -95,7 +97,8 @@ order1_groups = [
 ]
 
 
-# Decomposes a SMILES string into a single-row DataFrame of UNIFAC group counts
+#: Decomposes a SMILES string into a single-row DataFrame of UNIFAC group counts.
+#: An instance of :class:`~fuellib.gcm.core.Decomposer`.
 decompose = Decomposer("UNIFAC", TABLE.columns, order1_groups)
 
 

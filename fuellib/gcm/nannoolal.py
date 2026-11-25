@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     from ..fuel import Fuel
 
 TABLE = pd.read_csv(Path(__file__).with_suffix(".csv"), header=0, index_col=0)
+#: Nannoolal group contribution method.
+#: An instance of :class:`~fuellib.gcm.core.GCM`.
 nannoolal_gcm = GCMRegistry.register("nannoolal", property_fns=[])
 
 
@@ -181,7 +183,8 @@ class NannoolalDecomposer(Decomposer):
         return counts
 
 
-# Decomposes a SMILES string into a single-row DataFrame of Nannoolal group counts
+#: Decomposes a SMILES string into a single-row DataFrame of Nannoolal group counts.
+#: An instance of :class:`NannoolalDecomposer`.
 decompose = NannoolalDecomposer(
     "Nannoolal",
     TABLE.index,
