@@ -1,0 +1,6 @@
+atom\_counts
+============
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: atom_counts

@@ -1,0 +1,6 @@
+FUELDATA\_DIR
+=============
+
+.. currentmodule:: fuellib.exporters.converge
+
+.. autodata:: FUELDATA_DIR

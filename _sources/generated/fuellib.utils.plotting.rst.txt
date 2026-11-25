@@ -1,0 +1,30 @@
+plotting
+========
+
+Module ``fuellib.utils.plotting``
+
+.. automodule:: fuellib.utils.plotting
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      d86_data
+      format_legend_label
+      get_line_spec
+      plot_composition
+      plot_d86
+      plot_distillation
+      plot_mixture_properties
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      FUEL_MARKERS
+   

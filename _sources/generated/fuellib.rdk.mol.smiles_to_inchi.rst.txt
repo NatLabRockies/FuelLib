@@ -1,0 +1,6 @@
+smiles\_to\_inchi
+=================
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: smiles_to_inchi

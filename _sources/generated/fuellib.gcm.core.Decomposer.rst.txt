@@ -1,0 +1,27 @@
+Decomposer
+==========
+
+.. currentmodule:: fuellib.gcm.core
+
+.. autoclass:: Decomposer
+   :members:
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Decomposer.context
+      ~Decomposer.first_order_counts
+      ~Decomposer.parse_smarts
+      ~Decomposer.parse_smiles
+      ~Decomposer.second_order_counts
+   
+   

@@ -1,0 +1,6 @@
+density
+=======
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: density

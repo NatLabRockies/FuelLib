@@ -1,0 +1,6 @@
+arithmetic
+==========
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: arithmetic

@@ -1,0 +1,6 @@
+enthalpy\_vaporization\_molar
+=============================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: enthalpy_vaporization_molar

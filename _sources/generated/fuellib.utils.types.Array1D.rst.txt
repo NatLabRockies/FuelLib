@@ -1,0 +1,6 @@
+Array1D
+=======
+
+.. currentmodule:: fuellib.utils.types
+
+.. autodata:: Array1D

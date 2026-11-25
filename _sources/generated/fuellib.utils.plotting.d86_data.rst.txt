@@ -1,0 +1,6 @@
+d86\_data
+=========
+
+.. currentmodule:: fuellib.utils.plotting
+
+.. autofunction:: d86_data

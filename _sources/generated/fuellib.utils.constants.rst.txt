@@ -1,0 +1,22 @@
+constants
+=========
+
+Module ``fuellib.utils.constants``
+
+.. automodule:: fuellib.utils.constants
+   :no-members:
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      K_B
+      N_A
+      T_STP
+      SIGMA_GAS
+      LJ_EPS_BY_KB_GAS
+      MW_GAS
+      R
+   

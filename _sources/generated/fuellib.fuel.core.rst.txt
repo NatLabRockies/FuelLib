@@ -1,0 +1,16 @@
+core
+====
+
+Module ``fuellib.fuel.core``
+
+.. automodule:: fuellib.fuel.core
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Fuel
+   

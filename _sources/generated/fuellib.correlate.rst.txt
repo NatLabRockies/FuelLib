@@ -1,0 +1,19 @@
+﻿correlate
+=========
+
+Module ``fuellib.correlate``
+
+.. automodule:: fuellib.correlate
+   :no-members:
+
+   
+   .. rubric:: Modules
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      components
+      helpers
+      mixture
+   

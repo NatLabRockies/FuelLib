@@ -1,0 +1,6 @@
+get\_git\_info
+==============
+
+.. currentmodule:: fuellib.exporters.pele
+
+.. autofunction:: get_git_info

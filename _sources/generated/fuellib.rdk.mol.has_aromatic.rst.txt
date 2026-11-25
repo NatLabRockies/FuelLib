@@ -1,0 +1,6 @@
+has\_aromatic
+=============
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: has_aromatic

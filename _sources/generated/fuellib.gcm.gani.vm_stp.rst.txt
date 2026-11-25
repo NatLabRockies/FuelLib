@@ -1,0 +1,6 @@
+vm\_stp
+=======
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autofunction:: vm_stp

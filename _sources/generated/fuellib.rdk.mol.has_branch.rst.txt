@@ -1,0 +1,6 @@
+has\_branch
+===========
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: has_branch

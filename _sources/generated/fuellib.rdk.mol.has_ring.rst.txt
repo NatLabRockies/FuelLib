@@ -1,0 +1,6 @@
+has\_ring
+=========
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: has_ring

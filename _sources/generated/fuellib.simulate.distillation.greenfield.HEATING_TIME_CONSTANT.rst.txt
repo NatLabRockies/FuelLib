@@ -1,0 +1,6 @@
+HEATING\_TIME\_CONSTANT
+=======================
+
+.. currentmodule:: fuellib.simulate.distillation.greenfield
+
+.. autodata:: HEATING_TIME_CONSTANT

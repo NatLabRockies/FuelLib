@@ -1,0 +1,6 @@
+format\_legend\_label
+=====================
+
+.. currentmodule:: fuellib.utils.plotting
+
+.. autofunction:: format_legend_label

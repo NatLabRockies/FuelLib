@@ -1,0 +1,21 @@
+﻿utils
+=====
+
+Module ``fuellib.utils``
+
+.. automodule:: fuellib.utils
+   :no-members:
+
+   
+   .. rubric:: Modules
+
+   .. autosummary::
+      :toctree:
+      :recursive:
+   
+      color_maps
+      constants
+      plotting
+      types
+      utility
+   

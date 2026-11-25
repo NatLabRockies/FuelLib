@@ -1,0 +1,6 @@
+get\_line\_spec
+===============
+
+.. currentmodule:: fuellib.utils.plotting
+
+.. autofunction:: get_line_spec

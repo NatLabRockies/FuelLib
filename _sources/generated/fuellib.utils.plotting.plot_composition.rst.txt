@@ -1,0 +1,6 @@
+plot\_composition
+=================
+
+.. currentmodule:: fuellib.utils.plotting
+
+.. autofunction:: plot_composition

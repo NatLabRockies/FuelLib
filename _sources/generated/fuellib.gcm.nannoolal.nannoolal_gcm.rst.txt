@@ -1,0 +1,6 @@
+nannoolal\_gcm
+==============
+
+.. currentmodule:: fuellib.gcm.nannoolal
+
+.. autodata:: nannoolal_gcm

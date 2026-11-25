@@ -1,0 +1,30 @@
+color\_maps
+===========
+
+Module ``fuellib.utils.color_maps``
+
+.. automodule:: fuellib.utils.color_maps
+   :no-members:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      cycle_color
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      PRIMARY_BLUE
+      GRAY_50
+      GRAY_DARK
+      PURPLE
+      FL_BLUE_4
+      FL_PASTEL_18
+      FUEL_COLORS
+   

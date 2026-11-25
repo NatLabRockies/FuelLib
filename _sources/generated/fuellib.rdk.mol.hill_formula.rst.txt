@@ -1,0 +1,6 @@
+hill\_formula
+=============
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: hill_formula

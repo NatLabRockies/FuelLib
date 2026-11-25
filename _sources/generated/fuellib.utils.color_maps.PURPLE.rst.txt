@@ -1,0 +1,6 @@
+PURPLE
+======
+
+.. currentmodule:: fuellib.utils.color_maps
+
+.. autodata:: PURPLE

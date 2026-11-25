@@ -1,0 +1,6 @@
+SIGMA\_GAS
+==========
+
+.. currentmodule:: fuellib.utils.constants
+
+.. autodata:: SIGMA_GAS

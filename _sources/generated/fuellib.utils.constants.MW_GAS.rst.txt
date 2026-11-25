@@ -1,0 +1,6 @@
+MW\_GAS
+=======
+
+.. currentmodule:: fuellib.utils.constants
+
+.. autodata:: MW_GAS

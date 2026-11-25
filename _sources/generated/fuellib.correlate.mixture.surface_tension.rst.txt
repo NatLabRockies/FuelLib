@@ -1,0 +1,6 @@
+surface\_tension
+================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: surface_tension

@@ -1,0 +1,6 @@
+smoke\_point
+============
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: smoke_point

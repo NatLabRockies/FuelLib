@@ -1,0 +1,6 @@
+flash\_point\_alibakhshi
+========================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: flash_point_alibakhshi

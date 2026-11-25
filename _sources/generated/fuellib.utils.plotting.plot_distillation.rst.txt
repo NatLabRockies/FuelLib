@@ -1,0 +1,6 @@
+plot\_distillation
+==================
+
+.. currentmodule:: fuellib.utils.plotting
+
+.. autofunction:: plot_distillation

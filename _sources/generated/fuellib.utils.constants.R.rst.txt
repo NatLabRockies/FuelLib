@@ -1,0 +1,6 @@
+R
+=
+
+.. currentmodule:: fuellib.utils.constants
+
+.. autodata:: R

@@ -1,0 +1,6 @@
+yield\_sooting\_index
+=====================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: yield_sooting_index

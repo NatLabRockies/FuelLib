@@ -1,0 +1,38 @@
+Fuel
+====
+
+.. currentmodule:: fuellib.fuel.core
+
+.. autoclass:: Fuel
+   :members:
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Fuel.num_compounds
+      ~Fuel.name
+      ~Fuel.data_dir
+      ~Fuel.gc_data
+      ~Fuel.components_data
+      ~Fuel.prop_data
+      ~Fuel.metadata
+      ~Fuel.comps
+      ~Fuel.mix
+      ~Fuel.y0
+      ~Fuel.x0
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   

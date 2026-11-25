@@ -1,0 +1,6 @@
+viscosity\_dynamic\_dutt
+========================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: viscosity_dynamic_dutt

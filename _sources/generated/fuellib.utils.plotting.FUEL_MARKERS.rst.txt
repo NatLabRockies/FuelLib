@@ -1,0 +1,6 @@
+FUEL\_MARKERS
+=============
+
+.. currentmodule:: fuellib.utils.plotting
+
+.. autodata:: FUEL_MARKERS

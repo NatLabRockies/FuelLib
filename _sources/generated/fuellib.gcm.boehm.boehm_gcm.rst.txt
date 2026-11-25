@@ -1,0 +1,6 @@
+boehm\_gcm
+==========
+
+.. currentmodule:: fuellib.gcm.boehm
+
+.. autodata:: boehm_gcm

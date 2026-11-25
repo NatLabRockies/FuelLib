@@ -1,0 +1,6 @@
+Quantity0D
+==========
+
+.. currentmodule:: fuellib.utils.types
+
+.. autodata:: Quantity0D

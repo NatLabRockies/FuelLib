@@ -1,0 +1,6 @@
+vec\_to\_str
+============
+
+.. currentmodule:: fuellib.exporters.pele
+
+.. autofunction:: vec_to_str

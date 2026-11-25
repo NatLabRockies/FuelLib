@@ -1,0 +1,6 @@
+LJ\_EPS\_BY\_KB\_GAS
+====================
+
+.. currentmodule:: fuellib.utils.constants
+
+.. autodata:: LJ_EPS_BY_KB_GAS

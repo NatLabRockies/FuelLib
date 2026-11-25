@@ -1,0 +1,6 @@
+cycle\_color
+============
+
+.. currentmodule:: fuellib.utils.color_maps
+
+.. autofunction:: cycle_color

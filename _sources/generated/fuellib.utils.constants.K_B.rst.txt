@@ -1,0 +1,6 @@
+K\_B
+====
+
+.. currentmodule:: fuellib.utils.constants
+
+.. autodata:: K_B

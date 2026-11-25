@@ -1,0 +1,6 @@
+Array2D
+=======
+
+.. currentmodule:: fuellib.utils.types
+
+.. autodata:: Array2D

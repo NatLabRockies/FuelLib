@@ -1,0 +1,6 @@
+create\_mixture\_dataframe
+==========================
+
+.. currentmodule:: fuellib.exporters.pele
+
+.. autofunction:: create_mixture_dataframe

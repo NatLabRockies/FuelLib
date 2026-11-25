@@ -1,0 +1,6 @@
+GRAY\_50
+========
+
+.. currentmodule:: fuellib.utils.color_maps
+
+.. autodata:: GRAY_50

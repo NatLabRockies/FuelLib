@@ -1,0 +1,6 @@
+O2\_COEFFS
+==========
+
+.. currentmodule:: fuellib.simulate.distillation.greenfield
+
+.. autodata:: O2_COEFFS

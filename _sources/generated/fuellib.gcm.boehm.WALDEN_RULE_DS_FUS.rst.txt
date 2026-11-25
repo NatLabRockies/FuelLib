@@ -1,0 +1,6 @@
+WALDEN\_RULE\_DS\_FUS
+=====================
+
+.. currentmodule:: fuellib.gcm.boehm
+
+.. autodata:: WALDEN_RULE_DS_FUS

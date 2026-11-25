@@ -1,0 +1,6 @@
+FL\_PASTEL\_18
+==============
+
+.. currentmodule:: fuellib.utils.color_maps
+
+.. autodata:: FL_PASTEL_18

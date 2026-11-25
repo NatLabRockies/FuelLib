@@ -1,0 +1,6 @@
+smiles
+======
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: smiles

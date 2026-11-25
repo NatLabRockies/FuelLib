@@ -1,0 +1,29 @@
+pele
+====
+
+Module ``fuellib.exporters.pele``
+
+.. automodule:: fuellib.exporters.pele
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      UnitConverter
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      create_individual_compounds_dataframe
+      create_mixture_dataframe
+      export_pele
+      get_filename
+      get_git_info
+      vec_to_str
+   

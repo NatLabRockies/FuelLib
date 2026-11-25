@@ -1,0 +1,6 @@
+FUEL\_COLORS
+============
+
+.. currentmodule:: fuellib.utils.color_maps
+
+.. autodata:: FUEL_COLORS

@@ -1,0 +1,6 @@
+aromatics\_content
+==================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: aromatics_content

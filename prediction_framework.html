@@ -1,0 +1,789 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fuel Property Prediction Framework &mdash; FuelLib 2025 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9ddca91d" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cb975c41"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Group Contribution Methods" href="group_contribution_methods.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FuelLib
+              <img src="_static/FuelLibLogo_Blue.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#citing-this-work">Citing this work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#basic-usage">Basic usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fuel Property Prediction Framework</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fuellib-s-property-prediction-methodology">FuelLib’s property prediction methodology</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#notation">Notation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-fuel-class">The Fuel Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#core-attributes-fuel-attribute">Core attributes (<code class="docutils literal notranslate"><span class="pre">Fuel.&lt;attribute&gt;</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#individual-compound-properties-fuel-comps-att-method">Individual compound properties (<code class="docutils literal notranslate"><span class="pre">Fuel.comps.&lt;att-method&gt;</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixture-properties-fuel-mix-method">Mixture properties (<code class="docutils literal notranslate"><span class="pre">Fuel.mix.&lt;method&gt;</span></code>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_contribution_methods.html">Group Contribution Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="group_contribution_methods.html#notation">Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_contribution_methods.html#core-concepts">Core concepts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#decomposing-smiles-strings">Decomposing SMILES strings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_contribution_methods.html#constantinou-and-gani">Constantinou and Gani</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#table-of-constantinou-and-gani-properties">Table of Constantinou and Gani properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#equations-for-constantinou-and-gani-properties">Equations for Constantinou and Gani properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_contribution_methods.html#nannoolal">Nannoolal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#table-of-nannoolal-properties">Table of Nannoolal properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#equations-for-nannoolal-properties">Equations for Nannoolal properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#nannoolal-decomposition">Nannoolal decomposition</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_contribution_methods.html#unifac">UNIFAC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#table-of-unifac-properties">Table of UNIFAC properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#equations-for-unifac-properties">Equations for UNIFAC properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#unifac-decomposition">UNIFAC decomposition</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_contribution_methods.html#boehm">Boehm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#table-of-boehm-properties">Table of Boehm properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_contribution_methods.html#equations-for-boehm-properties">Equations for Boehm properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_contribution_methods.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference_compounds.html">Reference Compounds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference_compounds.html#reference-property-data">Reference Property Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference_compounds.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="correlations.html">Correlations and Mixture Rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="correlations.html#notation">Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="correlations.html#individual-component-properties-fuellib-correlate-components">Individual component properties (<code class="docutils literal notranslate"><span class="pre">fuellib.correlate.components</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#kinematic-viscosity">Kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#enthalpy-of-vaporization">Enthalpy of vaporization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#liquid-molar-volume">Liquid molar volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#density">Density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#specific-heat-capacity">Specific heat capacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#vapor-pressure">Vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#vapor-pressure-antoine-coefficients">Vapor pressure (Antoine coefficients)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#surface-tension">Surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#thermal-conductivity">Thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#flash-point">Flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#lower-heating-value">Lower heating value</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="correlations.html#mixture-properties-fuellib-correlate-mixture">Mixture properties (<code class="docutils literal notranslate"><span class="pre">fuellib.correlate.mixture</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#conventional-mixing-rules">Conventional mixing rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-density">Mixture density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-kinematic-viscosity">Mixture kinematic viscosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-vapor-pressure">Mixture vapor pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-vapor-pressure-antoine-coefficients">Mixture vapor pressure (Antoine coefficients)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-surface-tension">Mixture surface tension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-thermal-conductivity">Mixture thermal conductivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-freeze-point">Mixture freeze point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-flash-point">Mixture flash point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-heat-of-combustion">Mixture heat of combustion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-yield-sooting-index">Mixture yield sooting index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-smoke-point">Mixture smoke point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-derived-cetane-number">Mixture derived cetane number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-aromatics-content">Mixture aromatics content</a></li>
+<li class="toctree-l3"><a class="reference internal" href="correlations.html#mixture-naphthalenes-content">Mixture naphthalenes content</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="correlations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation_distillation.html">Distillation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#model">Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#apparatus-parameters">Apparatus parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#pure-compound-properties">Pure-compound properties</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#vapor-pressure">Vapor pressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#heat-capacities">Heat capacities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#cross-critical-properties">Cross critical properties</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#initial-state">Initial state</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#initial-charge">Initial charge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#phase-equilibrium">Phase equilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#vapor-fugacity-coefficients">Vapor fugacity coefficients</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#bubble-point">Bubble point</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#initial-heating-rate">Initial heating rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#warm-up">Warm-up</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#id7">Distillation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#time-step">Time step</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#stage-1-distillation-flask">Stage 1: distillation flask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#stage-2-mixing-stage">Stage 2: mixing stage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#natural-convection-from-the-vertical-tube">Natural convection from the vertical tube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#solution-of-stages-1-and-2">Solution of stages 1 and 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#flash">Flash</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#stage-3-air-filled-cstr">Stage 3: air-filled CSTR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simulation_distillation.html#heating-rate-control">Heating-rate control</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#differences-from-greenfield-et-al">Differences from Greenfield et al.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_distillation.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_basic.html">Introduction and Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#download-and-setup">Download and Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#required-input-files">Required Input Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#decomposing-fuel-components-into-fundamental-groups">Decomposing Fuel Components into Fundamental Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_basic.html#basic-usage">Basic Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_cli.html">Command-Line Interface (CLI) Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#unit-conversion-tools">Unit Conversion Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#fuel-management">Fuel Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#smiles-decomposition">SMILES Decomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#simulations">Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#export-for-cfd">Export for CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_cli.html#developer-tools">Developer Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_custom_fuels.html">Adding Custom Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#gcxgc-composition-data">GCxGC Composition Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#reference-compounds-and-group-decompositions">Reference Compounds and Group Decompositions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#using-custom-fuels">Using Custom Fuels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_custom_fuels.html#tips-and-best-practices">Tips and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_distillation.html">Simulating Distillation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_distillation.html#simulating-a-d86-curve">Simulating a D86 curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_distillation.html#model-variants-and-apparatus-parameters">Model variants and apparatus parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_distillation.html#plotting-and-comparing-curves">Plotting and comparing curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_distillation.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_export_pele.html">Exporting Properties for Pele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#additional-options">Additional Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#liquid-species-deposit-to-single-gas-phase-species">Liquid Species Deposit to Single Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#liquid-species-deposit-to-specific-gas-phase-species">Liquid Species Deposit to Specific Gas-Phase Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#export-liquid-fuel-as-single-mixture-species">Export Liquid Fuel as Single Mixture Species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_pele.html#exporting-properties-for-the-mp-model-in-pele">Exporting Properties for the MP Model in Pele</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials_export_converge.html">Exporting Properties for Converge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_converge.html#default-options">Default Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials_export_converge.html#additional-options">Additional Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#single-component-fuels">Single Component Fuels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#multicomponent-fuels">Multicomponent Fuels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="validation.html#fuel-blends">Fuel blends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="source_code.html">Source Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source_code.html#units">Units</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="source_code.html#basic-example">Basic example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source_code.html#type-annotations">Type annotations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="source_code.html#gcm-registry">GCM Registry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="source_code.html#registry-classes">Registry classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source_code.html#registering-a-new-property">Registering a new property</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source_code.html#fuel-integration"><code class="docutils literal notranslate"><span class="pre">Fuel</span></code> integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="source_code.html#public-api">Public API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.correlate.html">correlate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.correlate.components.html">components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.correlate.helpers.html">helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.correlate.mixture.html">mixture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.exporters.html">exporters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.exporters.converge.html">converge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.exporters.pele.html">pele</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.fuel.html">fuel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.fuel.components.html">components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.fuel.core.html">core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.fuel.mixture.html">mixture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.gcm.html">gcm</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.gcm.boehm.html">boehm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.gcm.core.html">core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.gcm.gani.html">gani</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.gcm.nannoolal.html">nannoolal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.gcm.unifac.html">unifac</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.rdk.html">rdk</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.rdk.mol.html">mol</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.simulate.html">simulate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.simulate.distillation.html">distillation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generated/fuellib.utils.html">utils</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.utils.color_maps.html">color_maps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.utils.constants.html">constants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.utils.plotting.html">plotting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.utils.types.html">types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/fuellib.utils.utility.html">utility</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#optional-conda-environment">Optional: Conda Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#pre-commit-hooks">Pre-commit Hooks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#optional-uv">Optional: uv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#developer-tasks">Developer Tasks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#working-with-units-pint">Working with Units (pint)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#code-style-and-naming">Code Style and Naming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#updating-the-changelog">Updating the Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#contributing-guidelines">Contributing Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#building-and-viewing-documentation-locally">Building and Viewing Documentation Locally</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#releasing">Releasing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="contributing.html#release-security-setup-repository-administrator">Release security setup (repository administrator)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FuelLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fuel Property Prediction Framework</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/prediction_framework.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fuel-property-prediction-framework">
+<h1>Fuel Property Prediction Framework<a class="headerlink" href="#fuel-property-prediction-framework" title="Link to this heading"></a></h1>
+<p>FuelLib predicts the properties of fuels from their composition. Fuels such as
+synthetic aviation turbine fuels (SATFs) are complex mixtures, and measured
+property data are often limited. FuelLib combines group contribution methods
+(GCMs), measured data for pure compounds, correlations, and mixture rules to
+estimate the properties of a fuel without extensive physical testing. This
+helps fuel developers identify promising fuel compositions before committing to
+large-scale production.</p>
+<p>FuelLib builds on
+<a class="reference external" href="https://github.com/gpavanb-old/GroupContribution">Pavan B. Govindaraju’s Matlab implementation</a>
+of the Constantinou-Gani GCM<a class="footnote-reference brackets" href="#footcite-govindaraju-group-2016" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, and
+includes gas chromatography data (GCxGC) for various jet fuels from the
+National Jet Fuel Combustion Program<a class="footnote-reference brackets" href="#footcite-colket-overview-2017" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>
+(NJFCP), the Air Force Research
+Laboratory<a class="footnote-reference brackets" href="#footcite-edwards-reference-2017" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-edwards-jet-2020" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> (AFRL), and
+Vozka et al.<a class="footnote-reference brackets" href="#footcite-vozka-impact-2018" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>.</p>
+<section id="fuellib-s-property-prediction-methodology">
+<span id="sec-prediction-methodology"></span><h2>FuelLib’s property prediction methodology<a class="headerlink" href="#fuellib-s-property-prediction-methodology" title="Link to this heading"></a></h2>
+<p>FuelLib predicts the properties of a fuel in four steps.</p>
+<ol class="arabic simple">
+<li><p><strong>Fuels are represented as a collection of individual compounds based on
+their GCxGC data bins.</strong> GCxGC analysis reports the weight percent of each
+hydrocarbon family and carbon number in a sample (e.g., 5% C10 isoalkane).
+FuelLib assigns pseudo compounds for each bin. This is generally a single
+compound per bin, but users can choose to distribute the weight percent of a
+bin across multiple compounds. FuelLib includes a selection of common
+<a class="reference internal" href="reference_compounds.html"><span class="doc">reference compounds</span></a>, and users can provide
+compounds as SMILES strings as well. The weight percents of the compounds
+become the initial mass fractions, <a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.y0" title="fuellib.fuel.core.Fuel.y0"><code class="xref py py-attr docutils literal notranslate"><span class="pre">y0</span></code></a>.</p></li>
+<li><p><strong>GCMs or measurement data predict the properties of individual compounds,
+typically at 298 K and 1 atm.</strong> Measured properties of pure compounds are
+used when they are available (see <a class="reference internal" href="reference_compounds.html#sec-reference-properties"><span class="std std-ref">Reference Property Data</span></a>).
+Otherwise, the properties are predicted from the groups that make up each
+compound with one of the <a class="reference internal" href="group_contribution_methods.html"><span class="doc">Group Contribution Methods</span></a>.</p></li>
+<li><p><strong>Correlations predict the properties of individual compounds at other
+conditions.</strong> The standard-condition properties are inputs to correlations
+for temperature-dependent properties such as density, viscosity, vapor
+pressure, and surface tension (see <a class="reference internal" href="correlations.html#eq-gcm-correlations"><span class="std std-ref">Individual component properties (fuellib.correlate.components)</span></a>).</p></li>
+<li><p><strong>Mixture rules predict the properties of the mixture.</strong> The compound
+properties are combined with mixture rules weighted by the mass or mole
+fraction of each compound (see <a class="reference internal" href="correlations.html#eq-mixture-properties"><span class="std std-ref">Mixture properties (fuellib.correlate.mixture)</span></a>).</p></li>
+</ol>
+<p>The table below summarizes the source of each compound property at standard
+conditions.</p>
+<span id="tab-property-sources"></span><table class="docutils align-center" id="id16">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Sources of the compound properties at standard conditions.</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 55.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Source</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Critical properties, boiling and melting points, enthalpies of formation and vaporization, liquid molar volume, and acentric factor</p></td>
+<td><p>Reference data when available, otherwise the Constantinou-Gani GCM<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-constantinou-estimation-1995" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gibbs free energy of formation and specific heat capacity</p></td>
+<td><p>Constantinou-Gani GCM<a class="footnote-reference brackets" href="#footcite-constantinou-new-1994" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-nielsen-molecular-1998" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-poling-properties-2001" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Viscosity parameters</p></td>
+<td><p>Nannoolal GCM<a class="footnote-reference brackets" href="#footcite-nannoolal-estimation-2009" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Volume and surface parameters, activity coefficients</p></td>
+<td><p>UNIFAC 2.0<a class="footnote-reference brackets" href="#footcite-hayer-advancing-2025" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Entropy of fusion</p></td>
+<td><p>Boehm GCM<a class="footnote-reference brackets" href="#footcite-boehm-blend-2022" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Yield sooting index and derived cetane number</p></td>
+<td><p>Reference data only. Yield sooting indices are primarily from the Yield Sooting Index Database<a class="footnote-reference brackets" href="#footcite-mcenally-yield-2017" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Molecular weight, atom counts, and hydrocarbon type</p></td>
+<td><p><a class="reference external" href="https://www.rdkit.org">RDKit</a>, from the SMILES string.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="notation">
+<span id="sec-notation"></span><h3>Notation<a class="headerlink" href="#notation" title="Link to this heading"></a></h3>
+<p>A tilde denotes a molar property (e.g., <span class="math notranslate nohighlight">\(\tilde{C}_{p,i}\)</span> in J/mol/K and
+<span class="math notranslate nohighlight">\(\Delta\tilde{H}_{v,i}\)</span> in J/mol), while the same symbol without a tilde
+denotes the corresponding mass-based property (e.g., <span class="math notranslate nohighlight">\(C_{p,i}\)</span> in J/kg/K
+and <span class="math notranslate nohighlight">\(\Delta H_{v,i}\)</span> in J/kg). The subscript <em>i</em> denotes the <em>i-th</em>
+compound in a mixture. The group-contribution parameters (e.g.,
+<span class="math notranslate nohighlight">\(h_{v1k}\)</span>) follow the notation of the original publications.</p>
+</section>
+</section>
+<section id="the-fuel-class">
+<span id="sec-fuel-class"></span><h2>The Fuel Class<a class="headerlink" href="#the-fuel-class" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel" title="fuellib.fuel.core.Fuel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fuel</span></code></a> objects wrap around multiple GCMs,
+correlations, and mixture rules, and are the easiest way to access fuel
+properties. A fuel is created from the name of its GCxGC data file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fuellib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fuel</span><span class="p">,</span> <span class="n">Units</span>
+
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">Fuel</span><span class="p">(</span><span class="s2">"posf10325"</span><span class="p">)</span>
+<span class="n">temp</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">300.0</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">)</span>
+
+<span class="n">fuel</span><span class="o">.</span><span class="n">num_compounds</span>          <span class="c1"># number of compounds</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">comps</span><span class="o">.</span><span class="n">tc</span>               <span class="c1"># critical temperature of each compound</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">comps</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>        <span class="c1"># density of each compound at 300 K</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">mix</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="n">fuel</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span> <span class="c1"># mixture density at 300 K</span>
+</pre></div>
+</div>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">use_ref_props=False</span></code> to use only GCM predictions, or <code class="docutils literal notranslate"><span class="pre">data_dir</span></code> to
+use custom fuels and reference compounds (see <a class="reference internal" href="tutorials_custom_fuels.html"><span class="doc">Adding Custom Fuels</span></a>).
+All quantities carry units (see <a class="reference internal" href="source_code.html#sec-units"><span class="std std-ref">Units</span></a>).</p>
+<section id="core-attributes-fuel-attribute">
+<h3>Core attributes (<code class="docutils literal notranslate"><span class="pre">Fuel.&lt;attribute&gt;</span></code>)<a class="headerlink" href="#core-attributes-fuel-attribute" title="Link to this heading"></a></h3>
+<p>The core attributes hold the input data and composition of the fuel.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.name" title="fuellib.fuel.core.Fuel.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Name of the fuel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.data_dir" title="fuellib.fuel.core.Fuel.data_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_dir</span></code></a></p></td>
+<td><p>Directory containing fuel data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.gc_data" title="fuellib.fuel.core.Fuel.gc_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gc_data</span></code></a></p></td>
+<td><p>GCxGC data as a DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.components_data" title="fuellib.fuel.core.Fuel.components_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">components_data</span></code></a></p></td>
+<td><p>Matched components data with reference compounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.prop_data" title="fuellib.fuel.core.Fuel.prop_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prop_data</span></code></a></p></td>
+<td><p>Property data for the fuel/mixture, if available.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.metadata" title="fuellib.fuel.core.Fuel.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></td>
+<td><p>Fuel metadata, if available.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.y0" title="fuellib.fuel.core.Fuel.y0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y0</span></code></a></p></td>
+<td><p>Normalized weight fractions from the GCxGC data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.x0" title="fuellib.fuel.core.Fuel.x0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x0</span></code></a></p></td>
+<td><p>Normalized mole fractions from the GCxGC data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.num_compounds" title="fuellib.fuel.core.Fuel.num_compounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_compounds</span></code></a></p></td>
+<td><p>Number of components in the fuel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.comps" title="fuellib.fuel.core.Fuel.comps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comps</span></code></a></p></td>
+<td><p>Components attribute for the fuel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.mix" title="fuellib.fuel.core.Fuel.mix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mix</span></code></a></p></td>
+<td><p>Mixture attribute for the fuel.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="individual-compound-properties-fuel-comps-att-method">
+<h3>Individual compound properties (<code class="docutils literal notranslate"><span class="pre">Fuel.comps.&lt;att-method&gt;</span></code>)<a class="headerlink" href="#individual-compound-properties-fuel-comps-att-method" title="Link to this heading"></a></h3>
+<p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.comps" title="fuellib.fuel.core.Fuel.comps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Fuel.comps</span></code></a> is a
+<a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components" title="fuellib.fuel.components.Components"><code class="xref py py-class docutils literal notranslate"><span class="pre">Components</span></code></a> object. Its attributes are
+properties at standard conditions or structural properties, which are computed
+the first time they are accessed. Its methods evaluate properties at a given
+temperature with the <a class="reference internal" href="correlations.html#eq-gcm-correlations"><span class="std std-ref">Individual component properties (fuellib.correlate.components)</span></a>, or convert between mass, mole,
+and volume fractions. Each returns one value per compound.</p>
+<p><strong>Attributes</strong></p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.tc" title="fuellib.fuel.components.Components.tc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tc</span></code></a></p></td>
+<td><p>Critical temperature of the fuel components in K.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.pc" title="fuellib.fuel.components.Components.pc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pc</span></code></a></p></td>
+<td><p>Critical pressure of the fuel components in Pa.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.vc" title="fuellib.fuel.components.Components.vc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vc</span></code></a></p></td>
+<td><p>Critical molar volume of the fuel components in m^3/mol.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.tm" title="fuellib.fuel.components.Components.tm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tm</span></code></a></p></td>
+<td><p>Melting point of the fuel components in K.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.tb" title="fuellib.fuel.components.Components.tb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tb</span></code></a></p></td>
+<td><p>Boiling point of the fuel components in K.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.hf_stp" title="fuellib.fuel.components.Components.hf_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hf_stp</span></code></a></p></td>
+<td><p>Enthalpy of formation (at STP) of the fuel components in J/mol.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.hv_stp" title="fuellib.fuel.components.Components.hv_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hv_stp</span></code></a></p></td>
+<td><p>Enthalpy of vaporization (at STP) of the fuel components in J/mol.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.vm_stp" title="fuellib.fuel.components.Components.vm_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vm_stp</span></code></a></p></td>
+<td><p>Molar volume (at STP) of the fuel components in m^3/mol.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.omega" title="fuellib.fuel.components.Components.omega"><code class="xref py py-obj docutils literal notranslate"><span class="pre">omega</span></code></a></p></td>
+<td><p>Acentric factor of the fuel components (dimensionless).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.ysi" title="fuellib.fuel.components.Components.ysi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ysi</span></code></a></p></td>
+<td><p>Yield Sooting Index (YSI) of the fuel components (dimensionless).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.dcn" title="fuellib.fuel.components.Components.dcn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dcn</span></code></a></p></td>
+<td><p>Derived cetane number (DCN) of the fuel components (dimensionless).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.gf_stp" title="fuellib.fuel.components.Components.gf_stp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gf_stp</span></code></a></p></td>
+<td><p>Gibbs free energy of formation (at STP) of the components in J/mol.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.lj_eps_by_kb" title="fuellib.fuel.components.Components.lj_eps_by_kb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lj_eps_by_kb</span></code></a></p></td>
+<td><p>Lennard-Jones potential well depth divided by Boltzmann constant in K.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.lj_sigma" title="fuellib.fuel.components.Components.lj_sigma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lj_sigma</span></code></a></p></td>
+<td><p>Lennard-Jones collision diameter of the fuel components in m.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.names" title="fuellib.fuel.components.Components.names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">names</span></code></a></p></td>
+<td><p>Reference compound names of the fuel components.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.smiles" title="fuellib.fuel.components.Components.smiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smiles</span></code></a></p></td>
+<td><p>SMILES strings of the fuel components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.pelephysics_keys" title="fuellib.fuel.components.Components.pelephysics_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pelephysics_keys</span></code></a></p></td>
+<td><p>PelePhysics species keys of the fuel components, if in the GCxGC data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.rdkit_mols" title="fuellib.fuel.components.Components.rdkit_mols"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdkit_mols</span></code></a></p></td>
+<td><p>RDKit <cite>Mol</cite> objects for the fuel components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.num_c" title="fuellib.fuel.components.Components.num_c"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_c</span></code></a></p></td>
+<td><p>Number of carbon atoms in each fuel component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.num_h" title="fuellib.fuel.components.Components.num_h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_h</span></code></a></p></td>
+<td><p>Number of hydrogen atoms in each fuel component.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.mw" title="fuellib.fuel.components.Components.mw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mw</span></code></a></p></td>
+<td><p>Molecular weights of the fuel components in kg/mol.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.formulas" title="fuellib.fuel.components.Components.formulas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">formulas</span></code></a></p></td>
+<td><p>Molecular formulas of the fuel components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.hc_type" title="fuellib.fuel.components.Components.hc_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hc_type</span></code></a></p></td>
+<td><p>Hydrocarbon type of each fuel component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.fam" title="fuellib.fuel.components.Components.fam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fam</span></code></a></p></td>
+<td><p>Hydrocarbon family codes for thermal conductivity.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods</strong></p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.rho" title="fuellib.fuel.components.Components.rho"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rho</span></code></a></p></td>
+<td><p>Calculate the density of each component at a given temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.nu" title="fuellib.fuel.components.Components.nu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nu</span></code></a></p></td>
+<td><p>Calculate component kinematic viscosity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.mu" title="fuellib.fuel.components.Components.mu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mu</span></code></a></p></td>
+<td><p>Calculate component dynamic viscosity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.cp" title="fuellib.fuel.components.Components.cp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp</span></code></a></p></td>
+<td><p>Compute specific heat capacity at a given temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.pvap" title="fuellib.fuel.components.Components.pvap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pvap</span></code></a></p></td>
+<td><p>Compute vapor pressure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.pvap_antoine_coeffs" title="fuellib.fuel.components.Components.pvap_antoine_coeffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pvap_antoine_coeffs</span></code></a></p></td>
+<td><p>Estimate Antoine coefficients for vapor pressure of each compound.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.vm" title="fuellib.fuel.components.Components.vm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vm</span></code></a></p></td>
+<td><p>Compute molar liquid volume with temperature correction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.hv" title="fuellib.fuel.components.Components.hv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hv</span></code></a></p></td>
+<td><p>Calculate enthalpy of vaporization adjusted for temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.d" title="fuellib.fuel.components.Components.d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">d</span></code></a></p></td>
+<td><p>Compute diffusion coefficients using Lennard-Jones parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.sigma" title="fuellib.fuel.components.Components.sigma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code></a></p></td>
+<td><p>Calculate surface tension of each compound at a given temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.k" title="fuellib.fuel.components.Components.k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code></a></p></td>
+<td><p>Calculate thermal conductivity at a given temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.t_flash" title="fuellib.fuel.components.Components.t_flash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_flash</span></code></a></p></td>
+<td><p>Calculate flash point of each compound.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.mass2y" title="fuellib.fuel.components.Components.mass2y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass2y</span></code></a></p></td>
+<td><p>Convert mass of each component to mass fractions (yi).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.mass2x" title="fuellib.fuel.components.Components.mass2x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass2x</span></code></a></p></td>
+<td><p>Convert mass of each component to mole fractions (xi).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.x2y" title="fuellib.fuel.components.Components.x2y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x2y</span></code></a></p></td>
+<td><p>Convert mole fractions (xi) to mass fractions (yi).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.y2x" title="fuellib.fuel.components.Components.y2x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y2x</span></code></a></p></td>
+<td><p>Convert mass fractions (yi) to mole fractions (xi).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.components.Components.html#fuellib.fuel.components.Components.y2v" title="fuellib.fuel.components.Components.y2v"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y2v</span></code></a></p></td>
+<td><p>Convert mass fractions (yi) to volume fractions (vi).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mixture-properties-fuel-mix-method">
+<h3>Mixture properties (<code class="docutils literal notranslate"><span class="pre">Fuel.mix.&lt;method&gt;</span></code>)<a class="headerlink" href="#mixture-properties-fuel-mix-method" title="Link to this heading"></a></h3>
+<p><a class="reference internal" href="generated/fuellib.fuel.core.Fuel.html#fuellib.fuel.core.Fuel.mix" title="fuellib.fuel.core.Fuel.mix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Fuel.mix</span></code></a> is a
+<a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture" title="fuellib.fuel.mixture.Mixture"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mixture</span></code></a> object. Its methods take the mass
+fractions of the compounds, <code class="docutils literal notranslate"><span class="pre">yi</span></code>, and return a single value for the mixture
+with the <a class="reference internal" href="correlations.html#eq-mixture-properties"><span class="std std-ref">Mixture properties (fuellib.correlate.mixture)</span></a>.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.rho" title="fuellib.fuel.mixture.Mixture.rho"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rho</span></code></a></p></td>
+<td><p>Calculate mixture density at a given temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.nu" title="fuellib.fuel.mixture.Mixture.nu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nu</span></code></a></p></td>
+<td><p>Calculate kinematic viscosity of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.mu" title="fuellib.fuel.mixture.Mixture.mu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mu</span></code></a></p></td>
+<td><p>Calculate dynamic viscosity of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.pvap" title="fuellib.fuel.mixture.Mixture.pvap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pvap</span></code></a></p></td>
+<td><p>Calculate vapor pressure of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs" title="fuellib.fuel.mixture.Mixture.pvap_antoine_coeffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pvap_antoine_coeffs</span></code></a></p></td>
+<td><p>Estimate Antoine coefficients for vapor pressure of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.sigma" title="fuellib.fuel.mixture.Mixture.sigma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code></a></p></td>
+<td><p>Calculate surface tension of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.k" title="fuellib.fuel.mixture.Mixture.k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code></a></p></td>
+<td><p>Calculate thermal conductivity of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.mw" title="fuellib.fuel.mixture.Mixture.mw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mw</span></code></a></p></td>
+<td><p>Calculate the mean molecular weight of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.t_freeze" title="fuellib.fuel.mixture.Mixture.t_freeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_freeze</span></code></a></p></td>
+<td><p>Calculate freeze point of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.t_flash" title="fuellib.fuel.mixture.Mixture.t_flash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_flash</span></code></a></p></td>
+<td><p>Calculate flash point of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.lhv" title="fuellib.fuel.mixture.Mixture.lhv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lhv</span></code></a></p></td>
+<td><p>Calculate heat of combustion (lower heating value) of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.ysi" title="fuellib.fuel.mixture.Mixture.ysi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ysi</span></code></a></p></td>
+<td><p>Calculate yield sooting index of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.smoke_point" title="fuellib.fuel.mixture.Mixture.smoke_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smoke_point</span></code></a></p></td>
+<td><p>Calculate smoke point of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.dcn" title="fuellib.fuel.mixture.Mixture.dcn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dcn</span></code></a></p></td>
+<td><p>Calculate derived cetane number of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.aromatics" title="fuellib.fuel.mixture.Mixture.aromatics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aromatics</span></code></a></p></td>
+<td><p>Calculate aromatics content of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fuellib.fuel.mixture.Mixture.html#fuellib.fuel.mixture.Mixture.naphthalenes" title="fuellib.fuel.mixture.Mixture.naphthalenes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">naphthalenes</span></code></a></p></td>
+<td><p>Calculate naphthalenes content of the mixture.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div class="docutils container" id="id15">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-govindaraju-group-2016" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Pavan B. Govindaraju and Matthias Ihme. Group contribution method for multicomponent evaporation with application to transportation fuels. <em>International Journal of Heat and Mass Transfer</em>, 102:833–845, November 2016. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S0017931016309887">https://linkinghub.elsevier.com/retrieve/pii/S0017931016309887</a> (visited on 2024-07-01), <a class="reference external" href="https://doi.org/10.1016/j.ijheatmasstransfer.2016.06.079">doi:10.1016/j.ijheatmasstransfer.2016.06.079</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-colket-overview-2017" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Meredith Colket, Joshua Heyne, Mark Rumizen, Mohan Gupta, Tim Edwards, William M. Roquemore, Gurhan Andac, Randy Boehm, Jeffery Lovett, Randy Williams, Jamey Condevaux, David Turner, Nader Rizk, Julian Tishkoff, Chiping Li, Jeff Moder, Daniel Friend, and Vaidya Sankaran. Overview of the National Jet Fuels Combustion Program. <em>AIAA Journal</em>, 55(4):1087–1104, April 2017. URL: <a class="reference external" href="https://arc.aiaa.org/doi/10.2514/1.J055361">https://arc.aiaa.org/doi/10.2514/1.J055361</a> (visited on 2025-01-28), <a class="reference external" href="https://doi.org/10.2514/1.J055361">doi:10.2514/1.J055361</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-edwards-reference-2017" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>James T. Edwards. Reference Jet Fuels for Combustion Testing. In <em>55th AIAA Aerospace Sciences Meeting</em>. Grapevine, Texas, January 2017. American Institute of Aeronautics and Astronautics. URL: <a class="reference external" href="https://arc.aiaa.org/doi/10.2514/6.2017-0146">https://arc.aiaa.org/doi/10.2514/6.2017-0146</a> (visited on 2025-01-17), <a class="reference external" href="https://doi.org/10.2514/6.2017-0146">doi:10.2514/6.2017-0146</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-edwards-jet-2020" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>James T. Edwards. Jet Fuel Properties. Technical Report AFRL-RQ-WP-TR-2020-0017, Air Force Research Laboratory, Wright-Patterson Air Force Base, OH 45433, 2020. URL: <a class="reference external" href="https://apps.dtic.mil/sti/pdfs/AD1093317.pdf">https://apps.dtic.mil/sti/pdfs/AD1093317.pdf</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-vozka-impact-2018" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">5</a><span class="fn-bracket">]</span></span>
+<p>Petr Vozka, Pavel Šimáček, and Gozdem Kilaz. Impact of HEFA Feedstocks on Fuel Composition and Properties in Blends with Jet A. <em>Energy &amp; Fuels</em>, 32(11):11595–11606, November 2018. URL: <a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.energyfuels.8b02787">https://pubs.acs.org/doi/10.1021/acs.energyfuels.8b02787</a> (visited on 2025-06-27), <a class="reference external" href="https://doi.org/10.1021/acs.energyfuels.8b02787">doi:10.1021/acs.energyfuels.8b02787</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-constantinou-new-1994" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id8">2</a>)</span>
+<p>Leonidas Constantinou and Rafiqul Gani. New group contribution method for estimating properties of pure compounds. <em>AIChE Journal</em>, 40(10):1697–1710, October 1994. URL: <a class="reference external" href="https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690401011">https://aiche.onlinelibrary.wiley.com/doi/10.1002/aic.690401011</a> (visited on 2024-07-08), <a class="reference external" href="https://doi.org/10.1002/aic.690401011">doi:10.1002/aic.690401011</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-constantinou-estimation-1995" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">7</a><span class="fn-bracket">]</span></span>
+<p>Leonidas Constantinou, Rafiqul Gani, and John P. O’Connell. Estimation of the acentric factor and the liquid molar volume at 298 K using a new group contribution method. <em>Fluid Phase Equilibria</em>, 103(1):11–22, January 1995. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/037838129402593P">https://linkinghub.elsevier.com/retrieve/pii/037838129402593P</a> (visited on 2024-07-08), <a class="reference external" href="https://doi.org/10.1016/0378-3812(94)02593-P">doi:10.1016/0378-3812(94)02593-P</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-nielsen-molecular-1998" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">8</a><span class="fn-bracket">]</span></span>
+<p>T.L. Nielsen. Molecular Structure Based Property Prediction, 15-point Project Department of Chemical Engineering. <em>Technical University of Denmark Lyngby</em>, 1998.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-poling-properties-2001" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">9</a><span class="fn-bracket">]</span></span>
+<p>Bruce E. Poling, John M. Prausnitz, and John P. O’Connell. <em>The properties of gases and liquids</em>. McGraw-Hill international editions Chemical engineering series. McGraw-Hill, New York, NY, 5. ed edition, 2001. ISBN 978-0-07-011682-5 978-0-07-118971-2. URL: <a class="reference external" href="https://www.accessengineeringlibrary.com/content/book/9780070116825?implicit-login=true">https://www.accessengineeringlibrary.com/content/book/9780070116825?implicit-login=true</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-nannoolal-estimation-2009" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">10</a><span class="fn-bracket">]</span></span>
+<p>Yash Nannoolal, Jürgen Rarey, and Deresh Ramjugernath. Estimation of pure component properties. Part 4: Estimation of the saturated liquid viscosity of non-electrolyte organic compounds via group contributions and group interactions. <em>Fluid Phase Equilibria</em>, 281(2):97–119, July 2009. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S0378381209000624">https://linkinghub.elsevier.com/retrieve/pii/S0378381209000624</a> (visited on 2026-10-19), <a class="reference external" href="https://doi.org/10.1016/j.fluid.2009.02.016">doi:10.1016/j.fluid.2009.02.016</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-hayer-advancing-2025" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">11</a><span class="fn-bracket">]</span></span>
+<p>Nicolas Hayer, Thorsten Wendel, Stephan Mandt, Hans Hasse, and Fabian Jirasek. Advancing thermodynamic group-contribution methods by machine learning: UNIFAC 2.0. <em>Chemical Engineering Journal</em>, 504:158667, January 2025. URL: <a class="reference external" href="https://linkinghub.elsevier.com/retrieve/pii/S1385894724101581">https://linkinghub.elsevier.com/retrieve/pii/S1385894724101581</a> (visited on 2026-10-22), <a class="reference external" href="https://doi.org/10.1016/j.cej.2024.158667">doi:10.1016/j.cej.2024.158667</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-boehm-blend-2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">12</a><span class="fn-bracket">]</span></span>
+<p>Randall C. Boehm, Allison A. Coburn, Zhibin Yang, C. Taber Wanstall, and Joshua S. Heyne. Blend Prediction Model for the Freeze Point of Jet Fuel Range Hydrocarbons. <em>Energy &amp; Fuels</em>, 36(19):12046–12053, October 2022. URL: <a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.energyfuels.2c02063">https://pubs.acs.org/doi/10.1021/acs.energyfuels.2c02063</a>, <a class="reference external" href="https://doi.org/10.1021/acs.energyfuels.2c02063">doi:10.1021/acs.energyfuels.2c02063</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-mcenally-yield-2017" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">13</a><span class="fn-bracket">]</span></span>
+<p>Charles S. McEnally, Dhrubajyoti D. Das, and Lisa D. Pfefferle. Yield Sooting Index Database Volume 2: Sooting Tendencies of a Wide Range of Fuel Compounds on a Unified Scale. 2017. Artwork Size: 62275, 29432, 15822, 141258 Pages: 62275, 29432, 15822, 141258. URL: <a class="reference external" href="https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/7HGFT8">https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/7HGFT8</a> (visited on 2026-10-13), <a class="reference external" href="https://doi.org/10.7910/DVN/7HGFT8">doi:10.7910/DVN/7HGFT8</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="group_contribution_methods.html" class="btn btn-neutral float-right" title="Group Contribution Methods" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 Alliance for Energy Innovation, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

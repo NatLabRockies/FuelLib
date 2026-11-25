@@ -1,0 +1,6 @@
+lower\_heating\_value
+=====================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: lower_heating_value

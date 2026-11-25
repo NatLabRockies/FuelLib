@@ -1,0 +1,48 @@
+gani
+====
+
+Module ``fuellib.gcm.gani``
+
+.. automodule:: fuellib.gcm.gani
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      GaniDecomposer
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      alibakhshi_phi
+      cp_b
+      cp_c
+      cp_stp
+      gf
+      hf
+      hv_stp
+      omega
+      pc
+      rd_a
+      rd_b
+      rd_d
+      tb
+      tc
+      tm
+      vc
+      vm_stp
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      gani_gcm
+      decompose
+   

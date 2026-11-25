@@ -1,0 +1,6 @@
+has\_double\_bond
+=================
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: has_double_bond

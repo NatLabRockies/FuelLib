@@ -1,0 +1,6 @@
+has\_naphthalene
+================
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: has_naphthalene

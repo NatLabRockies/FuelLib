@@ -1,0 +1,6 @@
+dbv
+===
+
+.. currentmodule:: fuellib.gcm.nannoolal
+
+.. autofunction:: dbv

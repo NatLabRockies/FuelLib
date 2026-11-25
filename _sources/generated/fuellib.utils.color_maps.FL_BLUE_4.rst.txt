@@ -1,0 +1,6 @@
+FL\_BLUE\_4
+===========
+
+.. currentmodule:: fuellib.utils.color_maps
+
+.. autodata:: FL_BLUE_4

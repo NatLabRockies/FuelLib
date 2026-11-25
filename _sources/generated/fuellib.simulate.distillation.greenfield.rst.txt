@@ -1,0 +1,36 @@
+greenfield
+==========
+
+Module ``fuellib.simulate.distillation.greenfield``
+
+.. automodule:: fuellib.simulate.distillation.greenfield
+   :no-members:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      D86Apparatus
+      D86Result
+      Thermo
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      distill
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      N2_COEFFS
+      O2_COEFFS
+      CP_AIR
+      HEATING_TIME_CONSTANT
+   

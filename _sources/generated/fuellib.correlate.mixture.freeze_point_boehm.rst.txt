@@ -1,0 +1,6 @@
+freeze\_point\_boehm
+====================
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: freeze_point_boehm

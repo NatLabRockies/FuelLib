@@ -1,0 +1,6 @@
+gani\_gcm
+=========
+
+.. currentmodule:: fuellib.gcm.gani
+
+.. autodata:: gani_gcm

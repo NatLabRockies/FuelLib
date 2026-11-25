@@ -1,0 +1,6 @@
+thermal\_conductivity\_latini
+=============================
+
+.. currentmodule:: fuellib.correlate.components
+
+.. autofunction:: thermal_conductivity_latini

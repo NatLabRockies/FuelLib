@@ -1,0 +1,6 @@
+plot\_mixture\_properties
+=========================
+
+.. currentmodule:: fuellib.utils.plotting
+
+.. autofunction:: plot_mixture_properties

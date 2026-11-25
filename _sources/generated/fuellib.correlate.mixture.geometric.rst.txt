@@ -1,0 +1,6 @@
+geometric
+=========
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: geometric

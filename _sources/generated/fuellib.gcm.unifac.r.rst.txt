@@ -1,0 +1,6 @@
+r
+=
+
+.. currentmodule:: fuellib.gcm.unifac
+
+.. autofunction:: r

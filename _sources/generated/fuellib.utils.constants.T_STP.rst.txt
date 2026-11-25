@@ -1,0 +1,6 @@
+T\_STP
+======
+
+.. currentmodule:: fuellib.utils.constants
+
+.. autodata:: T_STP

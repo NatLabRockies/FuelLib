@@ -1,0 +1,6 @@
+parameters
+==========
+
+.. currentmodule:: fuellib.gcm.unifac
+
+.. autofunction:: parameters

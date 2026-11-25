@@ -1,0 +1,6 @@
+N\_A
+====
+
+.. currentmodule:: fuellib.utils.constants
+
+.. autodata:: N_A

@@ -1,0 +1,6 @@
+PRIMARY\_BLUE
+=============
+
+.. currentmodule:: fuellib.utils.color_maps
+
+.. autodata:: PRIMARY_BLUE

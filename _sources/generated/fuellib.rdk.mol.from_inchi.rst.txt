@@ -1,0 +1,6 @@
+from\_inchi
+===========
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: from_inchi

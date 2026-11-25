@@ -1,0 +1,6 @@
+unifac\_gcm
+===========
+
+.. currentmodule:: fuellib.gcm.unifac
+
+.. autodata:: unifac_gcm

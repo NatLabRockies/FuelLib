@@ -1,0 +1,6 @@
+arrhenius
+=========
+
+.. currentmodule:: fuellib.correlate.mixture
+
+.. autofunction:: arrhenius

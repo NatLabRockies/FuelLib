@@ -1,0 +1,6 @@
+molecular\_weight
+=================
+
+.. currentmodule:: fuellib.rdk.mol
+
+.. autofunction:: molecular_weight
