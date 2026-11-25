@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The [`keepachangelog`](https://pypi.org/project/keepachangelog/) package is used by the
 release workflow to parse release entries in this file.
 
+## [Unreleased]
+
 ## [4.0.1] - 2026-11-24
 
 ### Changed
