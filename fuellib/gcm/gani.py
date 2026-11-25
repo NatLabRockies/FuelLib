@@ -74,7 +74,7 @@ def _check_compatible_dims(
 
 
 # Groups organized by priority (highest to lowest)
-order1_groups = [
+_order1_groups = [
     ("ACCH3", "c-[CH3]"),
     ("ACCH2", "c-[CH2]"),
     ("ACCH", "c-[CH1]"),
@@ -92,7 +92,7 @@ order1_groups = [
     ("CH", "[CH1]"),
     ("C", "[CH0]"),
 ]
-order2_groups = [
+_order2_groups = [
     ("CH3CH3", "[CH3][CH3]"),
     ("CHn=CHm—CHp=CHk k,n,m,p in (0,2)", "[C;H0,H2]=[C;H0,H2][C;H0,H2]=[C;H0,H2]"),
     ("CH3-CHm=CH, m in (0,1), n in (0,2)", "[CH3][C;H0,H1]=[C;H0,H2]"),
@@ -123,7 +123,7 @@ class GaniDecomposer(Decomposer):
         matched: set[int] = set()
         counts: dict[str, int] = {}
 
-        for group, smarts in order2_groups:
+        for group, smarts in _order2_groups:
             query = self.parse_smarts(smiles, smarts)
             for match in mol.GetSubstructMatches(query):
                 if matched.intersection(match):
@@ -149,7 +149,7 @@ class GaniDecomposer(Decomposer):
 #: Decomposes a SMILES string into a single-row DataFrame of Gani group counts.
 #: An instance of :class:`GaniDecomposer`.
 #: :meta hide-value:
-decompose = GaniDecomposer("Gani", TABLE.columns, order1_groups)
+decompose = GaniDecomposer("Gani", TABLE.columns, _order1_groups)
 
 
 @gani_gcm.register_property

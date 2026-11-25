@@ -79,7 +79,7 @@ def _check_compatible_dims(
 
 
 # Groups organized by priority (highest to lowest)
-order1_groups = [
+_order1_groups = [
     ("ACCH3", "c-[CH3]"),
     ("ACCH2", "c-[CH2]"),
     ("ACCH", "c-[CH1]"),
@@ -99,7 +99,7 @@ order1_groups = [
 
 #: Decomposes a SMILES string into a single-row DataFrame of UNIFAC group counts.
 #: An instance of :class:`~fuellib.gcm.core.Decomposer`.
-decompose = Decomposer("UNIFAC", TABLE.columns, order1_groups)
+decompose = Decomposer("UNIFAC", TABLE.columns, _order1_groups)
 
 
 @unifac_gcm.register_property

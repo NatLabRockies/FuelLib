@@ -77,7 +77,7 @@ def _check_compatible_dims(
 E = "$(*~[#7,#8,F,Cl])"
 
 # (priority, Nannoolal group name, SMARTS); lower priority number = matched first
-order1_groups = [
+_order1_groups = [
     (5, ">C=C=C<", "[C]=[C]=[C]"),
     (6, ">C=C-C=C< (ring)", "[C]=@[C]-[C]=@[C]"),
     (7, ">C=C-C=C< (chain)", "[C]=!@[C]-[C]=!@[C]"),
@@ -113,7 +113,7 @@ order1_groups = [
 CC = "!$(*~[!#6;!#1])"
 
 # (Nannoolal group name, SMARTS); additive, so every unique match is counted
-order2_groups = [
+_order2_groups = [
     ("((C=)(C)C-CC3)", f"[#6X3;D3;{CC};$(*=,:[#6])]-[CX4;D4;{CC}]"),
     ("C2C-CC2", f"[CX4;D3;{CC}]-[CX4;D3;{CC}]"),
     ("C3C-CC2", f"[CX4;D4;{CC}]-[CX4;D3;{CC}]"),
@@ -139,7 +139,7 @@ class NannoolalDecomposer(Decomposer):
         """
         counts: dict[str, int] = {}
 
-        for group, smarts in order2_groups:
+        for group, smarts in _order2_groups:
             query = self.parse_smarts(smiles, smarts)
             if n_matches := len(mol.GetSubstructMatches(query)):
                 counts[group] = n_matches
@@ -188,7 +188,7 @@ class NannoolalDecomposer(Decomposer):
 decompose = NannoolalDecomposer(
     "Nannoolal",
     TABLE.index,
-    [(group, smarts) for _, group, smarts in sorted(order1_groups)],
+    [(group, smarts) for _, group, smarts in sorted(_order1_groups)],
 )
 
 
