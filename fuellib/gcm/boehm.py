@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from ..fuel import Fuel
 
 TABLE = pd.read_csv(Path(__file__).with_suffix(".csv"), header=0, index_col=0)
+#: Boehm (2022) group contribution method.
+#: An instance of :class:`~fuellib.gcm.core.GCM`.
 boehm_gcm = GCMRegistry.register("boehm", property_fns=[])
 
 #: Walden-rule fusion entropy fallback (J/(mol*K)) for unclassified compounds.

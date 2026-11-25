@@ -36,7 +36,7 @@ Each row of the GCxGC file is matched to a compound in the reference data tables
 
 Rows are matched by ``Reference Compound`` name first (case-insensitive) and then by the InChI derived from ``SMILES``. A ``ValueError`` listing the unmatched rows is raised if any GCxGC compound is missing from the reference tables, so new compounds must first be added to the reference tables (see the :doc:`Adding Custom Fuels <tutorials_custom_fuels>` tutorial). Many examples can be found in the `fuellib/data <https://github.com/NatLabRockies/FuelLib/tree/main/fuellib/data>`_ directory in the repository.
 
-Optionally, measured property data can be provided in ``properties_data/<fuel_name>.csv``. It is loaded into ``Fuel.prop_data`` and used for validation and plotting.
+Optionally, measured property data can be provided in ``properties_data/<fuel_name>.csv``. It is loaded into :attr:`Fuel.prop_data <fuellib.fuel.core.Fuel.prop_data>` and used for validation and plotting.
 
 Decomposing Fuel Components into Fundamental Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -84,6 +84,10 @@ the remaining branch with a single CH3 group bonded to a CH2 group is not define
 
 .. _Gani table: https://github.com/NatLabRockies/FuelLib/blob/main/fuellib/gcm/gani.csv
 
+
+
+.. _sec-basic-usage:
+
 Basic Usage
 ^^^^^^^^^^^
 
@@ -103,7 +107,7 @@ as ``basic.py``. To begin, we will import the necessary modules and create a ``f
 
 Upon initialization, the ``fuel`` object will read the GCxGC composition and match each compound to the 
 reference compound and group decomposition tables. Fundamental properties at standard conditions for each component 
-of the fuel (e.g., ``fuel.comps.tc``, ``fuel.comps.pc``, ``fuel.comps.tb``) are evaluated lazily on first access and returned as 
+of the fuel (e.g., :attr:`fuel.comps.tc <fuellib.fuel.components.Components.tc>`, :attr:`fuel.comps.pc <fuellib.fuel.components.Components.pc>`, :attr:`fuel.comps.tb <fuellib.fuel.components.Components.tb>`) are evaluated lazily on first access and returned as 
 vectors (pint quantities for unit checking), as described in :ref:`eq-GCM-properties`. When measured values for a 
 compound are available in ``ref_compounds.csv`` they are used in place of the group-contribution prediction 
 (see :ref:`sec-reference-properties`); pass ``use_ref_props=False`` to :class:`~fuellib.fuel.core.Fuel` to use only predictions.
@@ -124,10 +128,10 @@ For example, we can display the fuel name, the components in the fuel, the initi
     >> Initial composition: [0.7375 0.2625]
     >> Critical temperature: [549.86 623.69] K
 
-Note that the units for critical temperature are included as `fuel.comps.tc` returns a `pint.Quantity[np.ndarray]`. Next, we can calculate any of the component- or mixture-level properties using the 
-``fuel`` object: component properties are available through ``fuel.comps``
-(:class:`~fuellib.fuel.components.Components`) and mixture properties through ``fuel.mix``
-(:class:`~fuellib.fuel.mixture.Mixture`). For example, we can calculate the vapor pressure
+Note that the units for critical temperature are included as :attr:`fuel.comps.tc <fuellib.fuel.components.Components.tc>` returns a `pint.Quantity[np.ndarray]`. 
+For more information about unit tracking in FuelLib (via `pint <https://pint.readthedocs.io>`_) see :ref:`Units <sec-units>`. Next, we can calculate any of the component- or mixture-level properties using the 
+``fuel`` object: component properties are available through
+:class:`fuel.comps <fuellib.fuel.components.Components>` and mixture properties through :class:`fuel.mix <fuellib.fuel.mixture.Mixture>`. For example, we can calculate the vapor pressure
 for each component and the mixture at a given temperature:
 
 .. code-block:: python

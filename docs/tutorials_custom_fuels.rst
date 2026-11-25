@@ -27,9 +27,9 @@ Create a fuel data directory with this structure:
 
 **Optional:**
 
-- ``properties_data/{fuel_name}.csv``: measured property data (one file per fuel) loaded into ``Fuel.prop_data``.
+- ``properties_data/{fuel_name}.csv``: measured property data (one file per fuel) loaded into :attr:`Fuel.prop_data <fuellib.fuel.core.Fuel.prop_data>`.
 - ``ref_compounds.csv``, ``ref_gani.csv``, ``ref_nannoolal.csv``, and ``ref_unifac.csv``: custom reference compound and group decomposition tables. When present, each table supplements FuelLib's built-in table; it does not replace it. If a file is absent, FuelLib uses the built-in table in ``fuellib/data``.
-- ``fuel_metadata.yaml``: display name, source, and other documentation for each fuel, keyed by fuel name under a top-level ``fuels`` entry. The entry for a fuel is loaded into ``Fuel.metadata`` (``None`` if the file or entry is absent).
+- ``fuel_metadata.yaml``: display name, source, and other documentation for each fuel, keyed by fuel name under a top-level ``fuels`` entry. The entry for a fuel is loaded into :attr:`Fuel.metadata <fuellib.fuel.core.Fuel.metadata>` (``None`` if the file or entry is absent).
 
 Fuel variants with identical compounds but different weight percentages simply use separate ``gc_data`` files that refer to the same reference compounds.
 

@@ -17,9 +17,11 @@ explicit and lets you convert between unit systems without manually tracking
 conversion factors.
 
 All quantities are created from a single shared unit registry,
-``fuellib.Units`` (equivalently ``fuellib.utils.Units``). Quantities
+:data:`fuellib.Units <fuellib.utils.types.Units>` (equivalently
+:data:`fuellib.utils.Units <fuellib.utils.types.Units>`). Quantities
 created from a different ``pint.UnitRegistry`` instance are **not**
-compatible with FuelLib's quantities, so always use ``fl.Units`` (or
+compatible with FuelLib's quantities, so always use
+:data:`fl.Units <fuellib.utils.types.Units>` (or
 ``fl.Units.Quantity``) to build new quantities of your own, such as a
 temperature to evaluate a correlation at.
 
@@ -54,11 +56,13 @@ temperature to a pressure), which helps catch unit-mismatch bugs early.
 Type annotations
 ^^^^^^^^^^^^^^^^
 
-FuelLib provides type aliases from ``fuellib.utils.types`` for annotating
-unit-aware code. ``Quantity0D`` represents a Pint quantity with a scalar
-magnitude, while ``Quantity1D`` and ``Quantity2D`` represent quantities with
-one- and two-dimensional ``float64`` NumPy-array magnitudes. Use ``Array1D``
-and ``Array2D`` for the corresponding bare NumPy arrays.
+FuelLib provides type aliases from :mod:`fuellib.utils.types` for annotating
+unit-aware code. :data:`~fuellib.utils.types.Quantity0D` represents a Pint
+quantity with a scalar magnitude, while :data:`~fuellib.utils.types.Quantity1D`
+and :data:`~fuellib.utils.types.Quantity2D` represent quantities with
+one- and two-dimensional ``float64`` NumPy-array magnitudes. Use
+:data:`~fuellib.utils.types.Array1D` and :data:`~fuellib.utils.types.Array2D`
+for the corresponding bare NumPy arrays.
 
 For example:
 
@@ -87,7 +91,7 @@ The :mod:`fuellib.gcm` module provides a generic, extensible framework for
 registering and evaluating the predictions of the
 :doc:`group_contribution_methods`. It decouples the definition of individual
 property formulas from the :class:`~fuellib.fuel.core.Fuel` class, so new
-methods or properties can be added without modifying the ``fuellib.fuel``
+methods or properties can be added without modifying the :mod:`fuellib.fuel`
 package.
 
 Registry classes
@@ -120,8 +124,10 @@ Three pieces make up the abstraction, all defined in
    gani.predict("tc", fuel)       # Quantity1D of critical temperatures
    gani.predict_all(fuel)         # {'gani': {'tc': ..., 'pc': ..., ...}}
 
-Method and property name lookups (``GCMRegistry.get_gcm``,
-``GCM.get_property``, ``GCM.predict``) are case-insensitive. Looking up an
+Method and property name lookups
+(:meth:`GCMRegistry.get_gcm <fuellib.gcm.core.GCMRegistry.get_gcm>`,
+:meth:`GCM.get_property <fuellib.gcm.core.GCM.get_property>`,
+:meth:`GCM.predict <fuellib.gcm.core.GCM.predict>`) are case-insensitive. Looking up an
 unregistered method or property raises a ``ValueError`` listing the
 available options.
 
@@ -155,7 +161,7 @@ New properties can be added to an existing GCM (or a new one) with the
 :meth:`~fuellib.gcm.core.GCM.register_property` decorator. A property
 function must accept a :class:`~fuellib.fuel.core.Fuel` and return a
 :data:`~fuellib.utils.types.Quantity1D` with one value per compound in
-``fuel.comps.names``:
+:attr:`fuel.comps.names <fuellib.fuel.components.Components.names>`:
 
 .. code-block:: python
 
@@ -172,9 +178,10 @@ function must accept a :class:`~fuellib.fuel.core.Fuel` and return a
        return Units.Quantity(value, "K")
 
 The function is registered under its (lowercased) ``__name__``, so it
-immediately becomes available via ``gani_gcm.predict("my_new_property",
-fuel)`` and, once a corresponding cached property is added to
-:class:`~fuellib.fuel.components.Components`, as an attribute of ``fuel.comps``.
+immediately becomes available via :meth:`gani_gcm.predict("my_new_property",
+fuel) <fuellib.gcm.core.GCM.predict>` and, once a corresponding cached property is added to
+:class:`~fuellib.fuel.components.Components`, as an attribute of
+:attr:`fuel.comps <fuellib.fuel.core.Fuel.comps>`.
 
 A completely new method can likewise be registered with
 :meth:`~fuellib.gcm.core.GCMRegistry.register`:
@@ -197,27 +204,30 @@ A completely new method can likewise be registered with
 
 - ``Fuel._gani_decomp``: the group decomposition (from
   ``ref_gani.csv``) of each compound in the mixture, in the same order as
-  ``fuel.comps.names``. Each compound in the GCxGC data must be present in the
-  reference tables, otherwise a ``ValueError`` is raised when the ``Fuel`` is
-  created.
+  :attr:`fuel.comps.names <fuellib.fuel.components.Components.names>`. Each
+  compound in the GCxGC data must be present in the
+  reference tables, otherwise a ``ValueError`` is raised when the
+  :class:`~fuellib.fuel.core.Fuel` is created.
 - ``Fuel._nannoolal_decomp``: the Nannoolal group
   decomposition (from ``ref_nannoolal.csv``) of each compound, used by the
   ``nannoolal`` method. Each compound must also be present in this table.
 - ``Fuel._unifac_decomp``: the UNIFAC subgroup decomposition
   (from ``ref_unifac.csv``) of each compound, used by the ``unifac`` method.
   Each compound must also be present in this table.
-- ``Fuel.components_data``: the rows of ``ref_compounds.csv``
+- :attr:`Fuel.components_data <fuellib.fuel.core.Fuel.components_data>`: the rows of ``ref_compounds.csv``
   matched to the GCxGC data, including the hydrocarbon ``Family`` used by the
   ``boehm`` method.
 - Cached properties of :attr:`fuel.comps <fuellib.fuel.core.Fuel.comps>` such as
   :attr:`~fuellib.fuel.components.Components.tc`,
   :attr:`~fuellib.fuel.components.Components.pc`, and
   :attr:`~fuellib.fuel.components.Components.tb` that
-  evaluate the corresponding registered property with ``gani_gcm.predict(...)``
+  evaluate the corresponding registered property with
+  :meth:`gani_gcm.predict(...) <fuellib.gcm.core.GCM.predict>`
   the first time they are accessed.
   Prediction-only coefficients (``Cp_stp``, ``Cp_B``, ``Cp_C``, ``rd_A``,
   ``rd_B``, ``rd_D``, ``alibakhshi_phi``, and ``dS_fus``) are not cached on the
-  fuel; call ``gani_gcm.predict(...)`` or ``boehm_gcm.predict(...)`` directly.
+  fuel; call :meth:`gani_gcm.predict(...) <fuellib.gcm.core.GCM.predict>` or
+  :meth:`boehm_gcm.predict(...) <fuellib.gcm.core.GCM.predict>` directly.
   Properties that can be measured (``Tc``, ``Pc``, ``Vc``, ``Tm``,
   ``Tb``, ``Hf_stp``, ``Hv_stp``, ``Vm_stp``, ``omega``) take reference values
   from ``ref_compounds.csv`` where available unless ``use_ref_props=False``
@@ -255,25 +265,18 @@ The project aims to keep the public API stable across releases. Any intentional
 breaking API change should be explicitly documented in release notes and
 accompanied by updates to tests and user-facing documentation.
 
-Click on the links below for the full auto-documentation of the API, or browse
-the :ref:`genindex` and the :ref:`modindex`.
+The API is organized as it is in the source code, by package and module, down
+to the individual classes, functions, and constants. Browse the packages below
+or use the sidebar, the :ref:`genindex`, and the :ref:`modindex`.
 
 .. autosummary::
-    :toctree: generated
+   :toctree: generated
+   :recursive:
 
-    fuellib.fuel.core
-    fuellib.fuel.components
-    fuellib.fuel.mixture
-    fuellib.utils.constants
-    fuellib.utils.utility
-    fuellib.utils.types
-    fuellib.gcm.core
-    fuellib.gcm.gani
-    fuellib.gcm.boehm
-    fuellib.gcm.nannoolal
-    fuellib.gcm.unifac
-    fuellib.rdk.mol
-    fuellib.correlate.components
-    fuellib.correlate.mixture
-    fuellib.correlate.helpers
-    fuellib.simulate.distillation.greenfield
+   fuellib.correlate
+   fuellib.exporters
+   fuellib.fuel
+   fuellib.gcm
+   fuellib.rdk
+   fuellib.simulate
+   fuellib.utils

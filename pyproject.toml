@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fuellib"
-version = "4.0.0"
+version = "4.0.1"
 description = "FuelLib: A fuel property prediction package based on group contribution methods and measurement data"
 readme = "README.md"
 license = {text = "BSD-3-Clause"}

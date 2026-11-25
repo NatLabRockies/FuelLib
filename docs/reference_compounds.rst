@@ -58,7 +58,7 @@ only the group-contribution predictions. ``YSI`` (Yield Sooting Index) and ``DCN
 are not predicted by FuelLib, so they are always taken from the reference data.
 
 Each GCxGC row is matched to a reference compound by ``Reference Compound`` name or by the InChI derived
-from its ``SMILES``; the matched rows are available as ``Fuel.components_data``, and the
+from its ``SMILES``; the matched rows are available as :attr:`Fuel.components_data <fuellib.fuel.core.Fuel.components_data>`, and the
 group decompositions from ``ref_gani.csv``, ``ref_nannoolal.csv``, and ``ref_unifac.csv`` as
 ``Fuel._gani_decomp``, ``Fuel._nannoolal_decomp``, and
 ``Fuel._unifac_decomp``. Custom tables are read from ``ref_compounds.csv``, ``ref_gani.csv``,
